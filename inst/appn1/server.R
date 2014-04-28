@@ -113,9 +113,7 @@ shinyServer(function(input,output,session){
   
     ## TAB: PCA PLOT ##
     colours <- reactive({
-      if(is.null(colours)){ ## to avoid error messages found on 
-      ## http://stackoverflow.com/questions/19673234/shiny-preventing-initial-
-      ## error-messages-in-endpoints-while-conductor-executes
+      if(is.null(colours)){ 
       return()} else{
           ## fvarLabels accesses labels of feature data
           fvarLabels(dataInput())}}) 
