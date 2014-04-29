@@ -1,28 +1,28 @@
 library(shiny)
 ## Define UI
 shinyUI(fluidPage(
-  
+    responsive = TRUE,
     ## Application title
-    titlePanel("pRolocGUI"),
+    titlePanel("pRolocGUI - pRototype"),
   
     ## Sidebar
+   
     sidebarPanel(
         ## Panel showing up when tab Data is selected
         conditionalPanel(condition="input.tab1 == 'PCA' |
                          input.tab1 == 'quantitation' |
                          input.tab1 == 'feature meta-data' |
                          input.tab1 == 'protein profiles'",
-                         ## Control Checkbox, if deactivated selected points
-                         ## will not appear in plot
-                         checkboxInput("searchyes",
-                                       "Search by and display ...",
-                                       value = FALSE),
-                         radioButtons("chooseIdenSearch",label="",
-                                      choices=c(
-                                      "cursor input (PCA)"="mouse.PCA",
-                                      "cursor input (protein profiles)"="mouse.plotDist",
-                                      "levels(s) in ..."="text"),
-                                      selected="text"),
+                         h4("Search"),
+                         ## Control Checkboxes, if deactivated points will 
+                         ## not be plotted
+                         checkboxGroupInput("chooseIdenSearch",label="",
+                                  choices=c(
+                                  "PCA"="mouse.PCA",
+                                  "protein profiles"="mouse.plotDist",
+                                  "saved searches"="saved.searches",
+                                  "level in"="text"),
+                                  selected=NULL),
                          ## fvarLabels() of selected MSnSet in which to look for
                          htmlOutput("search.UI"),
                          ## a search field to facilitate the search for
@@ -31,18 +31,23 @@ shinyUI(fluidPage(
                          ## has to be selected here
                          htmlOutput("search.results.UI"),
                          textOutput("search.indUI"),
-                         actionButton("save.text","Submit selected levels "),
-                         actionButton("reset.mult","Clear all multiple points")),
+                         actionButton("save.text","Submit selected level"),
+                         actionButton("reset.mult","Clear multiple points")),
     conditionalPanel(condition="input.tab1 == 'Data'",
-                     helpText("Welcome to this interactive visualisation tool 
-                              for organelle proteomics data. Please select 
-                              on the right an example MSnSet or 'own data' 
-                              in the drop down menu and upload your own 
-                              MSnSet data afterwards by using 
-                              the 'Browse...' button.")),
+                     strong("Welcome to", span("pRolocGUI", 
+                     style = "color:gray"), 
+                     ", the interactive visualisation tool 
+                     for organelle proteomics data."),
+                     br(),
+                     br(),
+                     p("Please select in the drop down menu
+                     on the right an example MSnSet or 'own data' 
+                     and upload your own MSnSet data afterwards 
+                     by using the 'Browse...' button.")),
     ## Panel showing up when tab PCA is selected
     conditionalPanel(condition="input.tab1 == 'PCA'",
-                     helpText("..........................................."),
+                     hr(),
+                     h4("Display"),
                      ## drop down menu for colours of PCA plot
                      htmlOutput("fcoloursOutput"),
                      ## drop down menu for symbol type of PCA plot
@@ -63,26 +68,21 @@ shinyUI(fluidPage(
     ),
     ## Panel showing up when tab 'quantitation' is selected
     conditionalPanel(condition="input.tab1 == 'quantitation'",
-                     helpText("quantitation Data for the selected MSnSet"),
-                     radioButtons("exprs.radio","Select",
-                                  choices=list("all or"="all",
-                                               "selected"="selected"),
-                                  selected="all")),
+                     hr(),
+                     htmlOutput("exprs.radioUI")),
     ## Panel showing up when tab 'feature meta-data' is selected
     conditionalPanel(condition="input.tab1 == 'feature meta-data'",
-                     helpText("feature meta-data for the selected MSnSet"),
-                     radioButtons("fData.radio","Select",
-                                  choices=list("all or"="all",
-                                               "selected"="selected"),
-                                  selected="all")),
+                     hr(),
+                     htmlOutput("fData.radioUI")),
     ## Panel showing up when tab 'sample meta-data' is selected
-    conditionalPanel(condition="input.tab1 == 'sample meta-data'",
-                     helpText("sample meta-data for the selected MSnSet")),
+ #  conditionalPanel(condition="input.tab1 == 'sample meta-data'",
+  #                   helpText("sample meta-data for the selected MSnSet")),
     ## Panel showing up when tab 'protein profiles' 
     ## is selected
     conditionalPanel(condition=c("input.tab1 == 
                                 'protein profiles'"),
-                     helpText("..........................................."),
+                     hr(),
+                     h4("Display"),
                      ## drop down menu for quantity of plots
                      selectInput("quantity.plot.dist",
                                  "number of plots to display",
@@ -100,6 +100,15 @@ shinyUI(fluidPage(
                      ## in all assigned proteins'
                      htmlOutput("organelle.allUI"),
                      htmlOutput("number.plot.distUI")),
+    conditionalPanel(condition="input.tab1 == 'search'",
+                     h4("Display"),
+                     radioButtons("save.lists.radio", 
+                                  label="",
+                                  choices=c("no", "yes"), selected="no"),
+                     ## selectInput for choosing between the different 
+                     ## search Results
+                     htmlOutput("tagslist.SearchResultUI"),
+                     actionButton("save.lists2SR", "Add your search to list")),    
                      width = 3
     ),
   
@@ -122,24 +131,24 @@ shinyUI(fluidPage(
                textOutput("warningowndataUI")
                ),
         tabPanel("PCA",
-               plotOutput("PCA",width="100%",height="600px",
+               plotOutput("PCA",width="100%",height="800px",
                            clickId = "PCAclick",
                            ## hoverId = "PCAhover",
                            ## hoverDelay = 300,
                            ## hoverDelayType = "throttle"
                           ),
-               verbatimTextOutput("coord.PCAUI"),
-               tableOutput("info.prot.PCAUI"),
+               #tableOutput("info.prot.PCAUI"),
                downloadButton("plotPCA.download","Download Plot")
                ),
         tabPanel("protein profiles",
                plotOutput("plotdist",width="100%",height="800px",
                           clickId = "plotDistclick"),
-               textOutput("coord.plotDistUI"),
                downloadButton("plotDist.download","Download Plot")),
         tabPanel("quantitation", dataTableOutput("MSn.exprs")),
         tabPanel("feature meta-data", dataTableOutput("MSn.fData")),
         tabPanel("sample meta-data", dataTableOutput("MSn.pData")),
+        tabPanel("search",
+                 dataTableOutput("tableSearchResults")),
                   id = "tab1"
                ), 
         width=9)

@@ -1,6 +1,6 @@
 Package: pRolocGUI
 Title: An interactive visualisation tool for organelle (spatial) proteomics data
-Version: 0.1
+Version: 0.1.0.1
 Date: 2014-04-28
 Author: Thomas Naake and Laurent Gatto
 Maintainer: Thomas Naake <thomasnaake@gmx.de>

@@ -1,2 +1,2 @@
-export(pRolocGUI)
+export(pRolocGUI, colours_GUI)
 import(pRoloc, pRolocdata, shiny)
