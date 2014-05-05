@@ -33,7 +33,7 @@
       htmlOutput("searchResultsUI"),
       textOutput("search.indUI"),
       actionButton("saveText", "Submit selected level"),
-      actionButton("resetMult", "Clear multiple points")),
+      actionButton("resetMult", "Clear features")),
     conditionalPanel(
       condition = "input.tab1 == 'Data'",
       strong("Welcome to", span("pRolocGUI", style = "color:gray"), 
@@ -135,7 +135,7 @@
                 "Tan et al. 2009", "own data"),
               selected="Christoforou 2011"),
           fileInput("owndata", 
-              "If you have chosen 'own data' select your own MSnSet file", ## upload your own data
+              "Select your own MSnSet file",
               ## accept=c('.rda', 'data/rda', '.RData', 'data/RData'),
               multiple = FALSE),
           textOutput("warningowndataUI")

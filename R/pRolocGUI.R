@@ -33,6 +33,57 @@ pRolocGUI <- function() {
       ),
     
     server = function(input, output) {   
+      ## TAB: DATA/UPLOAD ##
+      
+      ## upload function for own data, access to data path implemented 
+      ## by index "datapath", 
+      ## see ?shiny::fileInput for further details
+      .dIownData <- reactive({
+        if (!length(as.character(input$owndata["datapath"])))
+          od <- andy2011
+        else{
+          ## check if MSnSet has ending .rda or .RData and if 
+          ## it is MSnSet
+          if (file_ext(input$owndata["name"]) %in% c("rda","RData")){
+            if (inherits(
+              get(load(as.character(input$owndata["datapath"]))), 
+              "MSnSet"))
+              od <- get(load(as.character(input$owndata["datapath"])))
+            else
+              od <- andy2011
+          }
+          else
+            od <- andy2011
+        }
+      })
+      
+      ## use either example data andy2011, dunkley 2006, tan2009 (in pRolocdata) 
+      ## or own data and assign it appropriately
+      .dI <- reactive({
+        switch(input$data,
+               "Christoforou 2011" = andy2011,
+               "Dunkley et al. 2006" = dunkley2006,
+               "Tan et al. 2009" = tan2009r1,
+               "own data" = .dIownData()
+        )
+      })
+      
+    
+      
+      output$warningowndataUI <- renderText({
+        if(input$data == "own data"){
+          if (identical(.dI(), andy2011))
+            return("noMSnSet selected, 
+                   MSnSet Christoforou 2011 will be used")
+          else
+            return()
+        }
+        else
+          return()
+      })  
+      ## END: UPLOAD ##
+      
+      
       ## start of search implementation
       ## reactive expressions for general search
       ## reactive expression to forward indices to 
@@ -138,53 +189,9 @@ pRolocGUI <- function() {
       #    isolate({stopApp()})
       #})
       
-      ## TAB: DATA/UPLOAD ##
       
-      ## upload function for own data, access to data path implemented 
-      ## by index "datapath", 
-      ## see ?shiny::fileInput for further details
-      .dIownData <- reactive({
-        if (!length(as.character(input$owndata["datapath"])))
-          od <- andy2011
-        else{
-          ## check if MSnSet has ending .rda or .RData and if 
-          ## it is MSnSet
-          if (file_ext(input$owndata["name"]) %in% c("rda","RData")){
-            if (inherits(
-                  get(load(as.character(input$owndata["datapath"]))), 
-                  "MSnSet"))
-              od <- get(load(as.character(input$owndata["datapath"])))
-            else
-              od <- andy2011
-            }
-          else
-            od <- andy2011
-          }
-        })
       
-      ## use either example data andy2011, dunkley 2006, tan2009 (in pRolocdata) 
-      ## or own data and assign it appropriately
-      .dI <- reactive({
-        switch(input$data,
-            "Christoforou 2011" = andy2011,
-            "Dunkley et al. 2006" = dunkley2006,
-            "Tan et al. 2009" = tan2009r1,
-            "own data" = .dIownData()
-          )
-        })
       
-      output$warningowndataUI <- renderText({
-        if(input$data == "own data"){
-          if (identical(.dI(), andy2011))
-            return("noMSnSet selected, 
-                   MSnSet Christoforou 2011 will be used")
-          else
-            return()
-        }
-        else
-          return()
-        })  
-      ## END: UPLOAD ##
       
       
       
@@ -238,7 +245,7 @@ pRolocGUI <- function() {
           fcex <- 1
         
         if (!is.null(input$xrange)) { ## outer if: to prevent error message
-          if (input$fsymboltype == "none") 
+          if (is.null(input$fsymboltype) || input$fsymboltype == "none") 
             ## create plot2D and assign reactive variables to arguments,
             ## do not assign fpch (no symboltypes are plotted)
             plot2D(.dI(), fcol = colour,
@@ -281,8 +288,9 @@ pRolocGUI <- function() {
         })
     
       output$fsymboltypeOutput <- renderUI({ 
-        selectInput("fsymboltype", "symbol type", c("none", .colours()),
-            selected="none")
+        if (!is.null(input$fcolours) && input$fcolours %in% fvarLabels(.dI())) 
+          selectInput("fsymboltype", "symbol type", c("none", .colours()),
+              selected="none")
         })
       
       output$fcexOutput <- renderUI({
@@ -346,7 +354,7 @@ pRolocGUI <- function() {
         if (length(input$fcolours))
           if (input$fcolours %in% fvarLabels(.dI()))
             ## tick box: add legend
-            checkboxInput("legendyes", "legend of PCA plot", 
+            checkboxInput("legendyes", "legend", 
                 value = FALSE)
         })
       
@@ -355,7 +363,7 @@ pRolocGUI <- function() {
           if (input$fcolours %in% fvarLabels(.dI()))
             ## drop down menu for position of legend
             selectInput("legendpos",
-                "position of legend (PCA plot)",
+                "position of legend",
                 choices = c("bottomright", "bottom", "bottomleft","left",
                             "topleft", "top", "topright", "right","center"),
                 selected="bottomright")
@@ -408,16 +416,18 @@ pRolocGUI <- function() {
         if(!is.null(input$PCAclick)){
           isolate({.protPCA$mult <- c(.protPCA$mult, minDist2dProtPCA())
           ## remove indices when indices are clicked another time
-          if (length(which(as.vector(table(.protPCA$mult)) > 1)))
+          if (length(which(as.vector(table(.protPCA$mult)) > 1))) 
+      
             .protPCA$mult <- 
               .protPCA$mult[
                 -which(.protPCA$mult == names(which(table(.protPCA$mult) > 1)))
                 ]
+            
             })   
           }
         }) 
       ## END: PCA PLOT ##
-      
+
       
       
       ## TAB: PLOTDIST ##
@@ -687,7 +697,6 @@ pRolocGUI <- function() {
               fData(.dI())
               )
             )[c(.searchInd()), ]
-        data.fData
       })
       ## END: FEATURE META-DATA ##
       
@@ -720,7 +729,7 @@ pRolocGUI <- function() {
       
       ## Get the tag names of the list with the saved search results 
       .tagsList <- reactivePoll(
-          intervalMillis = 1000, 
+          intervalMillis = 100, 
           session = NULL,
           checkFunc = .digestFOI,
           valueFunc = .descrFOI
