@@ -125,21 +125,9 @@
   mainPanel(
     tabsetPanel(
       tabPanel("Data",
-        ## choose Data source, 
-        ## a drop down list of A. Christoforou 2011, 
-        ## Dunkley 2006, Tan et al. 2009 (all example data)
-        ## or use your own data by selecting load data
-          selectInput("data",
-              "Choose MSnSet data source:",
-              choices = c("Christoforou 2011", "Dunkley et al. 2006",
-                "Tan et al. 2009", "own data"),
-              selected="Christoforou 2011"),
-          fileInput("owndata", 
-              "Select your own MSnSet file",
-              ## accept=c('.rda', 'data/rda', '.RData', 'data/RData'),
-              multiple = FALSE),
-          textOutput("warningowndataUI")
-        ),
+        htmlOutput("Data1"),
+        htmlOutput("Data2"),
+        htmlOutput("Data3")),
       tabPanel("PCA",
         plotOutput("PCA", width = "100%",height="800px",
             clickId = "PCAclick",

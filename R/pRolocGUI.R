@@ -1,16 +1,21 @@
-#'@name pRolocGUI
-#'@title pRolocGUI
+#'@name pRolocVIS
+#'@title pRolocVIS
 #'@export
 #'@author Thomas Naake <thomasnaake@@gmx.de>
-#'@usage pRolocGUI()
+#'@usage pRolocVIS()
+#'@param object Pass a MSnSet to pRolocVIS directly. Default \code{NULL} will
+#'load no MSnSet
 #'@description A function to start a shiny session with one MSnSet data set. Run
-#'\code{pRolocGUI()} to start the shiny application and choose between
+#'\code{pRolocVIS()} to start the shiny application and choose between
 #'three example MSnSet originating from \code{pRolocdata} or upload your
 #'own MSnSet. Choosing between the tabs allows to display PCA plots,
 #'protein profiles, the underlying data and upload abilities for past
 #'search results.
 #'@examples \dontrun{pRolocGUI()}
-pRolocGUI <- function() {
+
+pRolocVIS <- function(object = NULL) {
+  
+  #on.exit(return(1))
   ## global
   ## load MSnSets
   data(andy2011)
@@ -26,6 +31,7 @@ pRolocGUI <- function() {
           ## Application title
           .pRn1_setTitlePanel(),
           ## Sidebar Panel
+          #.pRn1_setSidebarPanelUpload(),
           .pRn1_setSidebarPanel(),  
           ## Main Panel
           .pRn1_setMainPanel()
@@ -38,6 +44,42 @@ pRolocGUI <- function() {
       ## upload function for own data, access to data path implemented 
       ## by index "datapath", 
       ## see ?shiny::fileInput for further details
+      output$Data1 <- renderUI({
+        if (!is.null(object)){
+          if (inherits(.dI(), "MSnSet"))
+            helpText("committed object okay")
+          else 
+            helpText("committed object corrupt, 
+                     MSnSet Christoforou 2011 will be used")
+          }
+        else
+                 ## choose Data source, 
+                 ## a drop down list of A. Christoforou 2011, 
+                 ## Dunkley 2006, Tan et al. 2009 (all example data)
+                 ## or use your own data by selecting load data
+                 selectInput("data",
+                             "Choose MSnSet data source:",
+                             choices = c("Christoforou 2011", 
+                                         "Dunkley et al. 2006",
+                                         "Tan et al. 2009", 
+                                         "own data"),
+                             selected="Christoforou 2011")                
+        
+        })
+      
+      output$Data2 <- renderUI({
+        if (is.null(object))
+          fileInput("owndata", 
+                  "Select your own MSnSet file",
+                  ## accept=c('.rda', 'data/rda', '.RData', 'data/RData'),
+                  multiple = FALSE)
+        })
+      
+      output$Data3 <- renderUI({
+        if (is.null(object))
+          textOutput("warningowndataUI")
+        })
+
       .dIownData <- reactive({
         if (!length(as.character(input$owndata["datapath"])))
           od <- andy2011
@@ -57,18 +99,25 @@ pRolocGUI <- function() {
         }
       })
       
-      ## use either example data andy2011, dunkley 2006, tan2009 (in pRolocdata) 
-      ## or own data and assign it appropriately
-      .dI <- reactive({
-        switch(input$data,
-               "Christoforou 2011" = andy2011,
-               "Dunkley et al. 2006" = dunkley2006,
-               "Tan et al. 2009" = tan2009r1,
-               "own data" = .dIownData()
-        )
-      })
       
-    
+      if (is.null(object))
+        .dI <- reactive({
+          if (!is.null(input$data))
+            switch(input$data,
+                   "Christoforou 2011" = andy2011,
+                   "Dunkley et al. 2006" = dunkley2006,
+                   "Tan et al. 2009" = tan2009r1,
+                   "own data" = .dIownData()
+              )
+            })
+      else {
+        if (inherits(object, "MSnSet"))
+          .dI <- reactive(object)
+        else 
+          .dI <- reactive(andy2011) 
+          }
+        
+   
       
       output$warningowndataUI <- renderText({
         if(input$data == "own data"){
@@ -199,7 +248,7 @@ pRolocGUI <- function() {
   
       ## colours
       .colours <- reactive({
-        if(!is.null(.colours))
+        if(!is.null(.dI()))
           fvarLabels(.dI())
         })
       
@@ -276,7 +325,13 @@ pRolocGUI <- function() {
             foiPCA <- FeaturesOfInterest(description = "hoP",
                 fnames = featureNames(.dI())[c(.searchInd())],
                 object=.dI())
-            highlightOnPlot(.dI(), foiPCA, col="black", cex=1.5)
+            highlightOnPlot(.dI(), foiPCA, 
+                            args = list(
+                              xlim = c(input$xrange[1], input$xrange[2]),
+                              ylim = c(input$yrange[1], input$yrange[2]),
+                              dims = c(as.numeric(input$PCAn1),
+                                     as.numeric(input$PCAn2))),
+                            col="black", cex=1.5)
             }
           }
         } ## end function .plotPCA
@@ -334,12 +389,14 @@ pRolocGUI <- function() {
       ## compute number of principal components to look for 
       ## and change UI accordingly
       output$PCAn1UI <- renderUI({
+        if (!is.null(.dI()))
         selectInput("PCAn1", "number of 1st principal component",
             selected = 1,
             choices = c(1:ncol(exprs(.dI()))))
         })
       
       output$PCAn2UI <- renderUI({
+        if (!is.null(.dI()))
         selectInput("PCAn2", "number of 2nd principal component",
             selected = 2,
             choices = c(1:ncol(exprs(.dI()))))
@@ -541,6 +598,17 @@ pRolocGUI <- function() {
                        .listParams$levOrgMarkOrg[i]),
                    featureNames(.dI())
                    )
+            
+           iComp <-  featureNames(
+                  subset(.dI(), fData(.dI())[, .listParams$levSourMarkAll[i]] == 
+                     .listParams$levSourMarkAllOrg[i]))
+  
+           jComp <- subset(
+             featureNames(.dI()), 
+             fData(.dI())[, .listParams$levOrgMark[i]] == 
+               .listParams$levOrgMarkOrg[i])  
+            
+              
             ## which of j are in .searchInd(), returns index in j, e.g.
             ## "10", i.e. the tenth element of j is also in .searchInd()
             ind.col <- na.omit(match(.searchInd(), j))
@@ -560,7 +628,9 @@ pRolocGUI <- function() {
             else
               lwd.ind <- 1
             
-            plotDist(
+            if (length(na.exclude(match(jComp, iComp))) == length(j)) {
+            
+              plotDist(
               subset(.dI(), fData(.dI())[, .listParams$levSourMarkAll[i]] == 
                   .listParams$levSourMarkAllOrg[i]), 
               markers = subset(
@@ -571,6 +641,7 @@ pRolocGUI <- function() {
               lwd = lwd.ind
               )
             title(.listParams$levOrgMarkOrg[i])
+                    }
             } ## end for loop
           }
         }
