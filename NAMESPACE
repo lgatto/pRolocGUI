@@ -1,4 +1,4 @@
-export(pRolocGUI)
+export(pRolocVIS)
 import(pRoloc)
 import(pRolocdata)
 import(shiny)
