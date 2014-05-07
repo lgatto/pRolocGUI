@@ -18,7 +18,7 @@
 #'@seealso 
 #'\code{\link[pRolocdata]{pRolocdata}}
 #'\code{\link[MSnbase]{FeaturesOfInterest-class}}
-#'@examples \dontrun{pRolocGUI()}
+#'@examples \dontrun{pRolocVIS(object = NULL)}
 #'@import pRoloc pRolocdata shiny
 #'@importFrom digest digest
 #'@importFrom tools file_ext
