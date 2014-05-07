@@ -1,9 +1,7 @@
 #'@title Test for Features of Interests or Collection of 
 #'Features of Interest
-#'@name areFeaturesOfInterest 
-#'@aliases .areFeaturesOfInterest 
+#'@name .areFeaturesOfInterest  
 #'@aliases .isFoICollection
-#'@aliases isFoICollection
 #'@description  \code{.areFeaturesOfInterest} tests if an object is of class 
 #'\code{"FeaturesOfInterest"}, \code{.isFoIColection} if object is of class 
 #'\code{"FoICollection"}, respectively. Returning \code{TRUE} or \code{FALSE}.
