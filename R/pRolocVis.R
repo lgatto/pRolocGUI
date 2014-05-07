@@ -1,19 +1,21 @@
-#'@name pRolocVIS
-#'@title pRolocVIS
+#'@name pRolocVis
+#'@title pRolocVis
 #'@export
 #'@author Thomas Naake <thomasnaake@@gmx.de>
-#'@usage pRolocVIS()
-#'@param object Pass a MSnSet to pRolocVIS directly. Default \code{NULL} will
-#'load no MSnSet
+#'@usage pRolocVis(object = NULL)
+#'@param object Pass a MSnSet to pRolocVis directly. Default \code{NULL} will
+#'enable possibility to upload MSnSet in pRolovVis. 
 #'@description A function to start a shiny session with one MSnSet data set. Run
-#'\code{pRolocVIS()} to start the shiny application and choose between
+#'\code{pRolocVis()} to start the shiny application and choose between
 #'three example MSnSet originating from \code{pRolocdata} or upload your
 #'own MSnSet. Choosing between the tabs allows to display PCA plots,
 #'protein profiles, the underlying data and upload abilities for past
 #'search results.
-#'@examples \dontrun{pRolocGUI()}
+#'@examples \dontrun{pRolocVis(object = NULL)}
+#'
+#'@export
 
-pRolocVIS <- function(object = NULL) {
+pRolocVis <- function(object = NULL) {
   
   #on.exit(return(1))
   ## global
@@ -134,6 +136,81 @@ pRolocVIS <- function(object = NULL) {
       
       
       ## start of search implementation
+    
+      ## check boxes by clicking on plots PCA and plotDist
+      select <- reactiveValues(PCA = NULL, plotDist = NULL, text = NULL)
+      
+      selPCA <- reactive({
+        if (is.null(input$PCAclick) | is.null(.protPCA$mult)) #| is.null(.protPCA$mult) | !("mouse.PCA" %in% input$chooseIdenSearch))
+          select$PCA <- NULL
+        else {
+          isolate({
+            input$PCAclick
+            select$PCA <- "mouse.PCA"
+            })
+          
+          isolate({
+            input$chooseIdenSearch
+            if (length(.protPCA$mult) > 2 && !is.null(select$PCA) && 
+                  "mouse.PCA" %in% select$PCA && 
+                  !("mouse.PCA" %in% input$chooseIdenSearch))
+              select$PCA <- NULL
+            })
+          }
+        select$PCA <- unique(select$PCA)
+        })
+      
+      selPlotDist <- reactive({
+        if (is.null(input$plotDistclick) | is.null(.protPlotDist$mult))
+          select$plotDist <- NULL
+        else {
+          isolate({
+            input$plotDistclick
+            select$plotDist <- "mouse.plotDist"
+            })
+          isolate({
+            input$chooseIdenSearch
+            if (length(.protPlotDist$mult) > 2 && !is.null(select$plotDist) &&
+                  "mouse.plotDist" %in% select$plotDist && 
+                  !("mouse.plotDist" %in% input$chooseIdenSearch))
+              select$plotDist <- NULL
+            })
+          }
+        select$plotDist <- unique(select$plotDist)
+        })
+      
+      selText <- reactive({
+        if (is.null(input$saveText))
+          select$text <- NULL
+        else  {
+          isolate({
+            digest(input$saveText)
+            if (input$saveText > 0 && length(.protText$mult) < 1) 
+              select$text <- "text"
+            })
+          
+          isolate({
+            digest(input$resetMult)
+            input$chooseIdenSearch
+            if (input$resetMult > 0 && "text" %in% input$chooseIdenSearch)
+              select$text <- NULL
+            })      
+          }
+        select$text <- unique(select$text)
+        })
+      
+      
+      output$checkBoxUI <- renderUI({
+        checkboxGroupInput("chooseIdenSearch", 
+            label = "",
+            choices = c("PCA" = "mouse.PCA",
+                "protein profiles" = "mouse.plotDist",
+                "saved searches" = "saved.searches",
+                "query" = "text"),
+            selected=c(selPCA(), selPlotDist() , selText()))
+        })
+      
+      
       ## reactive expressions for general search
       ## reactive expression to forward indices to 
       ## plot2D, plotDist and tabs quantitation
@@ -173,6 +250,7 @@ pRolocVIS <- function(object = NULL) {
           .protPCA$mult <- NULL
           .protPlotDist$mult <- NULL
           .protText$mult <- NULL
+         select$text <- NULL
         }
       })
       
@@ -233,17 +311,13 @@ pRolocVIS <- function(object = NULL) {
         })
       ## End of searching implementation ##  
       
-      #observe({
-      #  if (input$closebutton != 0)
-      #    isolate({stopApp()})
-      #})
+      ##observe({
+      ##  if (input$closebutton != 0)
+      ##    isolate({stopApp()})
+      ##})
       
       
-      
-      
-      
-      
-      
+
       ## TAB: PCA PLOT ##  
   
       ## colours
@@ -449,20 +523,23 @@ pRolocVIS <- function(object = NULL) {
       
       minDist2dProtPCA <- reactive({
         ## will be empty initially
-        if (!is.null(input$PCAclick)){
+        if (!is.null(input$PCAclick)) {
           ## compute 2D distances from click input to each component 
           ## of the PCA plot, input$PCAclick$x and input$PCAclick$y
-          ## is user input
-          dist <- sqrt(
-            (input$PCAclick$x - .valuesPCA()[,1])^2 + ## x-component
-            (input$PCAclick$y - .valuesPCA()[,2])^2 ## y-component
-              )
-          minDist2d <- min(dist)
-          ## compute the element (row index, i.e. the protein) which has the 
-          ## shortest distance to the input (index will be returned)
-          whichMinDist2d <- which(dist == minDist2d)
+          ## is user input (index will be returned)
+          .minDistPCA(inputx = input$PCAclick$x, inputy = input$PCAclick$y,
+                  valuesx = .valuesPCA()[,1], valuesy = .valuesPCA()[,2])
           }
         })
+      
+      minDist2dProtPCAHover <- reactive({
+        if (!is.null(input$PCAhover)) {
+          .minDistPCA(inputx = input$PCAhover$x, inputy = input$PCAhover$y,
+                  valuesx = .valuesPCA()[,1], valuesy = .valuesPCA()[,2])
+        }
+      })
+      
+      output$hoverProtPCA <- renderText(featureNames(.dI())[minDist2dProtPCAHover()])
       
       ## Multiple points list
       ## Create a list-like object with reactive values
@@ -493,13 +570,13 @@ pRolocVIS <- function(object = NULL) {
       
       ## organelle marker name
       .organelleMarkerName <- reactive(
-        if (!is.null(.organelleMarkerName))
+        if (!is.null(input$sourceOrganelleMarkerPLDI))
           names(table(fData(.dI())[input$sourceOrganelleMarkerPLDI]))
         )
       
       ## organelle for all name
       .organelleAllName <- reactive(
-        if (!is.null(.organelleAllName))
+        if (!is.null(input$allOrganellePLDI))
           names(table(fData(.dI())[input$allOrganellePLDI]))
         )
       
@@ -535,26 +612,36 @@ pRolocVIS <- function(object = NULL) {
         })
       
       ## calculate protein nearest to user input
-      .minDistProteinPlotDist <- reactive(
-        if (!is.null(input$plotDistclick) && input$quantityPlotDist == "1") {
-          ## compute indices of printed proteins in plotDist
-          j <- match(
-                 subset(featureNames(.dI()),
-                   fData(.dI())[, .listParams$levOrgMark[1]] == 
-                     .listParams$levOrgMarkOrg[1]),
-                 featureNames(.dI())
-                 )
-          dist <- abs(
-            input$plotDistclick$y - 
-              exprs(.dI())[j, round(input$plotDistclick$x, 0)]
-              )
-          minDist <- min(dist)
-          whichMinDist <- which(minDist == dist)
-          ## return index
-          j[whichMinDist[[1]]]
-          }
+      .minDistProtPlotDist <- reactive(
+        if (!is.null(input$plotDistclick) && 
+            !is.null(input$sourceOrganelleMarkerPLDI) && 
+            input$quantityPlotDist == "1")
+          .minDistPlotDist(data = .dI(), 
+                           marker = .listParams$levOrgMark[1],
+                           org = .listParams$levOrgMarkOrg[1],
+                           inputx = input$plotDistclick$x,
+                           inputy = input$plotDistclick$y
+            )
         )
       
+      .minDistProtPlotDistHover <- reactive(
+        if (!is.null(input$plotDisthover) && 
+              !is.null(input$sourceOrganelleMarkerPLDI) && 
+              input$quantityPlotDist == "1" &&
+              !(input$plotDisthover$x < 0.5) && 
+              !(input$plotDisthover$x > nrow(pData(.dI())) + .3)) 
+          .minDistPlotDist(data = .dI(),
+                           marker = .listParams$levOrgMark[1],
+                           org = .listParams$levOrgMarkOrg[1],
+                           inputx = input$plotDisthover$x,
+                           inputy = input$plotDisthover$y
+            )
+        )
+      
+      output$hoverProtPlotDist <- renderText(
+         c(featureNames(.dI())[.minDistProtPlotDistHover()], input$sourceOrganelleMarkerPLDI)
+        )
+       
       ## Multiple points list
       ## Create a list-like object with reactive values
       .protPlotDist <- reactiveValues(mult=NULL)
@@ -565,7 +652,7 @@ pRolocVIS <- function(object = NULL) {
         if(!is.null(input$plotDistclick)) {
           isolate({
             .protPlotDist$mult <-
-              c(.protPlotDist$mult,.minDistProteinPlotDist())
+              c(.protPlotDist$mult,.minDistProtPlotDist())
             ## remove indices when indices are double-clicked
             if (length(which((as.vector(table(.protPlotDist$mult)) > 1))))
               .protPlotDist$mult <- 
@@ -656,6 +743,7 @@ pRolocVIS <- function(object = NULL) {
         )
       
       output$allOrganellesUI <- renderUI(
+        if (!is.null(input$sourceOrganelleMarkerPLDI))
         selectInput("allOrganellePLDI",
             "Source for all assigned proteins to the organelle",
             choices = .colours(), 
@@ -670,11 +758,11 @@ pRolocVIS <- function(object = NULL) {
         )
       
       output$organelleAllUI <- renderUI(
-        if(!is.null(input$allOrganellePLDI))
+        if(!is.null(input$organelleMarker))
           selectInput("organelleAll",
               "Organelle for all assigned proteins to the organelle",
               choices = .organelleAllName(), 
-              selected=input$organelleMarker)
+              selected = input$organelleMarker)
         )
       
       output$numberPlotDistUI <- renderUI(
@@ -714,7 +802,7 @@ pRolocVIS <- function(object = NULL) {
       ## TAB: QUANTITATION DATA ##
       ## Generate the quantitation data
       output$exprsRadioUI <- renderUI({
-        radioButtons("exprsRadio","Select",
+        radioButtons("exprsRadio","Features",
             choices = list("all or"="all", "selected"="selected"),
             selected = ifelse(length(.searchInd()), "selected", "all")
           )
@@ -745,7 +833,7 @@ pRolocVIS <- function(object = NULL) {
       ## TAB: FEATURE META-DATA ##
       ## Generate the feature meta-data
       output$fDataRadioUI <- renderUI({
-        radioButtons("fDataRadio","Select",
+        radioButtons("fDataRadio","Features",
             choices=list("all or" = "all", "selected" = "selected"),
             selected = ifelse(length(.searchInd()), "selected", "all")
           )

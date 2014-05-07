@@ -4,36 +4,36 @@
 #########################
 
 .pRn1_setTitlePanel <- function() 
-  titlePanel("pRolocGUI")
+  titlePanel("pRolocVis")
 
 .pRn1_setSidebarPanel <- function(){
   sidebarPanel(
     ## Panel showing up when tab Data is selected
+    
     conditionalPanel(
+      
       condition = "input.tab1 == 'PCA' |
           input.tab1 == 'quantitation' |
           input.tab1 == 'feature meta-data' |
           input.tab1 == 'protein profiles'",
-      h4("Search"),
-      ## Control Checkboxes, if deactivated points will 
-      ## not be plotted
-      checkboxGroupInput("chooseIdenSearch", 
-          label = "",
-          choices = c("PCA" = "mouse.PCA",
-            "protein profiles" = "mouse.plotDist",
-            "saved searches" = "saved.searches",
-            "level in" = "text"),
-          selected=NULL),
-      ## fvarLabels() of selected MSnSet in which to look for
-      htmlOutput("searchUI"),
-      ## a search field to facilitate the search for
-      ## a certain level which ...
-      textInput("level.search", "Search for"),
-      ## has to be selected here
-      htmlOutput("searchResultsUI"),
-      textOutput("search.indUI"),
-      actionButton("saveText", "Submit selected level"),
-      actionButton("resetMult", "Clear features")),
+      wellPanel(
+        h4("Display selection"),
+        ## Control Checkboxes, if deactivated points will 
+        ## not be plotted
+        htmlOutput("checkBoxUI"), 
+        ## fvarLabels() of selected MSnSet in which to look for
+        htmlOutput("searchUI"),
+        ## a search field to facilitate the search for
+        ## a certain level which ...
+        textInput("level.search", "Search for"),
+        ## has to be selected here
+        htmlOutput("searchResultsUI"),
+        textOutput("search.indUI"),
+        actionButton("saveText", "Submit selection"),
+        hr(),
+        actionButton("resetMult", "Clear features")
+        )
+      ),
     conditionalPanel(
       condition = "input.tab1 == 'Data'",
       strong("Welcome to", span("pRolocGUI", style = "color:gray"), 
@@ -49,25 +49,26 @@
     ## Panel showing up when tab PCA is selected
     conditionalPanel(
       condition = "input.tab1 == 'PCA'",
-      hr(),
-      h4("Display"),
-      ## drop down menu for colours of PCA plot
-      htmlOutput("fcoloursOutput"),
-      ## drop down menu for symbol type of PCA plot
-      htmlOutput("fsymboltypeOutput"),
-      ## drow pown menu for point size of PCA plot
-      htmlOutput("fcexOutput"),
-      ## numeric Input for PCAn (first component)
-      htmlOutput("PCAn1UI"),
-      ## numeric Input for PCAn (second component)
-      htmlOutput("PCAn2UI"),
-      ## legend, will be added when colours != "none"
-      htmlOutput("PCA.legendUI"),
-      htmlOutput("PCA.legendposUI"),
-      ## zoom slider for x axis
-      htmlOutput("xrangeUI"),
-      ## zoom slider for y axis
-      htmlOutput("yrangeUI")
+      wellPanel(
+        h4("Plot"),
+        ## drop down menu for colours of PCA plot
+        htmlOutput("fcoloursOutput"),
+        ## drop down menu for symbol type of PCA plot
+        htmlOutput("fsymboltypeOutput"),
+        ## drow pown menu for point size of PCA plot
+        htmlOutput("fcexOutput"),
+        ## numeric Input for PCAn (first component)
+        htmlOutput("PCAn1UI"),
+        ## numeric Input for PCAn (second component)
+        htmlOutput("PCAn2UI"),
+        ## legend, will be added when colours != "none"
+        htmlOutput("PCA.legendUI"),
+        htmlOutput("PCA.legendposUI"),
+        ## zoom slider for x axis
+        htmlOutput("xrangeUI"),
+        ## zoom slider for y axis
+        htmlOutput("yrangeUI")
+        )
       ),
     ## Panel showing up when tab 'quantitation' is selected
     conditionalPanel(
@@ -85,29 +86,30 @@
     ## is selected
     conditionalPanel(
       condition = "input.tab1 == 'protein profiles'",
-      hr(),
-      h4("Display"),
-      ## drop down menu for quantity of plots
-      selectInput("quantityPlotDist",
-          "number of plots to display",
-          choices=c(1:8),selected=4),
-      ## drop down menu for 'Select source for 
-      ## organelle markers':
-      htmlOutput("levelsOrganellesUI"),
-      ## drop down menu for 'select organelle 
-      ## in orgarnelle markers'
-      htmlOutput("organelleMarkerUI"),
-      ## drop down menu for 'select source for 
-      ## all assigned proteins to the organelle'
-      htmlOutput("allOrganellesUI"),
-      ## drop down menu for 'select organelle 
-      ## in all assigned proteins'
-      htmlOutput("organelleAllUI"),
-      htmlOutput("numberPlotDistUI")
+      wellPanel(
+        h4("Plot"),
+        ## drop down menu for quantity of plots
+        selectInput("quantityPlotDist",
+            "number of plots to display",
+            choices=c(1:8),selected=4),
+        ## drop down menu for 'Select source for 
+        ## organelle markers':
+        htmlOutput("levelsOrganellesUI"),
+        ## drop down menu for 'select organelle 
+        ## in orgarnelle markers'
+        htmlOutput("organelleMarkerUI"),
+        ## drop down menu for 'select source for 
+        ## all assigned proteins to the organelle'
+        htmlOutput("allOrganellesUI"),
+        ## drop down menu for 'select organelle 
+        ## in all assigned proteins'
+        htmlOutput("organelleAllUI"),
+        htmlOutput("numberPlotDistUI")
+        )
       ),
     conditionalPanel(
       condition="input.tab1 == 'search'",
-      h4("Display"),
+      h4("Plot appearance"),
       htmlOutput("savedSearchTextUI"),
       ## selectInput for choosing between the different 
       ## search Results
@@ -131,15 +133,21 @@
       tabPanel("PCA",
         plotOutput("PCA", width = "100%",height="800px",
             clickId = "PCAclick",
-            ## hoverId = "PCAhover",
-            ## hoverDelay = 300,
-            ## hoverDelayType = "throttle"
+            hoverId = "PCAhover",
+            hoverDelay = 100,
+            hoverDelayType = "throttle"
             ),
+        textOutput("hoverProtPCA"),
         downloadButton("plotPCADownload","Download Plot")
         ),
       tabPanel("protein profiles",
         plotOutput("plotdist", width="100%", height="800px",
-            clickId = "plotDistclick"),
+            clickId = "plotDistclick",
+            hoverId = "plotDisthover",
+            hoverDelay = 100,
+            hoverDelayType = "throttle"
+            ),
+        textOutput("hoverProtPlotDist"),
         downloadButton("plotDistDownload","Download Plot")
         ),
       tabPanel("quantitation", 
@@ -156,6 +164,6 @@
         ),
       id = "tab1"
     ),
-    #actionButton("closebutton", "Stop pRolocGUI"), 
+    ##actionButton("closebutton", "Stop pRolocVis"), 
     width=9)
 }
