@@ -15,17 +15,15 @@ package. The package is based on the MSnSet class defininitions of
 and on the functions defined in the package
 [**pRoloc**](http://www.bioconductor.org/packages/release/bioc/html/pRoloc.html)
 [2]
-and is especially used for [LOPIT [3]](id3) or [PCP [4]][id4] experiments.
-To achieve reactivity and interactivity pRolocGUI was written in 
+and is especially meant for the analyses of [LOPIT [3]](id3) or [PCP [4]][id4] 
+experiments.
+To achieve reactivity and interactivity the function of pRolocGUI was written in 
 [**shiny**](http://www.rstudio.com/shiny/) notation.
-pRolocGUI facilitates a higher degree of 
+The implemented application facilitates a higher degree of 
 interactivity with the underlying data, though, it is limited by its 
 deterministic nature and will not offer the high flexibility given by the
 use of a command based approach. Especially, pRolocGUI addresses to R
 novices who have constraints of exploring their data by using the console.
-
-The task of this vignette is not to give an introduction to spatial organelle
-proteomics. 
 
 pRolocGUI is under active development; current funtionality is evolving and 
 new features will be added. This software is free and open-source. You are
@@ -39,7 +37,7 @@ Bioconductor list.
 
 
 1. Introduction  
-2. Tabs  
+2. Tabs of pRolovVis
   2.1. Data  
   2.2. PCA  
   2.3. protein profiles  
@@ -47,7 +45,7 @@ Bioconductor list.
   2.5. feature meta-data  
   2.6. sample meta-data    
   2.7. search  
-3. *Search* widget  
+3. *Display selection* widget
   3.1. PCA  
   3.2. protein profiles  
   3.3. saved searches  
@@ -60,27 +58,30 @@ Bioconductor list.
 
 ### 1. Introduction
 
-Starting a pRolocGUI application is easy as it gets. Just type 
+Currently, you can start a pRolocVis application. 
+
+Starting a pRolocVis application is easy as it gets. Just type 
 
 ```r
-pRolocVIS()
+pRolocVis()
 ```
 
 in your console window and press [Enter]. This will open a new tab in your 
 Internet browser and after a bit you will see the application. You can also
-pass directly a MSnSet to pRolocVIS by entering
+pass directly a MSnSet (e.g. dunkley 2006) to pRolocVis by entering
 
 ```r
-pRolocVIS(object = dunkley2006)
+pRolocVis(object = dunkley2006)
 ```
 
-To stop the application from running press [Crtl] + [C] or [Esc] in the 
-console and close the browser tab. 
+To stop the application from running press [Esc] in the 
+console (or use the "STOP" button when using RStudio) and close the browser 
+tab, where pRolocVis is running. 
 
 -------------------
 
-### 2. Tabs
-To optimize ease of use the interface of pRolocVIS is subdivided in seven tabs:
+### 2. Tabs of pRolocVis
+To optimize ease of use the interface of pRolocVis is subdivided in seven tabs:
 * Data,  
 * PCA,  
 * protein profiles,     
@@ -90,34 +91,36 @@ To optimize ease of use the interface of pRolocVIS is subdivided in seven tabs:
 * search.   
 
 You browse through the tabs by simply clicking on them. Each tab
-selected will load a different kind of appearance while some (PCA, protein 
+selected will have a different kind of appearance while some (PCA, protein 
 profiles, quantitation and feature meta-data) share a common feature in the 
-sidebar, the *Search* widget (see 3. *Search* widget for further details). 
+sidebar, the *Display selection* widget (see 3. *Display selection* widget for further details). 
 
 #### 2.1. Data
-The tab **_Data_** is the first tab you will see when you start pRolocVIS. 
-The appearance will differ depending if you pass directly a MSnSet to pRolocVIS. 
+The tab **_Data_** is the first tab you will see when you start pRolocVis. 
+The appearance will differ depending on if you pass directly a MSnSet to 
+pRolocVis. 
 
-If you decide to start pRolocVIS without assigning a MSnSet to the argument 
+If you decide to start pRolocVis without assigning a MSnSet to the argument 
 object the tab **_data_** offers possibilities to switch to an other MSnSet.
 Currently you may choose between three example MSnSets (derived from experiments 
 of Christoforou 2011, Dunkley et al. 2006, Tan et al. 2009) provided by the 
 package **pRolocdata**  or to use an MSnSet of your choice (own data). 
 Clicking on **_Browse..._** will open a dialog window with which you can select
-your MSnSet. pRolocVIS will check if the selected data file is of class MSnSet 
+your MSnSet and load it to pRolovVis. 
+pRolocVis will check if the selected data file is of class MSnSet 
 and if it is an .Rdata or .rda file and will denote a notification if there 
 are any conflicts. 
 
-If you pass an object to pRolocVIS the tab data will show if the MSnSet was 
-accepted by pRolocVIS. 
+If you pass an object to pRolocVis the tab data will show if the MSnSet was 
+accepted by pRolocVis. 
 
 #### 2.2. PCA
 The tab **_PCA_** is characterized by its main panel which shows a PCA plot for 
-the selected MSnSet and its sidebar panel which is compartimented into *Search*
-and *Display*. 
+the selected MSnSet and its sidebar panel which is compartimented into *Display selection*
+and *Plot*. 
 
-Let's forget about the compartiment *Search* here (see 3. 
-*Search* widget for further details) and let's turn towards the *Display* 
+Let's forget about the compartiment *Display selection* here (see 3. 
+*Display selection* widget for further details) and let's turn towards the *Plot* 
 compartiment. Here we are able to adjust the appearance of the PCA plot in the
 main panel. We are able to colour features (proteins) in matters of common
 properties by changing the drop-down list **_colour_**, e.g. if we select 
@@ -125,7 +128,7 @@ for the
 MSnSet originating from Christoforou 2011 the colour "markers", the features in 
 the PCA plot will be coloured according to their organelle affiliation. 
 As soon as we select another colour than "none"
-two (or three) new items will be added to the *Display* widget:   
+two (or three) new items will be added to the *Plot* widget:   
 
 (1) an item to change the symbol type, **_symbol type_**,   
 (2) an item to manipulate legend properties, **_legend_** and 
@@ -140,7 +143,7 @@ symbol type of the features in the plot. By clicking on the check box to the
 left of **_legend_** a legend is added to the plot and by choosing one of the 
 items in the drop-down list **_position of legend_** below we will change its 
 position. The third item which might appear is the drop-down list 
-**_point size_** to change the point size. pRolocVIS will identify numeric 
+**_point size_** to change the point size. pRolocVis will identify numeric 
 values in the feature variable labels and will list them in the drop-down 
 menu (this might be of interest if you have scores which give information 
 about the quality of a phenoDisco analysis). 
@@ -160,15 +163,15 @@ open
 a dialog window with an interface on showing or saving the PCA plot as it is
 displayed in the main panel.
 
-#### 2.3. protein profiles 
+#### 2.3. protein profiles (has to be revised)
 The tab **_protein profiles_** shows the protein profiles in the main panel 
 (with an option of exporting the plot as it is shown in the main panel by 
-clicking on the button **_Download Plot_**) and the *Search* widget and the
-*Display* widget in the sidebar panel. Have a look on section 
-3. *Search* widget if you want to
-retrieve information about how to use the *Search* widget. 
+clicking on the button **_Download Plot_**) and the *Display selection* widget and the
+*Plot* widget in the sidebar panel. Have a look on section 
+3. *Display selection* widget if you want to
+retrieve information about how to use the *Display selection* widget. 
 
-The *Display* widget helps to manipulate the plots shown in the main panel.
+The *Plot* widget helps to manipulate the plots shown in the main panel.
 Let's assume we want to have a look upon the protein profiles for the
 proteins from which we know that they belong to the organelles endoplasmic
 reticulum, the golgi apparatus, mitochondrion and the plasma membrane for 
@@ -183,20 +186,28 @@ position 2 and for the shiny reactive expressions didn't receive yet a new
 input we have to change the drop-down lists in order a new plot will be 
 displayed, accordingly to our problem we will change the second drop-down list
 to "Golgi" (coding for golgi apparatus). We proceed with the two remaining 
-organelles as described before by changing firstly the slider to position 3 and
-continue addordingly to as described above.
+organelles as described before by changing firstly the slider to the next position
+and by changing the drop-down lists addordingly to the organelles we want to
+display.
+
+We can change the two lower drop-down lists if we want to see some features 
+compared to all features which are assigned to a variable name. To see display
+results of phenoDisco we can select for the MSnSet from Christoforou 2011
+"pd.markers" in the first drop-down list and "Golgi" as the organelle to look at. 
+As the comparison we will choose in the third drop-down list "markers" and 
+"Golgi" which will display the features in a transparent manner. 
 
 #### 2.4. quantitation   
 The tab **_quantitation_** displays the quantitation data for the proteins as a 
 data table. 
 
 In the main panel you can change the number of proteins shown per page and 
-search both for proteins or for the quantitation data. Also, you may sort 
+search both for proteins (or for the quantitation data). Also, you may sort 
 the proteins by name or the quantitation data by clicking on the arrows 
 on the top of the data table.
 
-In the sidebar panel the *Search* widget is placed as well as radio buttons
-to display all data or just selected features (see 3. *Search* widget for 
+In the sidebar panel the *Display selection* widget is placed as well as radio buttons
+to display all data or just selected features (see 3. *Display selection* widget for 
 further details)
 
 
@@ -208,8 +219,9 @@ The layout of the tab is similar to the **_quantitation_** tab
 and allows for sorting and searching in the feature meta-data of the MSnSet 
 selected. 
 
-The sidebar conprises the *Search* widget and radio buttons to show all or only
-selected features (see 3. *Search* widget for further details).
+The sidebar conprises the *Display selection* widget and radio buttons to 
+show all or only selected features (see 3. *Display selection* widget for 
+further details).
 
 
 #### 2.6. sample meta-data    
@@ -218,14 +230,14 @@ experiment, the name of the isotopes used for tagging and the associated
 fractions. 
 
 #### 2.7. search  
-pRolocVIS allows to use past search results to display it in the PCA plot,
+pRolocVis allows to use past search results to display it in the PCA plot,
 protein profiles and in the tabs **_quantitation_** and **_feature meta-data_**
-(see 3. *Search* widget for further details if this is your intention). 
+(see 3. *Display selection* widget for further details if this is your intention). 
 This ability requires an object **pRolocGUI_SearchResults** in the global 
 environment which is of class "FeaturesOfInterest" or "FoICollection" 
 (enter ?FeaturesOfInterest in the console for further details).
 
-In case this objects exists it will automatically be loaded to pRolocVIS and
+In case this objects exists it will automatically be loaded to pRolocVis and
 its content is displayed in the tab **_search_**. Use the drop-down list in the
 sidebar panel to browse through the different features of interest in case 
 the object is of class "FoICollection". 
@@ -248,35 +260,37 @@ in the global environment.
 -------------------
 
 ### 3. "Search" widget
-The *Search* widget is probably the most important implementation in pRolocVIS 
-for it enables the user to search for features in the MSnSet: you can do this
-by selecting points in the PCA plot, clicking on features in the tab 
-**_protein profiles_**, using past searches and/or querying for features in the
-MSnSet data.
+The *Display selection* widget is probably the most important implementation 
+in pRolocVis for it enables the user to search for features in the MSnSet: 
+you can do this by selecting points in the PCA plot, clicking on features 
+in the tab **_protein profiles_**, using past searches and/or querying for 
+features in the MSnSet data.
 
-As you may have already seen there are four check boxes in the *Search* widget
+As you may have already seen there are four check boxes in the 
+*Display selection* widget
 which represent the before mentioned ways of searching features in the MSnSet. 
 To activate the search for one specific method click on the check box left of
 its description. It is also possible to select more than one at a time which 
 allows for greater flexibility with regard to information retrieval.
 
 #### 3.1. PCA 
-If you decide to identify proteins by clicking on features in the PCA plot, 
-click on the check box to the left of **_PCA_**. If you haven't yet selected
-the
-tab **_PCA_**, do so and start clicking on features in the PCA plot 
-(tipp: the zoom function may be of great expedient). As soon as you have 
+If you decide to identify proteins in the PCA plot, change to the tab 
+**_PCA_** and start clicking on features in the PCA plot 
+(tipp: the zoom function may be of great expedient). The check box 
+will be checked when you start clicking in the PCA plot. As soon as you have 
 clicked on a feature it will be marked with a black circle around it. 
-If you have selected a feature by accident, just click again on the feature 
-and it will be deselected. 
+If you have selected a feature by accident or want to deselect it, 
+just click again on the feature and it will be deselected. 
 
 There are two possibilities to deselect all selected features: If you decide 
 to remove all your features click on **_Clear features_**. Please keep in mind
 that this step once carried out is irreversible. 
 Besides that you are also able to simply blind out the selected features by 
-deselecting the check box left of PCA in the *Search* widget. Internally, the
-features are still stored, i.e. by clicking again on the check box you will 
-see the selections again. The features selected are shared between the 
+deselecting the check box left of PCA in the *Display selection* widget. 
+Internally, the  features are still stored, i.e. by clicking again on 
+the check box you will see the selections again. Clicking on new proteins in 
+the PCA plot will not check the check box again, so you have to do this
+manually. The features selected are shared between the 
 different tabs. Click on the tabs **_quantitation_** and 
 **_feature meta-data_**
 to have a look upon information about the selected features. For the case 
@@ -306,17 +320,17 @@ displayed features) and will be available in the tabs **_quantitation_**
 and **_feature meta-data_** for information retrieval. 
 If there is an "FoICollection" loaded change the selected search 
 result in the drop-down list **_Search result_** in the tab **_search_**; 
-thus accordingly altering the selected features in the *Search* widget 
+thus accordingly altering the selected features in the *Display selection* widget 
 context. 
 
-In pRolocVIS there is no functionality implemented to remove features
+In pRolocVis there is no functionality implemented to remove features
 from the object **pRolocGUI_SearchResults** in the global environment. The 
 authors decided that it is not the task of a GUI to fulfill the requirements 
 of this kind of data manipulation in a GUI, hence, the execution of removing
 features of interests belongs to the field of the users responsibility.
 
 #### 3.4. query feature-meta data
-The *Search* widget offers the opportunity to query the feature meta-data
+The *Display selection* widget offers the opportunity to query the feature meta-data
 of the MSnSet for levels. The drop-down list consists of the item "protein",
 which is by definition the rowname of the feature-meta data and depending on 
 the data accession number, protein ID, protein description, assigned markers
@@ -326,7 +340,7 @@ Let's assume we want to look in the MSnSet which was derived from experiments
 of Christoforou (2011) for all proteins which are assigned by experimental
 evidence to the organelle "plasma membrane". We ensure ourselves that 
 "Christoforou 2011" is selected in the tab **_Data_** and change to a tab where
-the *Search* widget is loaded. We activate the check box to the left of 
+the *Display selection* widget is loaded. We activate the check box to the left of 
 **_level_** and select "marker" in the upper drop-down list (for we are 
 looking for
 the organelle). In the next drop-down list below we select "PM" which codes
