@@ -10,12 +10,9 @@ pRolocGUI: An interactive tool for visualisation of organelle proteomics data
 
 This vignette describes the implemented functionality in the **pRolocGUI** 
 package. The package is based on the MSnSet class defininitions of 
-[**MSnbase**](http://bioconductor.org/packages/release/bioc/html/MSnbase.html)
-[1]
-and on the functions defined in the package
-[**pRoloc**](http://www.bioconductor.org/packages/release/bioc/html/pRoloc.html)
-[2]
-and is especially meant for the analyses of [LOPIT [3]](id3) or [PCP [4]][id4] 
+**MSnbase** [[1](#id1)] and on the functions defined in the package
+**pRoloc** [[2](#id2)]
+and is especially meant for the analyses of LOPIT [[3](#id3)] or PCP [[4](#id4)]
 experiments.
 To achieve reactivity and interactivity the function of pRolocGUI was written in 
 [**shiny**](http://www.rstudio.com/shiny/) notation.
@@ -36,26 +33,26 @@ Bioconductor list.
 **Table of Contents**
 
 
-1. Introduction  
-2. Tabs of pRolovVis
-  2.1. Data  
-  2.2. PCA  
-  2.3. protein profiles  
-  2.4. quantitation   
-  2.5. feature meta-data  
-  2.6. sample meta-data    
-  2.7. search  
-3. *Display selection* widget
-  3.1. PCA  
-  3.2. protein profiles  
-  3.3. saved searches  
-  3.4. query feature meta-data  
-4. References
+1. [Introduction](#introduction)  
+2. [Tabs of pRolocVis](#tabspRolocVis)    
+  2.1. [Data](#tabspRolocVisData)  
+  2.2. [PCA](#tabspRolocVisPCA)  
+  2.3. [protein profiles](#tabspRolocVisPP)    
+  2.4. [quantitation](#tabspRolocVisExprs)    
+  2.5. [feature meta-data](#tabspRolocVisfData)   
+  2.6. [sample meta-data](#tabspRolocVispData)     
+  2.7. [search](#tabspRolocVisSearch)  
+3. [*Display selection* widget](#display)    
+  3.1. [PCA](#displayPCA)   
+  3.2. [protein profiles](#displayPP)    
+  3.3. [saved searches](#displaySaSe)    
+  3.4. [query feature meta-data](#displayQuery)    
+4. [References](#references)   
  
 
 
 -------------------
-
+<a id="introduction"></a> 
 ### 1. Introduction
 
 Currently, you can start a pRolocVis application. 
@@ -75,7 +72,7 @@ console (or use the "STOP" button when using RStudio) and close the browser
 tab, where pRolocVis is running. 
 
 -------------------
-
+<a id="tabspRolocVis"></a>
 ### 2. Tabs of pRolocVis
 To optimize ease of use the interface of pRolocVis is subdivided in seven tabs:
 * Data,  
@@ -91,6 +88,7 @@ selected will have a different kind of appearance while some (PCA, protein
 profiles, quantitation and feature meta-data) share a common feature in the 
 sidebar, the *Display selection* widget (see 3. *Display selection* widget for further details). 
 
+<a id="tabspRolocVisData"></a>
 #### 2.1. Data
 The tab **_Data_** is the first tab you will see when you start pRolocVis. 
 The appearance will differ depending on if you pass directly a MSnSet to 
@@ -110,6 +108,7 @@ are any conflicts.
 If you pass an object to pRolocVis the tab data will show if the MSnSet was 
 accepted by pRolocVis. 
 
+<a id="tabspRolocVisPCA"></a>
 #### 2.2. PCA
 The tab **_PCA_** is characterized by its main panel which shows a PCA plot for 
 the selected MSnSet and its sidebar panel which is compartimented into *Display selection*
@@ -159,6 +158,7 @@ open
 a dialog window with an interface on showing or saving the PCA plot as it is
 displayed in the main panel.
 
+<a id="tabspRolocVisPP"></a>
 #### 2.3. protein profiles (has to be revised)
 The tab **_protein profiles_** shows the protein profiles in the main panel 
 (with an option of exporting the plot as it is shown in the main panel by 
@@ -193,6 +193,7 @@ results of phenoDisco we can select for the MSnSet from Christoforou 2011
 As the comparison we will choose in the third drop-down list "markers" and 
 "Golgi" which will display the features in a transparent manner. 
 
+<a id="tabspRolocVisExprs"></a>
 #### 2.4. quantitation   
 The tab **_quantitation_** displays the quantitation data for the proteins as a 
 data table. 
@@ -206,7 +207,7 @@ In the sidebar panel the *Display selection* widget is placed as well as radio b
 to display all data or just selected features (see 3. *Display selection* widget for 
 further details)
 
-
+<a id="tabspRolocVisfData"></a>
 #### 2.5. feature meta-data  
 The tab **_feature meta-data_** displays the feature meta-data for the proteins
 as a data table.
@@ -219,12 +220,13 @@ The sidebar conprises the *Display selection* widget and radio buttons to
 show all or only selected features (see 3. *Display selection* widget for 
 further details).
 
-
+<a id="tabspRolocVispData"></a>
 #### 2.6. sample meta-data    
 The tab **_sample meta-data_** displays the sample meta-data for the 
 experiment, the name of the isotopes used for tagging and the associated
 fractions. 
 
+<a id="tabspRolocVisSearch"></a>
 #### 2.7. search  
 pRolocVis allows to use past search results to display it in the PCA plot,
 protein profiles and in the tabs **_quantitation_** and **_feature meta-data_**
@@ -254,8 +256,8 @@ This will add the selected features to the object **pRolocGUI_SearchResults**
 in the global environment.
 
 -------------------
-
-### 3. "Search" widget
+<a id="display"></a>
+### 3. *Display selection* widget
 The *Display selection* widget is probably the most important implementation 
 in pRolocVis for it enables the user to search for features in the MSnSet: 
 you can do this by selecting points in the PCA plot, clicking on features 
@@ -269,6 +271,7 @@ To activate the search for one specific method click on the check box left of
 its description. It is also possible to select more than one at a time which 
 allows for greater flexibility with regard to information retrieval.
 
+<a id="displayPCA"></a>
 #### 3.1. PCA 
 If you decide to identify proteins in the PCA plot, change to the tab 
 **_PCA_** and start clicking on features in the PCA plot 
@@ -299,6 +302,7 @@ If you display protein profiles in the tab **_protein profiles_** selected
 features will be displayed by black lines with a greater line width
 (depending on the features shown). 
 
+<a id="displayPP"></a>
 #### 3.2. protein profiles
 In principle the search for features in protein profiles is in accordance
 with the search in the PCA plot. Though, bear in mind that you are only 
@@ -308,6 +312,7 @@ plot will select, clicking another time will deselect features.
 The features will only be shown when the check box left of 
 **_protein profiles_** is activated. 
 
+<a id="displaySaSe"></a>
 #### 3.3. saved searches
 Clicking on the check box to the left of **_saved searches_** will load the 
 selected features of the class "FeaturesOfInterest". These will be displayed
@@ -325,6 +330,7 @@ authors decided that it is not the task of a GUI to fulfill the requirements
 of this kind of data manipulation in a GUI, hence, the execution of removing
 features of interests belongs to the field of the users responsibility.
 
+<a id="displayQuery"></a>
 #### 3.4. query feature-meta data
 The *Display selection* widget offers the opportunity to query the feature meta-data
 of the MSnSet for levels. The drop-down list consists of the item "protein",
@@ -362,17 +368,19 @@ protein names which have the string "OC" in their name which will limit the
 drop-down list to all proteins which have this specific string). By clicking on 
 **_Submit selected level_** we save internally the selected feature(s).
 
+<a id="references"></a>
 #### 4. References
-
+<a id="id1"></a>
 [1] Laurent Gatto and Kathryn S. Lilley. MSnbase - an R/Bioconductor
 package for isobaric tagged mass spectrometry data visualization,
 processing and quantitation. Bioinformatics 28, 288-289 (2011).
 
+<a id="id2"></a>
 [2] Gatto L, Breckels LM, Wieczorek S, Burger T, Lilley KS. Mass-spectrometry-
 based spatial proteomics data analysis using pRoloc and pRolocdata. Bioin-
 formatics. 2014 Feb 5.
 
-[id3]: http://dx.doi.org/10.1073/pnas.0506958103 
+<a id="id3"></a> 
 [3] Tom P. J. Dunkley, Svenja Hester, Ian P. Shadforth, John Runions,
 Thilo Weimar, Sally L. Hanton, Julian L. Griffin, Conrad Bessant, Federica
 Brandizzi, Chris Hawes, Rod B. Watson, Paul Dupree, and Kathryn S. Lilley.
@@ -380,7 +388,7 @@ Mapping the arabidopsis organelle proteome. Proc Natl Acad Sci USA,
 103(17):6518–6523, Apr 2006. doi: 10.1073/pnas.0506958103. 
 URL http://dx.doi.org/10.1073/pnas.0506958103.
 
-[id4]: http://dx.doi.org/10.1016/j.cell.2006.03.022
+<a id="id4"></a> 
 [4] Leonard J. Foster, Carmen L. de Hoog, Yanling Zhang, Yong Zhang, Xiaohui Xie,
 Vamsi K. Mootha, and Matthias Mann. A mammalian organelle map by protein
 correlation profiling. Cell, 125(1):187–199, Apr 2006. 
