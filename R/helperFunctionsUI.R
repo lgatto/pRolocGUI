@@ -3,6 +3,10 @@
 ## ui helper functions ##
 #########################
 
+addResourcePath(prefix="md_vignette", 
+               directoryPath="/home/thomas/Documents/Studium/Cambridge/app-1_dev")
+
+
 .pRn1_setTitlePanel <- function() 
   titlePanel(title="", windowTitle="pRolocVis")
 
@@ -37,7 +41,7 @@
           input.tab1 == 'feature meta-data' |
           input.tab1 == 'protein profiles'",
       wellPanel(
-        h4("Display selection", class="smallspacing"),
+        h4("Display selection"),
         ## Control Checkboxes, if deactivated points will 
         ## not be plotted
         htmlOutput("checkBoxUI"), 
@@ -51,7 +55,10 @@
         textOutput("search.indUI"),
         actionButton("saveText", "Submit selection"),
         hr(),
-        actionButton("resetMult", "Clear features")
+        actionButton("resetMult", "Clear features"),
+        a(href="/md_vignette/md_vignette.html#display", 
+          "Help", 
+          target="_blank")
         )
       ),
     conditionalPanel(
@@ -59,12 +66,17 @@
       strong("Welcome to", span("pRolocGUI", style = "color:gray"), 
           ", the interactive visualisation tool 
           for organelle proteomics data."),
+      ##a(href="https://www.rstudio.com", "rstudio", target="_blank"),
       br(),
       br(),
-      p("Please select in the drop down menu
-          on the right an example MSnSet or 'own data' 
-          and upload your own MSnSet data afterwards 
-          by using the 'Browse...' button.")
+      ##p("Please select in the drop down menu
+      ##    on the right an example MSnSet or 'own data' 
+      ##    and upload your own MSnSet data afterwards 
+      ##    by using the 'Browse...' button."),
+     ##br(),
+      a(href="/md_vignette/md_vignette.html#tabspRolocVisData", 
+        "Help", 
+        target="_blank")
       ),
     ## Panel showing up when tab PCA is selected
     conditionalPanel(
@@ -87,18 +99,11 @@
         ## zoom slider for x axis
         htmlOutput("xrangeUI"),
         ## zoom slider for y axis
-        htmlOutput("yrangeUI")
+        htmlOutput("yrangeUI"),
+        a(href="/md_vignette/md_vignette.html#tabspRolocVisPCA", 
+          "Help", 
+          target="_blank")
         )
-      ),
-    ## Panel showing up when tab 'quantitation' is selected
-    conditionalPanel(
-      condition = "input.tab1 == 'quantitation'",
-      htmlOutput("exprsRadioUI")
-      ),
-    ## Panel showing up when tab 'feature meta-data' is selected
-    conditionalPanel(
-      condition = "input.tab1 == 'feature meta-data'",
-      htmlOutput("fDataRadioUI")
       ),
     ## Panel showing up when tab 'protein profiles' 
     ## is selected
@@ -108,8 +113,8 @@
         h4("Plot"),
         ## drop down menu for quantity of plots
         selectInput("quantityPlotDist",
-            "number of plots to display",
-            choices=c(1:8),selected=4),
+                    "number of plots to display",
+                    choices=c(1:8),selected=4),
         ## drop down menu for 'Select source for 
         ## organelle markers':
         htmlOutput("levelsOrganellesUI"),
@@ -122,9 +127,34 @@
         ## drop down menu for 'select organelle 
         ## in all assigned proteins'
         htmlOutput("organelleAllUI"),
-        htmlOutput("numberPlotDistUI")
-        )
+        htmlOutput("numberPlotDistUI"),
+        a(href="/md_vignette/md_vignette.html#tabspRolocVisPP", 
+          "Help", 
+          target="_blank")
+      )
+    ),
+    ## Panel showing up when tab 'quantitation' is selected
+    conditionalPanel(
+      condition = "input.tab1 == 'quantitation'",
+      htmlOutput("exprsRadioUI"),
+      a(href="/md_vignette/md_vignette.html#tabspRolocVisExprs", 
+        "Help", 
+        target="_blank")
       ),
+    ## Panel showing up when tab 'feature meta-data' is selected
+    conditionalPanel(
+      condition = "input.tab1 == 'feature meta-data'",
+      htmlOutput("fDataRadioUI"),
+      a(href="/md_vignette/md_vignette.html#tabspRolocVisfData", 
+        "Help", 
+        target="_blank")
+      ),
+    ## Panel showing up when tab 'sample meta-data' is selected
+    conditionalPanel(
+      condition = "input.tab1 == 'sample meta-data'",
+      a(href="/md_vignette/md_vignette.html#tabspRolocVispData",
+        "Help",
+        target="_blank")),  
     conditionalPanel(
       condition="input.tab1 == 'search'",
       h4("Searches"),
@@ -135,7 +165,10 @@
       ## initilialize search
       htmlOutput("init.saveUI"),
       ## action Button
-      htmlOutput("save.lists2SRUI")
+      htmlOutput("save.lists2SRUI"),
+      a(href="/md_vignette/md_vignette.html#tabspRolocVisSearch", 
+        "Help", 
+        target="_blank")
       ),                     
     width = 3
     )

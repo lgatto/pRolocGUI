@@ -1,4 +1,4 @@
-#'@name Function to compute min2d distance from user input for PCA
+## Function to compute min2d distance from user input for PCA
 .minDistPCA <- function(inputx, inputy, valuesx, valuesy) {
   dist <- sqrt(
     (inputx - valuesx)^2 + ## x-component
@@ -10,7 +10,7 @@
   return(which(dist == minDist2d))
   }
 
-#'@name Function to compute min2d distance from user input for plotDist
+## Function to compute min2d distance from user input for plotDist
 ## calculate protein nearest to user input
 .minDistPlotDist <- function(data, marker, org, inputx, inputy) {
   j <- match(
