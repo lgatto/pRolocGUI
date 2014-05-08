@@ -5,8 +5,8 @@
 #'@usage pRolocVis(object = NULL)
 #'@param object Pass a MSnSet to pRolocVis directly. Default \code{NULL} will
 #'enable possibility to upload MSnSet in pRolovVis. 
-#'@description A function to start a shiny session with one MSnSet data set. Run
-#'\code{pRolocVis()} to start the shiny application and choose between
+#'@description A function to start a shiny session with one MSnSet data set. 
+#'Run \code{pRolocVis()} to start the shiny application and choose between
 #'three example MSnSet originating from \code{pRolocdata} or upload your
 #'own MSnSet. Choosing between the tabs allows to display PCA plots,
 #'protein profiles, the underlying data and upload abilities for past
@@ -141,7 +141,7 @@ pRolocVis <- function(object = NULL) {
       select <- reactiveValues(PCA = NULL, plotDist = NULL, text = NULL)
       
       selPCA <- reactive({
-        if (is.null(input$PCAclick) | is.null(.protPCA$mult)) #| is.null(.protPCA$mult) | !("mouse.PCA" %in% input$chooseIdenSearch))
+        if (is.null(input$PCAclick) | is.null(.protPCA$mult))
           select$PCA <- NULL
         else {
           isolate({
@@ -539,7 +539,9 @@ pRolocVis <- function(object = NULL) {
         }
       })
       
-      output$hoverProtPCA <- renderText(featureNames(.dI())[minDist2dProtPCAHover()])
+      output$hoverProtPCA <- renderText(
+        featureNames(.dI())[minDist2dProtPCAHover()]
+        )
       
       ## Multiple points list
       ## Create a list-like object with reactive values
@@ -639,7 +641,7 @@ pRolocVis <- function(object = NULL) {
         )
       
       output$hoverProtPlotDist <- renderText(
-         c(featureNames(.dI())[.minDistProtPlotDistHover()], input$sourceOrganelleMarkerPLDI)
+         featureNames(.dI())[.minDistProtPlotDistHover()]
         )
        
       ## Multiple points list
@@ -664,7 +666,9 @@ pRolocVis <- function(object = NULL) {
       
       ## plotDist and highlighting selected points in plot
       .plotPlotDist <- function() {
-        if(!is.null(.listParams$levOrgMark)) {
+        if(!is.null(.dI()) &&
+            !is.null(.listParams$levOrgMark) && 
+             !(is.null(.listParams$levSourMarkAll))) {
           
           if(as.numeric(input$quantityPlotDist)%%2==0)
             col <- as.numeric(input$quantityPlotDist)/2
@@ -737,6 +741,7 @@ pRolocVis <- function(object = NULL) {
       .plotDistReac <- reactive(.plotPlotDist()) 
       
       output$levelsOrganellesUI <- renderUI(
+        if (!is.null(.colours()))
         selectInput("sourceOrganelleMarkerPLDI",
             "Source for organelle markers", 
             choices = .colours())
@@ -751,10 +756,12 @@ pRolocVis <- function(object = NULL) {
         )
       
       output$organelleMarkerUI <- renderUI(
-        if(!is.null(input$sourceOrganelleMarkerPLDI))
+        if(!is.null(.organelleMarkerName()))
           selectInput("organelleMarker", 
               "Organelle for organelle markers",
               choices = .organelleMarkerName())
+        else
+          return()
         )
       
       output$organelleAllUI <- renderUI(
@@ -781,7 +788,10 @@ pRolocVis <- function(object = NULL) {
         }
       )
       
-      output$plotdist <- renderPlot(.plotPlotDist())
+      output$plotdist <- renderPlot(
+        if(!is.null(.plotPlotDist()))
+          .plotPlotDist()
+        )
       
       output$plotDistDownload <- downloadHandler(
         filename = function() {

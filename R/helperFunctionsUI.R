@@ -4,10 +4,30 @@
 #########################
 
 .pRn1_setTitlePanel <- function() 
-  titlePanel("pRolocVis")
+  titlePanel(title="", windowTitle="pRolocVis")
 
 .pRn1_setSidebarPanel <- function(){
   sidebarPanel(
+    tags$head(
+      tags$style(type="text/css","hr{margin:0;}"),
+      tags$style(HTML("#resetMult{
+                      margin:0;
+                      padding: 7 10 7 1;
+                      position: relative;
+                      display: block;
+                      width: 100%;}")),
+      tags$style(HTML("#saveText{
+                      margin:0;
+                      padding: 7 10 7 1;
+                      position: relative;
+                      display: block;
+                      width: 100%;}")),
+      tags$style(HTML(".well{
+                      padding: 15px 19px 15px 19px;}")),
+      tags$style(HTML("h4{
+                      margin: 3px 0px 5px 0px;}"))
+      ),
+    
     ## Panel showing up when tab Data is selected
     
     conditionalPanel(
@@ -17,7 +37,7 @@
           input.tab1 == 'feature meta-data' |
           input.tab1 == 'protein profiles'",
       wellPanel(
-        h4("Display selection"),
+        h4("Display selection", class="smallspacing"),
         ## Control Checkboxes, if deactivated points will 
         ## not be plotted
         htmlOutput("checkBoxUI"), 
@@ -73,13 +93,11 @@
     ## Panel showing up when tab 'quantitation' is selected
     conditionalPanel(
       condition = "input.tab1 == 'quantitation'",
-      hr(),
       htmlOutput("exprsRadioUI")
       ),
     ## Panel showing up when tab 'feature meta-data' is selected
     conditionalPanel(
       condition = "input.tab1 == 'feature meta-data'",
-      hr(),
       htmlOutput("fDataRadioUI")
       ),
     ## Panel showing up when tab 'protein profiles' 
@@ -109,7 +127,7 @@
       ),
     conditionalPanel(
       condition="input.tab1 == 'search'",
-      h4("Plot appearance"),
+      h4("Searches"),
       htmlOutput("savedSearchTextUI"),
       ## selectInput for choosing between the different 
       ## search Results
@@ -121,7 +139,11 @@
       ),                     
     width = 3
     )
-}
+  
+  
+
+  
+  }
 
 .pRn1_setMainPanel <- function(){
   mainPanel(
