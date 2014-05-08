@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=9" >
+
+<title>pRolocGUI: An interactive tool for visualisation of organelle proteomics data</title>
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 12px;
+   margin: 8px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 { 
+   font-size:2.2em; 
+}
+
+h2 { 
+   font-size:1.8em; 
+}
+
+h3 { 
+   font-size:1.4em; 
+}
+
+h4 { 
+   font-size:1.0em; 
+}
+
+h5 { 
+   font-size:0.9em; 
+}
+
+h6 { 
+   font-size:0.8em; 
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre {	
+   margin-top: 0;
+   max-width: 95%;
+   border: 1px solid #ccc;
+   white-space: pre-wrap;
+}
+
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code.r, code.cpp {
+   background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * { 
+      background: transparent !important; 
+      color: black !important; 
+      filter:none !important; 
+      -ms-filter: none !important; 
+   }
+
+   body { 
+      font-size:12pt; 
+      max-width:100%; 
+   }
+       
+   a, a:visited { 
+      text-decoration: underline; 
+   }
+
+   hr { 
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote { 
+      padding-right: 1em; 
+      page-break-inside: avoid; 
+   }
+
+   tr, img { 
+      page-break-inside: avoid; 
+   }
+
+   img { 
+      max-width: 100% !important; 
+   }
+
+   @page :left { 
+      margin: 15mm 20mm 15mm 10mm; 
+   }
+     
+   @page :right { 
+      margin: 15mm 10mm 15mm 20mm; 
+   }
+
+   p, h2, h3 { 
+      orphans: 3; widows: 3; 
+   }
+
+   h2, h3 { 
+      page-break-after: avoid; 
+   }
+}
+
+</style>
+
+<!-- Styles for R syntax highlighter -->
+<style type="text/css">
+   pre .operator,
+   pre .paren {
+     color: rgb(104, 118, 135)
+   }
+
+   pre .literal {
+     color: rgb(88, 72, 246)
+   }
+
+   pre .number {
+     color: rgb(0, 0, 205);
+   }
+
+   pre .comment {
+     color: rgb(76, 136, 107);
+   }
+
+   pre .keyword {
+     color: rgb(0, 0, 255);
+   }
+
+   pre .identifier {
+     color: rgb(0, 0, 0);
+   }
+
+   pre .string {
+     color: rgb(3, 106, 7);
+   }
+</style>
+
+<!-- R syntax highlighter -->
+<script type="text/javascript">
+var hljs=new function(){function m(p){return p.replace(/&/gm,"&amp;").replace(/</gm,"&lt;")}function f(r,q,p){return RegExp(q,"m"+(r.cI?"i":"")+(p?"g":""))}function b(r){for(var p=0;p<r.childNodes.length;p++){var q=r.childNodes[p];if(q.nodeName=="CODE"){return q}if(!(q.nodeType==3&&q.nodeValue.match(/\s+/))){break}}}function h(t,s){var p="";for(var r=0;r<t.childNodes.length;r++){if(t.childNodes[r].nodeType==3){var q=t.childNodes[r].nodeValue;if(s){q=q.replace(/\n/g,"")}p+=q}else{if(t.childNodes[r].nodeName=="BR"){p+="\n"}else{p+=h(t.childNodes[r])}}}if(/MSIE [678]/.test(navigator.userAgent)){p=p.replace(/\r/g,"\n")}return p}function a(s){var r=s.className.split(/\s+/);r=r.concat(s.parentNode.className.split(/\s+/));for(var q=0;q<r.length;q++){var p=r[q].replace(/^language-/,"");if(e[p]){return p}}}function c(q){var p=[];(function(s,t){for(var r=0;r<s.childNodes.length;r++){if(s.childNodes[r].nodeType==3){t+=s.childNodes[r].nodeValue.length}else{if(s.childNodes[r].nodeName=="BR"){t+=1}else{if(s.childNodes[r].nodeType==1){p.push({event:"start",offset:t,node:s.childNodes[r]});t=arguments.callee(s.childNodes[r],t);p.push({event:"stop",offset:t,node:s.childNodes[r]})}}}}return t})(q,0);return p}function k(y,w,x){var q=0;var z="";var s=[];function u(){if(y.length&&w.length){if(y[0].offset!=w[0].offset){return(y[0].offset<w[0].offset)?y:w}else{return w[0].event=="start"?y:w}}else{return y.length?y:w}}function t(D){var A="<"+D.nodeName.toLowerCase();for(var B=0;B<D.attributes.length;B++){var C=D.attributes[B];A+=" "+C.nodeName.toLowerCase();if(C.value!==undefined&&C.value!==false&&C.value!==null){A+='="'+m(C.value)+'"'}}return A+">"}while(y.length||w.length){var v=u().splice(0,1)[0];z+=m(x.substr(q,v.offset-q));q=v.offset;if(v.event=="start"){z+=t(v.node);s.push(v.node)}else{if(v.event=="stop"){var p,r=s.length;do{r--;p=s[r];z+=("</"+p.nodeName.toLowerCase()+">")}while(p!=v.node);s.splice(r,1);while(r<s.length){z+=t(s[r]);r++}}}}return z+m(x.substr(q))}function j(){function q(x,y,v){if(x.compiled){return}var u;var s=[];if(x.k){x.lR=f(y,x.l||hljs.IR,true);for(var w in x.k){if(!x.k.hasOwnProperty(w)){continue}if(x.k[w] instanceof Object){u=x.k[w]}else{u=x.k;w="keyword"}for(var r in u){if(!u.hasOwnProperty(r)){continue}x.k[r]=[w,u[r]];s.push(r)}}}if(!v){if(x.bWK){x.b="\\b("+s.join("|")+")\\s"}x.bR=f(y,x.b?x.b:"\\B|\\b");if(!x.e&&!x.eW){x.e="\\B|\\b"}if(x.e){x.eR=f(y,x.e)}}if(x.i){x.iR=f(y,x.i)}if(x.r===undefined){x.r=1}if(!x.c){x.c=[]}x.compiled=true;for(var t=0;t<x.c.length;t++){if(x.c[t]=="self"){x.c[t]=x}q(x.c[t],y,false)}if(x.starts){q(x.starts,y,false)}}for(var p in e){if(!e.hasOwnProperty(p)){continue}q(e[p].dM,e[p],true)}}function d(B,C){if(!j.called){j();j.called=true}function q(r,M){for(var L=0;L<M.c.length;L++){if((M.c[L].bR.exec(r)||[null])[0]==r){return M.c[L]}}}function v(L,r){if(D[L].e&&D[L].eR.test(r)){return 1}if(D[L].eW){var M=v(L-1,r);return M?M+1:0}return 0}function w(r,L){return L.i&&L.iR.test(r)}function K(N,O){var M=[];for(var L=0;L<N.c.length;L++){M.push(N.c[L].b)}var r=D.length-1;do{if(D[r].e){M.push(D[r].e)}r--}while(D[r+1].eW);if(N.i){M.push(N.i)}return f(O,M.join("|"),true)}function p(M,L){var N=D[D.length-1];if(!N.t){N.t=K(N,E)}N.t.lastIndex=L;var r=N.t.exec(M);return r?[M.substr(L,r.index-L),r[0],false]:[M.substr(L),"",true]}function z(N,r){var L=E.cI?r[0].toLowerCase():r[0];var M=N.k[L];if(M&&M instanceof Array){return M}return false}function F(L,P){L=m(L);if(!P.k){return L}var r="";var O=0;P.lR.lastIndex=0;var M=P.lR.exec(L);while(M){r+=L.substr(O,M.index-O);var N=z(P,M);if(N){x+=N[1];r+='<span class="'+N[0]+'">'+M[0]+"</span>"}else{r+=M[0]}O=P.lR.lastIndex;M=P.lR.exec(L)}return r+L.substr(O,L.length-O)}function J(L,M){if(M.sL&&e[M.sL]){var r=d(M.sL,L);x+=r.keyword_count;return r.value}else{return F(L,M)}}function I(M,r){var L=M.cN?'<span class="'+M.cN+'">':"";if(M.rB){y+=L;M.buffer=""}else{if(M.eB){y+=m(r)+L;M.buffer=""}else{y+=L;M.buffer=r}}D.push(M);A+=M.r}function G(N,M,Q){var R=D[D.length-1];if(Q){y+=J(R.buffer+N,R);return false}var P=q(M,R);if(P){y+=J(R.buffer+N,R);I(P,M);return P.rB}var L=v(D.length-1,M);if(L){var O=R.cN?"</span>":"";if(R.rE){y+=J(R.buffer+N,R)+O}else{if(R.eE){y+=J(R.buffer+N,R)+O+m(M)}else{y+=J(R.buffer+N+M,R)+O}}while(L>1){O=D[D.length-2].cN?"</span>":"";y+=O;L--;D.length--}var r=D[D.length-1];D.length--;D[D.length-1].buffer="";if(r.starts){I(r.starts,"")}return R.rE}if(w(M,R)){throw"Illegal"}}var E=e[B];var D=[E.dM];var A=0;var x=0;var y="";try{var s,u=0;E.dM.buffer="";do{s=p(C,u);var t=G(s[0],s[1],s[2]);u+=s[0].length;if(!t){u+=s[1].length}}while(!s[2]);if(D.length>1){throw"Illegal"}return{r:A,keyword_count:x,value:y}}catch(H){if(H=="Illegal"){return{r:0,keyword_count:0,value:m(C)}}else{throw H}}}function g(t){var p={keyword_count:0,r:0,value:m(t)};var r=p;for(var q in e){if(!e.hasOwnProperty(q)){continue}var s=d(q,t);s.language=q;if(s.keyword_count+s.r>r.keyword_count+r.r){r=s}if(s.keyword_count+s.r>p.keyword_count+p.r){r=p;p=s}}if(r.language){p.second_best=r}return p}function i(r,q,p){if(q){r=r.replace(/^((<[^>]+>|\t)+)/gm,function(t,w,v,u){return w.replace(/\t/g,q)})}if(p){r=r.replace(/\n/g,"<br>")}return r}function n(t,w,r){var x=h(t,r);var v=a(t);var y,s;if(v){y=d(v,x)}else{return}var q=c(t);if(q.length){s=document.createElement("pre");s.innerHTML=y.value;y.value=k(q,c(s),x)}y.value=i(y.value,w,r);var u=t.className;if(!u.match("(\\s|^)(language-)?"+v+"(\\s|$)")){u=u?(u+" "+v):v}if(/MSIE [678]/.test(navigator.userAgent)&&t.tagName=="CODE"&&t.parentNode.tagName=="PRE"){s=t.parentNode;var p=document.createElement("div");p.innerHTML="<pre><code>"+y.value+"</code></pre>";t=p.firstChild.firstChild;p.firstChild.cN=s.cN;s.parentNode.replaceChild(p.firstChild,s)}else{t.innerHTML=y.value}t.className=u;t.result={language:v,kw:y.keyword_count,re:y.r};if(y.second_best){t.second_best={language:y.second_best.language,kw:y.second_best.keyword_count,re:y.second_best.r}}}function o(){if(o.called){return}o.called=true;var r=document.getElementsByTagName("pre");for(var p=0;p<r.length;p++){var q=b(r[p]);if(q){n(q,hljs.tabReplace)}}}function l(){if(window.addEventListener){window.addEventListener("DOMContentLoaded",o,false);window.addEventListener("load",o,false)}else{if(window.attachEvent){window.attachEvent("onload",o)}else{window.onload=o}}}var e={};this.LANGUAGES=e;this.highlight=d;this.highlightAuto=g;this.fixMarkup=i;this.highlightBlock=n;this.initHighlighting=o;this.initHighlightingOnLoad=l;this.IR="[a-zA-Z][a-zA-Z0-9_]*";this.UIR="[a-zA-Z_][a-zA-Z0-9_]*";this.NR="\\b\\d+(\\.\\d+)?";this.CNR="\\b(0[xX][a-fA-F0-9]+|(\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)";this.BNR="\\b(0b[01]+)";this.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|\\.|-|-=|/|/=|:|;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~";this.ER="(?![\\s\\S])";this.BE={b:"\\\\.",r:0};this.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[this.BE],r:0};this.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[this.BE],r:0};this.CLCM={cN:"comment",b:"//",e:"$"};this.CBLCLM={cN:"comment",b:"/\\*",e:"\\*/"};this.HCM={cN:"comment",b:"#",e:"$"};this.NM={cN:"number",b:this.NR,r:0};this.CNM={cN:"number",b:this.CNR,r:0};this.BNM={cN:"number",b:this.BNR,r:0};this.inherit=function(r,s){var p={};for(var q in r){p[q]=r[q]}if(s){for(var q in s){p[q]=s[q]}}return p}}();hljs.LANGUAGES.cpp=function(){var a={keyword:{"false":1,"int":1,"float":1,"while":1,"private":1,"char":1,"catch":1,"export":1,virtual:1,operator:2,sizeof:2,dynamic_cast:2,typedef:2,const_cast:2,"const":1,struct:1,"for":1,static_cast:2,union:1,namespace:1,unsigned:1,"long":1,"throw":1,"volatile":2,"static":1,"protected":1,bool:1,template:1,mutable:1,"if":1,"public":1,friend:2,"do":1,"return":1,"goto":1,auto:1,"void":2,"enum":1,"else":1,"break":1,"new":1,extern:1,using:1,"true":1,"class":1,asm:1,"case":1,typeid:1,"short":1,reinterpret_cast:2,"default":1,"double":1,register:1,explicit:1,signed:1,typename:1,"try":1,"this":1,"switch":1,"continue":1,wchar_t:1,inline:1,"delete":1,alignof:1,char16_t:1,char32_t:1,constexpr:1,decltype:1,noexcept:1,nullptr:1,static_assert:1,thread_local:1,restrict:1,_Bool:1,complex:1},built_in:{std:1,string:1,cin:1,cout:1,cerr:1,clog:1,stringstream:1,istringstream:1,ostringstream:1,auto_ptr:1,deque:1,list:1,queue:1,stack:1,vector:1,map:1,set:1,bitset:1,multiset:1,multimap:1,unordered_set:1,unordered_map:1,unordered_multiset:1,unordered_multimap:1,array:1,shared_ptr:1}};return{dM:{k:a,i:"</",c:[hljs.CLCM,hljs.CBLCLM,hljs.QSM,{cN:"string",b:"'\\\\?.",e:"'",i:"."},{cN:"number",b:"\\b(\\d+(\\.\\d*)?|\\.\\d+)(u|U|l|L|ul|UL|f|F)"},hljs.CNM,{cN:"preprocessor",b:"#",e:"$"},{cN:"stl_container",b:"\\b(deque|list|queue|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array)\\s*<",e:">",k:a,r:10,c:["self"]}]}}}();hljs.LANGUAGES.r={dM:{c:[hljs.HCM,{cN:"number",b:"\\b0[xX][0-9a-fA-F]+[Li]?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+(?:[eE][+\\-]?\\d*)?L\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+\\.(?!\\d)(?:i\\b)?",e:hljs.IMMEDIATE_RE,r:1},{cN:"number",b:"\\b\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\.\\d+(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"keyword",b:"(?:tryCatch|library|setGeneric|setGroupGeneric)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\.",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\d+(?![\\w.])",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\b(?:function)",e:hljs.IMMEDIATE_RE,r:2},{cN:"keyword",b:"(?:if|in|break|next|repeat|else|for|return|switch|while|try|stop|warning|require|attach|detach|source|setMethod|setClass)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"literal",b:"(?:NA|NA_integer_|NA_real_|NA_character_|NA_complex_)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"literal",b:"(?:NULL|TRUE|FALSE|T|F|Inf|NaN)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"identifier",b:"[a-zA-Z.][a-zA-Z0-9._]*\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"<\\-(?!\\s*\\d)",e:hljs.IMMEDIATE_RE,r:2},{cN:"operator",b:"\\->|<\\-",e:hljs.IMMEDIATE_RE,r:1},{cN:"operator",b:"%%|~",e:hljs.IMMEDIATE_RE},{cN:"operator",b:">=|<=|==|!=|\\|\\||&&|=|\\+|\\-|\\*|/|\\^|>|<|!|&|\\||\\$|:",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"%",e:"%",i:"\\n",r:1},{cN:"identifier",b:"`",e:"`",r:0},{cN:"string",b:'"',e:'"',c:[hljs.BE],r:0},{cN:"string",b:"'",e:"'",c:[hljs.BE],r:0},{cN:"paren",b:"[[({\\])}]",e:hljs.IMMEDIATE_RE,r:0}]}};
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+
+</head>
+
+<body>
+<h1>pRolocGUI: An interactive tool for visualisation of organelle proteomics data</h1>
+
+<h3>Thomas Naake and Laurent Gatto*</h3>
+
+<h4>*Computational Proteomics Unit, University of Cambridge</h4>
+
+<h4>Foreword</h4>
+
+<p>This vignette describes the implemented functionality in the <strong>pRolocGUI</strong> 
+package. The package is based on the MSnSet class defininitions of 
+<strong>MSnbase</strong> [<a href="#id1">1</a>] and on the functions defined in the package
+<strong>pRoloc</strong> [<a href="#id2">2</a>]
+and is especially meant for the analyses of LOPIT [<a href="#id3">3</a>] or PCP [<a href="#id4">4</a>]
+experiments.
+To achieve reactivity and interactivity the function of pRolocGUI was written in 
+<a href="http://www.rstudio.com/shiny/"><strong>shiny</strong></a> notation.
+The implemented application facilitates a higher degree of 
+interactivity with the underlying data, though, it is limited by its 
+deterministic nature and will not offer the high flexibility given by the
+use of a command based approach. Especially, pRolocGUI addresses to R
+novices who have constraints of exploring their data by using the console.</p>
+
+<p>pRolocGUI is under active development; current funtionality is evolving and 
+new features will be added. This software is free and open-source. You are
+invited to contact Thomas Naake in case you have any questions, suggestions 
+or have found any bugs or typos. To reach a broader audience for more general
+questions about proteomics analyses using R consider of writing to the 
+Bioconductor list. </p>
+
+<hr/>
+
+<p><strong>Table of Contents</strong></p>
+
+<ol>
+<li><a href="#introduction">Introduction</a><br/></li>
+<li><a href="#tabspRolocVis">Tabs of pRolocVis</a><br/>
+2.1. <a href="#tabspRolocVisData">Data</a><br/>
+2.2. <a href="#tabspRolocVisPCA">PCA</a><br/>
+2.3. <a href="#tabspRolocVisPP">protein profiles</a><br/>
+2.4. <a href="#tabspRolocVisExprs">quantitation</a><br/>
+2.5. <a href="#tabspRolocVisfData">feature meta-data</a><br/>
+2.6. <a href="#tabspRolocVispData">sample meta-data</a><br/>
+2.7. <a href="#tabspRolocVisSearch">search</a><br/></li>
+<li><a href="#display"><em>Display selection</em> widget</a><br/>
+3.1. <a href="#displayPCA">PCA</a><br/>
+3.2. <a href="#displayPP">protein profiles</a><br/>
+3.3. <a href="#displaySaSe">saved searches</a><br/>
+3.4. <a href="#displayQuery">query feature meta-data</a><br/></li>
+<li><a href="#references">References</a><br/></li>
+</ol>
+
+<hr/>
+
+<p><a id="introduction"></a> </p>
+
+<h3>1. Introduction</h3>
+
+<p>Currently, you can start a pRolocVis application. </p>
+
+<p>Starting a pRolocVis application is easy as it gets. Just type </p>
+
+<pre><code class="r">pRolocVis()
+</code></pre>
+
+<p>in your console window and press [Enter]. This will open a new tab in your 
+Internet browser and after a bit you will see the application. You can also
+pass directly a MSnSet (e.g. dunkley 2006) to pRolocVis by entering</p>
+
+<pre><code class="r">pRolocVis(object = dunkley2006)
+</code></pre>
+
+<p>To stop the application from running press [Esc] in the 
+console (or use the &ldquo;STOP&rdquo; button when using RStudio) and close the browser 
+tab, where pRolocVis is running. </p>
+
+<hr/>
+
+<p><a id="tabspRolocVis"></a></p>
+
+<h3>2. Tabs of pRolocVis</h3>
+
+<p>To optimize ease of use the interface of pRolocVis is subdivided in seven tabs:</p>
+
+<ul>
+<li>Data,<br/></li>
+<li>PCA,<br/></li>
+<li>protein profiles,<br/></li>
+<li>quantitation,<br/></li>
+<li>feature meta-data,<br/></li>
+<li>sample meta-data and<br/></li>
+<li>search.<br/></li>
+</ul>
+
+<p>You browse through the tabs by simply clicking on them. Each tab
+selected will have a different kind of appearance while some (PCA, protein 
+profiles, quantitation and feature meta-data) share a common feature in the 
+sidebar, the <em>Display selection</em> widget (see 3. <em>Display selection</em> widget for further details). </p>
+
+<p><a id="tabspRolocVisData"></a></p>
+
+<h4>2.1. Data</h4>
+
+<p>The tab <strong><em>Data</em></strong> is the first tab you will see when you start pRolocVis. 
+The appearance will differ depending on if you pass directly a MSnSet to 
+pRolocVis. </p>
+
+<p>If you decide to start pRolocVis without assigning a MSnSet to the argument 
+object the tab <strong><em>data</em></strong> offers possibilities to switch to an other MSnSet.
+Currently you may choose between three example MSnSets (derived from experiments 
+of Christoforou 2011, Dunkley et al. 2006, Tan et al. 2009) provided by the 
+package <strong>pRolocdata</strong>  or to use an MSnSet of your choice (own data). 
+Clicking on <strong><em>Browse&hellip;</em></strong> will open a dialog window with which you can select
+your MSnSet and load it to pRolovVis. 
+pRolocVis will check if the selected data file is of class MSnSet 
+and if it is an .Rdata or .rda file and will denote a notification if there 
+are any conflicts. </p>
+
+<p>If you pass an object to pRolocVis the tab data will show if the MSnSet was 
+accepted by pRolocVis. </p>
+
+<p><a id="tabspRolocVisPCA"></a></p>
+
+<h4>2.2. PCA</h4>
+
+<p>The tab <strong><em>PCA</em></strong> is characterized by its main panel which shows a PCA plot for 
+the selected MSnSet and its sidebar panel which is compartimented into <em>Display selection</em>
+and <em>Plot</em>. </p>
+
+<p>Let&#39;s forget about the compartiment <em>Display selection</em> here (see 3. 
+<em>Display selection</em> widget for further details) and let&#39;s turn towards the <em>Plot</em> 
+compartiment. Here we are able to adjust the appearance of the PCA plot in the
+main panel. We are able to colour features (proteins) in matters of common
+properties by changing the drop-down list <strong><em>colour</em></strong>, e.g. if we select 
+for the
+MSnSet originating from Christoforou 2011 the colour &ldquo;markers&rdquo;, the features in 
+the PCA plot will be coloured according to their organelle affiliation. 
+As soon as we select another colour than &ldquo;none&rdquo;
+two (or three) new items will be added to the <em>Plot</em> widget:   </p>
+
+<p>(1) an item to change the symbol type, <strong><em>symbol type</em></strong>,<br/>
+(2) an item to manipulate legend properties, <strong><em>legend</em></strong> and 
+<strong><em>position of legend</em></strong> , and<br/>
+(3) according to the MSnSet used an item to change the point size, 
+<strong><em>point size</em></strong>. </p>
+
+<p>By selecting one of 
+the variable names in the drop-down list of <strong><em>symbol type</em></strong> we will change
+the 
+symbol type of the features in the plot. By clicking on the check box to the 
+left of <strong><em>legend</em></strong> a legend is added to the plot and by choosing one of the 
+items in the drop-down list <strong><em>position of legend</em></strong> below we will change its 
+position. The third item which might appear is the drop-down list 
+<strong><em>point size</em></strong> to change the point size. pRolocVis will identify numeric 
+values in the feature variable labels and will list them in the drop-down 
+menu (this might be of interest if you have scores which give information 
+about the quality of a phenoDisco analysis). </p>
+
+<p>By changing the drop-down lists of the items 
+<strong><em>number of 1st principal component</em></strong> and 
+<strong><em>number of 2nd principal component</em></strong> the x-values and 
+y-values, respectively, will be rendered according to the new principal
+components.</p>
+
+<p>To zoom in and out change the drag and drop the little arrows of the slider
+of the items <strong><em>zoom x-axis</em></strong> and <strong><em>zoom y-axis</em></strong>. This may be of great 
+help when you want to identify points in dense clusters.</p>
+
+<p>By clicking on <strong><em>Download Plot</em></strong> in the main panel below the PCA plot will
+open
+a dialog window with an interface on showing or saving the PCA plot as it is
+displayed in the main panel.</p>
+
+<p><a id="tabspRolocVisPP"></a></p>
+
+<h4>2.3. protein profiles (has to be revised)</h4>
+
+<p>The tab <strong><em>protein profiles</em></strong> shows the protein profiles in the main panel 
+(with an option of exporting the plot as it is shown in the main panel by 
+clicking on the button <strong><em>Download Plot</em></strong>) and the <em>Display selection</em> widget and the
+<em>Plot</em> widget in the sidebar panel. Have a look on section 
+3. <em>Display selection</em> widget if you want to
+retrieve information about how to use the <em>Display selection</em> widget. </p>
+
+<p>The <em>Plot</em> widget helps to manipulate the plots shown in the main panel.
+Let&#39;s assume we want to have a look upon the protein profiles for the
+proteins from which we know that they belong to the organelles endoplasmic
+reticulum, the golgi apparatus, mitochondrion and the plasma membrane for 
+the MSnSet originating from the experiments of Christoforou (2011). 
+We have four organelles to look at, so we select &ldquo;4&rdquo; in the drop-down 
+list <strong><em>number of plots to display</em></strong>. We will select
+&ldquo;markers&rdquo; in the drop-down list and select &ldquo;ER&rdquo; (coding for endoplasmic 
+reticulum) in the next drow-down list and leave the other two drop-down
+lists as they are. To plot the next plot we have to change the slider 
+<strong><em>Select number of plot to change</em></strong> to 
+position 2 and for the shiny reactive expressions didn&#39;t receive yet a new
+input we have to change the drop-down lists in order a new plot will be 
+displayed, accordingly to our problem we will change the second drop-down list
+to &ldquo;Golgi&rdquo; (coding for golgi apparatus). We proceed with the two remaining 
+organelles as described before by changing firstly the slider to the next position
+and by changing the drop-down lists addordingly to the organelles we want to
+display.</p>
+
+<p>We can change the two lower drop-down lists if we want to see some features 
+compared to all features which are assigned to a variable name. To see display
+results of phenoDisco we can select for the MSnSet from Christoforou 2011
+&ldquo;pd.markers&rdquo; in the first drop-down list and &ldquo;Golgi&rdquo; as the organelle to look at. 
+As the comparison we will choose in the third drop-down list &ldquo;markers&rdquo; and 
+&ldquo;Golgi&rdquo; which will display the features in a transparent manner. </p>
+
+<p><a id="tabspRolocVisExprs"></a></p>
+
+<h4>2.4. quantitation</h4>
+
+<p>The tab <strong><em>quantitation</em></strong> displays the quantitation data for the proteins as a 
+data table. </p>
+
+<p>In the main panel you can change the number of proteins shown per page and 
+search both for proteins (or for the quantitation data). Also, you may sort 
+the proteins by name or the quantitation data by clicking on the arrows 
+on the top of the data table.</p>
+
+<p>In the sidebar panel the <em>Display selection</em> widget is placed as well as radio buttons
+to display all data or just selected features (see 3. <em>Display selection</em> widget for 
+further details)</p>
+
+<p><a id="tabspRolocVisfData"></a></p>
+
+<h4>2.5. feature meta-data</h4>
+
+<p>The tab <strong><em>feature meta-data</em></strong> displays the feature meta-data for the proteins
+as a data table.</p>
+
+<p>The layout of the tab is similar to the <strong><em>quantitation</em></strong> tab
+and allows for sorting and searching in the feature meta-data of the MSnSet 
+selected. </p>
+
+<p>The sidebar conprises the <em>Display selection</em> widget and radio buttons to 
+show all or only selected features (see 3. <em>Display selection</em> widget for 
+further details).</p>
+
+<p><a id="tabspRolocVispData"></a></p>
+
+<h4>2.6. sample meta-data</h4>
+
+<p>The tab <strong><em>sample meta-data</em></strong> displays the sample meta-data for the 
+experiment, the name of the isotopes used for tagging and the associated
+fractions. </p>
+
+<p><a id="tabspRolocVisSearch"></a></p>
+
+<h4>2.7. search</h4>
+
+<p>pRolocVis allows to use past search results to display it in the PCA plot,
+protein profiles and in the tabs <strong><em>quantitation</em></strong> and <strong><em>feature meta-data</em></strong>
+(see 3. <em>Display selection</em> widget for further details if this is your intention). 
+This ability requires an object <strong>pRolocGUI_SearchResults</strong> in the global 
+environment which is of class &ldquo;FeaturesOfInterest&rdquo; or &ldquo;FoICollection&rdquo; 
+(enter ?FeaturesOfInterest in the console for further details).</p>
+
+<p>In case this objects exists it will automatically be loaded to pRolocVis and
+its content is displayed in the tab <strong><em>search</em></strong>. Use the drop-down list in the
+sidebar panel to browse through the different features of interest in case 
+the object is of class &ldquo;FoICollection&rdquo;. </p>
+
+<p>If no object called <strong>pRolocGUI_SearchResults</strong> exists in the global 
+environment
+you can assign an object to the global environment which is derived from the
+experiment of Christoforou (2011) but will have no features. To do this,
+click on <strong><em>Initialize saved searches</em></strong>, which will create a new 
+FoICollection.</p>
+
+<p>To save features of interest to the object in the global environment you need
+to select features and add these to the FoICollection by entering an 
+appropriate description in the text field (on the sidebar panel, which will
+be useful to trace back to the underlying features and doesn&#39;t yet exist in 
+the FoICollection) and by clicking on <strong><em>Create new features of interest</em></strong>.
+This will add the selected features to the object <strong>pRolocGUI_SearchResults</strong>
+in the global environment.</p>
+
+<hr/>
+
+<p><a id="display"></a></p>
+
+<h3>3. <em>Display selection</em> widget</h3>
+
+<p>The <em>Display selection</em> widget is probably the most important implementation 
+in pRolocVis for it enables the user to search for features in the MSnSet: 
+you can do this by selecting points in the PCA plot, clicking on features 
+in the tab <strong><em>protein profiles</em></strong>, using past searches and/or querying for 
+features in the MSnSet data.</p>
+
+<p>As you may have already seen there are four check boxes in the 
+<em>Display selection</em> widget
+which represent the before mentioned ways of searching features in the MSnSet. 
+To activate the search for one specific method click on the check box left of
+its description. It is also possible to select more than one at a time which 
+allows for greater flexibility with regard to information retrieval.</p>
+
+<p><a id="displayPCA"></a></p>
+
+<h4>3.1. PCA</h4>
+
+<p>If you decide to identify proteins in the PCA plot, change to the tab 
+<strong><em>PCA</em></strong> and start clicking on features in the PCA plot 
+(tipp: the zoom function may be of great expedient). The check box 
+will be checked when you start clicking in the PCA plot. As soon as you have 
+clicked on a feature it will be marked with a black circle around it. 
+If you have selected a feature by accident or want to deselect it, 
+just click again on the feature and it will be deselected. </p>
+
+<p>There are two possibilities to deselect all selected features: If you decide 
+to remove all your features click on <strong><em>Clear features</em></strong>. Please keep in mind
+that this step once carried out is irreversible. 
+Besides that you are also able to simply blind out the selected features by 
+deselecting the check box left of PCA in the <em>Display selection</em> widget. 
+Internally, the  features are still stored, i.e. by clicking again on 
+the check box you will see the selections again. Clicking on new proteins in 
+the PCA plot will not check the check box again, so you have to do this
+manually. The features selected are shared between the 
+different tabs. Click on the tabs <strong><em>quantitation</em></strong> and 
+<strong><em>feature meta-data</em></strong>
+to have a look upon information about the selected features. For the case 
+where you see all features in the data table change the radio buttons settings 
+from <strong><em>all</em></strong> to <strong><em>selected</em></strong> at the lowermost widget in the sidebar. Here 
+again, you can compose the features from different sources (PCA, protein 
+profiles, saved searches and the text-based query search). </p>
+
+<p>If you display protein profiles in the tab <strong><em>protein profiles</em></strong> selected 
+features will be displayed by black lines with a greater line width
+(depending on the features shown). </p>
+
+<p><a id="displayPP"></a></p>
+
+<h4>3.2. protein profiles</h4>
+
+<p>In principle the search for features in protein profiles is in accordance
+with the search in the PCA plot. Though, bear in mind that you are only 
+able to select features when &ldquo;1&rdquo; is selected in the drop-down list 
+<strong><em>number of plots to display</em></strong>. Clicking on (or near) the points in the 
+plot will select, clicking another time will deselect features. 
+The features will only be shown when the check box left of 
+<strong><em>protein profiles</em></strong> is activated. </p>
+
+<p><a id="displaySaSe"></a></p>
+
+<h4>3.3. saved searches</h4>
+
+<p>Clicking on the check box to the left of <strong><em>saved searches</em></strong> will load the 
+selected features of the class &ldquo;FeaturesOfInterest&rdquo;. These will be displayed
+in the PCA plot, in the plots for protein profiles (depending on the
+displayed features) and will be available in the tabs <strong><em>quantitation</em></strong>
+and <strong><em>feature meta-data</em></strong> for information retrieval. 
+If there is an &ldquo;FoICollection&rdquo; loaded change the selected search 
+result in the drop-down list <strong><em>Search result</em></strong> in the tab <strong><em>search</em></strong>; 
+thus accordingly altering the selected features in the <em>Display selection</em> widget 
+context. </p>
+
+<p>In pRolocVis there is no functionality implemented to remove features
+from the object <strong>pRolocGUI_SearchResults</strong> in the global environment. The 
+authors decided that it is not the task of a GUI to fulfill the requirements 
+of this kind of data manipulation in a GUI, hence, the execution of removing
+features of interests belongs to the field of the users responsibility.</p>
+
+<p><a id="displayQuery"></a></p>
+
+<h4>3.4. query feature-meta data</h4>
+
+<p>The <em>Display selection</em> widget offers the opportunity to query the feature meta-data
+of the MSnSet for levels. The drop-down list consists of the item &ldquo;protein&rdquo;,
+which is by definition the rowname of the feature-meta data and depending on 
+the data accession number, protein ID, protein description, assigned markers
+(varying on the underlying MSnSet). </p>
+
+<p>Let&#39;s assume we want to look in the MSnSet which was derived from experiments 
+of Christoforou (2011) for all proteins which are assigned by experimental
+evidence to the organelle &ldquo;plasma membrane&rdquo;. We ensure ourselves that 
+&ldquo;Christoforou 2011&rdquo; is selected in the tab <strong><em>Data</em></strong> and change to a tab where
+the <em>Display selection</em> widget is loaded. We activate the check box to the left of 
+<strong><em>level</em></strong> and select &ldquo;marker&rdquo; in the upper drop-down list (for we are 
+looking for
+the organelle). In the next drop-down list below we select &ldquo;PM&rdquo; which codes
+for &ldquo;plasma membrane&rdquo;. Next, we click on <strong><em>Submit selected level</em></strong>, which
+will
+highlight all features which are assigned to &ldquo;PM&rdquo; for the variable name
+&ldquo;marker&rdquo;. To remove the selected features from the internal assignment we 
+have to reset the search by clicking on <strong><em>Clear features</em></strong>. Of course,
+we can also add other features: If we want to add all features which are 
+assigned to the Golgi apparatus we simply select &ldquo;Golgi&rdquo; in the lower drop-down
+list and click on <strong><em>Submit selected level</em></strong> to save internally the selected 
+features. </p>
+
+<p>It is relatively easy to find levels when the drop-down list for these levels
+is short (as it is for &ldquo;markers&rdquo; in the MSnSet originating from the 
+experiments of Christoforou (2011)). But how should we proceed when we want to
+look for a special protein, e.g. OCAD1? The drop-down list for the variable 
+name &ldquo;protein&rdquo; is very long and it is time consuming to scroll through the 
+whole list and look for our protein of interest. Therefore, we can just enter 
+OCAD1 in the text input field <strong><em>Search for</em></strong> in between the two drop-down 
+lists and we will get the protein of interest (we are also able to query for
+protein names which have the string &ldquo;OC&rdquo; in their name which will limit the 
+drop-down list to all proteins which have this specific string). By clicking on 
+<strong><em>Submit selected level</em></strong> we save internally the selected feature(s).</p>
+
+<p><a id="references"></a></p>
+
+<h4>4. References</h4>
+
+<p><a id="id1"></a>
+[1] Laurent Gatto and Kathryn S. Lilley. MSnbase - an R/Bioconductor
+package for isobaric tagged mass spectrometry data visualization,
+processing and quantitation. Bioinformatics 28, 288-289 (2011).</p>
+
+<p><a id="id2"></a>
+[2] Gatto L, Breckels LM, Wieczorek S, Burger T, Lilley KS. Mass-spectrometry-
+based spatial proteomics data analysis using pRoloc and pRolocdata. Bioin-
+formatics. 2014 Feb 5.</p>
+
+<p><a id="id3"></a> 
+[3] Tom P. J. Dunkley, Svenja Hester, Ian P. Shadforth, John Runions,
+Thilo Weimar, Sally L. Hanton, Julian L. Griffin, Conrad Bessant, Federica
+Brandizzi, Chris Hawes, Rod B. Watson, Paul Dupree, and Kathryn S. Lilley.
+Mapping the arabidopsis organelle proteome. Proc Natl Acad Sci USA, 
+103(17):6518–6523, Apr 2006. doi: 10.1073/pnas.0506958103. 
+URL <a href="http://dx.doi.org/10.1073/pnas.0506958103">http://dx.doi.org/10.1073/pnas.0506958103</a>.</p>
+
+<p><a id="id4"></a> 
+[4] Leonard J. Foster, Carmen L. de Hoog, Yanling Zhang, Yong Zhang, Xiaohui Xie,
+Vamsi K. Mootha, and Matthias Mann. A mammalian organelle map by protein
+correlation profiling. Cell, 125(1):187–199, Apr 2006. 
+doi: 10.1016/j.cell.2006.03.
+022. URL <a href="http://dx.doi.org/10.1016/j.cell.2006.03.022">http://dx.doi.org/10.1016/j.cell.2006.03.022</a>.</p>
+
+</body>
+
+</html>
+
