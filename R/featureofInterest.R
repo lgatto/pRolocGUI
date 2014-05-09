@@ -1,5 +1,5 @@
-#'@title Test for Features of Interests or Collection of 
-#'Features of Interest
+#'@title Test for Features of Interests or Collection of Features of
+#' Interest
 #'@name .areFeaturesOfInterest  
 #'@aliases .isFoICollection
 #'@description  \code{.areFeaturesOfInterest} tests if an object is of class 
@@ -11,7 +11,7 @@
 #'.isFoICollection(xx)
 #'@param x An object tested of being of class \code{FeaturesOfInterest}
 #'@param xx An object tested of being of class \code{FoICollection}
-#'@examples \dontrun{
+#'@examples 
 #' x <- FeaturesOfInterest(description = "A traceable test set 
 #' of features of interest", fnames = featureNames(tan2009r1)[1:10], 
 #' object = tan2009r1)
@@ -26,7 +26,6 @@
 #' xx <- addFeaturesOfInterest(y, xx)
 #' 
 #' .isFoICollection(xx)
-#' }
 .areFeaturesOfInterest <- function(x)
   inherits(x, "FeaturesOfInterest")
 .isFoICollection <- function(xx)

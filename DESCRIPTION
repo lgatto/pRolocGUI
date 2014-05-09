@@ -1,7 +1,7 @@
 Package: pRolocGUI
 Title: An interactive visualisation tool for organelle (spatial)
     proteomics data
-Version: 0.1.1
+Version: 0.2.0
 Author: Thomas Naake and Laurent Gatto
 Maintainer: Thomas Naake <thomasnaake@gmx.de>
 Description: The package pRolocGUI comprises functions to
@@ -15,3 +15,4 @@ Depends:
     tools (>= 3.1.0),
     digest (>= 0.6.4)
 License: GPL-2
+VignetteBuilder: knitr
