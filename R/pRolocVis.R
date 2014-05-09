@@ -1,7 +1,7 @@
 #'@name pRolocVis
 #'@title pRolocVis
 #'@export
-#'@author Thomas Naake <thomasnaake@@gmx.de>
+#'@author Thomas Naake <tn299@@cam.ac.uk>
 #'@usage pRolocVis(object = NULL)
 #'@param object Pass a MSnSet to pRolocVis directly. Default \code{NULL} will
 #'enable possibility to upload MSnSet in pRolovVis. 
@@ -22,6 +22,7 @@ pRolocVis <- function(object = NULL) {
     data(andy2011, package = "pRolocdata")
     data(tan2009r1, package = "pRolocdata")
     data(dunkley2006, package = "pRolocdata")
+    ## increase upload limit to 20 MB
     options(shiny.maxRequestSize = 20*1024^2)
     
     app <- list(  
@@ -32,7 +33,6 @@ pRolocVis <- function(object = NULL) {
                 ## Application title
                 .pRn1_setTitlePanel(),
                 ## Sidebar Panel
-                ## .pRn1_setSidebarPanelUpload(),
                 .pRn1_setSidebarPanel(),  
                 ## Main Panel
                 .pRn1_setMainPanel()
@@ -72,7 +72,8 @@ pRolocVis <- function(object = NULL) {
                 if (is.null(object))
                     fileInput("owndata", 
                               "Select your own MSnSet file",
-                              ## accept=c('.rda', 'data/rda', '.RData', 'data/RData'),
+                              ## accept=c('.rda', 'data/rda', 
+                              ## '.RData', 'data/RData'),
                               multiple = FALSE)
             })
             
@@ -100,7 +101,7 @@ pRolocVis <- function(object = NULL) {
                 }
             })
             
-            
+            ## .dI
             if (is.null(object))
                 .dI <- reactive({
                     if (!is.null(input$data))
@@ -145,14 +146,15 @@ pRolocVis <- function(object = NULL) {
                 else {
                     isolate({
                         input$PCAclick
-                        select$PCA <- "mouse.PCA"
+                        select$PCA <- "mousePCA"
                     })
                     
                     isolate({
                         input$chooseIdenSearch
-                        if (length(.protPCA$mult) > 2 && !is.null(select$PCA) && 
-                            "mouse.PCA" %in% select$PCA && 
-                            !("mouse.PCA" %in% input$chooseIdenSearch))
+                        if (length(.protPCA$mult) > 2 && 
+                            !is.null(select$PCA) && 
+                            "mousePCA" %in% select$PCA && 
+                            !("mousePCA" %in% input$chooseIdenSearch))
                             select$PCA <- NULL
                     })
                 }
@@ -160,18 +162,20 @@ pRolocVis <- function(object = NULL) {
             })
             
             selPlotDist <- reactive({
-                if (is.null(input$plotDistclick) | is.null(.protPlotDist$mult))
+                if (is.null(input$plotDistclick) || 
+                    is.null(.protPlotDist$mult))
                     select$plotDist <- NULL
                 else {
                     isolate({
                         input$plotDistclick
-                        select$plotDist <- "mouse.plotDist"
+                        select$plotDist <- "mousePlotDist"
                     })
                     isolate({
                         input$chooseIdenSearch
-                        if (length(.protPlotDist$mult) > 2 && !is.null(select$plotDist) &&
-                            "mouse.plotDist" %in% select$plotDist && 
-                            !("mouse.plotDist" %in% input$chooseIdenSearch))
+                        if (length(.protPlotDist$mult) > 2 && 
+                            !is.null(select$plotDist) &&
+                            "mousePlotDist" %in% select$plotDist && 
+                            !("mousePlotDist" %in% input$chooseIdenSearch))
                             select$plotDist <- NULL
                     })
                 }
@@ -191,24 +195,24 @@ pRolocVis <- function(object = NULL) {
                     isolate({
                         digest(input$resetMult)
                         input$chooseIdenSearch
-                        if (input$resetMult > 0 && "text" %in% input$chooseIdenSearch)
+                        if (input$resetMult > 0 && 
+                            "text" %in% input$chooseIdenSearch)
                             select$text <- NULL
                     })      
                 }
                 select$text <- unique(select$text)
             })
             
-            
             output$checkBoxUI <- renderUI({
                 checkboxGroupInput("chooseIdenSearch", 
                                    label = "",
-                                   choices = c("PCA" = "mouse.PCA",
-                                       "protein profiles" = "mouse.plotDist",
-                                       "saved searches" = "saved.searches",
+                                   choices = c("PCA" = "mousePCA",
+                                       "protein profiles" = "mousePlotDist",
+                                       "saved searches" = "savedSearches",
                                        "query" = "text"),
-                                   selected=c(selPCA(), selPlotDist() , selText()))
+                                   selected=c(selPCA(), selPlotDist() , 
+                                              selText()))
             })
-            
             
             ## reactive expressions for general search
             ## reactive expression to forward indices to 
@@ -218,11 +222,11 @@ pRolocVis <- function(object = NULL) {
                 if (length(input$chooseIdenSearch) == 1) {
                     if ("text" %in% input$chooseIdenSearch)
                         searchInd <- .protText$mult
-                    if ("mouse.PCA" %in% input$chooseIdenSearch)
+                    if ("mousePCA" %in% input$chooseIdenSearch)
                         searchInd <- .protPCA$mult
-                    if ("mouse.plotDist" %in% input$chooseIdenSearch)
+                    if ("mousePlotDist" %in% input$chooseIdenSearch)
                         searchInd <- .protPlotDist$mult
-                    if ("saved.searches" %in% input$chooseIdenSearch &&
+                    if ("savedSearches" %in% input$chooseIdenSearch &&
                         !is.null(input$tagSelectList) && 
                         exists("pRolocGUI_SearchResults", .GlobalEnv))
                         searchInd <- .whichNamesFOI()
@@ -231,11 +235,11 @@ pRolocVis <- function(object = NULL) {
                     searchInd <- NULL
                     if ("text" %in% input$chooseIdenSearch)
                         searchInd <- c(searchInd, .protText$mult)
-                    if ("mouse.PCA" %in% input$chooseIdenSearch)
+                    if ("mousePCA" %in% input$chooseIdenSearch)
                         searchInd <- c(searchInd, .protPCA$mult)
-                    if ("mouse.plotDist" %in% input$chooseIdenSearch)
+                    if ("mousePlotDist" %in% input$chooseIdenSearch)
                         searchInd <- c(searchInd, .protPlotDist$mult)
-                    if ("saved.searches" %in% input$chooseIdenSearch &&
+                    if ("savedSearches" %in% input$chooseIdenSearch &&
                         !is.null(input$tagSelectList) &&
                         exists("pRolocGUI_SearchResults", .GlobalEnv))
                         searchInd <- c(searchInd, .whichNamesFOI())
@@ -276,15 +280,15 @@ pRolocVis <- function(object = NULL) {
                 subset(
                     (
                         if(input$search != "protein")
-                        names(table(fData(.dI())[input$search]))
+                            names(table(fData(.dI())[input$search]))
                         else
-                        row.names(.dI())
+                            row.names(.dI())
                         ), 
                     grepl(input$level.search,
                           if(input$search != "protein")
-                          names(table(fData(.dI())[input$search]))
+                              names(table(fData(.dI())[input$search]))
                           else
-                          row.names(.dI())
+                              row.names(.dI())
                           )
                     )
             })
@@ -306,7 +310,9 @@ pRolocVis <- function(object = NULL) {
             ## observe indices and concatenate to protText$mult
             observe({
                 if (input$saveText > 0)
-                    isolate(.protText$mult <- c(.protText$mult, .protIndices()))
+                    isolate(
+                        .protText$mult <- c(.protText$mult, .protIndices())
+                    )
             })
             ## End of searching implementation ##  
             
@@ -336,7 +342,7 @@ pRolocVis <- function(object = NULL) {
                     fvarLabels(.dI())[colNum]
             })
             
-            ## values of PCA, dims is dependent on user input.
+            ## values of PCA, dims is dependent on user input,
             ## so is xlim and ylim
             .valuesPCA <- reactive({
                 plot2D(.dI(), fcol=NULL,
@@ -361,15 +367,17 @@ pRolocVis <- function(object = NULL) {
                     if (input$fcex %in% fvarLabels(.dI()))
                         fcex <- fData(.dI())[, input$fcex]
                     else
-                        fcex <- as.numeric(input$fcex) # i.e. 1
+                        fcex <- 1  ## as.numeric(input$fcex)
                 } 
                 else
                     fcex <- 1
                 
-                if (!is.null(input$xrange)) { ## outer if: to prevent error message
-                    if (is.null(input$fsymboltype) || input$fsymboltype == "none") 
-                        ## create plot2D and assign reactive variables to arguments,
-                        ## do not assign fpch (no symboltypes are plotted)
+                if (!is.null(input$xrange)) { 
+                    if (is.null(input$fsymboltype) || 
+                        input$fsymboltype == "none") 
+                        ## create plot2D and assign reactive variables to 
+                        ## arguments, do not assign fpch (no symboltypes 
+                        ## are plotted)
                         plot2D(.dI(), fcol = colour,
                                xlim = c(input$xrange[1], input$xrange[2]),
                                ylim = c(input$yrange[1], input$yrange[2]),
@@ -377,8 +385,8 @@ pRolocVis <- function(object = NULL) {
                                    as.numeric(input$PCAn2)),
                                cex = fcex)
                     else
-                        ## create plot2D and assign reactive variables to arguments
-                        ## take input$fsymboltype for symboltype
+                        ## create plot2D and assign reactive variables to 
+                        ## arguments take input$fsymboltype for symboltype
                         plot2D(.dI(),fcol = colour, fpch = input$fsymboltype,
                                xlim = c(input$xrange[1], input$xrange[2]),
                                ylim = c(input$yrange[1], input$yrange[2]),
@@ -387,10 +395,13 @@ pRolocVis <- function(object = NULL) {
                                cex = fcex)
                 }
                 
-                if(length(input$legendyes)) ## outer if: to prevent error messages
-                    if (input$fcolours %in% fvarLabels(.dI()) && input$legendyes)
-                        ## add a legend to the plot with reactive variable as arguments
-                        addLegend(.dI(), fcol = colour, where = input$legendpos,
+                if(length(input$legendyes)) 
+                    if (input$fcolours %in% fvarLabels(.dI()) && 
+                          input$legendyes)
+                        ## add a legend to the plot with reactive 
+                        ## variable as arguments
+                        addLegend(.dI(), fcol = colour, 
+                                  where = input$legendpos,
                                   bty = "n", cex = 1)
                 
                 if(length(.searchInd())) {
@@ -400,10 +411,12 @@ pRolocVis <- function(object = NULL) {
                                                      object=.dI())
                         highlightOnPlot(.dI(), foiPCA, 
                                         args = list(
-                                            xlim = c(input$xrange[1], input$xrange[2]),
-                                            ylim = c(input$yrange[1], input$yrange[2]),
+                                            xlim = c(input$xrange[1], 
+                                                     input$xrange[2]),
+                                            ylim = c(input$yrange[1], 
+                                                     input$yrange[2]),
                                             dims = c(as.numeric(input$PCAn1),
-                                                as.numeric(input$PCAn2))),
+                                                     as.numeric(input$PCAn2))),
                                         col="black", cex=1.5)
                     }
                 }
@@ -416,8 +429,10 @@ pRolocVis <- function(object = NULL) {
             })
             
             output$fsymboltypeOutput <- renderUI({ 
-                if (!is.null(input$fcolours) && input$fcolours %in% fvarLabels(.dI())) 
-                    selectInput("fsymboltype", "symbol type", c("none", .colours()),
+                if (!is.null(input$fcolours) && 
+                    input$fcolours %in% fvarLabels(.dI())) 
+                    selectInput("fsymboltype", "symbol type", 
+                                c("none", .colours()),
                                 selected="none")
             })
             
@@ -444,7 +459,9 @@ pRolocVis <- function(object = NULL) {
                     sliderInput("xrange", "zoom x-axis", 
                                 min = min(.valuesPCA()[,1])-1,
                                 max = max(.valuesPCA()[,1])+1,
-                                value = c(min(.valuesPCA()[,1]), max(.valuesPCA()[,1])))
+                                value = c(min(.valuesPCA()[,1]), 
+                                          max(.valuesPCA()[,1]))
+                    )
             })  
             
             output$yrangeUI <- renderUI({
@@ -456,7 +473,9 @@ pRolocVis <- function(object = NULL) {
                     sliderInput("yrange", "zoom y-axis",
                                 min = min(.valuesPCA()[,2])-1, 
                                 max = max(.valuesPCA()[,2])+1,
-                                value = c(min(.valuesPCA()[,2]), max(.valuesPCA()[,2])))
+                                value = c(min(.valuesPCA()[,2]), 
+                                          max(.valuesPCA()[,2]))
+                    )
             })
             
             ## compute number of principal components to look for 
@@ -474,13 +493,8 @@ pRolocVis <- function(object = NULL) {
                                 selected = 2,
                                 choices = c(1:ncol(exprs(.dI()))))
             })
-            
-            ## Print fData of the latest selected protein in input PCA  
-            ##output$info.prot.PCAUI <- renderTable({
-            ##   fData(.dI())[minDist2dProtPCA(),]
-            ##})
-            
-            output$PCA.legendUI <- renderUI({
+                  
+            output$PCALegendUI <- renderUI({
                 if (length(input$fcolours))
                     if (input$fcolours %in% fvarLabels(.dI()))
                         ## tick box: add legend
@@ -488,7 +502,7 @@ pRolocVis <- function(object = NULL) {
                                       value = FALSE)
             })
             
-            output$PCA.legendposUI <- renderUI({
+            output$PCALegendposUI <- renderUI({
                 if (length(input$fcolours))
                     if (input$fcolours %in% fvarLabels(.dI()))
                         ## drop down menu for position of legend
@@ -519,28 +533,31 @@ pRolocVis <- function(object = NULL) {
                 )
             
             ## reactive expressions for search based on cursor input for PCA
-            
             minDist2dProtPCA <- reactive({
                 ## will be empty initially
                 if (!is.null(input$PCAclick)) {
                     ## compute 2D distances from click input to each component 
                     ## of the PCA plot, input$PCAclick$x and input$PCAclick$y
                     ## is user input (index will be returned)
-                    .minDistPCA(inputx = input$PCAclick$x, inputy = input$PCAclick$y,
-                                valuesx = .valuesPCA()[,1], valuesy = .valuesPCA()[,2])
+                    .minDistPCA(inputx = input$PCAclick$x, 
+                                inputy = input$PCAclick$y,
+                                valuesx = .valuesPCA()[,1],
+                                valuesy = .valuesPCA()[,2])
                 }
             })
             
             minDist2dProtPCAHover <- reactive({
                 if (!is.null(input$PCAhover)) {
-                    .minDistPCA(inputx = input$PCAhover$x, inputy = input$PCAhover$y,
-                                valuesx = .valuesPCA()[,1], valuesy = .valuesPCA()[,2])
+                    .minDistPCA(inputx = input$PCAhover$x, 
+                                inputy = input$PCAhover$y,
+                                valuesx = .valuesPCA()[,1], 
+                                valuesy = .valuesPCA()[,2])
                 }
             })
             
             output$hoverProtPCA <- renderText(
                 featureNames(.dI())[minDist2dProtPCAHover()]
-                )
+            )
             
             ## Multiple points list
             ## Create a list-like object with reactive values
@@ -549,16 +566,16 @@ pRolocVis <- function(object = NULL) {
             observe({
                 ## will be empty initially
                 if(!is.null(input$PCAclick)){
-                    isolate({.protPCA$mult <- c(.protPCA$mult, minDist2dProtPCA())
-                             ## remove indices when indices are clicked another time
-                             if (length(which(as.vector(table(.protPCA$mult)) > 1))) 
-                                 
-                                 .protPCA$mult <- 
-                                     .protPCA$mult[
-                                                   -which(.protPCA$mult == names(which(table(.protPCA$mult) > 1)))
-                                                   ]
+                    isolate({
+                        .protPCA$mult <- c(.protPCA$mult, minDist2dProtPCA())
+                        ## remove indices when indices are clicked another time
+                        if (length(which(as.vector(table(.protPCA$mult)) > 1))) 
+                            .protPCA$mult <- 
+                                .protPCA$mult[
+                                    -which(.protPCA$mult == names(which(table(.protPCA$mult) > 1)))
+                                    ]
                              
-                         })   
+                    })   
                 }
             }) 
             ## END: PCA PLOT ##
@@ -596,7 +613,7 @@ pRolocVis <- function(object = NULL) {
                 levOrgMarkOrg = NULL, 
                 levSourMarkAll = NULL, 
                 levSourMarkAllOrg = NULL
-                )
+            )
             
             ## write paramters to list for plotDist at index of .nCol()
             observe({
@@ -622,8 +639,8 @@ pRolocVis <- function(object = NULL) {
                                  org = .listParams$levOrgMarkOrg[1],
                                  inputx = input$plotDistclick$x,
                                  inputy = input$plotDistclick$y
-                                 )
                 )
+            )
             
             .minDistProtPlotDistHover <- reactive(
                 if (!is.null(input$plotDisthover) && 
@@ -636,12 +653,12 @@ pRolocVis <- function(object = NULL) {
                                  org = .listParams$levOrgMarkOrg[1],
                                  inputx = input$plotDisthover$x,
                                  inputy = input$plotDisthover$y
-                                 )
                 )
+            )
             
             output$hoverProtPlotDist <- renderText(
                 featureNames(.dI())[.minDistProtPlotDistHover()]
-                )
+            )
             
             ## Multiple points list
             ## Create a list-like object with reactive values
@@ -658,7 +675,7 @@ pRolocVis <- function(object = NULL) {
                         if (length(which((as.vector(table(.protPlotDist$mult)) > 1))))
                             .protPlotDist$mult <- 
                                 .protPlotDist$mult[-which(.protPlotDist$mult
-                                                          == names(which(table(.protPlotDist$mult) > 1)))]
+                                     == names(which(table(.protPlotDist$mult) > 1)))]
                     })
                 }
             }) 
@@ -690,7 +707,8 @@ pRolocVis <- function(object = NULL) {
                             )
                         
                         iComp <-  featureNames(
-                            subset(.dI(), fData(.dI())[, .listParams$levSourMarkAll[i]] == 
+                            subset(.dI(), 
+                                   fData(.dI())[, .listParams$levSourMarkAll[i]] == 
                                    .listParams$levSourMarkAllOrg[i]))
                         
                         jComp <- subset(
@@ -699,8 +717,9 @@ pRolocVis <- function(object = NULL) {
                             .listParams$levOrgMarkOrg[i])  
                         
                         
-                        ## which of j are in .searchInd(), returns index in j, e.g.
-                        ## "10", i.e. the tenth element of j is also in .searchInd()
+                        ## which of j are in .searchInd(), returns index in j,
+                        ## e.g. "10", i.e. the tenth element of j is also in 
+                        ## .searchInd()
                         ind.col <- na.omit(match(.searchInd(), j))
                         
                         ## vector for colours
@@ -714,14 +733,16 @@ pRolocVis <- function(object = NULL) {
                         ## vector for lwd
                         if(length(ind.col) && length(input$chooseIdenSearch)) {
                             lwd.ind <- rep(1,length(j))
-                            lwd.ind[ind.col] <- 3}
+                            lwd.ind[ind.col] <- 3
+                        }
                         else
                             lwd.ind <- 1
                         
                         if (length(na.exclude(match(jComp, iComp))) == length(j)) {
                             
                             plotDist(
-                                subset(.dI(), fData(.dI())[, .listParams$levSourMarkAll[i]] == 
+                                subset(.dI(), 
+                                       fData(.dI())[, .listParams$levSourMarkAll[i]] == 
                                        .listParams$levSourMarkAllOrg[i]), 
                                 markers = subset(
                                     featureNames(.dI()), 
@@ -744,7 +765,7 @@ pRolocVis <- function(object = NULL) {
                 selectInput("sourceOrganelleMarkerPLDI",
                             "Source for organelle markers", 
                             choices = .colours())
-                )
+            )
             
             output$allOrganellesUI <- renderUI(
                 if (!is.null(input$sourceOrganelleMarkerPLDI))
@@ -752,7 +773,7 @@ pRolocVis <- function(object = NULL) {
                             "Source for all assigned proteins to the organelle",
                             choices = .colours(), 
                             selected = input$sourceOrganelleMarkerPLDI)
-                )
+            )
             
             output$organelleMarkerUI <- renderUI(
                 if(!is.null(.organelleMarkerName()))
@@ -761,7 +782,7 @@ pRolocVis <- function(object = NULL) {
                             choices = .organelleMarkerName())
                 else
                 return()
-                )
+            )
             
             output$organelleAllUI <- renderUI(
                 if(!is.null(input$organelleMarker))
@@ -769,12 +790,12 @@ pRolocVis <- function(object = NULL) {
                             "Organelle for all assigned proteins to the organelle",
                             choices = .organelleAllName(), 
                             selected = input$organelleMarker)
-                )
+            )
             
             output$numberPlotDistUI <- renderUI(
                 if (!as.numeric(input$quantityPlotDist) == 1) {
-                    ## reset all parameters to avoid conflicts when decreasing the 
-                    ## quantity of plots
+                    ## reset all parameters to avoid conflicts when 
+                    ## decreasing the quantity of plots
                     .listParams$levOrgMark <- NULL
                     .listParams$levOrgMarkOrg <- NULL
                     .listParams$levSourMarkAll <- NULL
@@ -782,28 +803,29 @@ pRolocVis <- function(object = NULL) {
                     
                     sliderInput("numberPlotDist",
                                 "Select number of plot to change",
-                                min = 1,max = as.numeric(input$quantityPlotDist), value = 1,
+                                min = 1,
+                                max = as.numeric(input$quantityPlotDist), 
+                                value = 1,
                                 step = 1)
                 }
-                )
+            )
             
             output$plotdist <- renderPlot(
                 if(!is.null(.plotPlotDist()))
                 .plotPlotDist()
-                )
+            )
             
             output$plotDistDownload <- downloadHandler(
                 filename = function() {
-                    paste(input$data, "-", "plotDist","-", Sys.Date(), '.png', sep='')
+                    paste(input$data, "-", "plotDist","-", 
+                          Sys.Date(), '.png', sep='')
                 },
                 content = function(file) {
                     png(file)
                     print(.plotDistReac())
                     dev.off()
                 }
-                )
-            
-            
+            )
             ## END: PLOTDIST ##
             
             
@@ -812,9 +834,11 @@ pRolocVis <- function(object = NULL) {
             ## Generate the quantitation data
             output$exprsRadioUI <- renderUI({
                 radioButtons("exprsRadio","Features",
-                             choices = list("all or"="all", "selected"="selected"),
-                             selected = ifelse(length(.searchInd()), "selected", "all")
-                             )
+                             choices = list("all or"="all", 
+                                            "selected"="selected"),
+                             selected = ifelse(length(.searchInd()), 
+                                               "selected", "all")
+                )
             })
             
             output$MSnExprs <- renderDataTable({
@@ -843,9 +867,11 @@ pRolocVis <- function(object = NULL) {
             ## Generate the feature meta-data
             output$fDataRadioUI <- renderUI({
                 radioButtons("fDataRadio","Features",
-                             choices=list("all or" = "all", "selected" = "selected"),
-                             selected = ifelse(length(.searchInd()), "selected", "all")
-                             )
+                             choices=list("all or" = "all", 
+                                          "selected" = "selected"),
+                             selected = ifelse(length(.searchInd()), 
+                                               "selected", "all")
+                )
             })
             
             output$MSnfData <- renderDataTable({
@@ -878,9 +904,9 @@ pRolocVis <- function(object = NULL) {
                     cbind(
                         " " = row.names(pData(.dI())),
                         pData(.dI())
-                        )
                     )
                 )
+            )
             ## END: SAMPLE META-DATA ##
             
             
@@ -893,7 +919,7 @@ pRolocVis <- function(object = NULL) {
                 session = NULL,
                 checkFunc = .digestFOI,
                 valueFunc = .readSR
-                )
+            )
             
             ## Get the tag names of the list with the saved search results 
             .tagsList <- reactivePoll(
@@ -901,11 +927,12 @@ pRolocVis <- function(object = NULL) {
                 session = NULL,
                 checkFunc = .digestFOI,
                 valueFunc = .descrFOI
-                )
+            )
 
             .whichN <- reactive({
                 which(
-                    input$tagSelectList == substring(.descriptionFOI(.pR_SR()), 1, 15)
+                    input$tagSelectList == 
+                      substring(.descriptionFOI(.pR_SR()), 1, 15)
                     )[1]
             })
             
@@ -923,8 +950,8 @@ pRolocVis <- function(object = NULL) {
                     which(
                         match(
                             rownames(.dI()), .fnamesFOI(.pR_SR())[[.whichN()]]
-                            )  != "NA"
-                        )
+                        )  != "NA"
+                    )
             })
             
             ## select Input for the tag names of the list
@@ -934,8 +961,8 @@ pRolocVis <- function(object = NULL) {
                 selectInput("tagSelectList",
                             "Select search result",
                             choices = .tagsList()
-                            )
                 )
+            )
             
             ## display information about selected FoI
             output$infoSavedSearch <- renderText({
@@ -955,16 +982,16 @@ pRolocVis <- function(object = NULL) {
                 textInput("savedSearchText", 
                           "Description", 
                           value="new search result") 
-                )
+            )
             
             ## action button to save new FoIs
-            output$save.lists2SRUI <- renderUI({
+            output$saveLists2SRUI <- renderUI({
                 if ((exists("pRolocGUI_SearchResults", .GlobalEnv) ||
                      !is.null(.pR_SR())) && !is.null(input$savedSearchText)) {
                     if(!(input$savedSearchText %in% .descriptionFOI(.pR_SR())))
-                        actionButton("save.lists2SR", 
+                        actionButton("saveLists2SR", 
                                      "Create new features of interest"
-                                     )
+                        )
                     else
                         return("name exists already, choose another name")
                 }
@@ -972,31 +999,32 @@ pRolocVis <- function(object = NULL) {
             
             ## Action Button when pRolocGUI_SearchResults does not exist 
             ## in .GlobalEnv --> initialize
-            output$init.saveUI <- renderUI({
+            output$initSaveUI <- renderUI({
                 if (!exists("pRolocGUI_SearchResults", .GlobalEnv) 
                     && is.null(.tagsList()))
-                    actionButton("init.savedsearch",
+                    actionButton("initSavedSearch",
                                  "Initialize saved searches"
-                                 )
+                    )
             })
             
             ## create new FoICollection to initialize saved searches and
             ## assign it to the name pRolocGUI_SearchResult in .GlobalEnv
             observe({
-                if (!is.null(input$init.savedsearch) && input$init.savedsearch > 0) {
+                if (!is.null(input$initSavedSearch) && input$initSavedSearch > 0) {
                     init.foi <- FeaturesOfInterest(
                         description = "empty",
                         fnames = featureNames(tan2009r1)[0]
-                        )
+                    )
                     init.coll <- FoICollection()
                     init.coll <- addFeaturesOfInterest(init.foi, init.coll)
-                    assign("pRolocGUI_SearchResults", init.coll, envir = .GlobalEnv)
+                    assign("pRolocGUI_SearchResults", 
+                           init.coll, envir = .GlobalEnv)
                 }
             })
             
             ## new features of Interest as a reactive expression
             .newfoi <- reactive({
-                input$save.lists2SR
+                input$saveLists2SR
                 isolate({
                     FeaturesOfInterest(
                         description = input$savedSearchText,
@@ -1010,7 +1038,7 @@ pRolocVis <- function(object = NULL) {
             ## accordingly if .pR_SR() is FeaturesOfInterest or 
             ## collection of Features Of Interest
             observe({
-                if (!is.null(input$save.lists2SR) && input$save.lists2SR > 0 
+                if (!is.null(input$saveLists2SR) && input$saveLists2SR > 0 
                     && !is.null(.searchInd()) && length(input$savedSearchText)) {
                     
                     if (.isFoICollection(.pR_SR()) &&
@@ -1026,14 +1054,14 @@ pRolocVis <- function(object = NULL) {
                         ## add old FoI to collection
                         newColl <- addFeaturesOfInterest(oldSR, newColl)
                         newColl <- isolate({
-                            input$save.lists2SR
+                            input$saveLists2SR
                             addFeaturesOfInterest(newFOI, newColl)
                         })
                         assign("pRolocGUI_SearchResults", newColl, envir = .GlobalEnv)
                     }
                     else {
                         newColl <- isolate({
-                            input$save.lists2SR
+                            input$saveLists2SR
                             addFeaturesOfInterest(newFOI, oldSR)
                         })
                         assign("pRolocGUI_SearchResults", newColl, envir = .GlobalEnv)
