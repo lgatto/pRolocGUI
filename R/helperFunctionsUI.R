@@ -54,8 +54,8 @@
                 hr(),
                 actionButton("resetMult", "Clear features"),
                 a(href="/doc/pRolocVis.html#display", 
-                  "Help", 
-                  target="_blank")
+                  "?", target="_blank",
+                  class = c("btn", "action-button"))
                 )
             ),
         conditionalPanel(
@@ -72,8 +72,8 @@
             ##    by using the 'Browse...' button."),
             ##br(),
             a(href="/doc/pRolocVis.html#tabspRolocVisData", 
-              "Help", 
-              target="_blank")
+              "?", target="_blank",
+              class = c("btn", "action-button"))
             ),
         ## Panel showing up when tab PCA is selected
         conditionalPanel(
@@ -98,8 +98,8 @@
                 ## zoom slider for y axis
                 htmlOutput("yrangeUI"),
                 a(href="/doc/pRolocVis.html#tabspRolocVisPCA", 
-                  "Help", 
-                  target="_blank")
+                  "?", target="_blank",
+                  class = c("btn", "action-button"))
                 )
             ),
         ## Panel showing up when tab 'protein profiles' 
@@ -126,8 +126,8 @@
                 htmlOutput("organelleAllUI"),
                 htmlOutput("numberPlotDistUI"),
                 a(href="/doc/pRolocVis.html#tabspRolocVisPP", 
-                  "Help", 
-                  target="_blank")
+                  "?", target="_blank",
+                  class = c("btn", "action-button"))
                 )
             ),
         ## Panel showing up when tab 'quantitation' is selected
@@ -135,23 +135,24 @@
             condition = "input.tab1 == 'quantitation'",
             htmlOutput("exprsRadioUI"),
             a(href="/doc/pRolocVis.html#tabspRolocVisExprs", 
-              "Help", 
-              target="_blank")
+              "?", target="_blank",
+              class = c("btn", "action-button"))
             ),
         ## Panel showing up when tab 'feature meta-data' is selected
         conditionalPanel(
             condition = "input.tab1 == 'feature meta-data'",
             htmlOutput("fDataRadioUI"),
             a(href="/doc/pRolocVis.html#tabspRolocVisfData", 
-              "Help", 
-              target="_blank")
+              "?", target="_blank",
+              class = c("btn", "action-button"))
             ),
         ## Panel showing up when tab 'sample meta-data' is selected
         conditionalPanel(
             condition = "input.tab1 == 'sample meta-data'",
             a(href="/doc/pRolocVis.html#tabspRolocVispData",
-              "Help",
-              target="_blank")),  
+              "?", target="_blank",
+              class = c("btn", "action-button"))
+            ),  
         conditionalPanel(
             condition="input.tab1 == 'search'",
             h4("Searches"),
@@ -164,8 +165,8 @@
             ## action Button
             htmlOutput("save.lists2SRUI"),
             a(href="/doc/pRolocVis.html#tabspRolocVisSearch", 
-              "Help", 
-              target="_blank")
+              "?", target="_blank",
+              class = c("btn", "action-button"))
             ),                     
         width = 3
         )    
