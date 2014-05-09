@@ -763,14 +763,14 @@ pRolocVis <- function(object = NULL) {
             output$levelsOrganellesUI <- renderUI(
                 if (!is.null(.colours()))
                 selectInput("sourceOrganelleMarkerPLDI",
-                            "Source for organelle markers", 
+                            "feature(s) in", 
                             choices = .colours())
             )
             
             output$allOrganellesUI <- renderUI(
                 if (!is.null(input$sourceOrganelleMarkerPLDI))
                 selectInput("allOrganellePLDI",
-                            "Source for all assigned proteins to the organelle",
+                            "feature(s) in",
                             choices = .colours(), 
                             selected = input$sourceOrganelleMarkerPLDI)
             )
@@ -778,7 +778,7 @@ pRolocVis <- function(object = NULL) {
             output$organelleMarkerUI <- renderUI(
                 if(!is.null(.organelleMarkerName()))
                 selectInput("organelleMarker", 
-                            "Organelle for organelle markers",
+                            "assigned to",
                             choices = .organelleMarkerName())
                 else
                 return()
@@ -787,7 +787,7 @@ pRolocVis <- function(object = NULL) {
             output$organelleAllUI <- renderUI(
                 if(!is.null(input$organelleMarker))
                 selectInput("organelleAll",
-                            "Organelle for all assigned proteins to the organelle",
+                            "assigned to (transparent)",
                             choices = .organelleAllName(), 
                             selected = input$organelleMarker)
             )
@@ -802,7 +802,7 @@ pRolocVis <- function(object = NULL) {
                     .listParams$levSourMarkAllOrg <- NULL
                     
                     sliderInput("numberPlotDist",
-                                "Select number of plot to change",
+                                "Selected plot",
                                 min = 1,
                                 max = as.numeric(input$quantityPlotDist), 
                                 value = 1,

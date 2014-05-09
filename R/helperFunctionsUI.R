@@ -64,7 +64,7 @@
         ## Panel showing up when tab 'Data' is selected
         conditionalPanel(
             condition = "input.tab1 == 'Data'",
-            strong("Welcome to", span("pRolocGUI", style = "color:gray"), 
+            strong("Welcome to", span("pRolocVis", style = "color:gray"), 
                    ", the interactive visualisation tool 
                   for organelle proteomics data."),
             br(),
@@ -116,6 +116,7 @@
                 ## drop down menu for 'select organelle 
                 ## in orgarnelle markers'
                 htmlOutput("organelleMarkerUI"),
+                br(),
                 ## drop down menu for 'select source for 
                 ## all assigned proteins to the organelle'
                 htmlOutput("allOrganellesUI"),
