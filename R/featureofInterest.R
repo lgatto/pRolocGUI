@@ -6,7 +6,7 @@
 #'\code{"FeaturesOfInterest"}, \code{.isFoIColection} if object is of class 
 #'\code{"FoICollection"}, respectively. Returning \code{TRUE} or \code{FALSE}.
 #'@return \code{TRUE} or \code{FALSE}.
-#'@author Thomas Naake <thomasnaake@@gmx.de>
+#'@author Thomas Naake <tn299@@cam.ac.uk>
 #'@usage .areFeaturesOfInterest(x) 
 #'.isFoICollection(xx)
 #'@param x An object tested of being of class \code{FeaturesOfInterest}
@@ -94,7 +94,7 @@
 #' \code{\link{"MSnSet"}}. It is a helper function used in pRolocGUI 
 #' to display saved search results. 
 #'@usage .show.FOI(x, tan2009r1)
-#'@author Thomas Naake <thomasnaake@@gmx.de>
+#'@author Thomas Naake <tn299@@cam.ac.uk>
 #'@param x An object of class \code{FeaturesOfInterest} or \code{FoICollection}
 #'@param fMSnSet An object of class MSnSet
 #'@param index An integer n referring to the n-th \code{FeaturesOfInterest} 
