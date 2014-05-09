@@ -51,20 +51,20 @@ pRolocVis <- function(object = NULL) {
                         helpText("committed object okay")
                     else 
                         helpText("committed object corrupt, 
-                     MSnSet Christoforou 2011 will be used")
+                     MSnSet Breckels et al. 2013 will be used")
                 }
                 else
                     ## choose Data source, 
-                    ## a drop down list of A. Christoforou 2011, 
+                    ## a drop down list of Breckels et al. 2013, 
                     ## Dunkley 2006, Tan et al. 2009 (all example data)
                     ## or use your own data by selecting load data
                     selectInput("data",
                                 "Choose MSnSet data source:",
-                                choices = c("Christoforou 2011", 
+                                choices = c("Breckels et al. 2013", 
                                     "Dunkley et al. 2006",
                                     "Tan et al. 2009", 
                                     "own data"),
-                                selected="Christoforou 2011")                
+                                selected="Breckels et al. 2013")                
                 
             })
             
@@ -105,7 +105,7 @@ pRolocVis <- function(object = NULL) {
                 .dI <- reactive({
                     if (!is.null(input$data))
                         switch(input$data,
-                               "Christoforou 2011" = andy2011,
+                               "Breckels et al. 2013" = andy2011,
                                "Dunkley et al. 2006" = dunkley2006,
                                "Tan et al. 2009" = tan2009r1,
                                "own data" = .dIownData()
@@ -124,7 +124,7 @@ pRolocVis <- function(object = NULL) {
                 if(input$data == "own data"){
                     if (identical(.dI(), andy2011))
                         return("noMSnSet selected, 
-                   MSnSet Christoforou 2011 will be used")
+                   MSnSet Breckels et al. 2013 will be used")
                     else
                         return()
                 }
