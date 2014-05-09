@@ -21,6 +21,6 @@ search results.
 \dontrun{pRolocVis(object = NULL)}
 }
 \author{
-Thomas Naake <thomasnaake@gmx.de>
+Thomas Naake <tn299@cam.ac.uk>
 }
 
