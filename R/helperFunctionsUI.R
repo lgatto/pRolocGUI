@@ -49,33 +49,31 @@
                 textInput("level.search", "Search for"),
                 ## has to be selected here
                 htmlOutput("searchResultsUI"),
-                textOutput("search.indUI"),
+                ## action Button to add selected levels 
+                ## to internal assignment concerning query search
                 actionButton("saveText", "Submit selection"),
                 hr(),
+                ## action Button to delete internal assignments
                 actionButton("resetMult", "Clear features"),
+                ## link to help page
                 a(href="/doc/pRolocVis.html#display", 
                   "?", target="_blank",
                   class = c("btn", "action-button"))
                 )
             ),
+        ## Panel showing up when tab 'Data' is selected
         conditionalPanel(
             condition = "input.tab1 == 'Data'",
             strong("Welcome to", span("pRolocGUI", style = "color:gray"), 
                    ", the interactive visualisation tool 
-          for organelle proteomics data."),
-            ##a(href="https://www.rstudio.com", "rstudio", target="_blank"),
+                  for organelle proteomics data."),
             br(),
-            br(),
-            ##p("Please select in the drop down menu
-            ##    on the right an example MSnSet or 'own data' 
-            ##    and upload your own MSnSet data afterwards 
-            ##    by using the 'Browse...' button."),
-            ##br(),
+            ## link to help page
             a(href="/doc/pRolocVis.html#tabspRolocVisData", 
               "?", target="_blank",
               class = c("btn", "action-button"))
             ),
-        ## Panel showing up when tab PCA is selected
+        ## Panel showing up when tab 'PCA' is selected
         conditionalPanel(
             condition = "input.tab1 == 'PCA'",
             wellPanel(
@@ -91,12 +89,12 @@
                 ## numeric Input for PCAn (second component)
                 htmlOutput("PCAn2UI"),
                 ## legend, will be added when colours != "none"
-                htmlOutput("PCA.legendUI"),
-                htmlOutput("PCA.legendposUI"),
-                ## zoom slider for x axis
+                htmlOutput("PCALegendUI"),
+                htmlOutput("PCALegendposUI"),
+                ## zoom slider for x and y axis
                 htmlOutput("xrangeUI"),
-                ## zoom slider for y axis
                 htmlOutput("yrangeUI"),
+                ## link to help page
                 a(href="/doc/pRolocVis.html#tabspRolocVisPCA", 
                   "?", target="_blank",
                   class = c("btn", "action-button"))
@@ -111,7 +109,7 @@
                 ## drop down menu for quantity of plots
                 selectInput("quantityPlotDist",
                             "number of plots to display",
-                            choices=c(1:8),selected=4),
+                            choices=c(1:8), selected=4),
                 ## drop down menu for 'Select source for 
                 ## organelle markers':
                 htmlOutput("levelsOrganellesUI"),
@@ -153,6 +151,7 @@
               "?", target="_blank",
               class = c("btn", "action-button"))
             ),  
+        ## Panel showing up when tab 'search' is selected
         conditionalPanel(
             condition="input.tab1 == 'search'",
             h4("Searches"),
@@ -161,9 +160,9 @@
             ## search Results
             htmlOutput("tagsListSearchResultUI"),
             ## initilialize search
-            htmlOutput("init.saveUI"),
+            htmlOutput("initSaveUI"),
             ## action Button
-            htmlOutput("save.lists2SRUI"),
+            htmlOutput("saveLists2SRUI"),
             a(href="/doc/pRolocVis.html#tabspRolocVisSearch", 
               "?", target="_blank",
               class = c("btn", "action-button"))
