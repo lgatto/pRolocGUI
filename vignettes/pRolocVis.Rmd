@@ -171,7 +171,7 @@ plot will open a dialog window with an interface on showing or saving
 the PCA plot as it is displayed in the main panel.
 
 <a id="tabspRolocVisPP"></a>
-#### 2.3. protein profiles (has to be revised)
+#### 2.3. protein profiles
 
 The tab **_protein profiles_** shows the protein profiles in the main
 panel (with an option of exporting the plot as it is shown in the main
@@ -408,16 +408,16 @@ selected feature(s).
 [1] Laurent Gatto and Kathryn S. Lilley. MSnbase - an R/Bioconductor
 package for isobaric tagged mass spectrometry data visualization,
 processing and quantitation. Bioinformatics 28 (2): 288-289. 2011.
-doi: 10.1093/bioinformatics/btr645.
-http://www.ncbi.nlm.nih.gov/pubmed/22113085
+doi: 10.1093/bioinformatics/btr645. ,
+URL: http://www.ncbi.nlm.nih.gov/pubmed/22113085
 
 <a id="id2"></a>
 [2] Laurent Gatto, Lisa M. Breckels, Samuel Wieczorek, Thomas Burger, 
 Kathryn S. Lilley. Mass-spectrometry- based spatial proteomics data 
 analysis using pRoloc and pRolocdata. Bioinformatics, 30 (9): 1322-1324.
 2014.
-doi: 10.1093/bioinformatics/btu013 
-URL http://bioinformatics.oxfordjournals.org/content/30/9/1322
+doi: 10.1093/bioinformatics/btu013 ,
+URL: http://bioinformatics.oxfordjournals.org/content/30/9/1322
 
 <a id="id3"></a> 
 [3] Tom P. J. Dunkley, Svenja Hester, Ian P. Shadforth, John Runions,
@@ -425,26 +425,26 @@ Thilo Weimar, Sally L. Hanton, Julian L. Griffin, Conrad Bessant, Federica
 Brandizzi, Chris Hawes, Rod B. Watson, Paul Dupree, and Kathryn S. Lilley.
 Mapping the arabidopsis organelle proteome. Proc Natl Acad Sci USA, 
 103 (17): 6518-6523. 2006. 
-doi: 10.1073/pnas.0506958103. 
-URL http://dx.doi.org/10.1073/pnas.0506958103.
+doi: 10.1073/pnas.0506958103. ,
+URL: http://dx.doi.org/10.1073/pnas.0506958103.
 
 <a id="id4"></a> 
 [4] Leonard J. Foster, Carmen L. de Hoog, Yanling Zhang, Yong Zhang,
 Xiaohui Xie, Vamsi K. Mootha, and Matthias Mann. A mammalian organelle
 map by protein correlation profiling. Cell, 125 (1): 187-199. 2006.
-doi: 10.1016/j.cell.2006.03.022.
-URL http://dx.doi.org/10.1016/j.cell.2006.03.022.
+doi: 10.1016/j.cell.2006.03.022. ,
+URL: http://dx.doi.org/10.1016/j.cell.2006.03.022.
 
 <a id="id5"></a>
 [5] Breckels L.M., Gatto L., Christoforou A., Groen A.J., 
 Lilley K.S. and Trotter M.W.B. The Effect of Organelle Discovery upon Sub-Cellular Protein Localisation. Journal of Proteomics, 88: 129-140. 2013. 
-doi: 10.1016/j.jprot.2013.02.019.
-URL http://www.ncbi.nlm.nih.gov/pubmed/23523639
+doi: 10.1016/j.jprot.2013.02.019. ,
+URL: http://www.ncbi.nlm.nih.gov/pubmed/23523639
 
 <a id="id6"></a>
 [6] Denise J. L. Tan, Heidi Dvinge, Andrew Christoforou, Paul Bertone, 
 Alfonso Martinez Arias and Kathryn S. Lilley. Mapping organelle proteins 
 and protein complexes in Drosophila melanogaster. J. Proteome Res., 
 8 (6): 2667-2678. 2009.
-doi: 10.1021/pr800866n
-URL http://pubs.acs.org/doi/abs/10.1021/pr800866n
+doi: 10.1021/pr800866n ,
+URL: http://pubs.acs.org/doi/abs/10.1021/pr800866n
