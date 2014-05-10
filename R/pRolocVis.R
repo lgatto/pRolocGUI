@@ -15,6 +15,8 @@
 #'
 #'@export
 pRolocVis <- function(object = NULL) {
+    ## removing 'no visible binding for global variable' NOTE
+    andy2011 <- tan2009r1 <- dunkley2006 <- NULL
     
     ## on.exit(return(1))
     ## global
