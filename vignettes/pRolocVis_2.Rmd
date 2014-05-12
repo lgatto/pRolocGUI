@@ -25,7 +25,7 @@ achieve reactivity and interactivity, `pRolocGUI` relies on the
 application facilitates a higher degree of interactivity with the
 underlying spatial proteomics data.
 
-We recomment some familiarity with the `MSnSet` class (see `?MSnSet`
+We recommend some familiarity with the `MSnSet` class (see `?MSnSet`
 for details) and the `pRoloc` vignette (available with
 `vignette("pRoloc-tutorial")`).
 
@@ -135,7 +135,7 @@ The *Display selection* widget is described [below](#display).  In the
 in the main panel. We are able to colour features (proteins) in
 matters of common properties by changing the drop-down list
 **_colour_**. These properties are the `MSnSet`'s feature
-variables. For example if we select the `Christoforou 2011`, the
+variables. For example if we select the `andy2011`, the
 colour `markers`, the features in the PCA plot will be coloured
 according to their organelle affiliation. As soon as we select another
 colour than `none`, two (or three) new items will be added to the
