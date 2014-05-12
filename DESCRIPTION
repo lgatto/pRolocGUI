@@ -16,7 +16,8 @@ Depends:
     digest (>= 0.6.4)
 Suggests:
     knitr,
-    knitrBootstrap
+    knitrBootstrap,
+    knitcitations
 License: GPL-2
 VignetteBuilder: knitr
 biovViews: Proteomics, Visualisation, Vizualization, GUI
