@@ -50,26 +50,26 @@ pRolocVis <- function(object = NULL) {
                         helpText("committed object okay")
                     else 
                         helpText("committed object corrupt, 
-                     MSnSet Breckels et al. 2013 will be used")
+                     MSnSet 'andy2011' will be used")
                 }
                 else
-                    ## choose Data source, 
-                    ## a drop down list of Breckels et al. 2013, 
-                    ## Dunkley 2006, Tan et al. 2009 (all example data)
-                    ## or use your own data by selecting load data
+                    ## choose Data source, a drop down list of
+                    ## andy2011, dunkley2006, tan2009r1 (all example
+                    ## data) or use your own data by selecting load
+                    ## data
                     selectInput("data",
                                 "Choose MSnSet data source:",
-                                choices = c("Breckels et al. 2013", 
-                                    "Dunkley et al. 2006",
-                                    "Tan et al. 2009", 
+                                choices = c("andy2011", 
+                                    "dunkley2006",
+                                    "tan2009r1", 
                                     "own data"),
-                                selected="Breckels et al. 2013")                
+                                selected="andy2011")                
                 
             })
             
             output$Data2 <- renderUI({
                 if (is.null(object))
-                    fileInput("owndata", 
+                     fileInput("owndata", 
                               "Select your own MSnSet file",
                               ## accept=c('.rda', 'data/rda', 
                               ## '.RData', 'data/RData'),
@@ -105,9 +105,9 @@ pRolocVis <- function(object = NULL) {
                 .dI <- reactive({
                     if (!is.null(input$data))
                         switch(input$data,
-                               "Breckels et al. 2013" = andy2011,
-                               "Dunkley et al. 2006" = dunkley2006,
-                               "Tan et al. 2009" = tan2009r1,
+                               "andy2011" = andy2011,
+                               "dunkley2006" = dunkley2006,
+                               "tan2009r1" = tan2009r1,
                                "own data" = .dIownData()
                                )
                 })
@@ -124,7 +124,7 @@ pRolocVis <- function(object = NULL) {
                 if(input$data == "own data"){
                     if (identical(.dI(), andy2011))
                         return("noMSnSet selected, 
-                   MSnSet Breckels et al. 2013 will be used")
+                   MSnSet 'andy2011' will be used")
                     else
                         return()
                 }
