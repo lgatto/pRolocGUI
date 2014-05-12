@@ -521,11 +521,11 @@ pRolocVis <- function(object = NULL) {
             ## Download Handler for PCA plot
             output$plotPCADownload <- downloadHandler(
                 filename = function() {
-                    paste(input$data, "-" , Sys.Date(), '.png', sep='')
+                    paste(input$data, "-" , Sys.Date(), '.jpg', sep='')
                 },
                 content = function(file) {
-                    png(file)
-                    print(.PCAPlotReac())
+                    jpeg(file, quality = 100, width = 800, height = 800)
+                    PCAlotReac()
                     dev.off()
                 }
                 )
@@ -816,10 +816,10 @@ pRolocVis <- function(object = NULL) {
             output$plotDistDownload <- downloadHandler(
                 filename = function() {
                     paste(input$data, "-", "plotDist","-", 
-                          Sys.Date(), '.png', sep='')
+                          Sys.Date(), '.jpg', sep='')
                 },
                 content = function(file) {
-                    png(file)
+                    jpeg(file, quality = 100, width = 800, height = 800)
                     print(.plotDistReac())
                     dev.off()
                 }
