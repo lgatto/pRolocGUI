@@ -187,15 +187,16 @@ pRolocVis <- function(object = NULL) {
                     select$text <- NULL
                 else  {
                     isolate({
-                        digest(input$saveText)
-                        if (input$saveText > 0 && length(.protText$mult) < 1) 
+                        if (input$saveText > 0) 
                             select$text <- "text"
                     })
                     
                     isolate({
-                        digest(input$resetMult)
-                        input$chooseIdenSearch
+                        input$resetMult
+                        ##input$chooseIdenSearch
+                        
                         if (input$resetMult > 0 && 
+                            length(.protText$mult) < 1 &&
                             "text" %in% input$chooseIdenSearch)
                             select$text <- NULL
                     })      
