@@ -108,9 +108,9 @@ If you decide to start `pRolocVis` without assigning a `MSnSet` as
 argument, the tab **_Data_** offers possibilities to switch to an
 other `MSnSet`. 
 Currently you may choose between three example `MSnSets` (derived from
-experiments `andy2011` from `r citep(extbib["Breckels2013"])`, 
+experiments `andy2011` from `r citet(extbib["Breckels2013"])`, 
 `dunkley2006` from `r citet(extbib["Dunkley2006"])`, 
-and `tan2009r1`, the first replicate from `r citep(extbib["Tan2009"])`, 
+and `tan2009r1`, the first replicate from `r citet(extbib["Tan2009"])`, 
 all provided by the package 
 `pRolocdata` `r citep(extbib["GattoPRolocdata"])` or
 to use an `MSnSet` of your choice (own data).  Clicking on
