@@ -14,10 +14,7 @@
 #'@examples \dontrun{pRolocVis(object = NULL)}
 #'
 #'@export
-pRolocVis <- function(object = NULL) {
-    ## removing 'no visible binding for global variable' NOTE
-    andy2011 <- tan2009r1 <- dunkley2006 <- NULL
-    
+pRolocVis <- function(object = NULL) {    
     ## on.exit(return(1))
     ## global
     ## load MSnSets
@@ -484,14 +481,14 @@ pRolocVis <- function(object = NULL) {
             ## and change UI accordingly
             output$PCAn1UI <- renderUI({
                 if (!is.null(.dI()))
-                    selectInput("PCAn1", "number of 1st principal component",
+                    selectInput("PCAn1", "PC along x axis",
                                 selected = 1,
                                 choices = c(1:ncol(exprs(.dI()))))
             })
             
             output$PCAn2UI <- renderUI({
                 if (!is.null(.dI()))
-                    selectInput("PCAn2", "number of 2nd principal component",
+                    selectInput("PCAn2", "PC along y axis",
                                 selected = 2,
                                 choices = c(1:ncol(exprs(.dI()))))
             })
