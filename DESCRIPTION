@@ -17,6 +17,7 @@ Depends:
 Suggests:
     knitr,
     knitrBootstrap,
+    bibtex,
     knitcitations
 License: GPL-2
 VignetteBuilder: knitr
