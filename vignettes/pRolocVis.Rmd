@@ -8,7 +8,7 @@
 
 ```{r, eval=TRUE, echo=FALSE, warning=FALSE, message=FALSE}
 library(knitcitations)
-cite_options(tooltip = TRUE)
+cite_options(linked = FALSE)
 extbib <- read.bib("Vignette_citations.bib")
 
 ```
@@ -25,14 +25,14 @@ pRolocGUI: An interactive tool for visualisation of organelle proteomics data
 
 This vignette describes the implemented functionality in the
 `pRolocGUI` package. The package is based on the `MSnSet` class
-defininitions of 
-`MSnbase` `r citep(extbib["GattoLilley2012"])`
-and on the functions defined in the package 
-`pRoloc` 
-`r citep(list(extbib["Breckels2013"], extbib["Gatto2014"]))`. 
+defininitions of `MSnbase` 
+[`r citep(extbib["GattoLilley2012"])`](#references)
+and on the functions defined in the package `pRoloc` 
+[`r citep(list(extbib["Breckels2013"], extbib["Gatto2014"]))`](#references). 
 It is especially meant for the analyses of
-LOPIT `r citep(extbib["Dunkley2006"])`
-or PCP `r citep(extbib["Foster2006"])` experiments.  To achieve reactivity
+LOPIT [`r citep(extbib["Dunkley2006"])`](#references)
+or PCP [`r citep(extbib["Foster2006"])`](#references) experiments.  
+To achieve reactivity
 and interactivity, `pRolocGUI` relies on the
 [`shiny`](http://www.rstudio.com/shiny/) framework.  The implemented
 application facilitates a higher degree of interactivity with the
@@ -67,7 +67,7 @@ pRolocVis()
 
 This will open a new tab in your (default) Internet browser. You can
 also pass directly an `MSnSet` (e.g. `dunkley2006` available from the
-`pRolocdata` experiment package) to `pRolocVis` by entering
+`pRolocdata` [`r citep(extbib["GattoPRolocdata"])`](#references) experiment package) to `pRolocVis` by entering
 
 ```{r, eval = FALSE}
 pRolocVis(object = dunkley2006)
@@ -110,11 +110,12 @@ If you decide to start `pRolocVis` without assigning a `MSnSet` as
 argument, the tab **_Data_** offers possibilities to switch to an
 other `MSnSet`. 
 Currently you may choose between three example `MSnSets` (derived from
-experiments `andy2011` from `r citet(extbib["Breckels2013"])`, 
-`dunkley2006` from `r citet(extbib["Dunkley2006"])`, 
-and `tan2009r1`, the first replicate from `r citet(extbib["Tan2009"])`, 
+experiments `andy2011` from [`r citet(extbib["Breckels2013"])`](#references), 
+`dunkley2006` from [`r citet(extbib["Dunkley2006"])`](#references), 
+and `tan2009r1`, the first replicate 
+from [`r citet(extbib["Tan2009"])`](#references), 
 all provided by the package 
-`pRolocdata` `r citep(extbib["GattoPRolocdata"])` or
+[`pRolocdata` `r citep(extbib["GattoPRolocdata"])`](#references) or
 to use an `MSnSet` of your choice (own data).  Clicking on
 **_Browse..._** will open a dialog window with which you can select a
 file containing a saved `MSnSet` and load it to `pRolovVis`.
@@ -422,6 +423,6 @@ save internally the selected feature(s).
 ```{r, results="asis", message=FALSE, echo=FALSE}
 bibliography(style = "markdown", sort = FALSE, 
   ordering = c("authors", "year", "title", "journal", "volume", "number",
-  "pages", "doi", "url"))
+  "pages", "doi", "url"), bulleted = T)
 
 ```
