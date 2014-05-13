@@ -102,6 +102,9 @@
     return(NULL)
 }
 
+## @title get name of object parsed to pRolocVis
+##nameObj <- function(obj)
+##  MSnbase:::getVariableName(match.call(), "obj")
 
 
 

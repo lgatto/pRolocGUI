@@ -45,14 +45,6 @@ pRolocVis <- function(object = NULL) {
             ## by index "datapath", 
             ## see ?shiny::fileInput for further details
             output$Data1 <- renderUI({
-                if (!is.null(object)){
-                    if (inherits(.dI(), "MSnSet"))
-                        helpText("committed object okay")
-                    else 
-                        helpText("committed object corrupt, 
-                     MSnSet 'andy2011' will be used")
-                }
-                else
                     ## choose Data source, a drop down list of
                     ## andy2011, dunkley2006, tan2009r1 (all example
                     ## data) or use your own data by selecting load
@@ -63,17 +55,27 @@ pRolocVis <- function(object = NULL) {
                                     "dunkley2006",
                                     "tan2009r1", 
                                     "own data"),
-                                selected="andy2011")                
+                                selected=ifelse(is.null(object), 
+                                                "andy2011", 
+                                                "own data"))                
                 
             })
             
             output$Data2 <- renderUI({
                 if (is.null(object))
-                     fileInput("owndata", 
-                              "Select your own MSnSet file",
-                              ## accept=c('.rda', 'data/rda', 
-                              ## '.RData', 'data/RData'),
-                              multiple = FALSE)
+                  fileInput("owndata", 
+                            "Select your own MSnSet file",
+                            ## accept=c('.rda', 'data/rda', 
+                            ## '.RData', 'data/RData'),
+                            multiple = FALSE)
+                else{
+                  if (inherits(object, "MSnSet"))
+                    helpText("object is an MSnSet")
+                  else 
+                    helpText("object corrupt, 
+                          MSnSet 'andy2011' will be used")
+               }
+                  
             })
             
             output$Data3 <- renderUI({
