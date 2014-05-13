@@ -58,52 +58,42 @@ list.
 
 
 Currently, `pRolocGUI` distributes the `pRolocVis` application. Launch
-it by loading the `pRolocGUI` package and running `pRolocVis()` function:
+it by loading the `pRolocGUI` package and running `pRolocVis()` function:  
 
-```{r, eval = FALSE}
+```{r, eval=FALSE}
 library("pRolocGUI")
 pRolocVis()
 ```
 
-This will open a new tab in your (default) Internet browser. You can
+This will open a new tab in your default Internet browser. You can
 also pass directly an `MSnSet` (e.g. `dunkley2006` available from the
 `pRolocdata` [`r citep(extbib["GattoPRolocdata"])`](#references) experiment
-package) to `pRolocVis` by entering
+package) to `pRolocVis` by entering  
 
-```{r, eval = FALSE}
+```{r, eval=FALSE}
 pRolocVis(object = dunkley2006)
 ```
 
-To stop the application from running press [Esc] or `Ctrl-C` in the
+To stop the application from running press Esc or `Ctrl-C` in the
 console (or use the "STOP" button when using RStudio) and close the
-browser tab, where `pRolocVis` is running.     
+browser tab, where `pRolocVis` is running.
 
 -------------------
 <a id="tabspRolocVis"></a> 
 
 <h2>2. Tabs of <code>pRolocVis</code></h2>
 
-
-
 To optimize ease of use the interface of `pRolocVis` is subdivided in 
 seven tabs:  
 
 * Data,  
-
 * PCA,    
-
 * protein profiles,  
-
 * quantitation,  
-
 * feature meta-data,  
-
 * sample meta-data and  
+* search.  
 
-* search.    
-
-  
-  
 You browse through the tabs by simply clicking on them. Each tab
 selected will have a different kind of appearance while some (PCA,
 protein profiles, quantitation and feature meta-data) share a common
@@ -115,9 +105,11 @@ issue (e.g. regarding PCA tab or on how to use the *Display selection* widget)
 click on `?` which will open the vignette in a new browser tab in the
 corresponding section.  
 
+
+<hr>
 <div align="center">
 <img src="figures/Screenshot_Help1.png" width="100%" alt="" />
-<p>"Fig. 1: Vignette of pRolocVis"</p>
+<p> Fig. 1: Vignette of pRolocVis </p>
 </div> 
 
 <a id="tabspRolocVisData"></a>
@@ -549,6 +541,6 @@ narrows the features in the drop-down list accordingly (andy2011) </p>
 ```{r, results="asis", message=FALSE, echo=FALSE}
 bibliography(style = "markdown", sort = FALSE, 
   ordering = c("authors", "year", "title", "journal", "volume", "number",
-  "pages", "doi", "url"), bulleted = T)
+  "pages", "doi", "url"))
 
 ```
