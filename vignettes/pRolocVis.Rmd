@@ -60,21 +60,18 @@ list.
 Currently, `pRolocGUI` distributes the `pRolocVis` application. Launch
 it by loading the `pRolocGUI` package and running `pRolocVis()` function:  
 
-```{r, eval=FALSE}
-library("pRolocGUI")
-pRolocVis()
-```
+`library(pRolocGUI)`
+`pRolocVis()`
 
 This will open a new tab in your default Internet browser. You can
 also pass directly an `MSnSet` (e.g. `dunkley2006` available from the
-`pRolocdata` [`r citep(extbib["GattoPRolocdata"])`](#references) experiment
+`pRolocdata` 
+[`r citep(extbib["GattoPRolocdata"])`](#references) experiment
 package) to `pRolocVis` by entering  
 
-```{r, eval=FALSE}
-pRolocVis(object = dunkley2006)
-```
+`pRolocVis(object = dunkley2006)`
 
-To stop the application from running press Esc or `Ctrl-C` in the
+To stop the application from running press `Esc` or `Ctrl-C` in the
 console (or use the "STOP" button when using RStudio) and close the
 browser tab, where `pRolocVis` is running.
 
@@ -98,7 +95,7 @@ You browse through the tabs by simply clicking on them. Each tab
 selected will have a different kind of appearance while some (PCA,
 protein profiles, quantitation and feature meta-data) share a common
 feature in the sidebar, the *Display selection* widget (see section
-[*Display selection* widget](#display) for further details).  
+[Display selection widget](#display) for further details).  
 
 In case you have a question and want to consult the vignette for a certain
 issue (e.g. regarding PCA tab or on how to use the *Display selection* widget)
