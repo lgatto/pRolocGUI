@@ -66,7 +66,7 @@
         conditionalPanel(
             condition = "input.tab1 == 'Data'",
             strong("Welcome to", span("pRolocVis", style = "color:gray"), 
-                   ", the interactive visualisation tool 
+                   ", an interactive visualisation tool 
                   for organelle proteomics data."),
             br(),
             ## link to help page
