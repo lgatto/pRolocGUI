@@ -60,7 +60,7 @@ list.
 Currently, `pRolocGUI` distributes the `pRolocVis` application. Launch
 it by loading the `pRolocGUI` package and running `pRolocVis()` function:  
 
-`library(pRolocGUI)`
+`library("pRolocGUI")`
 `pRolocVis()`
 
 This will open a new tab in your default Internet browser. You can
@@ -272,7 +272,7 @@ organelle to look at.  As the comparison we will choose `markers` and
 these features in a transparent manner.
 
 <div align="center">
-<img src="figures/Screenshot_PP5.png" width="100%" alt="" />
+<img src="figures/Screenshot_PP3.png" width="100%" alt="" />
 <p> Fig. 7: Protein profiles of newly associated organelle groups according 
 to phenoDisco function (andy2011) </p>
 </div>
@@ -524,7 +524,7 @@ have this specific string). By clicking on **_Submit selection_** we
 save internally the selected feature(s).
 
 <div align="center">
-<img src="figures/Screenshot_PCA6.png" width="100%" alt="" />
+<img src="figures/Screenshot_PCA2.png" width="100%" alt="" />
 <p> Fig. 15: Query for proteins which contain the string "AC" which 
 narrows the features in the drop-down list accordingly (andy2011) </p>
 </div> 
