@@ -100,7 +100,7 @@ You browse through the tabs by simply clicking on them. Each tab
 selected will have a different kind of appearance while some (PCA,
 protein profiles, quantitation and feature meta-data) share a common
 feature in the sidebar, the *Display selection* widget (see section
-[Display selection widget](#display) for further details).  
+[3. Display selection widget](#display) for further details).  
 
 In case you have a question and want to consult the vignette for a certain
 issue (e.g. regarding PCA tab or on how to use the *Display selection* widget)
