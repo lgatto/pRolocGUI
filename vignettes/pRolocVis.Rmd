@@ -58,17 +58,22 @@ list.
 
 Currently, `pRolocGUI` distributes the `pRolocVis` application. Launch
 it by loading the `pRolocGUI` package and running `pRolocVis()` function:  
+```{r, eval = FALSE, echo = TRUE}
+library("pRolocGUI")
+pRolocVis()
+```
 
-`library("pRolocGUI")`
-`pRolocVis()`
 
 This will open a new tab in your default Internet browser. You can
 also pass directly an `MSnSet` (e.g. `dunkley2006` available from the
 `pRolocdata` 
 [`r citep(extbib["GattoPRolocdata"])`](#references) experiment
 package) to `pRolocVis` by entering  
+```{r, eval = FALSE, echo = TRUE}
+pRolocVis(object = dunkley2006)
+```
 
-`pRolocVis(object = dunkley2006)`
+
 
 To stop the application from running press `Esc` or `Ctrl-C` in the
 console (or use the "STOP" button when using RStudio) and close the
@@ -94,19 +99,15 @@ You browse through the tabs by simply clicking on them. Each tab
 selected will have a different kind of appearance while some (PCA,
 protein profiles, quantitation and feature meta-data) share a common
 feature in the sidebar, the *Display selection* widget (see section
-[Display selection widget](#display) for further details).  
+[3. Display selection widget](#display) for further details).  
 
 In case you have a question and want to consult the vignette for a certain
 issue (e.g. regarding PCA tab or on how to use the *Display selection* widget)
 click on `?` which will open the vignette in a new browser tab in the
 corresponding section.  
 
-
-<hr>
-<div align="center">
 <img src="figures/Screenshot_Help1.png" width="100%" alt="" />
-<p> Fig. 1: Vignette of pRolocVis </p>
-</div> 
+<p align="center"> Fig. 1: Vignette of pRolocVis </p>
 
 <a id="tabspRolocVisData"></a>
 
@@ -115,10 +116,9 @@ The tab **_Data_** is the first tab you will see when you start `pRolocVis`.
 The appearance will differ depending on if you pass directly a `MSnSet` to 
 `pRolocVis` or not. 
 
-<div align="center">
 <img src="figures/Screenshot_Data1.png" width="100%" alt="" />
-<p> Fig. 2: Appearance of Data tab in pRolocVis </p>
-</div> 
+<p align="center"> Fig. 2: Appearance of Data tab in pRolocVis </p>
+
 
 If you decide to start `pRolocVis` without assigning a `MSnSet` as
 argument, the tab **_Data_** offers possibilities to switch to an
@@ -139,10 +139,8 @@ Clicking on **_Browse..._** will open a dialog window with which you
 can select a file containing a saved `MSnSet` and load 
 it to `pRolovVis`.
 
-<div align="center">
 <img src="figures/Screenshot_Data2.png" width="100%" alt="" />
-<p> Fig. 3: File upload in pRolocVis </p>
-</div> 
+<p align="center"> Fig. 3: File upload in pRolocVis </p>
 
 If you pass an object to `pRolocVis` the tab data will show if the
 `MSnSet` was accepted by `pRolocVis`.
@@ -156,10 +154,10 @@ Principal Component Analyis (PCA) plot for the selected `MSnSet` and
 its sidebar panel which is compartimented into *Display selection* and
 *Plot*.
 
-<div align="center">
+
 <img src="figures/Screenshot_PCA1.png" width="100%" alt="" />
-<p> Fig. 4: Appearance of PCA tab (andy2011) </p>
-</div>
+<p align="center"> Fig. 4: Appearance of PCA tab (andy2011) </p>
+
 
 The *Display selection* widget is described [below](#display). The
 *Plot* compartiment enables to adjust the appearance of the PCA plot
@@ -188,11 +186,9 @@ items in the list renders the features in the PCA plot according to
 their numerical value in the variable label (for example
 classification scores).
 
-<div align="center">
 <img src="figures/Screenshot_PCA3.png" width="100%" alt="" />
-<p> Fig. 5: Appearance of PCA tab (andy2011). markers used for colours, 
+<p align="center"> Fig. 5: Appearance of PCA tab (andy2011). markers used for colours, 
 legend added. </p>
-</div>
 
 
 By changing the drop-down lists of the items 
@@ -244,12 +240,12 @@ drop-down lists addordingly to the organelles we want to
 display. Please be aware that it is possible to "go" back to a plot to
 change its parameter.
 
-<div align="center">
+
 <img src="figures/Screenshot_PP4.png" width="100%" alt="" />
-<p> Fig. 6: Appearance of protein profiles tab showing protein profiles  of
+<p align="center"> Fig. 6: Appearance of protein profiles tab showing protein profiles  of
 organelles/compartiments endoplasmic reticulum, golgi apparatus, 
 mitochondrion and plasma membrane of markers (andy2011) </p>
-</div>
+
 
 We can change the two drop-down lists in the second group if we want to 
 display the protein profiles compared to protein profiles assigned 
@@ -270,11 +266,11 @@ organelle to look at.  As the comparison we will choose `markers` and
 `unknown` in the drop-down lists of the second group which will display
 these features in a transparent manner.
 
-<div align="center">
+
 <img src="figures/Screenshot_PP3.png" width="100%" alt="" />
-<p> Fig. 7: Protein profiles of newly associated organelle groups according 
+<p align="center"> Fig. 7: Protein profiles of newly associated organelle groups according 
 to phenoDisco function (andy2011) </p>
-</div>
+
 
 <a id="tabspRolocVisExprs"></a>
 
@@ -293,11 +289,10 @@ In the sidebar panel the *Display selection* widget is placed as well as
 radio buttons to display all data or just selected features 
 (see [3. *Display selection*](#display) for further details).
 
-<div align="center">
 <img src="figures/Screenshot_Quant1.png" width="100%" alt="" />
-<p> Fig. 8: Appearance of quantitation tab (andy2011). Features shown
+<p align="center"> Fig. 8: Appearance of quantitation tab (andy2011). Features shown
 originate from selection made in the PCA and protein profiles plots </p>
-</div>
+
 
 <a id="tabspRolocVisfData"></a>
 
@@ -314,11 +309,11 @@ The sidebar comprises the *Display selection* widget and radio buttons to
 show all or only selected features (see [3. *Display selection*](#display) 
 for further details).
 
-<div align="center">
+
 <img src="figures/Screenshot_fData1.png" width="100%" alt="" />
-<p> Fig. 9: Appearance of feature meta-data tab (andy2011). Features shown
+<p align="center"> Fig. 9: Appearance of feature meta-data tab (andy2011). Features shown
 originate from selection made in protein profiles plot </p>
-</div>
+
 
 <a id="tabspRolocVispData"></a>
 
@@ -328,10 +323,8 @@ The tab **_sample meta-data_** displays the sample meta-data for the
 experiment, the name of the isotopes used for tagging and the associated
 fractions. 
 
-<div align="center">
 <img src="figures/Screenshot_pData1.png" width="100%" alt="" />
-<p> Fig. 10: Appearance of sample meta-data tab (andy2011) </p>
-</div>
+<p align="center"> Fig. 10: Appearance of sample meta-data tab (andy2011) </p>
 
 <a id="tabspRolocVisSearch"></a>
 
@@ -366,13 +359,10 @@ the `FoICollection`). Add the selected features to the object
 `pRolocGUI_SearchResults` in the global environment by clicking on 
 **_Create new features of interest_**.
 
-<div align="center">
 <img src="figures/Screenshot_SaSe1.png" width="100%" alt="" />
-<p> Fig. 11: Appearance of search tab (andy2011). Search result 
+<p align="center"> Fig. 11: Appearance of search tab (andy2011). Search result 
 pRolocVis_Test1 contains one 
 feature of interest (PGAP1_Human) </p>
-</div>  
-
 
 -------------------
 <a id="display"></a>
@@ -407,11 +397,11 @@ black circle around it.
 If you have selected a feature by accident or want to deselect it,
 just click again on the feature and it will be deselected.
 
-<div align="center">
+
 <img src="figures/Screenshot_PCA4.png" width="100%" alt="" />
-<p> Fig. 12: Display of selected features in PCA plot (andy2011). The features
+<p align="center"> Fig. 12: Display of selected features in PCA plot (andy2011). The features
 selected originate from selection in the PCA plot </p>
-</div>  
+
 
 There are two possibilities to deselect all selected features: If you
 decide to remove all your features click on **_Clear
@@ -435,11 +425,10 @@ If you display protein profiles in the tab **_protein profiles_**
 selected features will be displayed by black lines with a greater line
 width (depending on the features shown).
 
-<div align="center">
 <img src="figures/Screenshot_PP2.png" width="100%" alt="" />
-<p> Fig. 13: Display of selected features in protein profiles plot. 
+<p align="center"> Fig. 13: Display of selected features in protein profiles plot. 
 The features selected originate from selection in PCA plot (andy2011) </p>
-</div> 
+
 
 <a id="displayPP"></a>
 
@@ -454,11 +443,10 @@ the points in the plot will select, clicking another time will
 deselect features.  The features will only be shown when the check box
 left of **_protein profiles_** is activated.
 
-<div align="center">
+
 <img src="figures/Screenshot_PP1.png" width="100%" alt="" />
-<p> Fig. 14: Display of selected features in protein profiles plot. 
+<p align="center"> Fig. 14: Display of selected features in protein profiles plot. 
 The features selected originate from selection in protein profiles plot (andy2011) </p>
-</div> 
 
 <a id="displaySaSe"></a>
 
@@ -479,8 +467,6 @@ from the object `pRolocGUI_SearchResults` in the global environment. The
 authors decided that it is not the task of a GUI to fulfill the requirements 
 of this kind of data manipulation in a GUI, hence, the execution of removing
 features of interests belongs to the field of the users responsibility.
-
-link to Image: search tab
  
 <a id="displayQuery"></a>
 
@@ -522,11 +508,9 @@ their name which will limit the drop-down list to all proteins which
 have this specific string). By clicking on **_Submit selection_** we
 save internally the selected feature(s).
 
-<div align="center">
 <img src="figures/Screenshot_PCA2.png" width="100%" alt="" />
-<p> Fig. 15: Query for proteins which contain the string "AC" which 
+<p align="center"> Fig. 15: Query for proteins which contain the string "AC" which 
 narrows the features in the drop-down list accordingly (andy2011) </p>
-</div> 
 
 -------------------
 <a id="references"></a>
