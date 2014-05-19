@@ -7,7 +7,7 @@
     titlePanel(title="", windowTitle="pRolocVis")
 
 .pRn1_setSidebarPanel <- function() {
-    addResourcePath(prefix = "doc", 
+   addResourcePath(prefix = "doc", 
                     directoryPath = system.file("doc", package = "pRolocGUI"))    
     sidebarPanel(
         tags$head(
