@@ -444,7 +444,6 @@ the points in the plot will select, clicking another time will
 deselect features.  The features will only be shown when the check box
 left of **_protein profiles_** is activated.
 
-
 <img src="figures/Screenshot_PP1.png" width="100%" alt="" />
 <p align="center"> Fig. 14: Display of selected features in protein profiles plot. 
 The features selected originate from selection in protein profiles plot (andy2011) </p>
