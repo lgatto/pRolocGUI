@@ -9,7 +9,8 @@
 ```{r, eval=TRUE, echo=FALSE, warning=FALSE, message=FALSE}
 library(knitcitations)
 cite_options(linked = FALSE)
-extbib <- read.bib("pRolocGUI.bib")
+extbib <- read.bib("Vignette_citations.bib")
+
 ```
 
 
