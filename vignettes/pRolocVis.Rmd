@@ -107,7 +107,7 @@ issue (e.g. regarding PCA tab or on how to use the *Display selection* widget)
 click on `?` which will open the vignette in a new browser tab in the
 corresponding section.  
 
-<img src="figures/Screenshot_Help1.png" width="100%" alt="" />
+<img src=figures/Screenshot_Help1.png" width="100%" alt="" />
 <p align="center"> Fig. 1: Vignette of pRolocVis </p>
 
 <a id="tabspRolocVisData"></a>
@@ -509,7 +509,7 @@ have this specific string). By clicking on **_Submit selection_** we
 save internally the selected feature(s).
 
 <img src="figures/Screenshot_PCA2.png" width="100%" alt="" />
-<p align="center"> Fig. 15: Query for proteins which contain the string "AC" which 
+<p align="center"> Fig. 15: Query for proteins which contain the string "AC" which ycvb
 narrows the features in the drop-down list accordingly (andy2011) </p>
 
 -------------------
