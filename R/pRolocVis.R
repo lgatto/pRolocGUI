@@ -411,6 +411,7 @@ pRolocVis <- function(object = NULL) {
                                                      object=.dI())
                         highlightOnPlot(.dI(), foiPCA, 
                                         args = list(
+                                            fcol = fvarLabels(.dI())[1],
                                             xlim = c(input$xrange[1], 
                                                      input$xrange[2]),
                                             ylim = c(input$yrange[1], 
