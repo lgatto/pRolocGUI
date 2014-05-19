@@ -10,6 +10,7 @@
 library(knitcitations)
 cite_options(linked = FALSE)
 extbib <- read.bib("pRolocGUI.bib")
+library(shiny)
 addResourcePath(prefix = "doc", 
                     directoryPath = system.file("doc", package = "pRolocGUI"))  
 ```
