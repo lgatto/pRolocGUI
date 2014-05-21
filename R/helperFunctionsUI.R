@@ -63,7 +63,7 @@
             strong("Welcome to", span("pRolocVis", style = "color:gray"), 
                    ", an interactive visualisation tool 
                   for organelle proteomics data."),
-            hr(),
+            helpText(""),
             ## link to help page
             htmlOutput("linkData")
             ),
