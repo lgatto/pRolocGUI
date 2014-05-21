@@ -9,7 +9,7 @@ Description: The package pRolocGUI comprises functions to
     data on the basis of pRoloc, pRolocdata and shiny.
 Depends:
     R (>= 3.1.0),
-    pRoloc (>= 1.5.2),
+    pRoloc (>= 1.5.4),
     pRolocdata,
     shiny (>= 0.9.1),
     tools (>= 3.1.0),
