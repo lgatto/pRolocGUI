@@ -22,8 +22,6 @@
                       position: relative;
                       display: block;
                       width: 100%;}")),
-            tags$style(HTML(".well{
-                      padding: 15px 19px 15px 19px;}")),
             tags$style(HTML("h4{
                       margin: 3px 0px 5px 0px;}"))
             ),
@@ -102,12 +100,6 @@
                 selectInput("quantityPlotDist",
                             "number of plots to display",
                             choices=c(1:8), selected=4),
-                ## drop down menu for 'Select source for 
-                ## organelle markers':
-                htmlOutput("levelsOrganellesUI"),
-                ## drop down menu for 'select organelle 
-                ## in orgarnelle markers'
-                htmlOutput("organelleMarkerUI"),
                 hr(),
                 ## drop down menu for 'select source for 
                 ## all assigned proteins to the organelle'
@@ -178,7 +170,7 @@
                                 hoverDelay = 100,
                                 hoverDelayType = "throttle"
                                 ),
-                     textOutput("hoverProtPlotDist"),
+                     verbatimTextOutput("hoverProtPlotDist"),
                      downloadButton("plotDistDownload","Download Plot")
                      ),
             tabPanel("quantitation", 

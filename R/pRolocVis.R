@@ -311,7 +311,7 @@ pRolocVis <- function(object = NULL) {
                     .protPCA$mult <- NULL
                     .protPlotDist$mult <- NULL
                     .protText$mult <- NULL
-                    select$text <- NULL
+                    select <- NULL
                 }
             })
             
@@ -645,18 +645,6 @@ pRolocVis <- function(object = NULL) {
             
             ## reactive expressions for plotDist
             
-            ## organelle marker name
-            .organelleMarkerName <- reactive(
-                if (!is.null(input$sourceOrganelleMarkerPLDI))
-                names(table(fData(.dI())[input$sourceOrganelleMarkerPLDI]))
-                )
-            
-            ## organelle for all name
-            .organelleAllName <- reactive(
-                if (!is.null(input$allOrganellePLDI))
-                names(table(fData(.dI())[input$allOrganellePLDI]))
-                )
-            
             ## Index of element in list where parameters are stored
             .nCol <- reactive({
                 if (is.null(input$numberPlotDist))
@@ -668,22 +656,17 @@ pRolocVis <- function(object = NULL) {
             ## list where parameters for plot are stored
             ## create a list with reactive values
             .listParams <- reactiveValues(
-                levOrgMark = NULL, 
-                levOrgMarkOrg = NULL, 
-                levSourMarkAll = NULL, 
-                levSourMarkAllOrg = NULL
+                levPlotDist = NULL, 
+                levPlotDistOrg = NULL
             )
             
             ## write paramters to list for plotDist at index of .nCol()
             observe({
-                if (!is.null(input$organelleAll)) {
-                    isolate(.listParams$levOrgMark[.nCol()] <- 
-                            input$sourceOrganelleMarkerPLDI)
-                    isolate(.listParams$levOrgMarkOrg[.nCol()] <- 
-                            input$organelleMarker)
-                    isolate(.listParams$levSourMarkAll[.nCol()] <- 
-                            input$allOrganellePLDI)
-                    isolate(.listParams$levSourMarkAllOrg[.nCol()] <- 
+                if (!is.null(input$organelleAll) &&
+                      !is.null(input$fNamesplDist)) {
+                    isolate(.listParams$levPlotDist[.nCol()] <- 
+                            input$fNamesplDist)
+                    isolate(.listParams$levPlotDistOrg[.nCol()] <- 
                             input$organelleAll)
                 }
             })
@@ -691,11 +674,10 @@ pRolocVis <- function(object = NULL) {
             ## calculate protein nearest to user input
             .minDistProtPlotDist <- reactive(
                 if (!is.null(input$plotDistclick) && 
-                    !is.null(input$sourceOrganelleMarkerPLDI) && 
                     input$quantityPlotDist == "1")
                 .minDistPlotDist(data = .dI(), 
-                                 marker = .listParams$levOrgMark[1],
-                                 org = .listParams$levOrgMarkOrg[1],
+                                 marker = .listParams$levPlotDist[1],
+                                 org = .listParams$levPlotDistOrg[1],
                                  inputx = input$plotDistclick$x,
                                  inputy = input$plotDistclick$y
                 )
@@ -703,13 +685,12 @@ pRolocVis <- function(object = NULL) {
             
             .minDistProtPlotDistHover <- reactive(
                 if (!is.null(input$plotDisthover) && 
-                    !is.null(input$sourceOrganelleMarkerPLDI) && 
                     input$quantityPlotDist == "1" &&
                     !(input$plotDisthover$x < 0.5) && 
                     !(input$plotDisthover$x > nrow(pData(.dI())) + .3)) 
                 .minDistPlotDist(data = .dI(),
-                                 marker = .listParams$levOrgMark[1],
-                                 org = .listParams$levOrgMarkOrg[1],
+                                 marker = .listParams$levPlotDist[1],
+                                 org = .listParams$levPlotDistOrg[1],
                                  inputx = input$plotDisthover$x,
                                  inputy = input$plotDisthover$y
                 )
@@ -742,8 +723,8 @@ pRolocVis <- function(object = NULL) {
             ## plotDist and highlighting selected points in plot
             .plotPlotDist <- function() {
                 if(!is.null(.dI()) &&
-                   !is.null(.listParams$levOrgMark) && 
-                   !(is.null(.listParams$levSourMarkAll))) {
+                  !is.null(.listParams$levPlotDist) &&
+                  !(is.null(.listParams$levPlotDistOrg))) {
                     
                     if(as.numeric(input$quantityPlotDist)%%2==0)
                         col <- as.numeric(input$quantityPlotDist)/2
@@ -755,63 +736,32 @@ pRolocVis <- function(object = NULL) {
                     else
                         par(mfrow=c(2, col))
                     
+                    
                     ## Actual plotting
-                    for (i in 1:length(.listParams$levOrgMark)) { 
-                        ## j (returns indices in fData/exprs)
-                        j <- match(
-                            subset(featureNames(.dI()),
-                                   fData(.dI())[, .listParams$levOrgMark[i]] ==
-                                   .listParams$levOrgMarkOrg[i]),
-                            featureNames(.dI())
-                            )
+                    for (i in 1:length(.listParams$levPlotDist)) { 
+                    
+                    if (.listParams$levPlotDist[i] == "all")
+                        objPlotDist <- .dI()
+                    else
+                        objPlotDist <- subset(.dI(), 
+                            fData(.dI())[, .listParams$levPlotDist[i]] == 
+                            .listParams$levPlotDistOrg[i])
+                    
+                    if (is.null(.searchInd()))
+                      ylim <- range(exprs(objPlotDist))
+                    else {
+                      ylim1 <- range(exprs(objPlotDist))
+                      ylim2 <- range(exprs(.dI())[.searchInd(),])
+                      ylim <- range(ylim1, ylim2)
+                    }
+                  
+                    plotDist(objPlotDist, ylim = ylim)
+                    
+                    if (!is.null(.searchInd()))
+                       for (line in .searchInd())    
+                           lines(exprs(.dI())[line,], type="l")
+                    title(.listParams$levPlotDistOrg[i])
                         
-                        iComp <-  featureNames(
-                            subset(.dI(), 
-                                   fData(.dI())[, .listParams$levSourMarkAll[i]] == 
-                                   .listParams$levSourMarkAllOrg[i]))
-                        
-                        jComp <- subset(
-                            featureNames(.dI()), 
-                            fData(.dI())[, .listParams$levOrgMark[i]] == 
-                            .listParams$levOrgMarkOrg[i])  
-                        
-                        
-                        ## which of j are in .searchInd(), returns index in j,
-                        ## e.g. "10", i.e. the tenth element of j is also in 
-                        ## .searchInd()
-                        ind.col <- na.omit(match(.searchInd(), j))
-                        
-                        ## vector for colours
-                        if(length(ind.col)&& length(input$chooseIdenSearch)) {
-                            mcol.ind <- rep("steelblue",length(j)) 
-                            mcol.ind[ind.col] <- "black"
-                        }
-                        else
-                            mcol.ind <- "steelblue"
-                        
-                        ## vector for lwd
-                        if(length(ind.col) && length(input$chooseIdenSearch)) {
-                            lwd.ind <- rep(1,length(j))
-                            lwd.ind[ind.col] <- 3
-                        }
-                        else
-                            lwd.ind <- 1
-                        
-                        if (length(na.exclude(match(jComp, iComp))) == length(j)) {
-                            
-                            plotDist(
-                                subset(.dI(), 
-                                       fData(.dI())[, .listParams$levSourMarkAll[i]] == 
-                                       .listParams$levSourMarkAllOrg[i]), 
-                                markers = subset(
-                                    featureNames(.dI()), 
-                                    fData(.dI())[, .listParams$levOrgMark[i]] == 
-                                    .listParams$levOrgMarkOrg[i]),
-                                mcol = mcol.ind, 
-                                lwd = lwd.ind
-                                )
-                            title(.listParams$levOrgMarkOrg[i])
-                        }
                     } ## end for loop
                 }
             }
@@ -819,46 +769,38 @@ pRolocVis <- function(object = NULL) {
             ## for Plot/Download button (needs a reactive expression)
             .plotDistReac <- reactive(.plotPlotDist()) 
             
-            output$levelsOrganellesUI <- renderUI(
-                if (!is.null(.colours()))
-                selectInput("sourceOrganelleMarkerPLDI",
-                            "feature(s) in", 
-                            choices = .colours())
+            ## organelle for all name
+            .organelleAllName <- reactive(
+              if (!is.null(input$fNamesplDist))
+                if (input$fNamesplDist != "all")
+                  names(table(fData(.dI())[input$fNamesplDist]))
+                else
+                  "all"
             )
             
             output$allOrganellesUI <- renderUI(
-                if (!is.null(input$sourceOrganelleMarkerPLDI))
-                selectInput("allOrganellePLDI",
+              if(!is.null(.colours()))
+                selectInput("fNamesplDist",
                             "feature(s) in",
-                            choices = .colours(), 
-                            selected = input$sourceOrganelleMarkerPLDI)
-            )
-            
-            output$organelleMarkerUI <- renderUI(
-                if(!is.null(.organelleMarkerName()))
-                selectInput("organelleMarker", 
-                            "assigned to",
-                            choices = .organelleMarkerName())
-                else
-                return()
+                            choices = c("all", .colours()) 
+                )
             )
             
             output$organelleAllUI <- renderUI(
-                if(!is.null(input$organelleMarker))
+              if(!is.null(.organelleAllName()) &&
+                  !is.null(input$fNamesplDist))
                 selectInput("organelleAll",
-                            "assigned to (transparent)",
-                            choices = .organelleAllName(), 
-                            selected = input$organelleMarker)
+                            "assigned to",
+                            choices = .organelleAllName()
+                )
             )
             
             output$numberPlotDistUI <- renderUI(
                 if (!as.numeric(input$quantityPlotDist) == 1) {
                     ## reset all parameters to avoid conflicts when 
                     ## decreasing the quantity of plots
-                    .listParams$levOrgMark <- NULL
-                    .listParams$levOrgMarkOrg <- NULL
-                    .listParams$levSourMarkAll <- NULL
-                    .listParams$levSourMarkAllOrg <- NULL
+                    .listParams$levPlotDist <- NULL
+                    .listParams$levPlotDistOrg <- NULL
                     
                     sliderInput("numberPlotDist",
                                 "Selected plot",

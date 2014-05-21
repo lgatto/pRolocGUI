@@ -13,11 +13,14 @@
 ## Function to compute min2d distance from user input for plotDist
 ## calculate protein nearest to user input
 .minDistPlotDist <- function(data, marker, org, inputx, inputy) {
-  j <- match(
-    subset(featureNames(data),
-           fData(data)[, marker] == org),
-    featureNames(data)
-    )
+  if (marker == "all")
+    j <- 1:nrow(andy2011)
+  else {
+    j <- match(
+      subset(featureNames(data), fData(data)[, marker] == org),
+      featureNames(data)
+      )
+  }
   dist <- abs(
     inputy - exprs(data)[j, round(inputx, 0)]
     )
