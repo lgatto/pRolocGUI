@@ -170,7 +170,7 @@
                                 hoverDelay = 100,
                                 hoverDelayType = "throttle"
                                 ),
-                     verbatimTextOutput("hoverProtPlotDist"),
+                     textOutput("hoverProtPlotDist"),
                      downloadButton("plotDistDownload","Download Plot")
                      ),
             tabPanel("quantitation", 
