@@ -7,8 +7,6 @@
     titlePanel(title="", windowTitle="pRolocVis")
 
 .pRn1_setSidebarPanel <- function() {
-   addResourcePath(prefix = "doc", 
-                    directoryPath = system.file("doc", package = "pRolocGUI"))    
     sidebarPanel(
         tags$head(
             tags$style(type="text/css","hr{margin:0;}"),
@@ -56,10 +54,7 @@
                 ## action Button to delete internal assignments
                 actionButton("resetMult", "Clear features"),
                 ## link to help page
-                a(href="/doc/pRolocVis.html#display", 
-                  "?", target="_blank"
-                  ##class = c("btn", "action-button"))
-                  )
+                htmlOutput("linkDisplay")
                 )
             ),
         ## Panel showing up when tab 'Data' is selected
@@ -68,12 +63,9 @@
             strong("Welcome to", span("pRolocVis", style = "color:gray"), 
                    ", an interactive visualisation tool 
                   for organelle proteomics data."),
-            br(),
+            hr(),
             ## link to help page
-            a(href="/doc/pRolocVis.html#tabspRolocVisData", 
-              "?", target="_blank"
-              ##class = c("btn", "action-button"))
-              )
+            htmlOutput("linkData")
             ),
         ## Panel showing up when tab 'PCA' is selected
         conditionalPanel(
@@ -97,10 +89,7 @@
                 htmlOutput("xrangeUI"),
                 htmlOutput("yrangeUI"),
                 ## link to help page
-                a(href="/doc/pRolocVis.html#tabspRolocVisPCA", 
-                  "?", target="_blank"
-                  ##class = c("btn", "action-button"))
-                  )
+                htmlOutput("linkPCA")
                 )
             ),
         ## Panel showing up when tab 'protein profiles' 
@@ -119,7 +108,7 @@
                 ## drop down menu for 'select organelle 
                 ## in orgarnelle markers'
                 htmlOutput("organelleMarkerUI"),
-                br(),
+                hr(),
                 ## drop down menu for 'select source for 
                 ## all assigned proteins to the organelle'
                 htmlOutput("allOrganellesUI"),
@@ -127,37 +116,25 @@
                 ## in all assigned proteins'
                 htmlOutput("organelleAllUI"),
                 htmlOutput("numberPlotDistUI"),
-                a(href="/doc/pRolocVis.html#tabspRolocVisPP", 
-                  "?", target="_blank"
-                  ##class = c("btn", "action-button"))
-                  )
+                htmlOutput("linkPP")
                 )
             ),
         ## Panel showing up when tab 'quantitation' is selected
         conditionalPanel(
             condition = "input.tab1 == 'quantitation'",
             htmlOutput("exprsRadioUI"),
-            a(href="/doc/pRolocVis.html#tabspRolocVisExprs", 
-              "?", target="_blank"
-              ##class = c("btn", "action-button"))
-              )
+            htmlOutput("linkExprs")
             ),
         ## Panel showing up when tab 'feature meta-data' is selected
         conditionalPanel(
             condition = "input.tab1 == 'feature meta-data'",
             htmlOutput("fDataRadioUI"),
-            a(href="/doc/pRolocVis.html#tabspRolocVisfData", 
-              "?", target="_blank"
-              ##class = c("btn", "action-button"))
-              )
+            htmlOutput("linkfData")
             ),
         ## Panel showing up when tab 'sample meta-data' is selected
         conditionalPanel(
             condition = "input.tab1 == 'sample meta-data'",
-            a(href="/doc/pRolocVis.html#tabspRolocVispData",
-              "?", target="_blank"
-              ##class = c("btn", "action-button"))
-              )
+            htmlOutput("linkpData")
             ),  
         ## Panel showing up when tab 'search' is selected
         conditionalPanel(
@@ -171,16 +148,13 @@
             htmlOutput("initSaveUI"),
             ## action Button
             htmlOutput("saveLists2SRUI"),
-            a(href="/doc/pRolocVis.html#tabspRolocVisSearch", 
-              "?", target="_blank"
-              ##class = c("btn", "action-button"))
-              )
+            htmlOutput("linkSearch")
             ),                     
         width = 3
         )    
 }
 
-.pRn1_setMainPanel <- function(){
+.pRn1_setMainPanel <- function() {
     mainPanel(
         tabsetPanel(
             tabPanel("Data",
