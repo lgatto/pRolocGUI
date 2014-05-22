@@ -107,7 +107,7 @@ issue (e.g. regarding PCA tab or on how to use the *Display selection* widget)
 click on `?` which will open the vignette in a new browser tab in the
 corresponding section.  
 
-<img src=figures/Screenshot_Help1.png" width="100%" alt="" />
+<img src="figures/Screenshot_Help1.png" width="100%" alt="" />
 <p align="center"> Fig. 1: Vignette of pRolocVis </p>
 
 <a id="tabspRolocVisData"></a>
@@ -223,18 +223,17 @@ The *Plot* widget helps to manipulate the plots shown in the main
 panel. Let's assume we want to have a look upon the protein profiles
 for the proteins from which we know that they belong to the organelles
 endoplasmic reticulum, the golgi apparatus, mitochondrion and the
-plasma membrane for the `andy2011`.  We have four organelles to look
+plasma membrane for the `andy2011` MSnSet.  We have four organelles to look
 at, so we select "4" in the drop-down list 
 **_number of plots to display_**.  We will select the feature variable
 `markers` in the drop-down list **_feature(s) in_** and select `ER` 
 (coding for endoplasmic reticulum)
-in the drow-down list underneath (**_assigned to_**) in the first
-group. The other two drop-down list will be left as they are.  To
+in the drow-down list underneath (**_assigned to_**). To
 display the next plot we have to change the slider **_Selected plot_**
-to position 2 and for the shiny reactive expressions did not receive
-yet a new input we have to change the drop-down lists in order a new
-plot will be displayed, accordingly to our question we will change the
-second drop-down list to `Golgi` (coding for golgi apparatus). We
+to position 2. The shiny reactive expressions did not receive
+yet a new input, therefore, we have to change the drop-down lists in 
+order a new plot will be displayed. Accordingly to our question we will 
+change the second drop-down list to `Golgi` (coding for golgi apparatus). We
 proceed with the two remaining organelles as described before by
 changing firstly the slider to the next position and by changing the
 drop-down lists addordingly to the organelles we want to
@@ -242,35 +241,11 @@ display. Please be aware that it is possible to "go" back to a plot to
 change its parameter.
 
 
-<img src="figures/Screenshot_PP4.png" width="100%" alt="" />
-<p align="center"> Fig. 6: Appearance of protein profiles tab showing protein profiles  of
+<img src="figures/Screenshot_PP3.png" width="100%" alt="" />
+<p align="center"> Fig. 6: Appearance of protein profiles tab 
+showing protein profiles  of
 organelles/compartiments endoplasmic reticulum, golgi apparatus, 
 mitochondrion and plasma membrane of markers (andy2011) </p>
-
-
-We can change the two drop-down lists in the second group if we want to 
-display the protein profiles compared to protein profiles assigned 
-to another variable name (or by default the same). The 
-features selected in the drop-down 
-list of the second group have to include at least the features 
-which were selected in the first group, otherwise there will be no plot 
-displayed.
-To display results of the `phenoDisco` function we can select for the
-`andy2011`, `pd.markers` in the first drop-down list. For we want to have
-a closer look on the new discovered organelle groups 
-`Chromatin associated`, `Lysosome`, `Nucleus` and `Cytosol`which all
-originated from `unknown` in `markers` we select the organelle names in
-the first group where `pd.markers` is selected. In the second group of 
-the drop-down lists we select `markers` and `unknown`, respectively for
-every organelle in `pd.markers`. 
-organelle to look at.  As the comparison we will choose `markers` and
-`unknown` in the drop-down lists of the second group which will display
-these features in a transparent manner.
-
-
-<img src="figures/Screenshot_PP3.png" width="100%" alt="" />
-<p align="center"> Fig. 7: Protein profiles of newly associated organelle groups according 
-to phenoDisco function (andy2011) </p>
 
 
 <a id="tabspRolocVisExprs"></a>
@@ -291,7 +266,7 @@ radio buttons to display all data or just selected features
 (see [3. *Display selection*](#display) for further details).
 
 <img src="figures/Screenshot_Quant1.png" width="100%" alt="" />
-<p align="center"> Fig. 8: Appearance of quantitation tab (andy2011). Features shown
+<p align="center"> Fig. 7: Appearance of quantitation tab (andy2011). Features shown
 originate from selection made in the PCA and protein profiles plots </p>
 
 
@@ -312,7 +287,7 @@ for further details).
 
 
 <img src="figures/Screenshot_fData1.png" width="100%" alt="" />
-<p align="center"> Fig. 9: Appearance of feature meta-data tab (andy2011). Features shown
+<p align="center"> Fig. 8: Appearance of feature meta-data tab (andy2011). Features shown
 originate from selection made in protein profiles plot </p>
 
 
@@ -325,7 +300,7 @@ experiment, the name of the isotopes used for tagging and the associated
 fractions. 
 
 <img src="figures/Screenshot_pData1.png" width="100%" alt="" />
-<p align="center"> Fig. 10: Appearance of sample meta-data tab (andy2011) </p>
+<p align="center"> Fig. 9: Appearance of sample meta-data tab (andy2011) </p>
 
 <a id="tabspRolocVisSearch"></a>
 
@@ -361,7 +336,7 @@ the `FoICollection`). Add the selected features to the object
 **_Create new features of interest_**.
 
 <img src="figures/Screenshot_SaSe1.png" width="100%" alt="" />
-<p align="center"> Fig. 11: Appearance of search tab (andy2011). Search result 
+<p align="center"> Fig. 10: Appearance of search tab (andy2011). Search result 
 pRolocVis_Test1 contains one 
 feature of interest (PGAP1_Human) </p>
 
@@ -400,7 +375,7 @@ just click again on the feature and it will be deselected.
 
 
 <img src="figures/Screenshot_PCA4.png" width="100%" alt="" />
-<p align="center"> Fig. 12: Display of selected features in PCA plot (andy2011). The features
+<p align="center"> Fig. 11: Display of selected features in PCA plot (andy2011). The features
 selected originate from selection in the PCA plot </p>
 
 
@@ -423,11 +398,11 @@ sources (PCA, protein profiles, saved searches and the text-based
 query search).
 
 If you display protein profiles in the tab **_protein profiles_**
-selected features will be displayed by black lines with a greater line
-width (depending on the features shown).
+selected features will be displayed by black lines on all plots 
+drawn.
 
 <img src="figures/Screenshot_PP2.png" width="100%" alt="" />
-<p align="center"> Fig. 13: Display of selected features in protein profiles plot. 
+<p align="center"> Fig. 12: Display of selected features in protein profiles plot. 
 The features selected originate from selection in PCA plot (andy2011) </p>
 
 
@@ -445,7 +420,7 @@ deselect features.  The features will only be shown when the check box
 left of **_protein profiles_** is activated.
 
 <img src="figures/Screenshot_PP1.png" width="100%" alt="" />
-<p align="center"> Fig. 14: Display of selected features in protein profiles plot. 
+<p align="center"> Fig. 13: Display of selected features in protein profiles plot. 
 The features selected originate from selection in protein profiles plot (andy2011) </p>
 
 <a id="displaySaSe"></a>
@@ -509,7 +484,7 @@ have this specific string). By clicking on **_Submit selection_** we
 save internally the selected feature(s).
 
 <img src="figures/Screenshot_PCA2.png" width="100%" alt="" />
-<p align="center"> Fig. 15: Query for proteins which contain the string "AC" which ycvb
+<p align="center"> Fig. 14: Query for proteins which contain the string "AC" which ycvb
 narrows the features in the drop-down list accordingly (andy2011) </p>
 
 -------------------
