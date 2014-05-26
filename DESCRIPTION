@@ -20,5 +20,6 @@ Suggests:
     bibtex,
     knitcitations
 License: GPL-2
+URL: https://github.com/ComputationalProteomicsUnit/pRolocGUI
 VignetteBuilder: knitr
 biovViews: Proteomics, Visualisation, Vizualization, GUI
