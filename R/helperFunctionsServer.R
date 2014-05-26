@@ -145,7 +145,7 @@
     else
       ## create plot2D and assign reactive variables to 
       ## arguments take input$fsymboltype for symboltype
-      plot2D(data,fcol = colour, fpch = input$fsymboltype,
+      plot2D(data,fcol = colour, fpch = sb,
              xlim = c(xrange[1], xrange[2]),
              ylim = c(yrange[1], yrange[2]),
              dims = c(as.numeric(PCAn1),
@@ -165,7 +165,7 @@
   if(length(sI)) {
     if(length(cIS)) {
       foiPCA <- FeaturesOfInterest(description = "hoP",
-                                   fnames = featureNames(data)[c(sI)],
+                                   fnames = featureNames(data)[sI],
                                    object=data)
       highlightOnPlot(data, foiPCA, 
                       args = list(

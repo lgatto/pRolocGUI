@@ -537,7 +537,7 @@ pRolocVis <- function(object = NULL) {
                 },
                 content = function(file) {
                     jpeg(file, quality = 100, width = 800, height = 800)
-                    PCAlotReac()
+                    .PCAPlotReac()
                     dev.off()
                 }
                 )
