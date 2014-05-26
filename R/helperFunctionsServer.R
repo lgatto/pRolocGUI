@@ -106,5 +106,78 @@
 ##nameObj <- function(obj)
 ##  MSnbase:::getVariableName(match.call(), "obj")
 
-
+##@title Function for PCA plot
+## PCA plot, add legend or not, add points via function 
+## highlightOnPlot
+.plotPCA <- function(data, fcolours, fcex, xrange, yrange,
+                     sb, PCAn1, PCAn2, legend, legendpos,
+                     sI, cIS) {
+  par(mfrow=c(1, 1))
+  
+  if (length(fcolours)) {
+    if (fcolours %in% fvarLabels(data))
+      colour <- fcolours
+    else
+      colour <- NULL
+  }
+  
+  if (length(fcex)) {
+    if (fcex %in% fvarLabels(data))
+      fcex <- fData(data)[, fcex]
+    else
+      fcex <- 1  ## as.numeric(fcex)
+  } 
+  else
+    fcex <- 1
+  
+  if (!is.null(xrange)) { 
+    if (is.null(sb) || 
+          sb == "none") 
+      ## create plot2D and assign reactive variables to 
+      ## arguments, do not assign fpch (no symboltypes 
+      ## are plotted)
+      plot2D(data, fcol = colour,
+             xlim = c(xrange[1], xrange[2]),
+             ylim = c(yrange[1], yrange[2]),
+             dims = c(as.numeric(PCAn1),
+                      as.numeric(PCAn2)),
+             cex = fcex)
+    else
+      ## create plot2D and assign reactive variables to 
+      ## arguments take input$fsymboltype for symboltype
+      plot2D(data,fcol = colour, fpch = input$fsymboltype,
+             xlim = c(xrange[1], xrange[2]),
+             ylim = c(yrange[1], yrange[2]),
+             dims = c(as.numeric(PCAn1),
+                      as.numeric(PCAn2)),
+             cex = fcex)
+  }
+  
+  if(length(legend)) 
+    if (fcolours %in% fvarLabels(data) && 
+          legend)
+      ## add a legend to the plot with reactive 
+      ## variable as arguments
+      addLegend(data, fcol = colour, 
+                where = legendpos,
+                bty = "n", cex = 1)
+  
+  if(length(sI)) {
+    if(length(cIS)) {
+      foiPCA <- FeaturesOfInterest(description = "hoP",
+                                   fnames = featureNames(data)[c(sI)],
+                                   object=data)
+      highlightOnPlot(data, foiPCA, 
+                      args = list(
+                        fcol = fvarLabels(data)[1],
+                        xlim = c(xrange[1], 
+                                 xrange[2]),
+                        ylim = c(yrange[1], 
+                                 yrange[2]),
+                        dims = c(as.numeric(PCAn1),
+                                 as.numeric(PCAn2))),
+                      col="black", cex=1.5)
+    }
+  }
+} ## end function .plotPCA
 

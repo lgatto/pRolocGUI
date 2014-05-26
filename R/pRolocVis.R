@@ -410,77 +410,6 @@ pRolocVis <- function(object = NULL) {
                            as.numeric(input$PCAn2)), plot=FALSE)
             })
             
-            ## PCA plot, legend, points
-            .plotPCA <- function() {
-                par(mfrow=c(1, 1))
-                
-                if (length(input$fcolours)){
-                    if (input$fcolours %in% fvarLabels(.dI()))
-                        colour <- input$fcolours
-                    else
-                        colour <- NULL
-                }
-                
-                if (length(input$fcex)) {
-                    if (input$fcex %in% fvarLabels(.dI()))
-                        fcex <- fData(.dI())[, input$fcex]
-                    else
-                        fcex <- 1  ## as.numeric(input$fcex)
-                } 
-                else
-                    fcex <- 1
-                
-                if (!is.null(input$xrange)) { 
-                    if (is.null(input$fsymboltype) || 
-                        input$fsymboltype == "none") 
-                        ## create plot2D and assign reactive variables to 
-                        ## arguments, do not assign fpch (no symboltypes 
-                        ## are plotted)
-                        plot2D(.dI(), fcol = colour,
-                               xlim = c(input$xrange[1], input$xrange[2]),
-                               ylim = c(input$yrange[1], input$yrange[2]),
-                               dims = c(as.numeric(input$PCAn1),
-                                   as.numeric(input$PCAn2)),
-                               cex = fcex)
-                    else
-                        ## create plot2D and assign reactive variables to 
-                        ## arguments take input$fsymboltype for symboltype
-                        plot2D(.dI(),fcol = colour, fpch = input$fsymboltype,
-                               xlim = c(input$xrange[1], input$xrange[2]),
-                               ylim = c(input$yrange[1], input$yrange[2]),
-                               dims = c(as.numeric(input$PCAn1),
-                                   as.numeric(input$PCAn2)),
-                               cex = fcex)
-                }
-                
-                if(length(input$legendyes)) 
-                    if (input$fcolours %in% fvarLabels(.dI()) && 
-                          input$legendyes)
-                        ## add a legend to the plot with reactive 
-                        ## variable as arguments
-                        addLegend(.dI(), fcol = colour, 
-                                  where = input$legendpos,
-                                  bty = "n", cex = 1)
-                
-                if(length(.searchInd())) {
-                    if(length(input$chooseIdenSearch)) {
-                        foiPCA <- FeaturesOfInterest(description = "hoP",
-                                                     fnames = featureNames(.dI())[c(.searchInd())],
-                                                     object=.dI())
-                        highlightOnPlot(.dI(), foiPCA, 
-                                        args = list(
-                                            fcol = fvarLabels(.dI())[1],
-                                            xlim = c(input$xrange[1], 
-                                                     input$xrange[2]),
-                                            ylim = c(input$yrange[1], 
-                                                     input$yrange[2]),
-                                            dims = c(as.numeric(input$PCAn1),
-                                                     as.numeric(input$PCAn2))),
-                                        col="black", cex=1.5)
-                    }
-                }
-            } ## end function .plotPCA
-            
             ## render UI accordingly to .colours()
             output$fcoloursOutput <- renderUI({ 
                 selectInput("fcolours", "colour", c("none",.colours()),
@@ -574,10 +503,32 @@ pRolocVis <- function(object = NULL) {
             
             ## Generate PCA plot, use fcolours for colours and add legend function 
             ## (appearance and position dependent of user input)
-            output$PCA <- renderPlot(.plotPCA())    
+            output$PCA <- renderPlot(.plotPCA(data = .dI(), 
+                              fcolours = input$fcolours, 
+                              fcex = input$fcex, xrange = input$xrange,
+                              yrange = input$yrange,
+                              sb = input$fsymboltype,
+                              PCAn1 = input$PCAn1, PCAn2 = input$PCAn2,
+                              legend = input$legendyes, 
+                              legendpos = input$legendpos,
+                              sI = .searchInd(), cIS = input$chooseIdenSearch
+                                  )
+                              )
+            
             
             ## for Plot/Download button (needs a reactive expression)
-            .PCAPlotReac <- reactive(.plotPCA())
+            .PCAPlotReac <- reactive(.plotPCA(data = .dI(), 
+                                fcolours = input$fcolours, 
+                                fcex = input$fcex, xrange = input$xrange,
+                                yrange = input$yrange,
+                                sb = input$fsymboltype,
+                                PCAn1 = input$PCAn1, PCAn2 = input$PCAn2,
+                                legend = input$legendyes, 
+                                legendpos = input$legendpos,
+                                sI = .searchInd(), cIS = input$chooseIdenSearch
+                                     )
+                                )
+              
             
             ## Download Handler for PCA plot
             output$plotPCADownload <- downloadHandler(
