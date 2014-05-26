@@ -671,54 +671,14 @@ pRolocVis <- function(object = NULL) {
                 }
             }) 
             
-            ## plotDist and highlighting selected points in plot
-            .plotPlotDist <- function() {
-                if(!is.null(.dI()) &&
-                  !is.null(.listParams$levPlotDist) &&
-                  !(is.null(.listParams$levPlotDistOrg))) {
-                    
-                    if(as.numeric(input$quantityPlotDist)%%2==0)
-                        col <- as.numeric(input$quantityPlotDist)/2
-                    else
-                        col <- (as.numeric(input$quantityPlotDist)+1)/2
-                    
-                    if (as.numeric(input$quantityPlotDist)==1)
-                        par(mfrow=c(1,1))
-                    else
-                        par(mfrow=c(2, col))
-                    
-                    
-                    ## Actual plotting
-                    for (i in 1:length(.listParams$levPlotDist)) { 
-                    
-                    if (.listParams$levPlotDist[i] == "all")
-                        objPlotDist <- .dI()
-                    else
-                        objPlotDist <- subset(.dI(), 
-                            fData(.dI())[, .listParams$levPlotDist[i]] == 
-                            .listParams$levPlotDistOrg[i])
-                    
-                    if (is.null(.searchInd()))
-                      ylim <- range(exprs(objPlotDist))
-                    else {
-                      ylim1 <- range(exprs(objPlotDist))
-                      ylim2 <- range(exprs(.dI())[.searchInd(),])
-                      ylim <- range(ylim1, ylim2)
-                    }
-                  
-                    plotDist(objPlotDist, ylim = ylim)
-                    
-                    if (!is.null(.searchInd()))
-                       for (line in .searchInd())    
-                           lines(exprs(.dI())[line,], type="l")
-                    title(.listParams$levPlotDistOrg[i])
-                        
-                    } ## end for loop
-                }
-            }
-            
             ## for Plot/Download button (needs a reactive expression)
-            .plotDistReac <- reactive(.plotPlotDist()) 
+            .plotDistReac <- reactive(.plotPlotDist(data = .dI(), 
+                                 levPlotDist = .listParams$levPlotDist,
+                                 levPlotDistOrg = .listParams$levPlotDistOrg,
+                                 quantity = input$quantityPlotDist,
+                                 sI = .searchInd()
+                                 )
+                             )
             
             ## organelle for all name
             .organelleAllName <- reactive(
@@ -763,9 +723,15 @@ pRolocVis <- function(object = NULL) {
             )
             
             output$plotdist <- renderPlot(
-                if(!is.null(.plotPlotDist()))
-                .plotPlotDist()
-            )
+               ## if(!is.null(.plotPlotDist()))
+                .plotPlotDist(data = .dI(), 
+                              levPlotDist = .listParams$levPlotDist,
+                              levPlotDistOrg = .listParams$levPlotDistOrg,
+                              quantity = input$quantityPlotDist,
+                              sI = .searchInd()
+                              )
+                )
+            
             
             output$plotDistDownload <- downloadHandler(
                 filename = function() {

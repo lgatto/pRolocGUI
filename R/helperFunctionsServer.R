@@ -181,3 +181,56 @@
   }
 } ## end function .plotPCA
 
+##@ function for plotDist
+## plotDist and highlighting selected points in plot
+.plotPlotDist <- function(data, levPlotDist, levPlotDistOrg,
+                          quantity, sI) {
+  if(!is.null(data) &&
+       !is.null(levPlotDist) &&
+       !(is.null(levPlotDistOrg))) {
+    
+    if(as.numeric(quantity)%%2==0)
+      col <- as.numeric(quantity)/2
+    else
+      col <- (as.numeric(quantity)+1)/2
+    
+    if (as.numeric(quantity)==1)
+      par(mfrow=c(1,1))
+    else
+      par(mfrow=c(2, col))
+    
+    
+    ## Actual plotting
+    for (i in 1:length(levPlotDist)) { 
+      
+      if (levPlotDist[i] == "all")
+        objPlotDist <- data
+      else
+        objPlotDist <- subset(data, 
+                              fData(data)[, levPlotDist[i]] == 
+                                levPlotDistOrg[i])
+      
+      if (is.null(sI))
+        ylim <- range(exprs(objPlotDist))
+      else {
+        ylim1 <- range(exprs(objPlotDist))
+        if (length(sI)) {
+          ylim2 <- range(exprs(data)[sI,])
+          ylim <- range(ylim1, ylim2)
+        }
+       else 
+         ylim <- ylim1
+      }
+      
+      plotDist(objPlotDist, ylim = ylim)
+      
+      if (!is.null(sI))
+        for (line in sI)    
+          if (!is.null(line))
+            lines(exprs(data)[line,], type="l")
+      title(levPlotDistOrg[i])
+      
+    } ## end for loop
+  }
+}
+
