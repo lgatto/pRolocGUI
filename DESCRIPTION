@@ -23,4 +23,4 @@ License: GPL-2
 URL: https://github.com/ComputationalProteomicsUnit/pRolocGUI
 BugReports: https://github.com/ComputationalProteomicsUnit/pRolocGUI/issues
 VignetteBuilder: knitr
-biovViews: Proteomics, Visualisation, Vizualization, GUI
+biocViews: Proteomics, Visualisation, Vizualization, GUI
