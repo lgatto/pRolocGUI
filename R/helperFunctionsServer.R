@@ -1,18 +1,3 @@
-## @title Test for Features of Interests or Collection of Features of Interest
-## @description  \code{.areFeaturesOfInterest} tests if an object is of class 
-## \code{"FeaturesOfInterest"}, \code{.isFoIColection} if object is of class 
-## \code{"FoICollection"}, respectively. Returning \code{TRUE} or \code{FALSE}.
-## @return \code{TRUE} or \code{FALSE}.
-## @author Thomas Naake <tn299@@cam.ac.uk>
-## @usage .areFeaturesOfInterest(x) 
-## .isFoICollection(xx)
-## @param x An object tested of being of class \code{FeaturesOfInterest}
-## @param xx An object tested of being of class \code{FoICollection}
-.areFeaturesOfInterest <- function(x)
-  inherits(x, "FeaturesOfInterest")
-.isFoICollection <- function(xx)
-  inherits(xx, "FoICollection")
-
 ## @title Return information about set of features
 ## @description \code{.fnamesFOI} and \code{.descriptionFOI} accept both 
 ## \code{FeaturesOfInterest} and \code{FoICollection} objects and 

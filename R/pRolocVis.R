@@ -178,7 +178,7 @@ pRolocVis <- function(object = NULL) {
                     .dI <- reactive(andy2011) 
             }
             
-            
+           
             
             output$warningowndataUI <- renderText({
                 if(input$data == "own data"){
@@ -404,8 +404,8 @@ pRolocVis <- function(object = NULL) {
             ## so is xlim and ylim
             .valuesPCA <- reactive({
                 plot2D(.dI(), fcol=NULL,
-                       xlim=c(input$xrange[1], input$xrange[2]),
-                       ylim=c(input$yrange[1], input$yrange[2]),
+                       ##xlim=c(input$xrange[1], input$xrange[2]),
+                       ##ylim=c(input$yrange[1], input$yrange[2]),
                        dims=c(as.numeric(input$PCAn1),
                            as.numeric(input$PCAn2)), plot=FALSE)
             })
@@ -439,9 +439,7 @@ pRolocVis <- function(object = NULL) {
             
             ## zoom function: parameters for x- and y-range for PCA plot
             output$xrangeUI <- renderUI({
-                if(is.null(input$PCAn1))
-                    return("loading...please wait")
-                else
+                if(!is.null(.valuesPCA()))
                     ## get max and min values of first principal component
                     ## create a range slider
                     sliderInput("xrange", "zoom x-axis", 
@@ -453,9 +451,7 @@ pRolocVis <- function(object = NULL) {
             })  
             
             output$yrangeUI <- renderUI({
-                if(is.null(input$PCAn1))
-                    return("loading...please wait")
-                else
+                if(!is.null(.valuesPCA()))
                     ## get max and min values of second principal component
                     ## create a range slider
                     sliderInput("yrange", "zoom y-axis",
@@ -543,7 +539,7 @@ pRolocVis <- function(object = NULL) {
                 )
             
             ## reactive expressions for search based on cursor input for PCA
-            minDist2dProtPCA <- reactive({
+            minDist2dProtPCA <- reactive(
                 ## will be empty initially
                 if (!is.null(input$PCAclick)) {
                     ## compute 2D distances from click input to each component 
@@ -554,16 +550,16 @@ pRolocVis <- function(object = NULL) {
                                 valuesx = .valuesPCA()[,1],
                                 valuesy = .valuesPCA()[,2])
                 }
-            })
+            )
             
-            minDist2dProtPCAHover <- reactive({
+            minDist2dProtPCAHover <- reactive(
                 if (!is.null(input$PCAhover)) {
                     .minDistPCA(inputx = input$PCAhover$x, 
                                 inputy = input$PCAhover$y,
                                 valuesx = .valuesPCA()[,1], 
                                 valuesy = .valuesPCA()[,2])
                 }
-            })
+            )
             
             output$hoverProtPCA <- renderText(
                 featureNames(.dI())[minDist2dProtPCAHover()]
@@ -833,7 +829,7 @@ pRolocVis <- function(object = NULL) {
             ## get object pRolocGUI_SearchResults from
             ## the global environment and poll for changes
             .pR_SR <- reactivePoll(
-                intervalMillis = 100, 
+                intervalMillis = 500, 
                 session = NULL,
                 checkFunc = .digestFOI,
                 valueFunc = .readSR
@@ -841,7 +837,7 @@ pRolocVis <- function(object = NULL) {
             
             ## Get the tag names of the list with the saved search results 
             .tagsList <- reactivePoll(
-                intervalMillis = 100, 
+                intervalMillis = 500, 
                 session = NULL,
                 checkFunc = .digestFOI,
                 valueFunc = .descrFOI
@@ -855,14 +851,14 @@ pRolocVis <- function(object = NULL) {
             })
             
             .names.FOI <- reactive({
-                if (.areFeaturesOfInterest(.pR_SR()))
+                if (inherits(.pR_SR(), "FeaturesOfInterest"))
                     .fnamesFOI(.pR_SR())
                 else
                     .fnamesFOI(.pR_SR())[[.whichN()]]
             })
             
             .whichNamesFOI <- reactive({
-                if (.areFeaturesOfInterest(.pR_SR()))
+                if (inherits(.pR_SR(), "FeaturesOfInterest"))
                     which(match(rownames(.dI()), .fnamesFOI(.pR_SR())) != "NA")
                 else
                     which(
@@ -959,7 +955,7 @@ pRolocVis <- function(object = NULL) {
                 if (!is.null(input$saveLists2SR) && input$saveLists2SR > 0 
                     && !is.null(.searchInd()) && length(input$savedSearchText)) {
                     
-                    if (.isFoICollection(.pR_SR()) &&
+                    if (inherits(.pR_SR(), "FoICollection") &&
                         "empty" %in% .descriptionFOI(.pR_SR())) 
                         oldSR <- FoICollection() 
                     else
@@ -967,7 +963,7 @@ pRolocVis <- function(object = NULL) {
                     
                     newFOI <- .newfoi()
                     
-                    if (.areFeaturesOfInterest(.pR_SR())){
+                    if (inherits(.pR_SR(), "FeaturesOfInterest")){
                         newColl <- FoICollection() ## create new collection
                         ## add old FoI to collection
                         newColl <- addFeaturesOfInterest(oldSR, newColl)
