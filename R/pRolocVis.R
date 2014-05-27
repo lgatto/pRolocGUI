@@ -318,15 +318,17 @@ pRolocVis <- function(object = NULL) {
                 selectInput("search", "", choices = c("protein", .colours()))
             })
             
-            output$searchResultsUI <- renderUI({
+            output$searchResultsUI <- renderUI(
                 if(!is.null(input$search)) {
                     if (length(.searchResultsText()))
                         selectInput("sRTextInput", label = "",
                                     choices = .searchResultsText())
-                    else
+                    else 
                         return("not found")
                 }
-            })
+              
+             
+            )
             
             ## reactive expressions for text based search
             ## levels to search
