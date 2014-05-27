@@ -24,7 +24,7 @@
                       width: 100%;}")),
             tags$style(HTML("h4{
                       margin: 3px 0px 5px 0px;}"))
-            ),
+        ),
         
         ## Panel showing up when tab Data is selected
         
@@ -53,8 +53,8 @@
                 actionButton("resetMult", "Clear features"),
                 ## link to help page
                 htmlOutput("linkDisplay")
-                )
-            ),
+            )
+        ),
         ## Panel showing up when tab 'Data' is selected
         conditionalPanel(
             condition = "input.tab1 == 'Data'",
@@ -64,7 +64,7 @@
             helpText(""),
             ## link to help page
             htmlOutput("linkData")
-            ),
+        ),
         ## Panel showing up when tab 'PCA' is selected
         conditionalPanel(
             condition = "input.tab1 == 'PCA'",
@@ -88,8 +88,8 @@
                 htmlOutput("yrangeUI"),
                 ## link to help page
                 htmlOutput("linkPCA")
-                )
-            ),
+            )
+        ),
         ## Panel showing up when tab 'protein profiles' 
         ## is selected
         conditionalPanel(
@@ -109,25 +109,25 @@
                 htmlOutput("organelleAllUI"),
                 htmlOutput("numberPlotDistUI"),
                 htmlOutput("linkPP")
-                )
-            ),
+            )
+        ),
         ## Panel showing up when tab 'quantitation' is selected
         conditionalPanel(
             condition = "input.tab1 == 'quantitation'",
             htmlOutput("exprsRadioUI"),
             htmlOutput("linkExprs")
-            ),
+        ),
         ## Panel showing up when tab 'feature meta-data' is selected
         conditionalPanel(
             condition = "input.tab1 == 'feature meta-data'",
             htmlOutput("fDataRadioUI"),
             htmlOutput("linkfData")
-            ),
+        ),
         ## Panel showing up when tab 'sample meta-data' is selected
         conditionalPanel(
             condition = "input.tab1 == 'sample meta-data'",
             htmlOutput("linkpData")
-            ),  
+        ),  
         ## Panel showing up when tab 'search' is selected
         conditionalPanel(
             condition="input.tab1 == 'search'",
@@ -141,9 +141,9 @@
             ## action Button
             htmlOutput("saveLists2SRUI"),
             htmlOutput("linkSearch")
-            ),                     
+        ),                     
         width = 3
-        )    
+    )    
 }
 
 .pRn1_setMainPanel <- function() {
@@ -186,7 +186,7 @@
                      verbatimTextOutput("infoSavedSearch")
                      ),
             id = "tab1"
-            ),
-        ##actionButton("closebutton", "Stop pRolocVis"), 
+        ),
+        ## actionButton("closebutton", "Stop pRolocVis"), 
         width=9)
 }
