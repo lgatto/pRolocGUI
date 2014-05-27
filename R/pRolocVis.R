@@ -500,24 +500,27 @@ pRolocVis <- function(object = NULL) {
                 if (length(input$fcolours))
                     if (input$fcolours %in% fvarLabels(.dI()))
                         ## drop down menu for position of legend
-                        selectInput("legendpos",
-                                    "position of legend",
-                                    choices = c("bottomright", "bottom", "bottomleft","left",
-                                        "topleft", "top", "topright", "right","center"),
+                        selectInput("legendpos", "position of legend",
+                                    choices = c("bottomright", "bottom",
+                                        "bottomleft","left", "topleft", "top",
+                                        "topright", "right","center"), 
                                     selected="bottomright")
             })
             
-            ## Generate PCA plot, use fcolours for colours and add legend function 
-            ## (appearance and position dependent of user input)
+            ## Generate PCA plot, use fcolours for colours and add legend
+            ## function (appearance and position dependent of user input)
             output$PCA <- renderPlot(.plotPCA(data = .dI(), 
                                               fcolours = input$fcolours, 
-                                              fcex = input$fcex, xrange = input$xrange,
+                                              fcex = input$fcex,
+                                              xrange = input$xrange,
                                               yrange = input$yrange,
                                               sb = input$fsymboltype,
-                                              PCAn1 = input$PCAn1, PCAn2 = input$PCAn2,
+                                              PCAn1 = input$PCAn1,
+                                              PCAn2 = input$PCAn2,
                                               legend = input$legendyes, 
                                               legendpos = input$legendpos,
-                                              sI = .searchInd(), cIS = input$chooseIdenSearch
+                                              sI = .searchInd(),
+                                              cIS = input$chooseIdenSearch
                                               )
                                      )
             
@@ -679,13 +682,14 @@ pRolocVis <- function(object = NULL) {
             }) 
             
             ## for Plot/Download button (needs a reactive expression)
-            .plotDistReac <- reactive(.plotPlotDist(data = .dI(), 
-                                                    levPlotDist = .listParams$levPlotDist,
-                                                    levPlotDistOrg = .listParams$levPlotDistOrg,
-                                                    quantity = input$quantityPlotDist,
-                                                    sI = .searchInd()
-                                                    )
-                                      )
+            .plotDistReac <-
+                reactive(.plotPlotDist(data = .dI(), 
+                                       levPlotDist = .listParams$levPlotDist,
+                                       levPlotDistOrg = .listParams$levPlotDistOrg,
+                                       quantity = input$quantityPlotDist,
+                                       sI = .searchInd()
+                                       )
+                         )
             
             ## organelle for all name
             .organelleAllName <- reactive(

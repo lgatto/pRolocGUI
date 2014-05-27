@@ -162,8 +162,7 @@
                 for (line in sI)    
                     if (!is.null(line))
                         lines(exprs(data)[line,], type="l")
-            title(levPlotDistOrg[i])
-            
+            title(levPlotDistOrg[i])            
         } ## end for loop
     }
 }
