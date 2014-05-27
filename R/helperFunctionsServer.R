@@ -44,7 +44,7 @@
     else return(NULL)
 }
 
-.plotPCA <- function(data, fcolours, fcex, xrange,
+.plotPCA <- function(data, fcolours, fcex, xrange, yrange,
                      sb, PCAn1, PCAn2, legend, legendpos,
                      sI, cIS) {
     par(mfrow=c(1, 1))

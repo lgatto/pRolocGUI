@@ -103,7 +103,7 @@ pRolocVis <- function(object = NULL) {
                 ##class = c("btn", "action-button"))
             })
             ## END: Links to vignette ## 
-                                  
+            
             ## TAB: DATA/UPLOAD ##
             
             ## upload function for own data, access to data path implemented 
@@ -862,14 +862,14 @@ pRolocVis <- function(object = NULL) {
             })
             
             .names.FOI <- reactive({
-                if (.areFeaturesOfInterest(.pR_SR()))
+                if (inherits(.pR_SR(), "FeaturesOfInterest"))
                     .fnamesFOI(.pR_SR())
                 else
                     .fnamesFOI(.pR_SR())[[.whichN()]]
             })
             
             .whichNamesFOI <- reactive({
-                if (.areFeaturesOfInterest(.pR_SR()))
+                if (inherits(.pR_SR(), "FeaturesOfInterest"))
                     which(match(rownames(.dI()), .fnamesFOI(.pR_SR())) != "NA")
                 else
                     which(
@@ -967,14 +967,14 @@ pRolocVis <- function(object = NULL) {
                     && !is.null(.searchInd()) && length(input$savedSearchText)) {
 
                     if (inherits(.pR_SR, "FoICollection") && 
-                            length(description(.pR_SR())) == 0)
+                            length(.pR_SR()) == 0)
                         oldSR <- FoICollection() 
                     else
                         oldSR <- .pR_SR()
                     
                     newFOI <- .newfoi()
                     
-                    if (.areFeaturesOfInterest(.pR_SR())){
+                    if (inherits(.pR_SR(), "FeaturesOfInterest")){
                         newColl <- FoICollection() ## create new collection
                         ## add old FoI to collection
                         newColl <- addFeaturesOfInterest(oldSR, newColl)
