@@ -175,10 +175,8 @@ pRolocVis <- function(object = NULL) {
                 if (inherits(object, "MSnSet"))
                     .dI <- reactive(object)
                 else 
-                    .dI <- reactive(andy2011) 
+                    .dI <- reactive(andy2011)
             }
-            
-           
             
             output$warningowndataUI <- renderText({
                 if(input$data == "own data"){
@@ -321,9 +319,7 @@ pRolocVis <- function(object = NULL) {
             })
             
             output$searchResultsUI <- renderUI({
-                if(is.null(input$search))
-                    return("loading...please wait")
-                else {
+                if(!is.null(input$search)) {
                     if (length(.searchResultsText()))
                         selectInput("sRTextInput", label = "",
                                     choices = .searchResultsText())
@@ -385,7 +381,7 @@ pRolocVis <- function(object = NULL) {
             
             ## colours
             .colours <- reactive({
-                if(!is.null(.dI()))
+               ## if(!is.null(.dI()))
                     fvarLabels(.dI())
             })
             
@@ -846,17 +842,10 @@ pRolocVis <- function(object = NULL) {
             .whichN <- reactive({
                 which(
                     input$tagSelectList == 
-                      substring(.descriptionFOI(.pR_SR()), 1, 15)
+                      description(.pR_SR())
                     )[1]
             })
-            
-            .names.FOI <- reactive({
-                if (inherits(.pR_SR(), "FeaturesOfInterest"))
-                    .fnamesFOI(.pR_SR())
-                else
-                    .fnamesFOI(.pR_SR())[[.whichN()]]
-            })
-            
+                    
             .whichNamesFOI <- reactive({
                 if (inherits(.pR_SR(), "FeaturesOfInterest"))
                     which(match(rownames(.dI()), .fnamesFOI(.pR_SR())) != "NA")
@@ -874,7 +863,8 @@ pRolocVis <- function(object = NULL) {
                     !is.null(.pR_SR())) 
                 selectInput("tagSelectList",
                             "Select search result",
-                            choices = .tagsList()
+                            choices = .tagsList(),
+                            selected = .tagsList()[1]
                 )
             )
             
@@ -902,7 +892,7 @@ pRolocVis <- function(object = NULL) {
             output$saveLists2SRUI <- renderUI({
                 if ((exists("pRolocGUI_SearchResults", .GlobalEnv) ||
                      !is.null(.pR_SR())) && !is.null(input$savedSearchText)) {
-                    if(!(input$savedSearchText %in% .descriptionFOI(.pR_SR())))
+                    if(!(input$savedSearchText %in% description(.pR_SR())))
                         actionButton("saveLists2SR", 
                                      "Create new features of interest"
                         )
@@ -956,7 +946,7 @@ pRolocVis <- function(object = NULL) {
                     && !is.null(.searchInd()) && length(input$savedSearchText)) {
                     
                     if (inherits(.pR_SR(), "FoICollection") &&
-                        "empty" %in% .descriptionFOI(.pR_SR())) 
+                        "empty" %in% description(.pR_SR())) 
                         oldSR <- FoICollection() 
                     else
                         oldSR <- .pR_SR()

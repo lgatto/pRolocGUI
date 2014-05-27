@@ -7,7 +7,7 @@
 ## @param flist If \code{TRUE}, .fnamesFOI returns list-like object, if 
 ## \code{FALSE} it will return a vector. Set \code{TRUE} or \code{FALSE}.
 .fnamesFOI <- function(x, flist=TRUE) {
-  if(.areFeaturesOfInterest(x)) 
+  if(inherits(x, "FeaturesOfInterest")) 
     return(foi(x))
   else
     if (!isTRUE(flist)) {
@@ -21,18 +21,6 @@
       } 
       return(y)
 }
-
-.descriptionFOI <- function(x) {
-  if(.areFeaturesOfInterest(x))
-    return(description(x))
-  else
-    y <- vector("character", length=0)
-    for (i in 1:length(x)) {
-      y <- c(y, description(foi(x)[[i]]))
-    }
-    return(y)
-}
-
 ## @title .show.FOI
 ## @description A function which gives a result similar to executing
 ## \code{x} when \code{x} is of class {"FeaturesOfInterest"} with 
@@ -47,12 +35,12 @@
 ## @param index An integer n referring to the n-th \code{FeaturesOfInterest} 
 ## object in an \code{FoICollection}
 .showFOI <- function(x, fMSnSet, index=1) {
-  if (.areFeaturesOfInterest(x)) 
+  if (inherits(x, "FeaturesOfInterest")) 
     showFOI <- capture.output(x)
   else
     showFOI <- capture.output(show(foi(x)[[index]]))
   showFOI <- c(showFOI, "Therefrom in selected MSnSet:")
-  if (.areFeaturesOfInterest(x))
+  if (inherits(x, "FeaturesOfInterest"))
     showFOI <- c(showFOI, fnamesIn(x, fMSnSet, TRUE))
   else
     showFOI <- c(showFOI, fnamesIn(foi(x)[[index]], fMSnSet, TRUE))
@@ -82,7 +70,7 @@
 
 .descrFOI <- function() {
   if (exists("pRolocGUI_SearchResults", envir = .GlobalEnv))
-    substring(.descriptionFOI(get("pRolocGUI_SearchResults", .GlobalEnv)), 1, 15)
+      description(get("pRolocGUI_SearchResults", .GlobalEnv))
   else
     return(NULL)
 }
