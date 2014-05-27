@@ -9,7 +9,7 @@
 .pRn1_setSidebarPanel <- function() {
     sidebarPanel(
         tags$head(
-            tags$style(type="text/css","hr{margin:0;}"),
+          ##  tags$style(type="text/css","hr{margin:0;}"),
             tags$style(HTML("#resetMult{
                       margin:0;
                       padding: 7 10 7 1;
@@ -21,9 +21,9 @@
                       padding: 7 10 7 1;
                       position: relative;
                       display: block;
-                      width: 100%;}")),
-            tags$style(HTML("h4{
-                      margin: 3px 0px 5px 0px;}"))
+                      width: 100%;}"))
+           ## tags$style(HTML("h4{
+           ##           margin: 3px 0px 5px 0px;}"))
             ),
         
         ## Panel showing up when tab Data is selected
@@ -48,7 +48,7 @@
                 ## action Button to add selected levels 
                 ## to internal assignment concerning query search
                 actionButton("saveText", "Submit selection"),
-                hr(),
+                tags$br(),
                 ## action Button to delete internal assignments
                 actionButton("resetMult", "Clear features"),
                 ## link to help page
@@ -100,7 +100,7 @@
                 selectInput("quantityPlotDist",
                             "number of plots to display",
                             choices=c(1:8), selected=4),
-                hr(),
+                tags$br(),
                 ## drop down menu for 'select source for 
                 ## all assigned proteins to the organelle'
                 htmlOutput("allOrganellesUI"),
