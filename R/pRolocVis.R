@@ -320,6 +320,7 @@ pRolocVis <- function(object = NULL) {
             
             ## text-based search: protein und fvarLabels
             output$searchUI <- renderUI({
+              if (!is.null(.colours()))
                 selectInput("search", "", choices = c("protein", .colours()))
             })
             
@@ -388,7 +389,7 @@ pRolocVis <- function(object = NULL) {
             
             ## colours
             .colours <- reactive({
-               ## if(!is.null(.dI()))
+                if(!is.null(.dI()))
                     fvarLabels(.dI())
             })
             
@@ -468,14 +469,14 @@ pRolocVis <- function(object = NULL) {
             ## compute number of principal components to look for 
             ## and change UI accordingly
             output$PCAn1UI <- renderUI({
-                if (!is.null(.dI()))
+                if (!is.null(.dI())))
                     selectInput("PCAn1", "PC along x axis",
                                 selected = 1,
                                 choices = c(1:ncol(exprs(.dI()))))
             })
             
             output$PCAn2UI <- renderUI({
-                if (!is.null(.dI()))
+                if (!is.null(exprs(.dI())))
                     selectInput("PCAn2", "PC along y axis",
                                 selected = 2,
                                 choices = c(1:ncol(exprs(.dI()))))
