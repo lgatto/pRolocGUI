@@ -1,6 +1,6 @@
 ## Returns the feature names of the FeaturesOfInterest of
-## FoICollection provided as input. If flist is TRUE, the output
-## is listed in the latter case.
+## FoICollection provided as input. If flist is TRUE, the 
+## output is listed in the latter case.
 .fnamesFOI <- function(x, flist=TRUE) {
     if (inherits(x, "FeaturesOfInterest")) {
         ans <- foi(x)
@@ -11,10 +11,9 @@
     return(ans)
 }
 
-
 .showFOI <- function(x, fMSnSet, index=1) {
     if (inherits(x, "FeaturesOfInterest")) {
-        n <- fnamesIn(x, fMSnSet, TRUE)
+        n <- fnamesIn(x[[index]], fMSnSet, TRUE)
         showFOI <- c(capture.output(x),
                      paste("Therefrom in selected MSnSet:", n))
     } else { ## FoICollection
