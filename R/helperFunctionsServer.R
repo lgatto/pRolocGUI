@@ -1,6 +1,6 @@
 ## Returns the feature names of the FeaturesOfInterest of
-## FoICollection provided as input. If flist is TRUE, the output
-## is listed in the latter case.
+## FoICollection provided as input. If flist is TRUE, the 
+## output is listed in the latter case.
 .fnamesFOI <- function(x, flist=TRUE) {
     if (inherits(x, "FeaturesOfInterest")) {
         ans <- foi(x)

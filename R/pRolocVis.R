@@ -23,6 +23,19 @@ pRolocVis <- function(object = NULL) {
     ## increase upload limit to 20 MB
     options(shiny.maxRequestSize = 20*1024^2)
     
+    ## is there a pRolocGUI_SearchResults? is so load it.
+    ## possibly FeaturesOfInterest -> FoICollection
+    ## else empty FoICollection
+    sr <- FoICollection()
+    
+    savesr <- function(sr) {
+      if (length(sr) > 0)
+        assign(sr, "pRolocGUI_SearchResults", .GobalEnv)
+      return(TRUE)
+    }
+    
+    on.exit(savesr(sr))
+    
     app <- list(  
         ui = 
             bootstrapPage( 
