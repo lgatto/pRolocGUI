@@ -97,22 +97,20 @@
                       where = legendpos,
                       bty = "n", cex = 1)
     
-    if (length(sI)) {
-        if (length(cIS)) {
-            foiPCA <- FeaturesOfInterest(description = "hoP",
-                                         fnames = featureNames(data)[sI],
-                                         object=data)
-            highlightOnPlot(data, foiPCA, 
-                            args = list(
-                                fcol = fvarLabels(data)[1],
-                                xlim = c(xrange[1], 
-                                    xrange[2]),
-                                ylim = c(yrange[1], 
-                                    yrange[2]),
-                                dims = c(as.numeric(PCAn1),
-                                    as.numeric(PCAn2))),
-                            col="black", cex=1.5)
-        }
+    if (length(sI) && length(cIS)) {
+        foiPCA <- FeaturesOfInterest(description = "hoP",
+                         fnames = featureNames(data)[sI],
+                         object=data)
+        highlightOnPlot(data, foiPCA, 
+                         args = list(
+                             fcol = fvarLabels(data)[1],
+                             xlim = c(xrange[1], 
+                                      xrange[2]),
+                             ylim = c(yrange[1], 
+                                      yrange[2]),
+                             dims = c(as.numeric(PCAn1),
+                                      as.numeric(PCAn2))),
+                         col="black", cex=1.5)
     }
 }
 
