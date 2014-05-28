@@ -214,9 +214,9 @@ pRolocVis <- function(object = NULL) {
                     isolate({
                         input$chooseIdenSearch
                         if (length(.protPCA$mult) > 2 && 
-                                !is.null(select$PCA) && 
-                                    "mousePCA" %in% select$PCA && 
-                                        !("mousePCA" %in% input$chooseIdenSearch))
+                            !is.null(select$PCA) && 
+                                "mousePCA" %in% select$PCA && 
+                                    !("mousePCA" %in% input$chooseIdenSearch))
                             select$PCA <- NULL
                     })
                 }
@@ -235,9 +235,9 @@ pRolocVis <- function(object = NULL) {
                     isolate({
                         input$chooseIdenSearch
                         if (length(.protPlotDist$mult) > 2 && 
-                                !is.null(select$plotDist) &&
-                                    "mousePlotDist" %in% select$plotDist && 
-                                        !("mousePlotDist" %in% input$chooseIdenSearch))
+                            !is.null(select$plotDist) &&
+                                "mousePlotDist" %in% select$plotDist && 
+                                    !("mousePlotDist" %in% input$chooseIdenSearch))
                             select$plotDist <- NULL
                     })
                 }
@@ -588,7 +588,8 @@ pRolocVis <- function(object = NULL) {
                         if (length(which(as.vector(table(.protPCA$mult)) > 1))) 
                             .protPCA$mult <- 
                                 .protPCA$mult[
-                                              -which(.protPCA$mult == names(which(table(.protPCA$mult) > 1)))
+                                    -which(.protPCA$mult 
+                                        == names(which(table(.protPCA$mult) > 1)))
                                               ]
                         
                     })   
@@ -670,7 +671,7 @@ pRolocVis <- function(object = NULL) {
                         if (length(which((as.vector(table(.protPlotDist$mult)) > 1))))
                             .protPlotDist$mult <- 
                                 .protPlotDist$mult[-which(.protPlotDist$mult
-                                                          == names(which(table(.protPlotDist$mult) > 1)))]
+                                    == names(which(table(.protPlotDist$mult) > 1)))]
                     })
                 }
             }) 
@@ -838,115 +839,116 @@ pRolocVis <- function(object = NULL) {
             ## get object pRolocGUI_SearchResults from
             ## the global environment and poll for changes
             .pR_SR <- reactivePoll(
-              intervalMillis = 1000,
-              session = NULL,
-              checkFunc = .digestFOI,
-              valueFunc = .readSR
+                intervalMillis = 1000,
+                session = NULL,
+                checkFunc = .digestFOI,
+                valueFunc = .readSR
             )
             
             ## Get the tag names of the list with the saved search results
             .tagsList <- reactivePoll(
-              intervalMillis = 1000,
-              session = NULL,
-              checkFunc = .digestFOI,
-              valueFunc = .descrFOI
+                intervalMillis = 1000,
+                session = NULL,
+                checkFunc = .digestFOI,
+                valueFunc = .descrFOI
             )
             
             .whichN <- reactive({
-              which(
-                input$tagSelectList ==
-                  description(.pR_SR())
-              )[1]
+                which(
+                    input$tagSelectList ==
+                        description(.pR_SR())
+                )[1]
             })
             
             .whichNamesFOI <- reactive({
-              if (inherits(.pR_SR(), "FeaturesOfInterest"))
-                which(match(rownames(.dI()), .fnamesFOI(.pR_SR())) != "NA")
-              else
-                which(
-                  match(
-                    rownames(.dI()), .fnamesFOI(.pR_SR())[[.whichN()]]
-                  ) != "NA"
-                )
+                if (inherits(.pR_SR(), "FeaturesOfInterest"))
+                    which(match(rownames(.dI()), .fnamesFOI(.pR_SR())) != "NA")
+                else
+                    which(
+                        match(
+                            rownames(.dI()), .fnamesFOI(.pR_SR())[[.whichN()]]
+                        ) != "NA"
+                    )
             })
             
             ## select Input for the tag names of the list
             output$tagsListSearchResultUI <- renderUI(
-              if (exists("pRolocGUI_SearchResults", .GlobalEnv) |
+                if (exists("pRolocGUI_SearchResults", .GlobalEnv) |
                     !is.null(.pR_SR()))
-                selectInput("tagSelectList",
-                            "Select search result",
-                            choices = .tagsList()
-                )
+                    selectInput("tagSelectList",
+                                "Select search result",
+                                choices = .tagsList()
+                    )
             )
             
             ## display information about selected FoI
             output$infoSavedSearch <- renderText({
-              if (exists("pRolocGUI_SearchResults", .GlobalEnv)|
+                if (exists("pRolocGUI_SearchResults", .GlobalEnv)|
                     !is.null(.pR_SR())) {
-                showFOI <- .showFOI(.pR_SR(), .dI(), .whichN())
-                paste0(showFOI, sep = "\n", collapse = "")
-              }
-              else
-                return("pRolocGUI_SearchResults not found in workspace")
+                    showFOI <- .showFOI(.pR_SR(), .dI(), .whichN())
+                    paste0(showFOI, sep = "\n", collapse = "")
+                }
+                else
+                  return("pRolocGUI_SearchResults not found in workspace")
             })
             
             ## text field to assign name to search results
             output$savedSearchTextUI <- renderUI(
-              if(exists("pRolocGUI_SearchResults", .GlobalEnv) ||
-                   !is.null(.pR_SR()))
-                textInput("savedSearchText",
-                          "Description",
-                          value="new search result")
+                if(exists("pRolocGUI_SearchResults", .GlobalEnv) ||
+                    !is.null(.pR_SR()))
+                    textInput("savedSearchText",
+                              "Description",
+                               value="new search result")
             )
             
             ## action button to save new FoIs
             output$saveLists2SRUI <- renderUI({
-              if ((exists("pRolocGUI_SearchResults", .GlobalEnv) ||
+                if ((exists("pRolocGUI_SearchResults", .GlobalEnv) ||
                      !is.null(.pR_SR())) && !is.null(input$savedSearchText)) {
-                if(!(input$savedSearchText %in% description(.pR_SR())))
-                  actionButton("saveLists2SR",
-                               "Create new features of interest"
-                  )
-                else
-                  return("name exists already, choose another name")
-              }
+                    if(!(input$savedSearchText %in% description(.pR_SR())))
+                        actionButton("saveLists2SR",
+                                     "Create new features of interest"
+                        )
+                    else
+                        return("name exists already, choose another name")
+                }
             })
             
             ## Action Button when pRolocGUI_SearchResults does not exist
             ## in .GlobalEnv --> initialize
             output$initSaveUI <- renderUI({
-              if (!exists("pRolocGUI_SearchResults", .GlobalEnv)
-                  && is.null(.tagsList()))
-                actionButton("initSavedSearch",
-                             "Initialize saved searches"
-                )
+                if (!exists("pRolocGUI_SearchResults", .GlobalEnv)
+                    && is.null(.tagsList()))
+                    actionButton("initSavedSearch",
+                                 "Initialize saved searches"
+                    )
             })
             
             ## create new FoICollection to initialize saved searches and
             ## assign it to the name pRolocGUI_SearchResult in .GlobalEnv
             observe({
-              if (!is.null(input$initSavedSearch) && input$initSavedSearch > 0) {
-                initFoi <- FeaturesOfInterest(
-                  description = "empty",
-                  fnames = featureNames(tan2009r1)[0]
-                )
-                initColl <- FoICollection()
-                initColl <- addFeaturesOfInterest(initFoi, initColl)
-                assign("pRolocGUI_SearchResults",
-                       initColl, envir = .GlobalEnv)
-              }
+                if (!is.null(input$initSavedSearch) && 
+                    input$initSavedSearch > 0) {
+                    initFoi <- FeaturesOfInterest(
+                        description = "empty",
+                        fnames = featureNames(tan2009r1)[0]
+                    )
+                    initColl <- FoICollection()
+                    initColl <- addFeaturesOfInterest(initFoi, initColl)
+                    assign("pRolocGUI_SearchResults",
+                        initColl, envir = .GlobalEnv)
+                }
             })
             
             ## new features of Interest as a reactive expression
             .newfoi <- reactive({
-              input$saveLists2SR
-              isolate({
-                FeaturesOfInterest(
-                  description = input$savedSearchText,
-                  fnames = featureNames(.dI())[.searchInd()],
-                  object = .dI())
-              })
+                input$saveLists2SR
+                isolate({
+                    FeaturesOfInterest(
+                        description = input$savedSearchText,
+                        fnames = featureNames(.dI())[.searchInd()],
+                        object = .dI())
+                })
             })
             
             ## overwrite pRolocGUI_SearchResults with new features
@@ -954,35 +956,38 @@ pRolocVis <- function(object = NULL) {
             ## accordingly if .pR_SR() is FeaturesOfInterest or
             ## collection of Features Of Interest
             observe({
-              if (!is.null(input$saveLists2SR) && input$saveLists2SR > 0
-                  && !is.null(.searchInd()) && length(input$savedSearchText)) {
-                if (inherits(.pR_SR(), "FoICollection") &&
-                      length(.pR_SR()) == 1 && 
-                      !length(.fnamesFOI(.pR_SR(), flist = FALSE)))
-                  oldSR <- FoICollection()
-                else
-                  oldSR <- .pR_SR()
+                if (!is.null(input$saveLists2SR) && input$saveLists2SR > 0
+                    && !is.null(.searchInd()) 
+                    && length(input$savedSearchText)) {
+                    if (inherits(.pR_SR(), "FoICollection") &&
+                        length(.pR_SR()) == 1 && 
+                        !length(.fnamesFOI(.pR_SR(), flist = FALSE)))
+                        oldSR <- FoICollection()
+                    else
+                        oldSR <- .pR_SR()
                 
-                newFOI <- .newfoi()
+                    newFOI <- .newfoi()
                 
-                if (inherits(.pR_SR(), "FeaturesOfInterest")){
-                  newColl <- FoICollection() ## create new collection
-                  ## add old FoI to collection
-                  newColl <- addFeaturesOfInterest(oldSR, newColl)
-                  newColl <- isolate({
-                    input$saveLists2SR
-                    addFeaturesOfInterest(newFOI, newColl)
-                  })
-                  assign("pRolocGUI_SearchResults", newColl, envir = .GlobalEnv)
-                }
-                else {
-                  newColl <- isolate({
-                    input$saveLists2SR
-                    addFeaturesOfInterest(newFOI, oldSR)
-                  })
-                  assign("pRolocGUI_SearchResults", newColl, envir = .GlobalEnv)
-                }
-              } ## end if
+                    if (inherits(.pR_SR(), "FeaturesOfInterest")){
+                        newColl <- FoICollection() ## create new collection
+                        ## add old FoI to collection
+                        newColl <- addFeaturesOfInterest(oldSR, newColl)
+                        newColl <- isolate({
+                            input$saveLists2SR
+                            addFeaturesOfInterest(newFOI, newColl)
+                        })
+                        assign("pRolocGUI_SearchResults", newColl, 
+                            envir = .GlobalEnv)
+                    }
+                    else {
+                        newColl <- isolate({
+                            input$saveLists2SR
+                            addFeaturesOfInterest(newFOI, oldSR)
+                        })
+                        assign("pRolocGUI_SearchResults", newColl, 
+                            envir = .GlobalEnv)
+                    }
+                } ## end if
             })## end observe
             
             ### END: SEARCH ###
