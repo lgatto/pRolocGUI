@@ -325,18 +325,20 @@ different features of interest in case the object is of class
 `FoICollection`.
 
 If no object called `pRolocGUI_SearchResults` exists in the global
-environment you can assign an object to the global environment which
+environment an object is internally created in `pRolocVis` which
 is derived from `andy2011` but will have no
-features. To do this, click on **_Initialize saved searches_**, which
-will create a new `FoICollection`.
+features. 
 
-To save features of interest to the object in the global environment you need
+To save features of interest to the object internally you need
 to select features and add these to the `FoICollection` by entering an 
 appropriate description in the text field (on the sidebar panel, which will
 be useful to trace back to the underlying features and does not exist yet in 
 the `FoICollection`). Add the selected features to the object 
 `pRolocGUI_SearchResults` in the global environment by clicking on 
 **_Create new features of interest_**.
+
+When exiting `pRolocVis` these features will be assigned to the 
+object `pRolocGUI_SearchResults` in the global environment. 
 
 <img src="figures/Screenshot_SaSe1.png" width="100%" alt="" /> <p
 align="center"> Fig. 10: Appearance of search tab (`andy2011`). Search
