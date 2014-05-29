@@ -11,37 +11,18 @@
     return(ans)
 }
 
-
 .showFOI <- function(x, fMSnSet, index=1) {
-    if (inherits(x, "FeaturesOfInterest")) {
-        n <- fnamesIn(x, fMSnSet, TRUE)
-        showFOI <- c(capture.output(x),
-                     paste("Therefrom in selected MSnSet:", n))
-    } else { ## FoICollection
-        n <- fnamesIn(foi(x)[[index]], fMSnSet, TRUE)
-        showFOI <- c(capture.output(show(foi(x)[[index]])),
-                     paste("Therefrom in selected MSnSet:", n))
-    }
-    return(showFOI)
-}
-
-.digestFOI <- function() {
-    if (exists("pRolocGUI_SearchResults", .GlobalEnv)) 
-        digest(get("pRolocGUI_SearchResults", .GlobalEnv))
-    else return(NULL) 
-}
-
-.readSR <- function() {
-    if (exists("pRolocGUI_SearchResults", .GlobalEnv))
-        get("pRolocGUI_SearchResults", .GlobalEnv)
-    else return(NULL)
-}
-
-.descrFOI <- function() {
-  if (exists("pRolocGUI_SearchResults", envir = .GlobalEnv))
-      description(get("pRolocGUI_SearchResults", .GlobalEnv))
-  else
-    return(NULL)
+  if (inherits(x, "FoICollection")) {
+    n <- fnamesIn(foi(x)[[index]], fMSnSet, TRUE)
+    showFOI <- c(capture.output(show(foi(x)[[index]])),
+                 paste("Therefrom in selected MSnSet:", n))
+  } 
+  if (is.list(x)) { ## FoICollection
+    n <- fnamesIn(x[[index]], fMSnSet, TRUE)
+    showFOI <- c(capture.output(show(x[[index]])),
+                 paste("Therefrom in selected MSnSet:", n))
+  }
+  return(showFOI)
 }
 
 .plotPCA <- function(data, fcolours, fcex, xrange, yrange,
