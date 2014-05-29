@@ -107,8 +107,8 @@ issue (e.g. regarding PCA tab or on how to use the *Display selection* widget)
 click on `?` which will open the vignette in a new browser tab in the
 corresponding section.  
 
-<img src="figures/Screenshot_Help1.png" width="100%" alt="" />
-<p align="center"> Fig. 1: Vignette of pRolocVis </p>
+<img src="figures/Screenshot_Help1.png" width="100%" alt="" /> <p 
+align="center"> Fig. 1: Vignette of pRolocVis </p>
 
 <a id="tabspRolocVisData"></a>
 
@@ -117,8 +117,8 @@ The tab **_Data_** is the first tab you will see when you start `pRolocVis`.
 The appearance will differ depending on if you pass directly a `MSnSet` to 
 `pRolocVis` or not. 
 
-<img src="figures/Screenshot_Data1.png" width="100%" alt="" />
-<p align="center"> Fig. 2: Appearance of Data tab in pRolocVis </p>
+<img src="figures/Screenshot_Data1.png" width="100%" alt="" /> <p 
+align="center"> Fig. 2: Appearance of Data tab in pRolocVis </p>
 
 
 If you decide to start `pRolocVis` without assigning a `MSnSet` as
@@ -140,8 +140,8 @@ Clicking on **_Browse..._** will open a dialog window with which you
 can select a file containing a saved `MSnSet` and load 
 it to `pRolocVis`.
 
-<img src="figures/Screenshot_Data2.png" width="100%" alt="" />
-<p align="center"> Fig. 3: File upload in pRolocVis </p>
+<img src="figures/Screenshot_Data2.png" width="100%" alt="" /> <p 
+align="center"> Fig. 3: File upload in pRolocVis </p>
 
 If you pass an object to `pRolocVis` the tab data will show if the
 `MSnSet` was accepted by `pRolocVis`.
@@ -156,8 +156,8 @@ its sidebar panel which is divided into *Display selection* and
 *Plot*.
 
 
-<img src="figures/Screenshot_PCA1.png" width="100%" alt="" />
-<p align="center"> Fig. 4: Appearance of PCA tab (`andy2011`) </p>
+<img src="figures/Screenshot_PCA1.png" width="100%" alt="" /> <p 
+align="center"> Fig. 4: Appearance of PCA tab (`andy2011`) </p>
 
 
 The *Display selection* widget is described [below](#display). The
@@ -241,8 +241,8 @@ display. Please be aware that it is possible to "go" back to a plot to
 change its parameter.
 
 
-<img src="figures/Screenshot_PP3.png" width="100%" alt="" />
-<p align="center"> Fig. 6: Appearance of protein profiles tab 
+<img src="figures/Screenshot_PP3.png" width="100%" alt="" /> <p 
+align="center"> Fig. 6: Appearance of protein profiles tab 
 showing protein profiles  of
 organelles/compartments Endoplasmic reticulum, Golgi apparatus, 
 Mitochondrion and plasma membrane of markers (`andy2011`) </p>
