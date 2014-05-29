@@ -871,17 +871,18 @@ pRolocVis <- function(object = NULL) {
                         if(!(input$savedSearchText %in% description(FoICollection(.pR_SR$foi)))) {
                             .pR_SR$foi <- c(.pR_SR$foi, newFOI)
                     })
-                    isolate(
+                  #  isolate(
                         if(length(.pR_SR$foi[[1]]) == 0) {
                             .pR_SR$foi <- c(.pR_SR$foi[-1])
-                        })
+                        }
+                  #      })
                 }            
             })
             
             ## text field to assign name to search results
             ## display information about selected FoI
             output$infoSavedSearch <- renderText({
-                if (!is.null(.pR_SR$foi)) {
+                if (!is.null(.pR_SR$foi) && length(.pR_SR$foi[[1]]) != 0) {
                     showFOI <- .showFOI(.pR_SR$foi, .dI(), .whichN())
                     paste0(showFOI, sep = "\n", collapse = "")
                 }
@@ -909,16 +910,18 @@ pRolocVis <- function(object = NULL) {
             
             ## select Input for the tag names of the list
             output$tagsListSearchResultUI <- renderUI(
-              selectInput("tagSelectList",
-                          "Select search result",
-                          choices = .tagsList()
-              )
+              if (!is.null(.pR_SR$foi))  
+                  if(length(.pR_SR$foi[[1]]) != 0) 
+                      selectInput("tagSelectList",
+                                  "Select search result",
+                                  choices = .tagsList()
+                )
             )     
             
             output$savedSearchTextUI <- renderUI(
-              textInput("savedSearchText",
-                        "Description",
-                        value="new search result")
+                textInput("savedSearchText",
+                          "Description",
+                          value="new search result")
             )
             
             ## action button to save new FoIs
