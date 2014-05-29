@@ -33,8 +33,10 @@ pRolocVis <- function(object = NULL) {
         else  ## "FeaturesOfInterest"
             sr <- list(sr)
     } else {
-        sr <- list(FeaturesOfInterest(description="empty", fnames = featureNames(andy2011)[0],
-                     object=andy2011))
+        sr <- NULL
+      ##  sr <- foi(FoICollection())
+      ##  list(FeaturesOfInterest(description="empty", fnames = featureNames(andy2011)[0],
+      ##               object=andy2011))
     }
     
     
@@ -852,37 +854,42 @@ pRolocVis <- function(object = NULL) {
             
             ## TAB: SEARCH ##
             observe({
-                if (length(.pR_SR$foi) > 0)
-                    on.exit(assign("pRolocGUI_SearchResults", 
-                            FoICollection(.pR_SR$foi), .GlobalEnv)
-                    )
+              if (length(.pR_SR$foi) > 0)
+                on.exit(assign("pRolocGUI_SearchResults",
+                               FoICollection(.pR_SR$foi), .GlobalEnv)
+                )
             })
             
             .pR_SR <- reactiveValues(foi = sr)
+            if ((is.null(sr))) {
+                .pR_SR$foi <- foi(FoICollection())
+            }
             
             observe({
-                newFOI <- isolate(.newfoi$ind)
+                newFOI <- .newfoi$ind
               
-                if (input$saveLists2SR > 0 
-                    && !is.null(input$saveLists2SR) 
+                if (input$saveLists2SR > 0
+                    && !is.null(input$saveLists2SR)
                         && length(.searchInd()) > 0) {
                 
                     isolate(
-                        if(!(input$savedSearchText %in% description(FoICollection(.pR_SR$foi)))) {
-                            .pR_SR$foi <- c(.pR_SR$foi, newFOI)
+                        if(length(.pR_SR$foi) != 0 && 
+                             !(input$savedSearchText %in% 
+                                 description(FoICollection(.pR_SR$foi)))) {
+                        .pR_SR$foi <- c(.pR_SR$foi, newFOI)
                     })
-                  #  isolate(
-                        if(length(.pR_SR$foi[[1]]) == 0) {
-                            .pR_SR$foi <- c(.pR_SR$foi[-1])
-                        }
-                  #      })
-                }            
+               
+                    if(length(.pR_SR$foi) == 0) {
+                        .pR_SR$foi <- c(newFOI)
+                    }
+                
+                }
             })
             
             ## text field to assign name to search results
             ## display information about selected FoI
             output$infoSavedSearch <- renderText({
-                if (!is.null(.pR_SR$foi) && length(.pR_SR$foi[[1]]) != 0) {
+                if (!is.null(.pR_SR$foi) && length(.pR_SR$foi) != 0) {
                     showFOI <- .showFOI(.pR_SR$foi, .dI(), .whichN())
                     paste0(showFOI, sep = "\n", collapse = "")
                 }
@@ -895,14 +902,14 @@ pRolocVis <- function(object = NULL) {
             .whichN <- reactive({
                 which(
                     input$tagSelectList ==
-                    description(FoICollection(.pR_SR$foi))
-                )[1]
+                        description(FoICollection(.pR_SR$foi))
+                 )[1]
             })
             
             .whichNamesFOI <- reactive({
                 which(
                     match(
-                        rownames(.dI()), 
+                        rownames(.dI()),
                         .fnamesFOI(FoICollection(.pR_SR$foi))[[.whichN()]]
                     ) != "NA"
                 )
@@ -910,13 +917,13 @@ pRolocVis <- function(object = NULL) {
             
             ## select Input for the tag names of the list
             output$tagsListSearchResultUI <- renderUI(
-              if (!is.null(.pR_SR$foi))  
-                  if(length(.pR_SR$foi[[1]]) != 0) 
-                      selectInput("tagSelectList",
-                                  "Select search result",
-                                  choices = .tagsList()
-                )
-            )     
+            ##  if (!is.null(.pR_SR$foi))
+                if(length(.pR_SR$foi) != 0)
+                    selectInput("tagSelectList",
+                                "Select search result",
+                                choices = .tagsList()
+                    )
+            )
             
             output$savedSearchTextUI <- renderUI(
                 textInput("savedSearchText",
@@ -927,15 +934,16 @@ pRolocVis <- function(object = NULL) {
             ## action button to save new FoIs
             output$saveLists2SRUI <- renderUI({
                 if (length(input$savedSearchText) != 0){
-                    if(!(input$savedSearchText %in% 
-                           description(FoICollection(.pR_SR$foi))))
-                        actionButton("saveLists2SR",
-                            "Create new features of interest")
-                    else 
-                        return("name already exists, choose another name")
+                    if(!(input$savedSearchText %in%
+                        description(FoICollection(.pR_SR$foi))) ||
+                            length(.pR_SR$foi) == 0)
+                    actionButton("saveLists2SR",
+                                 "Create new features of interest")
+                else
+                    return("name already exists, choose another name")
                 }
             })
-            
+                        
             .newfoi <- reactiveValues(ind = NULL)
             
             observe({
@@ -943,16 +951,16 @@ pRolocVis <- function(object = NULL) {
                 sI <- isolate(.searchInd())
                 searchText <- isolate(input$savedSearchText)
                 dataInput <- isolate(.dI())
-                if (!is.null(searchText) 
-                    && !is.null(dataInput) 
+                if (!is.null(searchText)
+                    && !is.null(dataInput)
                         && !is.null(sI))
-                    isolate({
-                        .newfoi$ind <- FeaturesOfInterest(
-                            description = searchText,
-                            fnames = featureNames(dataInput)[sI],
-                            object = dataInput)
-                    })
-            })            
+                isolate({
+                    .newfoi$ind <- FeaturesOfInterest(
+                        description = searchText,
+                        fnames = featureNames(dataInput)[sI],
+                        object = dataInput)
+                })
+            })
             ### END: SEARCH ###
         
         } ## end server function        
