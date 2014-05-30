@@ -97,7 +97,7 @@
                 ## drop down menu for quantity of plots
                 selectInput("quantityPlotDist",
                             "number of plots to display",
-                            choices=c(1:8), selected=4),
+                            choices=c(1:8), selected=1),
                 tags$br(),
                 ## drop down menu for 'select source for 
                 ## all assigned proteins to the organelle'
