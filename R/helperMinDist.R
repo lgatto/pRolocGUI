@@ -18,7 +18,7 @@
     else {
         j <- match(
             subset(featureNames(data), fData(data)[, marker] == org),
-            featureNames(data)
+                featureNames(data)
         )
     }
     dist <- abs(inputy - exprs(data)[j, round(inputx, 0)])

@@ -9,28 +9,28 @@
 .pRn1_setSidebarPanel <- function() {
     sidebarPanel(
         tags$head(
-          ##  tags$style(type="text/css","hr{margin:0;}"),
+            ##  tags$style(type="text/css","hr{margin:0;}"),
             tags$style(HTML("#resetMult{
-                      margin:0;
-                      padding: 7 10 7 1;
-                      position: relative;
-                      display: block;
-                      width: 100%;}")),
+                    margin:0;
+                    padding: 7 10 7 1;
+                    position: relative;
+                    display: block;
+                    width: 100%;}")),
             tags$style(HTML("#saveText{
-                      margin:0;
-                      padding: 7 10 7 1;
-                      position: relative;
-                      display: block;
-                      width: 100%;}"))
+                    margin:0;
+                    padding: 7 10 7 1;
+                    position: relative;
+                    display: block;
+                    width: 100%;}"))
         ),
         
         ## Panel showing up when tab Data is selected
         
         conditionalPanel(            
             condition = "input.tab1 == 'PCA' |
-          input.tab1 == 'quantitation' |
-          input.tab1 == 'feature meta-data' |
-          input.tab1 == 'protein profiles'",
+                input.tab1 == 'quantitation' |
+                input.tab1 == 'feature meta-data' |
+                input.tab1 == 'protein profiles'",
             wellPanel(
                 h4("Display selection"),
                 ## Control Checkboxes, if deactivated points will 
@@ -57,8 +57,8 @@
         conditionalPanel(
             condition = "input.tab1 == 'Data'",
             strong("Welcome to", span("pRolocVis", style = "color:gray"), 
-                   ", an interactive visualisation tool 
-                  for organelle proteomics data."),
+                ", an interactive visualisation tool 
+                for organelle proteomics data."),
             helpText(""),
             ## link to help page
             htmlOutput("linkData")
@@ -96,8 +96,8 @@
                 h4("Plot"),
                 ## drop down menu for quantity of plots
                 selectInput("quantityPlotDist",
-                            "number of plots to display",
-                            choices=c(1:8), selected=1),
+                        "number of plots to display",
+                        choices=c(1:8), selected=1),
                 tags$br(),
                 ## drop down menu for 'select source for 
                 ## all assigned proteins to the organelle'
@@ -148,41 +148,42 @@
     mainPanel(
         tabsetPanel(
             tabPanel("Data",
-                     htmlOutput("Data1"),
-                     htmlOutput("Data2"),
-                     htmlOutput("Data3")),
+                htmlOutput("Data1"),
+                htmlOutput("Data2"),
+                htmlOutput("Data3")
+            ),
             tabPanel("PCA",
-                     plotOutput("PCA", width = "100%",height="800px",
-                                clickId = "PCAclick",
-                                hoverId = "PCAhover",
-                                hoverDelay = 100,
-                                hoverDelayType = "throttle"
-                                ),
-                     textOutput("hoverProtPCA"),
-                     downloadButton("plotPCADownload","Download Plot")
-                     ),
+                plotOutput("PCA", width = "100%",height="800px",
+                    clickId = "PCAclick",
+                    hoverId = "PCAhover",
+                    hoverDelay = 100,
+                    hoverDelayType = "throttle"
+                ),
+                textOutput("hoverProtPCA"),
+                downloadButton("plotPCADownload","Download Plot")
+            ),
             tabPanel("protein profiles",
-                     plotOutput("plotdist", width="100%", height="800px",
-                                clickId = "plotDistclick",
-                                hoverId = "plotDisthover",
-                                hoverDelay = 100,
-                                hoverDelayType = "throttle"
-                                ),
-                     textOutput("hoverProtPlotDist"),
-                     downloadButton("plotDistDownload","Download Plot")
-                     ),
+                plotOutput("plotdist", width="100%", height="800px",
+                    clickId = "plotDistclick",
+                    hoverId = "plotDisthover",
+                    hoverDelay = 100,
+                    hoverDelayType = "throttle"
+                ),
+                textOutput("hoverProtPlotDist"),
+                downloadButton("plotDistDownload","Download Plot")
+            ),
             tabPanel("quantitation", 
-                     dataTableOutput("MSnExprs")
-                     ),
+                dataTableOutput("MSnExprs")
+            ),
             tabPanel("feature meta-data", 
-                     dataTableOutput("MSnfData")
-                     ),
+                dataTableOutput("MSnfData")
+            ),
             tabPanel("sample meta-data", 
-                     dataTableOutput("MSnpData")
-                     ),
+                dataTableOutput("MSnpData")
+            ),
             tabPanel("search",
-                     verbatimTextOutput("infoSavedSearch")
-                     ),
+                verbatimTextOutput("infoSavedSearch")
+            ),
             id = "tab1"
         ),
         ## actionButton("closebutton", "Stop pRolocVis"), 
