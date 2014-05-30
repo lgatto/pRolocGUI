@@ -36,9 +36,6 @@ pRolocVis <- function(object = NULL) {
         }
     } else {
         sr <- NULL
-      ##  sr <- foi(FoICollection())
-      ##  list(FeaturesOfInterest(description="empty", fnames = featureNames(andy2011)[0],
-      ##               object=andy2011))
     }
     
     
@@ -62,48 +59,48 @@ pRolocVis <- function(object = NULL) {
             if (nchar(vignette))
                 addResourcePath(prefix = "doc", 
                                 directoryPath = system.file("doc",
-                                    package = "pRolocGUI"))
+                                package = "pRolocGUI"))
             
             ## Links to vignette ##
             output$linkDisplay <- renderUI({
                 if (nchar(vignette))
                     a(href="/doc/pRolocVis.html#display",
-                      "?", target="_blank")
+                        "?", target="_blank")
                 ##class = c("btn", "action-button"))
             })
             
             output$linkData <- renderUI({
                 if (nchar(vignette))
                     a(href="/doc/pRolocVis.html#tabspRolocVisData",
-                      "?", target="_blank")
+                        "?", target="_blank")
                 ##class = c("btn", "action-button"))
             })
             
             output$linkPCA <- renderUI({
                 if (nchar(vignette))
                     a(href="/doc/pRolocVis.html#tabspRolocVisPCA",
-                      "?", target="_blank")
+                        "?", target="_blank")
                 ##class = c("btn", "action-button"))
             })
             
             output$linkPP <- renderUI({
                 if (nchar(vignette))
                     a(href="/doc/pRolocVis.html#tabspRolocVisPP",
-                      "?", target="_blank")
+                        "?", target="_blank")
                 ##class = c("btn", "action-button"))
             })
             
             output$linkExprs <- renderUI({
                 if (nchar(vignette))
                     a(href="/doc/pRolocVis.html#tabspRolocVisExprs",
-                      "?", target="_blank")
+                        "?", target="_blank")
                 ##class = c("btn", "action-button"))
             })
             
             output$linkfData <- renderUI({
                 if (nchar(vignette))
                     a(href="/doc/pRolocVis.html#tabspRolocVisfData",
-                      "?", target="_blank")
+                        "?", target="_blank")
                 ##class = c("btn", "action-button"))
             })
             
@@ -168,14 +165,16 @@ pRolocVis <- function(object = NULL) {
             .dIownData <- reactive({
                 if (!length(as.character(input$owndata["datapath"])))
                     od <- andy2011
-                else{
+                else {
                     ## check if MSnSet has ending .rda or .RData and if 
                     ## it is MSnSet
                     if (file_ext(input$owndata["name"]) %in% c("rda","RData")){
                         if (inherits(
                             get(load(as.character(input$owndata["datapath"]))), 
                             "MSnSet"))
-                            od <- get(load(as.character(input$owndata["datapath"])))
+                            od <- get(load(
+                                as.character(input$owndata["datapath"])
+                            ))
                         else
                             od <- andy2011
                     }
@@ -325,8 +324,10 @@ pRolocVis <- function(object = NULL) {
             
             ## text-based search: protein und fvarLabels
             output$searchUI <- renderUI({
-              if (!is.null(.colours()))
-                selectInput("search", "", choices = c("protein", .colours()))
+                if (!is.null(.colours()))
+                    selectInput("search", "", 
+                                choices = c("protein", .colours())
+                    )
             })
             
             output$searchResultsUI <- renderUI(
@@ -458,7 +459,7 @@ pRolocVis <- function(object = NULL) {
                                 max = max(.valuesPCA()[,1])+1,
                                 value = c(min(.valuesPCA()[,1]), 
                                     max(.valuesPCA()[,1]))
-                                )
+                    )
             })  
             
             output$yrangeUI <- renderUI({
@@ -479,7 +480,8 @@ pRolocVis <- function(object = NULL) {
                 if (!is.null(.dI()))
                     selectInput("PCAn1", "PC along x axis",
                                 selected = 1,
-                                choices = c(1:ncol(exprs(.dI()))))
+                                choices = c(1:ncol(exprs(.dI())))
+                    )
             })
             
             output$PCAn2UI <- renderUI({
@@ -530,20 +532,21 @@ pRolocVis <- function(object = NULL) {
             
             
             ## for Plot/Download button (needs a reactive expression)
-            .PCAPlotReac <- reactive(.plotPCA(data = .dI(), 
-                                              fcolours = input$fcolours, 
-                                              fcex = input$fcex,
-                                              xrange = input$xrange,
-                                              yrange = input$yrange,
-                                              sb = input$fsymboltype,
-                                              PCAn1 = input$PCAn1,
-                                              PCAn2 = input$PCAn2,
-                                              legend = input$legendyes, 
-                                              legendpos = input$legendpos,
-                                              sI = .searchInd(),
-                                              cIS = input$chooseIdenSearch
-                                              )
-                                     )
+            .PCAPlotReac <- reactive(
+                .plotPCA(data = .dI(), 
+                         fcolours = input$fcolours, 
+                         fcex = input$fcex,
+                         xrange = input$xrange,
+                         yrange = input$yrange,
+                         sb = input$fsymboltype,
+                         PCAn1 = input$PCAn1,
+                         PCAn2 = input$PCAn2,
+                         legend = input$legendyes, 
+                         legendpos = input$legendpos,
+                         sI = .searchInd(),
+                         cIS = input$chooseIdenSearch
+                )
+            )
             
             
             ## Download Handler for PCA plot
@@ -582,8 +585,7 @@ pRolocVis <- function(object = NULL) {
             )
             
             output$hoverProtPCA <- renderText(
-               ## if (!is.null(minDist2dProtPCAHover()))
-                    featureNames(.dI())[minDist2dProtPCAHover()]
+                featureNames(.dI())[minDist2dProtPCAHover()]
             )
             
             ## Multiple points list
@@ -602,7 +604,6 @@ pRolocVis <- function(object = NULL) {
                                     -which(.protPCA$mult 
                                         == names(which(table(.protPCA$mult) > 1)))
                                               ]
-                        
                     })   
                 }
             }) 
@@ -661,7 +662,7 @@ pRolocVis <- function(object = NULL) {
                                      org = .listParams$levPlotDistOrg[1],
                                      inputx = input$plotDisthover$x,
                                      inputy = input$plotDisthover$y
-                                     )
+                    )
             )
             
             output$hoverProtPlotDist <- renderText(
@@ -678,7 +679,7 @@ pRolocVis <- function(object = NULL) {
                 if(!is.null(input$plotDistclick)) {
                     isolate({
                         .protPlotDist$mult <-
-                            c(.protPlotDist$mult,.minDistProtPlotDist())
+                            c(.protPlotDist$mult, .minDistProtPlotDist())
                         ## remove indices when indices are double-clicked
                         if (length(which((as.vector(table(.protPlotDist$mult)) > 1))))
                             .protPlotDist$mult <- 
@@ -689,14 +690,14 @@ pRolocVis <- function(object = NULL) {
             }) 
             
             ## for Plot/Download button (needs a reactive expression)
-            .plotDistReac <-
-                reactive(.plotPlotDist(data = .dI(), 
-                                       levPlotDist = .listParams$levPlotDist,
-                                       levPlotDistOrg = .listParams$levPlotDistOrg,
-                                       quantity = input$quantityPlotDist,
-                                       sI = .searchInd()
-                                       )
-                         )
+            .plotDistReac <- reactive(
+                .plotPlotDist(data = .dI(), 
+                              levPlotDist = .listParams$levPlotDist,
+                              levPlotDistOrg = .listParams$levPlotDistOrg,
+                              quantity = input$quantityPlotDist,
+                              sI = .searchInd()
+                )
+            )
             
             ## organelle for all name
             .organelleAllName <- reactive(
@@ -712,7 +713,7 @@ pRolocVis <- function(object = NULL) {
                     selectInput("fNamesplDist",
                                 "feature(s) in",
                                 choices = c("all", .colours()) 
-                                )
+                    )
             )
             
             output$organelleAllUI <- renderUI(
@@ -721,7 +722,7 @@ pRolocVis <- function(object = NULL) {
                     selectInput("organelleAll",
                                 "assigned to",
                                 choices = .organelleAllName()
-                                )
+                    )
             )
             
             output$numberPlotDistUI <- renderUI(
@@ -747,13 +748,13 @@ pRolocVis <- function(object = NULL) {
                               levPlotDistOrg = .listParams$levPlotDistOrg,
                               quantity = input$quantityPlotDist,
                               sI = .searchInd()
-                              )
+                )
             )
             
             
             output$plotDistDownload <- downloadHandler(
                 filename = function() {
-                    paste(input$data, "-", "plotDist","-", 
+                    paste(input$data, "-", "plotDist", "-", 
                           Sys.Date(), '.jpg', sep='')
                 },
                 content = function(file) {
@@ -774,7 +775,7 @@ pRolocVis <- function(object = NULL) {
                                  "selected"="selected"),
                              selected = ifelse(length(.searchInd()), 
                                  "selected", "all")
-                             )
+                )
             })
             
             output$MSnExprs <- renderDataTable({
@@ -807,7 +808,7 @@ pRolocVis <- function(object = NULL) {
                                  "selected" = "selected"),
                              selected = ifelse(length(.searchInd()), 
                                  "selected", "all")
-                             )
+                )
             })
             
             output$MSnfData <- renderDataTable({
@@ -849,10 +850,10 @@ pRolocVis <- function(object = NULL) {
             
             ## TAB: SEARCH ##
             observe({
-              if (length(.pR_SR$foi) > 0)
-                on.exit(assign("pRolocGUI_SearchResults",
-                               .pR_SR$foi, .GlobalEnv)
-                )
+                if (length(.pR_SR$foi) > 0)
+                    on.exit(assign("pRolocGUI_SearchResults",
+                            .pR_SR$foi, .GlobalEnv)
+                    )
             })
             
             .pR_SR <- reactiveValues(foi = sr)
@@ -869,7 +870,9 @@ pRolocVis <- function(object = NULL) {
                     isolate(
                         if (!(input$savedSearchText %in% 
                             description(.pR_SR$foi))) {
-                            .pR_SR$foi <- addFeaturesOfInterest(newFOI, .pR_SR$foi)
+                            .pR_SR$foi <- addFeaturesOfInterest(
+                                              newFOI, .pR_SR$foi
+                                          )
                         }
                     )
                 }
@@ -881,8 +884,7 @@ pRolocVis <- function(object = NULL) {
                 if (!is.null(.pR_SR$foi) && length(.pR_SR$foi) != 0) {
                     showFOI <- .showFOI(.pR_SR$foi, .dI(), .whichN())
                     paste0(showFOI, sep = "\n", collapse = "")
-                }
-                else
+                } else
                     return("pRolocGUI_SearchResults not found in workspace")
             })
             
@@ -916,13 +918,16 @@ pRolocVis <- function(object = NULL) {
             output$savedSearchTextUI <- renderUI(
                 textInput("savedSearchText",
                           "Description",
-                          value="new search result")
+                          value="new search result"
+                )
             )
             
             ## action button to save new FoIs
             output$saveLists2SRUI <- renderUI({
+                ## actionButton will only appear when 
+                ## there is a description and features are selected
                 if (nchar(input$savedSearchText) != 0 && 
-                      length(.searchInd()) != 0){
+                    length(.searchInd()) != 0) {
                     if(!(input$savedSearchText %in%
                         description(.pR_SR$foi)) ||
                             length(.pR_SR$foi) == 0)
