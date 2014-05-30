@@ -1,3 +1,8 @@
+CHANGES IN VERSION 0.99.2
+------------------------
+ o change access and assignment to object pRolocGUI_SearchResults in
+   .GlobalEnv [2014-05-30 Fri]
+
 CHANGES IN VERSION 0.99.1
 -------------------------
  o fix biocViews [2014-05-27 Tue]
