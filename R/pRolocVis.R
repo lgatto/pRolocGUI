@@ -299,31 +299,17 @@ pRolocVis <- function(object = NULL) {
             ## plot2D, plotDist and tabs quantitation
             ## and feature meta-data
             .searchInd <- reactive({
-                if (length(input$chooseIdenSearch) == 1) {
-                    if ("text" %in% input$chooseIdenSearch)
-                        searchInd <- .protText$mult
-                    if ("mousePCA" %in% input$chooseIdenSearch)
-                        searchInd <- .protPCA$mult
-                    if ("mousePlotDist" %in% input$chooseIdenSearch)
-                        searchInd <- .protPlotDist$mult
-                    if ("savedSearches" %in% input$chooseIdenSearch &&
-                            !is.null(input$tagSelectList) && 
-                                exists("pRolocGUI_SearchResults", .GlobalEnv))
-                        searchInd <- .whichNamesFOI()
-                }
-                else {
-                    searchInd <- NULL
-                    if ("text" %in% input$chooseIdenSearch)
-                        searchInd <- c(searchInd, .protText$mult)
-                    if ("mousePCA" %in% input$chooseIdenSearch)
-                        searchInd <- c(searchInd, .protPCA$mult)
-                    if ("mousePlotDist" %in% input$chooseIdenSearch)
-                        searchInd <- c(searchInd, .protPlotDist$mult)
-                    if ("savedSearches" %in% input$chooseIdenSearch &&
-                            !is.null(input$tagSelectList) &&
-                                exists("pRolocGUI_SearchResults", .GlobalEnv))
-                        searchInd <- c(searchInd, .whichNamesFOI())
-                }
+                searchInd <- NULL
+                if ("text" %in% input$chooseIdenSearch)
+                    searchInd <- c(searchInd, .protText$mult)
+                if ("mousePCA" %in% input$chooseIdenSearch)
+                    searchInd <- c(searchInd, .protPCA$mult)
+                if ("mousePlotDist" %in% input$chooseIdenSearch)
+                    searchInd <- c(searchInd, .protPlotDist$mult)
+                if ("savedSearches" %in% input$chooseIdenSearch &&
+                    !is.null(input$tagSelectList) &&
+                        exists("pRolocGUI_SearchResults", .GlobalEnv))
+                    searchInd <- c(searchInd, .whichNamesFOI())
                 unique(searchInd)
             })
             
@@ -666,9 +652,10 @@ pRolocVis <- function(object = NULL) {
             
             .minDistProtPlotDistHover <- reactive(
                 if (!is.null(input$plotDisthover) && 
-                        input$quantityPlotDist == "1" &&
-                            !(input$plotDisthover$x < 0.5) && 
-                                !(input$plotDisthover$x > nrow(pData(.dI())) + .3)) 
+                    !(input$plotDisthover$x > nrow(pData(.dI())) + .3) &&
+                        !(input$plotDisthover$x < 0.5) && 
+                            !is.null(input$quantityPlotDist) && 
+                                input$quantityPlotDist == "1") 
                     .minDistPlotDist(data = .dI(),
                                      marker = .listParams$levPlotDist[1],
                                      org = .listParams$levPlotDistOrg[1],
