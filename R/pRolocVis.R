@@ -29,9 +29,11 @@ pRolocVis <- function(object = NULL) {
     if (exists("pRolocGUI_SearchResults", .GlobalEnv)) {
         sr <- get("pRolocGUI_SearchResults", .GlobalEnv)
         if (inherits(sr, "FoICollection"))
-            sr <- foi(sr) 
-        else  ## "FeaturesOfInterest"
-            sr <- list(sr)
+            sr <- sr
+        else { ## "FeaturesOfInterest"
+            coll <- FoICollection()
+            sr <- addFeaturesOfInterest(sr, coll)
+        }
     } else {
         sr <- NULL
       ##  sr <- foi(FoICollection())
@@ -424,11 +426,13 @@ pRolocVis <- function(object = NULL) {
             ## values of PCA, dims is dependent on user input,
             ## so is xlim and ylim
             .valuesPCA <- reactive({
-                plot2D(.dI(), fcol=NULL,
-                       ##xlim=c(input$xrange[1], input$xrange[2]),
-                       ##ylim=c(input$yrange[1], input$yrange[2]),
-                       dims=c(as.numeric(input$PCAn1),
-                           as.numeric(input$PCAn2)), plot=FALSE)
+                if (!is.null(.dI()))
+                    plot2D(.dI(), fcol=NULL,
+                         ##xlim=c(input$xrange[1], input$xrange[2]),
+                         ##ylim=c(input$yrange[1], input$yrange[2]),
+                         dims=c(as.numeric(input$PCAn1),
+                                as.numeric(input$PCAn2)), 
+                         plot=FALSE)
             })
             
             ## render UI accordingly to .colours()
@@ -520,20 +524,22 @@ pRolocVis <- function(object = NULL) {
             
             ## Generate PCA plot, use fcolours for colours and add legend
             ## function (appearance and position dependent of user input)
-            output$PCA <- renderPlot(.plotPCA(data = .dI(), 
-                                              fcolours = input$fcolours, 
-                                              fcex = input$fcex,
-                                              xrange = input$xrange,
-                                              yrange = input$yrange,
-                                              sb = input$fsymboltype,
-                                              PCAn1 = input$PCAn1,
-                                              PCAn2 = input$PCAn2,
-                                              legend = input$legendyes, 
-                                              legendpos = input$legendpos,
-                                              sI = .searchInd(),
-                                              cIS = input$chooseIdenSearch
-                                              )
-                                     )
+            output$PCA <- renderPlot(
+                if (!is.null(.dI()))
+                    .plotPCA(data = .dI(), 
+                             fcolours = input$fcolours, 
+                             fcex = input$fcex,
+                             xrange = input$xrange,
+                             yrange = input$yrange,
+                             sb = input$fsymboltype,
+                             PCAn1 = input$PCAn1,
+                             PCAn2 = input$PCAn2,
+                             legend = input$legendyes, 
+                             legendpos = input$legendpos,
+                             sI = .searchInd(),
+                             cIS = input$chooseIdenSearch
+                    )
+                )
             
             
             ## for Plot/Download button (needs a reactive expression)
@@ -568,7 +574,7 @@ pRolocVis <- function(object = NULL) {
             ## reactive expressions for search based on cursor input for PCA
             minDist2dProtPCA <- reactive(
                 ## will be empty initially
-                if (!is.null(input$PCAclick)) {
+                if (!is.null(input$PCAclick) && !is.null(.valuesPCA())) {
                     ## compute 2D distances from click input to each component 
                     ## of the PCA plot, input$PCAclick$x and input$PCAclick$y
                     ## is user input (index will be returned)
@@ -580,7 +586,7 @@ pRolocVis <- function(object = NULL) {
             )
             
             minDist2dProtPCAHover <- reactive(
-                if (!is.null(input$PCAhover)) {
+                if (!is.null(input$PCAhover) && !is.null(.valuesPCA())) {
                     .minDistPCA(inputx = input$PCAhover$x, 
                                 inputy = input$PCAhover$y,
                                 valuesx = .valuesPCA()[,1], 
@@ -589,7 +595,8 @@ pRolocVis <- function(object = NULL) {
             )
             
             output$hoverProtPCA <- renderText(
-                featureNames(.dI())[minDist2dProtPCAHover()]
+                if (!is.null(minDist2dProtPCAHover()))
+                    featureNames(.dI())[minDist2dProtPCAHover()]
             )
             
             ## Multiple points list
@@ -598,7 +605,7 @@ pRolocVis <- function(object = NULL) {
             ## observe and concatenate new indices to .protPCA$mult
             observe({
                 ## will be empty initially
-                if(!is.null(input$PCAclick)){
+                if(!is.null(input$PCAclick) && !is.null(minDist2dProtPCA())){
                     isolate({
                         .protPCA$mult <- c(.protPCA$mult, minDist2dProtPCA())
                         ## remove indices when indices are clicked another time
@@ -856,33 +863,27 @@ pRolocVis <- function(object = NULL) {
             observe({
               if (length(.pR_SR$foi) > 0)
                 on.exit(assign("pRolocGUI_SearchResults",
-                               FoICollection(.pR_SR$foi), .GlobalEnv)
+                               .pR_SR$foi, .GlobalEnv)
                 )
             })
             
             .pR_SR <- reactiveValues(foi = sr)
+            
             if ((is.null(sr))) {
-                .pR_SR$foi <- foi(FoICollection())
+                .pR_SR$foi <- FoICollection()
             }
             
             observe({
                 newFOI <- .newfoi$ind
-              
                 if (input$saveLists2SR > 0
                     && !is.null(input$saveLists2SR)
                         && length(.searchInd()) > 0) {
-                
                     isolate(
-                        if(length(.pR_SR$foi) != 0 && 
-                             !(input$savedSearchText %in% 
-                                 description(FoICollection(.pR_SR$foi)))) {
-                        .pR_SR$foi <- c(.pR_SR$foi, newFOI)
-                    })
-               
-                    if(length(.pR_SR$foi) == 0) {
-                        .pR_SR$foi <- c(newFOI)
-                    }
-                
+                        if (!(input$savedSearchText %in% 
+                            description(.pR_SR$foi))) {
+                            .pR_SR$foi <- addFeaturesOfInterest(newFOI, .pR_SR$foi)
+                        }
+                    )
                 }
             })
             
@@ -897,12 +898,12 @@ pRolocVis <- function(object = NULL) {
                     return("pRolocGUI_SearchResults not found in workspace")
             })
             
-            .tagsList <- reactive({description(FoICollection(.pR_SR$foi))})
+            .tagsList <- reactive({description(.pR_SR$foi)})
             
             .whichN <- reactive({
                 which(
                     input$tagSelectList ==
-                        description(FoICollection(.pR_SR$foi))
+                        description(.pR_SR$foi)
                  )[1]
             })
             
@@ -910,14 +911,13 @@ pRolocVis <- function(object = NULL) {
                 which(
                     match(
                         rownames(.dI()),
-                        .fnamesFOI(FoICollection(.pR_SR$foi))[[.whichN()]]
+                        .fnamesFOI(.pR_SR$foi)[[.whichN()]]
                     ) != "NA"
                 )
             })
             
             ## select Input for the tag names of the list
             output$tagsListSearchResultUI <- renderUI(
-            ##  if (!is.null(.pR_SR$foi))
                 if(length(.pR_SR$foi) != 0)
                     selectInput("tagSelectList",
                                 "Select search result",
@@ -933,12 +933,13 @@ pRolocVis <- function(object = NULL) {
             
             ## action button to save new FoIs
             output$saveLists2SRUI <- renderUI({
-                if (length(input$savedSearchText) != 0){
+                if (nchar(input$savedSearchText) != 0 && 
+                      length(.searchInd()) != 0){
                     if(!(input$savedSearchText %in%
-                        description(FoICollection(.pR_SR$foi))) ||
+                        description(.pR_SR$foi)) ||
                             length(.pR_SR$foi) == 0)
-                    actionButton("saveLists2SR",
-                                 "Create new features of interest")
+                        actionButton("saveLists2SR",
+                                     "Create new features of interest")
                 else
                     return("name already exists, choose another name")
                 }
@@ -954,12 +955,10 @@ pRolocVis <- function(object = NULL) {
                 if (!is.null(searchText)
                     && !is.null(dataInput)
                         && !is.null(sI))
-                isolate({
                     .newfoi$ind <- FeaturesOfInterest(
                         description = searchText,
                         fnames = featureNames(dataInput)[sI],
                         object = dataInput)
-                })
             })
             ### END: SEARCH ###
         
