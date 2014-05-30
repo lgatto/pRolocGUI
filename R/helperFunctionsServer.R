@@ -19,7 +19,7 @@
         showFOI <- c(capture.output(show(foi(x)[[index]])),
                     paste("Therefrom in selected MSnSet:", n))
     } 
-    else { ## "FeaturesOfInterest"
+    else { "FeaturesOfInterest"
         n <- fnamesIn(x, fMSnSet, TRUE)
         showFOI <- c(capture.output(show(x)),
                     paste("Therefrom in selected MSnSet:", n))
