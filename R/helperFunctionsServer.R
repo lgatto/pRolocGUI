@@ -11,6 +11,8 @@
     return(ans)
 }
 
+## Returns information about FoICollection or FeaturesOfInterest
+## and the number of features present in the MSnSet
 .showFOI <- function(x, fMSnSet, index=1) {
     if (inherits(x, "FoICollection")) {
         n <- fnamesIn(foi(x)[[index]], fMSnSet, TRUE)
@@ -25,6 +27,8 @@
     return(showFOI)
 }
 
+## a helper function for plotting the PCA plot and highlighting
+## FeaturesOfInterest using highlightOnPlot
 .plotPCA <- function(data, fcolours, fcex, xrange, yrange,
                      sb, PCAn1, PCAn2, legend, legendpos,
                      sI, cIS) {
@@ -95,6 +99,8 @@
     }
 }
 
+## A helper function for plotting protein profile plots 
+## and highlighting FeaturesOfInterest
 .plotPlotDist <- function(data, levPlotDist,
                           levPlotDistOrg,
                           quantity, sI) {
