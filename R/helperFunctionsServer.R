@@ -11,6 +11,7 @@
     return(ans)
 }
 
+<<<<<<< HEAD
 ## Returns information about FoICollection or FeaturesOfInterest
 ## and the number of features present in the MSnSet
 .showFOI <- function(x, fMSnSet, index=1) {
@@ -19,7 +20,7 @@
         showFOI <- c(capture.output(show(foi(x)[[index]])),
                     paste("Therefrom in selected MSnSet:", n))
     } 
-    else { "FeaturesOfInterest"
+    else { ## "FeaturesOfInterest"
         n <- fnamesIn(x, fMSnSet, TRUE)
         showFOI <- c(capture.output(show(x)),
                     paste("Therefrom in selected MSnSet:", n))
