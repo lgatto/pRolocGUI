@@ -26,8 +26,7 @@ data</h1>
 
 This vignette describes the implemented functionality in the
 `pRolocGUI` package. The package is based on the `MSnSet` class
-definitions of `MSnbase` 
-[`r citep(extbib["GattoLilley2012"])`](#references)
+definitions of `MSnbase` [`r citep(extbib["GattoLilley2012"])`](#references)
 and on the functions defined in the package `pRoloc` 
 [`r citep(list(extbib["Breckels2013"], extbib["Gatto2014"]))`](#references). 
 It is especially meant for the analyses of
@@ -40,7 +39,7 @@ application facilitates a higher degree of interactivity with the
 underlying spatial proteomics data.
 
 We recommend some familiarity with the `MSnSet` class (see `?MSnSet`
-for details) and the `pRoloc` vignette (available with
+for details) and the `pRoloc` vignette (available with 
 `vignette("pRoloc-tutorial")`).
 
 `pRolocGUI` is under active development; current functionality is
