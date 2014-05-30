@@ -11,7 +11,6 @@
     return(ans)
 }
 
-<<<<<<< HEAD
 ## Returns information about FoICollection or FeaturesOfInterest
 ## and the number of features present in the MSnSet
 .showFOI <- function(x, fMSnSet, index=1) {
