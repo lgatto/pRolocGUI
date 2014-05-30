@@ -12,17 +12,17 @@
 }
 
 .showFOI <- function(x, fMSnSet, index=1) {
-  if (inherits(x, "FoICollection")) {
-    n <- fnamesIn(foi(x)[[index]], fMSnSet, TRUE)
-    showFOI <- c(capture.output(show(foi(x)[[index]])),
-                 paste("Therefrom in selected MSnSet:", n))
-  } 
-  if (is.list(x)) { ## FoICollection
-    n <- fnamesIn(x[[index]], fMSnSet, TRUE)
-    showFOI <- c(capture.output(show(x[[index]])),
-                 paste("Therefrom in selected MSnSet:", n))
-  }
-  return(showFOI)
+    if (inherits(x, "FoICollection")) {
+        n <- fnamesIn(foi(x)[[index]], fMSnSet, TRUE)
+        showFOI <- c(capture.output(show(foi(x)[[index]])),
+                     paste("Therefrom in selected MSnSet:", n))
+    } 
+    else { "FeaturesOfInterest"
+        n <- fnamesIn(x, fMSnSet, TRUE)
+        showFOI <- c(capture.output(show(x)),
+                     paste("Therefrom in selected MSnSet:", n))
+    }
+    return(showFOI)
 }
 
 .plotPCA <- function(data, fcolours, fcex, xrange, yrange,
