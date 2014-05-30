@@ -14,7 +14,8 @@ extbib <- read.bib("pRolocGUI.bib")
 ```
 
 
-<h1>pRolocGUI: Interactive visualisation of organelle (spatial) proteomics data</h1>
+<h1>pRolocGUI: Interactive visualisation of organelle (spatial) proteomics 
+data</h1>
 
 
 #### Thomas Naake and Laurent Gatto*
@@ -224,7 +225,7 @@ panel. Let's assume we want to have a look upon the protein profiles
 for the proteins from which we know that they belong to the organelles
 Endoplasmic reticulum, the Golgi apparatus, Mitochondrion and the
 plasma membrane for the `andy2011` MSnSet.  We have four organelles to look
-at, so we select "4" in the drop-down list 
+at, so we select `4` in the drop-down list 
 **_number of plots to display_**.  We will select the feature variable
 `markers` in the drop-down list **_feature(s) in_** and select `ER` 
 (coding for Endoplasmic reticulum)
@@ -325,9 +326,9 @@ different features of interest in case the object is of class
 `FoICollection`.
 
 If no object called `pRolocGUI_SearchResults` exists in the global
-environment an object is internally created in `pRolocVis` which
-is derived from `andy2011` but will have no
-features. 
+environment you still have the possibility to assign `FeaturesOfInterest`
+to an `FoICollection` which will be assigned to the global environment when 
+exiting `pRolocVis`. 
 
 To save features of interest to the object internally you need
 to select features and add these to the `FoICollection` by entering an 
@@ -335,9 +336,12 @@ appropriate description in the text field (on the sidebar panel, which will
 be useful to trace back to the underlying features and does not exist yet in 
 the `FoICollection`). Add the selected features to the object 
 `pRolocGUI_SearchResults` in the global environment by clicking on 
-**_Create new features of interest_**.
+**_Create new features of interest_**. You only have the possibility to
+add selected features to the `FoICollection` when you have entered an 
+appropriate description, i.e. one that doesn't exist yet in the 
+`FoICollection` and if you have selected `FeaturesOfInterest`. 
 
-When exiting `pRolocVis` these features will be assigned to the 
+When exiting `pRolocVis` the `FoICollection` will be assigned to the 
 object `pRolocGUI_SearchResults` in the global environment. 
 
 <img src="figures/Screenshot_SaSe1.png" width="100%" alt="" /> <p
