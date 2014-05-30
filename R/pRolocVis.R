@@ -426,7 +426,7 @@ pRolocVis <- function(object = NULL) {
             ## values of PCA, dims is dependent on user input,
             ## so is xlim and ylim
             .valuesPCA <- reactive({
-                if (!is.null(.dI()))
+                if (!is.null(.dI()) && !is.null(input$PCAn1))
                     plot2D(.dI(), fcol=NULL,
                          ##xlim=c(input$xrange[1], input$xrange[2]),
                          ##ylim=c(input$yrange[1], input$yrange[2]),
@@ -484,7 +484,7 @@ pRolocVis <- function(object = NULL) {
                                 max = max(.valuesPCA()[,2])+1,
                                 value = c(min(.valuesPCA()[,2]), 
                                     max(.valuesPCA()[,2]))
-                                )
+                    )
             })
             
             ## compute number of principal components to look for 
@@ -500,7 +500,8 @@ pRolocVis <- function(object = NULL) {
                 if (!is.null(.dI()))
                     selectInput("PCAn2", "PC along y axis",
                                 selected = 2,
-                                choices = c(1:ncol(exprs(.dI()))))
+                                choices = c(1:ncol(exprs(.dI())))
+                    )
             })
             
             output$PCALegendUI <- renderUI({
@@ -595,7 +596,7 @@ pRolocVis <- function(object = NULL) {
             )
             
             output$hoverProtPCA <- renderText(
-                if (!is.null(minDist2dProtPCAHover()))
+               ## if (!is.null(minDist2dProtPCAHover()))
                     featureNames(.dI())[minDist2dProtPCAHover()]
             )
             
@@ -605,7 +606,7 @@ pRolocVis <- function(object = NULL) {
             ## observe and concatenate new indices to .protPCA$mult
             observe({
                 ## will be empty initially
-                if(!is.null(input$PCAclick) && !is.null(minDist2dProtPCA())){
+                if(!is.null(input$PCAclick)) {
                     isolate({
                         .protPCA$mult <- c(.protPCA$mult, minDist2dProtPCA())
                         ## remove indices when indices are clicked another time
