@@ -263,11 +263,12 @@ pRolocVis <- function(object = NULL) {
             })
             
             selText <- reactive({
-                if (is.null(input$saveText))
+                if (is.null(input$saveText) || input$saveText == 0)
                     select$text <- NULL
                 else  {
                     isolate({
                         if (input$saveText > 0) 
+                        
                             select$text <- "text"
                     })
                     
@@ -319,7 +320,9 @@ pRolocVis <- function(object = NULL) {
                     .protPCA$mult <- NULL
                     .protPlotDist$mult <- NULL
                     .protText$mult <- NULL
-                    select <- NULL
+                    select$PCA <- NULL
+                    select$plotDist <- NULL
+                    select$text <- NULL
                 }
             })
             
