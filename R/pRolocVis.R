@@ -267,8 +267,8 @@ pRolocVis <- function(object = NULL) {
                     select$text <- NULL
                 else  {
                     isolate({
+                        input$saveText
                         if (input$saveText > 0) 
-                        
                             select$text <- "text"
                     })
                     
