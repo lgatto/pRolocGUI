@@ -361,17 +361,6 @@ pRolocVis <- function(object = NULL) {
                 )
             })
             
-            ## Multiple points list for text based search 
-            ## (stores indices of searched levels)
-            ##.protIndices <- reactive({
-            ##    if ("text" %in% input$chooseIdenSearch){
-            ##        if (input$search == "protein")
-            ##            which(rownames(.dI()) == input$sRTextInput)
-             ##       else
-             ##           which(fData(.dI())[input$search] == input$sRTextInput)
-             ##   }
-        ##    })
-            
             ## vector with reactive values
             .protText <- reactiveValues(mult=NULL)
             
@@ -392,10 +381,6 @@ pRolocVis <- function(object = NULL) {
                             })
                     }
                 }
-               ## if (input$saveText > 0)
-               ##     isolate(
-               ##         .protText$mult <- c(.protText$mult, .protIndices())
-               ##     )
             })
             ## END OF SEARCHING IMPLEMENTATION ##  
             
@@ -657,29 +642,34 @@ pRolocVis <- function(object = NULL) {
             
             ## calculate protein nearest to user input
             .minDistProtPlotDist <- reactive(
-                if (!is.null(input$plotDistclick) && 
-                        input$quantityPlotDist == "1")
-                    .minDistPlotDist(data = .dI(), 
+                if (!is.null(input$plotDistclick)) { 
+                    if (input$plotDistclick$x < (nrow(pData(.dI())) + .3) &&
+                        input$plotDistclick$x > 0.5 &&
+                            !is.null(input$quantityPlotDist) && 
+                                input$quantityPlotDist == "1")
+                        .minDistPlotDist(data = .dI(), 
                                 marker = .listParams$levPlotDist[1],
                                 org = .listParams$levPlotDistOrg[1],
                                 inputx = input$plotDistclick$x,
                                 inputy = input$plotDistclick$y
                     )
+                }
             )
                         
-            .minDistProtPlotDistHover <- reactive(
-                if (!is.null(input$plotDisthover) && 
-                    !(input$plotDisthover$x > nrow(pData(.dI())) + .3) &&
-                        !(input$plotDisthover$x < 0.5) && 
+            .minDistProtPlotDistHover <- reactive({
+                if (!is.null(input$plotDisthover$x)) {
+                    if (input$plotDisthover$x < (nrow(pData(.dI())) + .3) &&
+                        input$plotDisthover$x > 0.5 && 
                             !is.null(input$quantityPlotDist) && 
                                 input$quantityPlotDist == "1") 
-                    .minDistPlotDist(data = .dI(),
+                        .minDistPlotDist(data = .dI(),
                                 marker = .listParams$levPlotDist[1],
                                 org = .listParams$levPlotDistOrg[1],
                                 inputx = input$plotDisthover$x,
                                 inputy = input$plotDisthover$y
-                    )
-            )
+                        )
+                }
+            })
             
             output$hoverProtPlotDist <- renderText(
                 featureNames(.dI())[.minDistProtPlotDistHover()]
