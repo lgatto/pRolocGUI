@@ -619,7 +619,8 @@ pRolocVis <- function(object = NULL) {
             
             ## Index of element in list where parameters are stored
             .nCol <- reactive({
-                if (is.null(input$numberPlotDist))
+                if (is.null(input$numberPlotDist) || 
+                        input$quantityPlotDist == "1")
                     1
                 else
                     as.numeric(input$numberPlotDist)
@@ -654,7 +655,7 @@ pRolocVis <- function(object = NULL) {
                                 inputy = input$plotDistclick$y
                     )
             )
-            
+                        
             .minDistProtPlotDistHover <- reactive(
                 if (!is.null(input$plotDisthover) && 
                     !(input$plotDisthover$x > nrow(pData(.dI())) + .3) &&
@@ -729,13 +730,8 @@ pRolocVis <- function(object = NULL) {
                     )
             )
             
-            output$numberPlotDistUI <- renderUI(
+            output$numberPlotDistUI <- renderUI({
                 if (!as.numeric(input$quantityPlotDist) == 1) {
-                    ## reset all parameters to avoid conflicts when 
-                    ## decreasing the quantity of plots
-                    .listParams$levPlotDist <- NULL
-                    .listParams$levPlotDistOrg <- NULL
-                    
                     sliderInput("numberPlotDist",
                                 "Selected plot",
                                 min = 1,
@@ -743,7 +739,7 @@ pRolocVis <- function(object = NULL) {
                                 value = 1,
                                 step = 1)
                 }
-            )
+            })
             
             output$plotdist <- renderPlot(
                 ## if(!is.null(.plotPlotDist()))

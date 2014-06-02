@@ -118,7 +118,7 @@
         
         
         ## Actual plotting
-        for (i in 1:length(levPlotDist)) { 
+        for (i in 1:min(quantity, length(levPlotDist))) { 
             
             if (levPlotDist[i] == "all")
                 objPlotDist <- data
