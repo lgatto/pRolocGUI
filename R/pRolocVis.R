@@ -274,7 +274,7 @@ pRolocVis <- function(object = NULL) {
                     
                     isolate({
                         input$resetMult
-                        if (input$resetMult > 0 && 
+                        if (##input$resetMult > 0 && 
                                 length(.protText$mult) < 1 &&
                                     "text" %in% input$chooseIdenSearch)
                             select$text <- NULL
@@ -636,10 +636,10 @@ pRolocVis <- function(object = NULL) {
             observe({
                 if (!is.null(input$organelleAll) &&
                         !is.null(input$fNamesplDist)) {
-                    isolate(.listParams$levPlotDist[.nCol()] <- 
-                        input$fNamesplDist)
-                    isolate(.listParams$levPlotDistOrg[.nCol()] <- 
-                        input$organelleAll)
+                    .listParams$levPlotDist[.nCol()] <- 
+                        input$fNamesplDist
+                    .listParams$levPlotDistOrg[.nCol()] <- 
+                        input$organelleAll
                 }
             })
             
