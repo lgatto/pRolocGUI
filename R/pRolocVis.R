@@ -271,17 +271,18 @@ pRolocVis <- function(object = NULL) {
                         if (input$saveText > 0) 
                             select$text <- "text"
                     })
-                    
-                    isolate({
-                        input$resetMult
-                        if (##input$resetMult > 0 && 
-                                length(.protText$mult) < 1 &&
-                                    "text" %in% input$chooseIdenSearch)
+                  #  isolate({
+                       # input$resetMult
+                        if (input$resetMult > 0 && 
+                                length(.protText$mult) < 1)# &&
+                                  #  "text" %in% input$chooseIdenSearch)
                             select$text <- NULL
-                    })      
+                    #})      
                 }
                 select$text <- unique(select$text)
             })
+            
+            output$help <- renderText(c(.searchInd(), selText()))
             
             output$checkBoxUI <- renderUI({
                 checkboxGroupInput("chooseIdenSearch", 
