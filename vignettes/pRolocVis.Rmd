@@ -230,9 +230,7 @@ at, so we select `4` in the drop-down list
 (coding for Endoplasmic reticulum)
 in the drop-down list underneath (**_assigned to_**). To
 display the next plot we have to change the slider **_Selected plot_**
-to position 2. The shiny reactive expressions did not receive
-yet a new input, therefore, we have to change the drop-down lists in 
-order a new plot will be displayed. Accordingly to our question we will 
+to position 2. Accordingly to our question we will 
 change the second drop-down list to `Golgi` (coding for Golgi apparatus). We
 proceed with the two remaining organelles as described before by
 changing firstly the slider to the next position and by changing the
