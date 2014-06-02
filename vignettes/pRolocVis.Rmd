@@ -420,7 +420,7 @@ plot (`andy2011`) </p>
 
 In principle the search for features in protein profiles is in
 accordance with the search in the PCA plot. Though, bear in mind that
-you are only able to select features when "1" is selected in the
+you are only able to select features when `1` is selected in the
 drop-down list **_number of plots to display_**. Hovering over the 
 plot will display the nearest protein below the plot. Clicking on (or near)
 the points in the plot will select, clicking another time will
@@ -437,7 +437,7 @@ protein profiles plot (`andy2011`) </p>
 ### 3.3. saved searches
 
 Clicking on the check box to the left of **_saved searches_** will
-load the selected features of the class "FeaturesOfInterest". These
+load the selected features of the class `FeaturesOfInterest`. These
 will be displayed in the PCA plot, in the plots for protein profiles
 (depending on the displayed features) and will be available in the
 tabs **_quantitation_** and **_feature meta-data_** for information
@@ -471,7 +471,7 @@ membrane`. We ensure ourselves that `andy2011` is selected in the tab
 loaded. We activate the check box to the left of **_query_** and
 select `marker` in the upper drop-down list (for we are looking for
 organelles). In the next drop-down list below we select `PM` which
-codes for "plasma membrane". Next, we click on **_Submit selection_**,
+codes for `plasma membrane`. Next, we click on **_Submit selection_**,
 which will highlight all features which are assigned to `PM` for the
 variable name `marker`. To remove the selected features from the
 internal assignment we have to reset the search by clicking on
