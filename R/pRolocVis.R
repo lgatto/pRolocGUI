@@ -215,7 +215,7 @@ pRolocVis <- function(object = NULL) {
             ## END: UPLOAD ##
             
             
-            ## start of search implementation
+            ## START OF SEARCH IMPLEMENTATION ##
             
             ## check boxes by clicking on plots PCA and plotDist
             select <- reactiveValues(PCA = NULL, plotDist = NULL, text = NULL)
@@ -271,18 +271,16 @@ pRolocVis <- function(object = NULL) {
                         if (input$saveText > 0) 
                             select$text <- "text"
                     })
-                  #  isolate({
-                       # input$resetMult
+                    isolate({
+                        input$resetMult
                         if (input$resetMult > 0 && 
                                 length(.protText$mult) < 1)# &&
                                   #  "text" %in% input$chooseIdenSearch)
                             select$text <- NULL
-                    #})      
+                    })      
                 }
                 select$text <- unique(select$text)
             })
-            
-            output$help <- renderText(c(.searchInd(), selText()))
             
             output$checkBoxUI <- renderUI({
                 checkboxGroupInput("chooseIdenSearch", 
@@ -291,8 +289,7 @@ pRolocVis <- function(object = NULL) {
                                     "protein profiles" = "mousePlotDist",
                                     "saved searches" = "savedSearches",
                                     "query" = "text"),
-                                selected=c(selPCA(), selPlotDist() , 
-                                selText())
+                                selected=c(selPCA(), selPlotDist(), selText())
                 )
             })
             
@@ -343,8 +340,6 @@ pRolocVis <- function(object = NULL) {
                     else 
                         return("not found")
                 }
-              
-             
             )
             
             ## reactive expressions for text based search
@@ -368,26 +363,41 @@ pRolocVis <- function(object = NULL) {
             
             ## Multiple points list for text based search 
             ## (stores indices of searched levels)
-            .protIndices <- reactive({
-                if ("text" %in% input$chooseIdenSearch){
-                    if (input$search == "protein")
-                        which(rownames(.dI()) == input$sRTextInput)
-                    else
-                        which(fData(.dI())[input$search] == input$sRTextInput)
-                }
-            })
+            ##.protIndices <- reactive({
+            ##    if ("text" %in% input$chooseIdenSearch){
+            ##        if (input$search == "protein")
+            ##            which(rownames(.dI()) == input$sRTextInput)
+             ##       else
+             ##           which(fData(.dI())[input$search] == input$sRTextInput)
+             ##   }
+        ##    })
             
             ## vector with reactive values
             .protText <- reactiveValues(mult=NULL)
             
             ## observe indices and concatenate to protText$mult
             observe({
-                if (input$saveText > 0)
-                    isolate(
-                        .protText$mult <- c(.protText$mult, .protIndices())
-                    )
+                sRText <- isolate(input$sRTextInput)
+                if (!is.null(input$search)) {
+                    if (input$search == "protein")
+                        newInd <- which(rownames(andy2011) == sRText)
+                    else 
+                        newInd <- which(fData(.dI())[input$search] == sRText)
+                    if (!is.null(newInd)) {
+                        if (input$saveText > 0 && length(newInd > 0))
+                            isolate({
+                                input$saveText
+                                .protText$mult <- 
+                                    isolate(c(.protText$mult, newInd))
+                            })
+                    }
+                }
+               ## if (input$saveText > 0)
+               ##     isolate(
+               ##         .protText$mult <- c(.protText$mult, .protIndices())
+               ##     )
             })
-            ## End of searching implementation ##  
+            ## END OF SEARCHING IMPLEMENTATION ##  
             
             ##observe({
             ##  if (input$closebutton != 0)
