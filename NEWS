@@ -1,3 +1,9 @@
+CHANGES IN VERSION 
+------------------------
+
+ o improve query search (submit and select check box) [2014-06-02 Mon]
+ o add unit tests [2014-06-03 Tue]
+
 CHANGES IN VERSION 0.99.2
 ------------------------
  o change access and assignment to object pRolocGUI_SearchResults in
