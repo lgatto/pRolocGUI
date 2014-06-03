@@ -787,10 +787,10 @@ pRolocVis <- function(object = NULL) {
                     as.data.frame(
                         ## cbind to display data properly
                         cbind(
-                            " " = row.names(exprs(.dI())),
-                            exprs(.dI())
+                            " " = row.names(exprs(.dI()[.searchInd()])),
+                            exprs(.dI()[.searchInd()])
                         )
-                    )[c(.searchInd()), ]
+                    )
             })
             ## END: QUANTITATION DATA ##
             
@@ -820,10 +820,10 @@ pRolocVis <- function(object = NULL) {
                     as.data.frame(
                         ## cbind to display data properly
                         cbind(
-                            " " = row.names(fData(.dI())),
-                            fData(.dI())
+                            " " = row.names(fData(.dI()[.searchInd()])),
+                            fData(.dI()[.searchInd()])
                         )
-                    )[c(.searchInd()), ]
+                    )
             })
             ## END: FEATURE META-DATA ##
             
