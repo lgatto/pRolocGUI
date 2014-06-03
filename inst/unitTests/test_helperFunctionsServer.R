@@ -20,8 +20,8 @@ features <- c("FBgn0001104", "FBgn0000044", "FBgn0035720", "FBgn0003731",
 featuresList <- list(features)
 
 test_fnamesFOI <- function() {
-    checkEquals(.fnamesFOI(x), features)
-    checkEquals(.fnamesFOI(xx), featuresList)
+    checkEquals(pRolocGUI:::.fnamesFOI(x), features)
+    checkEquals(pRolocGUI:::.fnamesFOI(xx), featuresList)
 }
 ## END unit test for .fnamesFOI ## 
 

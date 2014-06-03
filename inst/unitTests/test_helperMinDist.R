@@ -3,13 +3,13 @@
 ## START unit test .minDistPCA ##
 valuesPCA <- plot2D(andy2011, fcol=NULL, plot = FALSE)
 
-test_minDistPCA <- function() {
+test_.minDistPCA <- function() {
     checkEqualsNumeric(
-        .minDistPCA(-4.05, 5.65, valuesPCA[, 1], valuesPCA[, 2]), 
+        pRolocGUI:::.minDistPCA(-4.05, 5.65, valuesPCA[, 1], valuesPCA[, 2]), 
         922
     )
     checkEquals(
-        names(.minDistPCA(-4.05, 5.65, valuesPCA[, 1], valuesPCA[, 2])), 
+        names(pRolocGUI:::.minDistPCA(-4.05, 5.65, valuesPCA[, 1], valuesPCA[, 2])), 
         "PARP1_HUMAN"
     )
 }
@@ -18,13 +18,13 @@ test_minDistPCA <- function() {
 
 
 ## START unit test .minDistPlotDist ## 
-test_minDistPlotDist <- function() {
+test_.minDistPlotDist <- function() {
     checkEqualsNumeric(
-        .minDistPlotDist(andy2011, "all", "all", 3, 0.48), 
+        pRolocGUI:::.minDistPlotDist(andy2011, "all", "all", 3, 0.48), 
         47
     )
     checkEqualsNumeric(
-        .minDistPlotDist(andy2011, "markers", "ER", 1, 0.27),
+        pRolocGUI:::.minDistPlotDist(andy2011, "markers", "ER", 1, 0.27),
         29
     )
 }
