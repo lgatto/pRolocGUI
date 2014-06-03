@@ -106,13 +106,13 @@
             !is.null(levPlotDist) &&
                 !(is.null(levPlotDistOrg))) {
         
-        if (as.numeric(quantity)%%2==0)
-            col <- as.numeric(quantity)/2
+        if (as.numeric(quantity) %% 2 == 0)
+            col <- as.numeric(quantity) / 2
         else
-            col <- (as.numeric(quantity)+1)/2
+            col <- (as.numeric(quantity) + 1) / 2
         
-        if (as.numeric(quantity)==1)
-            par(mfrow=c(1,1))
+        if (as.numeric(quantity) == 1)
+            par(mfrow=c(1, 1))
         else
             par(mfrow=c(2, col))
         
