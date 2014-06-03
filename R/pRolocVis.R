@@ -455,10 +455,10 @@ pRolocVis <- function(object = NULL) {
                     ## get max and min values of first principal component
                     ## create a range slider
                     sliderInput("xrange", "zoom x-axis", 
-                                min = min(.valuesPCA()[,1])-1,
-                                max = max(.valuesPCA()[,1])+1,
-                                value = c(min(.valuesPCA()[,1]), 
-                                    max(.valuesPCA()[,1]))
+                                min = min(.valuesPCA()[, 1]) - 1,
+                                max = max(.valuesPCA()[, 1]) + 1,
+                                value = c(min(.valuesPCA()[, 1]), 
+                                    max(.valuesPCA()[, 1]))
                     )
             })  
             
@@ -467,10 +467,10 @@ pRolocVis <- function(object = NULL) {
                     ## get max and min values of second principal component
                     ## create a range slider
                     sliderInput("yrange", "zoom y-axis",
-                                min = min(.valuesPCA()[,2])-1, 
-                                max = max(.valuesPCA()[,2])+1,
-                                value = c(min(.valuesPCA()[,2]), 
-                                    max(.valuesPCA()[,2]))
+                                min = min(.valuesPCA()[, 2]) - 1, 
+                                max = max(.valuesPCA()[, 2]) + 1,
+                                value = c(min(.valuesPCA()[, 2]), 
+                                    max(.valuesPCA()[, 2]))
                     )
             })
             
