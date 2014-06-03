@@ -140,10 +140,8 @@
             
             plotDist(objPlotDist, ylim = ylim)
             
-            if (!is.null(sI))
-                for (line in sI)    
-                    if (!is.null(line))
-                        lines(exprs(data)[line,], type="l")
+            if (!is.null(sI) && length(sI) > 0)
+                apply(X = exprs(data[sI, ]), MARGIN = 1, FUN = lines)
             title(levPlotDistOrg[i])            
         } ## end for loop
     }
