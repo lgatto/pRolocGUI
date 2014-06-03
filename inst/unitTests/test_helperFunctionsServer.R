@@ -1,5 +1,4 @@
 ## START unit test for helperFunctionsServer.R ## 
-library(RUnit)
 
 ## START unit test for .fnamesFOI ## 
 
@@ -20,7 +19,7 @@ features <- c("FBgn0001104", "FBgn0000044", "FBgn0035720", "FBgn0003731",
 ## create list
 featuresList <- list(features)
 
-test_.fnamesFOI <- function() {
+test_fnamesFOI <- function() {
     checkEquals(.fnamesFOI(x), features)
     checkEquals(.fnamesFOI(xx), featuresList)
 }

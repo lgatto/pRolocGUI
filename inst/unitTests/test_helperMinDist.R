@@ -3,7 +3,7 @@
 ## START unit test .minDistPCA ##
 valuesPCA <- plot2D(andy2011, fcol=NULL, plot = FALSE)
 
-test_.minDistPCA <- function() {
+test_minDistPCA <- function() {
     checkEqualsNumeric(
         .minDistPCA(-4.05, 5.65, valuesPCA[, 1], valuesPCA[, 2]), 
         922
@@ -18,7 +18,7 @@ test_.minDistPCA <- function() {
 
 
 ## START unit test .minDistPlotDist ## 
-test_.minDistPlotDist <- function() {
+test_minDistPlotDist <- function() {
     checkEqualsNumeric(
         .minDistPlotDist(andy2011, "all", "all", 3, 0.48), 
         47
