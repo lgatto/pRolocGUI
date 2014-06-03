@@ -147,7 +147,7 @@ pRolocVis <- function(object = NULL) {
                             ## accept=c('.rda', 'data/rda', 
                             ## '.RData', 'data/RData'),
                             multiple = FALSE)
-                else{
+                else {
                     if (inherits(object, "MSnSet"))
                         helpText("object is an MSnSet")
                     else 
@@ -168,7 +168,7 @@ pRolocVis <- function(object = NULL) {
                 else {
                     ## check if MSnSet has ending .rda or .RData and if 
                     ## it is MSnSet
-                    if (file_ext(input$owndata["name"]) %in% c("rda","RData")){
+                    if (file_ext(input$owndata["name"]) %in% c("rda","RData")) {
                         if (inherits(
                             get(load(as.character(input$owndata["datapath"]))), 
                             "MSnSet"))
@@ -177,8 +177,7 @@ pRolocVis <- function(object = NULL) {
                             ))
                         else
                             od <- andy2011
-                    }
-                    else
+                    } else
                         od <- andy2011
                 }
             })
@@ -202,14 +201,13 @@ pRolocVis <- function(object = NULL) {
             }
             
             output$warningowndataUI <- renderText({
-                if(input$data == "own data"){
+                if (input$data == "own data") {
                     if (identical(.dI(), andy2011))
                         return("noMSnSet selected, 
-                   MSnSet 'andy2011' will be used")
+                                MSnSet 'andy2011' will be used")
                     else
                         return()
-                }
-                else
+                } else
                     return()
             })  
             ## END: UPLOAD ##
@@ -306,8 +304,7 @@ pRolocVis <- function(object = NULL) {
                 if ("mousePlotDist" %in% input$chooseIdenSearch)
                     searchInd <- c(searchInd, .protPlotDist$mult)
                 if ("savedSearches" %in% input$chooseIdenSearch &&
-                    !is.null(input$tagSelectList) &&
-                        exists("pRolocGUI_SearchResults", .GlobalEnv))
+                    !is.null(input$tagSelectList))
                     searchInd <- c(searchInd, .whichNamesFOI())
                 unique(searchInd)
             })
@@ -415,8 +412,6 @@ pRolocVis <- function(object = NULL) {
             .valuesPCA <- reactive({
                 if (!is.null(.dI()) && !is.null(input$PCAn1))
                     plot2D(.dI(), fcol=NULL,
-                        ##xlim=c(input$xrange[1], input$xrange[2]),
-                        ##ylim=c(input$yrange[1], input$yrange[2]),
                         dims=c(as.numeric(input$PCAn1),
                         as.numeric(input$PCAn2)), 
                         plot=FALSE)
