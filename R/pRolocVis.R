@@ -40,8 +40,7 @@ pRolocVis <- function(object = NULL) {
     } else {
         sr <- NULL
     }
-    
-    
+        
     app <- list(  
         ui = 
             bootstrapPage( 

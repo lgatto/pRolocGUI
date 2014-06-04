@@ -28,12 +28,12 @@
                     margin: 0px 0px 5px 0px;}"))
         ),
         
-        ## Panel showing up when tab Data is selected
-        
+        ## Panel showing up when tab 'PCA', 'quantitation',
+        ## 'feature meta-data', 'protein profiles' is selected
         conditionalPanel(            
-            condition = "input.tab1 == 'PCA' |
-                input.tab1 == 'quantitation' |
-                input.tab1 == 'feature meta-data' |
+            condition = "input.tab1 == 'PCA' ||
+                input.tab1 == 'quantitation' ||
+                input.tab1 == 'feature meta-data' ||
                 input.tab1 == 'protein profiles'",
             wellPanel(
                 h4("Display selection"),
@@ -61,7 +61,7 @@
         conditionalPanel(
             condition = "input.tab1 == 'Data'",
             strong("Welcome to", span("pRolocVis", style = "color:gray"), 
-                ", an interactive visualisation tool 
+                   ", an interactive visualisation tool 
                 for organelle proteomics data."),
             helpText(""),
             ## link to help page
