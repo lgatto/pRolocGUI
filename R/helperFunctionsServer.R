@@ -1,3 +1,25 @@
+## A helper function to select the checkbox of "query" in the 
+## Display selection widget, used in observer for assigning to dSelect$text
+.selText <- function(saveText, resetMult, protText, dtext, chooseIdenSearch) {
+    if (is.null(saveText) || saveText == 0)
+        dtext <- NULL
+    else  {
+        if (saveText > 0) 
+            dtext <- "text"
+        isolate({
+            resetMult
+            if (resetMult > 0 && 
+                    length(protText) < 1 &&
+                        "text" %in% chooseIdenSearch)
+                dtext <- NULL
+        })      
+    }
+    dtext <- unique(dtext)
+    return(dtext)
+    
+}
+
+
 ## Returns the feature names of the FeaturesOfInterest of
 ## FoICollection provided as input. If flist is TRUE, the 
 ## output is listed in the latter case.
