@@ -30,9 +30,12 @@ pRolocVis <- function(object = NULL) {
         sr <- get("pRolocGUI_SearchResults", .GlobalEnv)
         if (inherits(sr, "FoICollection"))
             sr <- sr
-        else { ## "FeaturesOfInterest"
-            coll <- FoICollection()
-            sr <- addFeaturesOfInterest(sr, coll)
+        else {
+            if (inherits(sr, "FeaturesOfInterest")) { 
+                coll <- FoICollection()
+                sr <- addFeaturesOfInterest(sr, coll)
+            } else
+                sr <- NULL
         }
     } else {
         sr <- NULL
@@ -183,22 +186,39 @@ pRolocVis <- function(object = NULL) {
             })
             
             ## .dI
-            if (is.null(object))
-                .dI <- reactive({
+            .dI <- reactive({
+                if (is.null(object)) {
                     if (!is.null(input$data))
                         switch(input$data,
                             "andy2011" = andy2011,
-                            "dunkley2006" = dunkley2006,
+                            "dunkley2006" = dunkley2006,,
                             "tan2009r1" = tan2009r1,
                             "own data" = .dIownData()
-                        )
-                })
-            else {
-                if (inherits(object, "MSnSet"))
-                    .dI <- reactive(object)
-                else 
-                    .dI <- reactive(andy2011)
-            }
+                        ) 
+                } else {
+                    if (inherits(object, "MSnSet"))
+                        object
+                    else 
+                        andy2011
+                }
+                
+            })
+            #if (is.null(object))
+            #    .dI <- reactive({
+            #        if (!is.null(input$data))
+            #            switch(input$data,
+            #                "andy2011" = andy2011,
+            #                "dunkley2006" = dunkley2006,
+            #                "tan2009r1" = tan2009r1,
+            #                "own data" = .dIownData()
+            #            )
+            #    })
+            #else {
+            #    if (inherits(object, "MSnSet"))
+            #        .dI <- reactive(object)
+            #    else 
+            #        .dI <- reactive(andy2011)
+            #}
             
             output$warningowndataUI <- renderText({
                 if (input$data == "own data") {
