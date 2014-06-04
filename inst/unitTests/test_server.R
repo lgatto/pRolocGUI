@@ -20,8 +20,8 @@
     ## select "markers" in "colour" 
     ## ("none" in symboltype, PC 1 (along x-axis) and 2 (along y-axis), 
     ## not zoomed)
-    ## the plot in tab "PCA" should look like this (make sure the check box
-    ## next to "PCA" is checked):
+    ## the plot in tab "PCA" should look like this (make sure the 
+    ## check box next to "PCA" is checked):
     plot2D(andy2011, fcol="markers",
         xlim=c(min(valuesPCA[, 1]), max(valuesPCA[, 1])),
         ylim=c(min(valuesPCA[, 2]), max(valuesPCA[, 2])),
