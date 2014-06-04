@@ -1,22 +1,46 @@
 ## A helper function to select the checkbox of "query" in the 
 ## Display selection widget, used in observer for assigning to dSelect$text
-.selText <- function(saveText, resetMult, protText, dtext, chooseIdenSearch) {
+.selText <- function(dtext, saveText, resetMult, protText) {
     if (is.null(saveText) || saveText == 0)
         dtext <- NULL
     else  {
-        if (saveText > 0) 
+        dtext <- NULL
+        isolate({
+            isolate(saveText)
+            if (saveText > 0)
             dtext <- "text"
+        })
+        
         isolate({
             resetMult
-            if (resetMult > 0 && 
-                    length(protText) < 1 &&
-                        "text" %in% chooseIdenSearch)
+            if (resetMult > 0 && length(protText) < 1)
                 dtext <- NULL
         })      
     }
     dtext <- unique(dtext)
     return(dtext)
-    
+}
+
+.selPlotDist <- function(dplotDist, plotDistclick, protPlotDist, cIS) {
+    if (is.null(plotDistclick) || 
+            is.null(protPlotDist))
+        dplotDist <- NULL
+    else {
+        isolate({
+            plotDistclick
+            dplotDist <- "mousePlotDist"
+        })
+        isolate({
+            cIS
+            if (length(protPlotDist) > 2 && 
+                !is.null(dplotDist) &&
+                    "mousePlotDist" %in% dplotDist && 
+                        !("mousePlotDist" %in% cIS))
+                dplotDist <- NULL
+        })
+    }
+    dplotDist <- unique(dplotDist)
+    return(dplotDist)
 }
 
 

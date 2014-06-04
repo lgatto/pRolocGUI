@@ -270,34 +270,39 @@ pRolocVis <- function(object = NULL) {
                 dSelect$PCA <- unique(dSelect$PCA)
             })
             
-            selPlotDist <- reactive({
-                if (is.null(input$plotDistclick) || 
-                        is.null(.protPlotDist$mult))
-                    dSelect$plotDist <- NULL
-                else {
-                    isolate({
-                        input$plotDistclick
-                        dSelect$plotDist <- "mousePlotDist"
-                    })
-                    isolate({
-                        input$chooseIdenSearch
-                        if (length(.protPlotDist$mult) > 2 && 
-                            !is.null(dSelect$plotDist) &&
-                                "mousePlotDist" %in% dSelect$plotDist && 
-                                    !("mousePlotDist" %in% input$chooseIdenSearch))
-                            dSelect$plotDist <- NULL
-                    })
-                }
-                dSelect$plotDist <- unique(dSelect$plotDist)
-            })
+          #  selPlotDist <- reactive({
+          #      if (is.null(input$plotDistclick) || 
+          #              is.null(.protPlotDist$mult))
+          #          dSelect$plotDist <- NULL
+          #      else {
+          #          isolate({
+          #              input$plotDistclick
+          #              dSelect$plotDist <- "mousePlotDist"
+          #          })
+          #          isolate({
+          #              input$chooseIdenSearch
+          #              if (length(.protPlotDist$mult) > 2 && 
+          #                  !is.null(dSelect$plotDist) &&
+          #                      "mousePlotDist" %in% dSelect$plotDist && 
+          #                          !("mousePlotDist" %in% input$chooseIdenSearch))
+          #                  dSelect$plotDist <- NULL
+          #          })
+          #      }
+          #      dSelect$plotDist <- unique(dSelect$plotDist)
+          #  })
             
            
             observe({
+                dSelect$plotDist <- .selPlotDist(
+                                        dSelect$plotDist, input$plotDistclick,
+                                        .protPlotDist$mult
+                                    )
                 dSelect$text <- .selText(
-                                    input$saveText, input$resetMult, 
-                                    .protText$mult, dSelect$text, 
+                                    dSelect$text, input$saveText, 
+                                    input$resetMult, .protText$mult,  
                                     input$chooseIdenSearch
                                 )
+                
             })
             
             output$checkBoxUI <- renderUI({
@@ -307,7 +312,7 @@ pRolocVis <- function(object = NULL) {
                                     "protein profiles" = "mousePlotDist",
                                     "saved searches" = "savedSearches",
                                     "query" = "text"),
-                                selected=c(selPCA(), selPlotDist(), dSelect$text)
+                                selected=c(selPCA(), dSelect$plotDist, dSelect$text)
                 )
             })
             
