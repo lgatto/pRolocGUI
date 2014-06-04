@@ -251,18 +251,15 @@ pRolocVis <- function(object = NULL) {
             
             observe({
                 dSelect$PCA <- .selPCA(
-                                        dSelect$PCA, input$PCAclick,
-                                        .protPCA$mult
-                                )
+                    dSelect$PCA, input$PCAclick, .protPCA$mult
+                )
                 dSelect$plotDist <- .selPlotDist(
-                                        dSelect$plotDist, input$plotDistclick,
-                                        .protPlotDist$mult
-                                    )
+                    dSelect$plotDist, input$plotDistclick, .protPlotDist$mult
+                )
                 dSelect$text <- .selText(
-                                        dSelect$text, input$saveText, 
-                                        input$resetMult, .protText$mult
-                                )
-                
+                    dSelect$text, input$saveText, input$resetMult, 
+                    .protText$mult
+                )  
             })
             
             output$checkBoxUI <- renderUI({

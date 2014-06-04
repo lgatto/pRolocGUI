@@ -9,9 +9,10 @@
             dPCA <- "mousePCA"
         })
     }
-    dPCA <- unique(dPCA)
-    return(dPCA)
+    ans <- unique(dPCA)
+    return(ans)
 }
+
 ## A helper function to select the checkbox of "protein profiles" in the 
 ## Display selection widget, used in observer for assigning to dSelect$PCA
 .selPlotDist <- function(dplotDist, plotDistclick, protPlotDist) {
@@ -24,8 +25,8 @@
             dplotDist <- "mousePlotDist"
         })
     }
-    dplotDist <- unique(dplotDist)
-    return(dplotDist)
+    ans <- unique(dplotDist)
+    return(ans)
 }
 
 ## A helper function to select the checkbox of "query" in the 
@@ -47,12 +48,9 @@
                 dtext <- NULL
         })      
     }
-    dtext <- unique(dtext)
-    return(dtext)
+    ans <- unique(dtext)
+    return(ans)
 }
-
-
-
 
 ## Returns the feature names of the FeaturesOfInterest of
 ## FoICollection provided as input. If flist is TRUE, the 
