@@ -1,3 +1,33 @@
+## A helper function to select the checkbox of "PCA" in the 
+## Display selection widget, used in observer for assigning to dSelect$PCA
+.selPCA <- function(dPCA, PCAclick, protPCA) {
+    if (is.null(PCAclick) || is.null(protPCA))
+        dPCA <- NULL
+    else {
+        isolate({
+            PCAclick
+            dPCA <- "mousePCA"
+        })
+    }
+    dPCA <- unique(dPCA)
+    return(dPCA)
+}
+## A helper function to select the checkbox of "protein profiles" in the 
+## Display selection widget, used in observer for assigning to dSelect$PCA
+.selPlotDist <- function(dplotDist, plotDistclick, protPlotDist) {
+    if (is.null(plotDistclick) || 
+            is.null(protPlotDist))
+        dplotDist <- NULL
+    else {
+        isolate({
+            plotDistclick
+            dplotDist <- "mousePlotDist"
+        })
+    }
+    dplotDist <- unique(dplotDist)
+    return(dplotDist)
+}
+
 ## A helper function to select the checkbox of "query" in the 
 ## Display selection widget, used in observer for assigning to dSelect$text
 .selText <- function(dtext, saveText, resetMult, protText) {
@@ -21,27 +51,7 @@
     return(dtext)
 }
 
-.selPlotDist <- function(dplotDist, plotDistclick, protPlotDist, cIS) {
-    if (is.null(plotDistclick) || 
-            is.null(protPlotDist))
-        dplotDist <- NULL
-    else {
-        isolate({
-            plotDistclick
-            dplotDist <- "mousePlotDist"
-        })
-        isolate({
-            cIS
-            if (length(protPlotDist) > 2 && 
-                !is.null(dplotDist) &&
-                    "mousePlotDist" %in% dplotDist && 
-                        !("mousePlotDist" %in% cIS))
-                dplotDist <- NULL
-        })
-    }
-    dplotDist <- unique(dplotDist)
-    return(dplotDist)
-}
+
 
 
 ## Returns the feature names of the FeaturesOfInterest of
