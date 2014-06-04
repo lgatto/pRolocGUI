@@ -161,49 +161,68 @@
 
 ## END: Sidebar panel ##
 
-
-.pRn1_setMainPanel <- function() {
-    mainPanel(
-        tabsetPanel(
-            tabPanel("Data",
-                htmlOutput("Data1"),
-                htmlOutput("Data2"),
-                htmlOutput("Data3")
-            ),
-            tabPanel("PCA",
-                plotOutput("PCA", width = "100%",height="800px",
-                    clickId = "PCAclick",
-                    hoverId = "PCAhover",
-                    hoverDelay = 100,
-                    hoverDelayType = "throttle"
-                ),
-                textOutput("hoverProtPCA"),
-                downloadButton("plotPCADownload","Download Plot")
-            ),
-            tabPanel("protein profiles",
-                plotOutput("plotdist", width="100%", height="800px",
-                    clickId = "plotDistclick",
-                    hoverId = "plotDisthover",
-                    hoverDelay = 100,
-                    hoverDelayType = "throttle"
-                ),
-                textOutput("hoverProtPlotDist"),
-                downloadButton("plotDistDownload","Download Plot")
-            ),
-            tabPanel("quantitation", 
-                dataTableOutput("MSnExprs")
-            ),
-            tabPanel("feature meta-data", 
-                dataTableOutput("MSnfData")
-            ),
-            tabPanel("sample meta-data", 
-                dataTableOutput("MSnpData")
-            ),
-            tabPanel("search",
-                verbatimTextOutput("infoSavedSearch")
-            ),
-            id = "tab1"
-        ),
-        ## actionButton("closebutton", "Stop pRolocVis"), 
-        width=9)
+## START: Main Panel ## 
+    
+.pR_tabPanelData <- function() {
+    tabPanel(
+        "Data",
+        htmlOutput("Data1"),
+        htmlOutput("Data2"),
+        htmlOutput("Data3")
+    )
 }
+
+.pR_tabPanelPCA <- function() {
+    tabPanel(
+        "PCA",
+        plotOutput(
+            "PCA", 
+            width = "100%",height="800px",
+            clickId = "PCAclick",
+            hoverId = "PCAhover", hoverDelay = 100,
+            hoverDelayType = "throttle"
+        ),
+        textOutput("hoverProtPCA"),
+        downloadButton("plotPCADownload","Download Plot")
+    )
+}
+
+.pR_tabPanelProteinProfiles <- function() {
+    tabPanel(
+        "protein profiles",
+        plotOutput(
+            "plotdist", 
+            width="100%", height="800px",
+            clickId = "plotDistclick",
+            hoverId = "plotDisthover", hoverDelay = 100,
+            hoverDelayType = "throttle"
+        ),
+        textOutput("hoverProtPlotDist"),
+        downloadButton("plotDistDownload","Download Plot")
+    )
+}
+
+.pR_tabPanelQuantitation <- function() {
+    tabPanel("quantitation", 
+             dataTableOutput("MSnExprs")
+    )
+}    
+
+.pR_tabPanelfData <- function() {
+    tabPanel("feature meta-data", 
+             dataTableOutput("MSnfData")
+    )
+}
+
+.pR_tabPanelpData <- function() {
+    tabPanel("sample meta-data", 
+             dataTableOutput("MSnpData")
+    )
+}
+
+.pR_tabPanelSearch <- function() {
+    tabPanel("search",
+             verbatimTextOutput("infoSavedSearch")
+    )
+}
+
