@@ -49,7 +49,18 @@ pRolocVis <- function(object = NULL) {
                     ## Application title
                     .pRn1_setTitlePanel(),
                     ## Sidebar Panel
-                    .pRn1_setSidebarPanel(),  
+                    sidebarPanel(
+                        .pR_tags(), 
+                        .pR_condDisplaySelection(),
+                        .pR_condTabData(),
+                        .pR_condTabPCA(),
+                        .pR_condTabProteinProfiles(),
+                        .pR_condTabQuantitation(),
+                        .pR_condTabfData(),
+                        .pR_condTabpData(),
+                        .pR_condTabSearch(),
+                        width = 3
+                    ),
                     ## Main Panel
                     .pRn1_setMainPanel()
                 )
