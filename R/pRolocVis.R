@@ -191,7 +191,7 @@ pRolocVis <- function(object = NULL) {
                     if (!is.null(input$data))
                         switch(input$data,
                             "andy2011" = andy2011,
-                            "dunkley2006" = dunkley2006,,
+                            "dunkley2006" = dunkley2006,
                             "tan2009r1" = tan2009r1,
                             "own data" = .dIownData()
                         ) 
@@ -203,22 +203,6 @@ pRolocVis <- function(object = NULL) {
                 }
                 
             })
-            #if (is.null(object))
-            #    .dI <- reactive({
-            #        if (!is.null(input$data))
-            #            switch(input$data,
-            #                "andy2011" = andy2011,
-            #                "dunkley2006" = dunkley2006,
-            #                "tan2009r1" = tan2009r1,
-            #                "own data" = .dIownData()
-            #            )
-            #    })
-            #else {
-            #    if (inherits(object, "MSnSet"))
-            #        .dI <- reactive(object)
-            #    else 
-            #        .dI <- reactive(andy2011)
-            #}
             
             output$warningowndataUI <- renderText({
                 if (input$data == "own data") {
