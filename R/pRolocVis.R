@@ -328,27 +328,7 @@ pRolocVis <- function(object = NULL) {
                                         input$saveText, input$sRTextInput, 
                                         input$search)
             })
-                
-                
-                
-                    
-                    
-            #sRText <- isolate(input$sRTextInput)
-            #    if (!is.null(input$search)) {
-            #        if (input$search == "protein")
-            #            newInd <- which(rownames(.dI()) == sRText)
-            #        else 
-            #            newInd <- which(fData(.dI())[input$search] == sRText)
-            #        if (!is.null(newInd)) {
-            #            if (input$saveText > 0 && length(newInd > 0))
-            #                isolate({
-            #                    input$saveText
-            #                    .protText$mult <- 
-            #                        isolate(c(.protText$mult, newInd))
-            #                })
-            #        }
-           #     }
-           # })
+            
             ## END OF SEARCHING IMPLEMENTATION ##  
                         
 
