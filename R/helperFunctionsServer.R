@@ -130,6 +130,23 @@
         selected = c(dPCA, dPlotDist, dText)
     )
 }
+
+## select Input helper for Display selection
+.selVarText <- function(data) {
+    if (!is.null(data))
+        selectInput("search", "", 
+                    choices = c("protein", fvarLabels(data)))
+}
+
+## selectInput helper for Display selection, to select results
+.selResText <- function(search, results) {
+    if (!is.null(search))
+        if (length(results))
+            selectInput("sRTextInput", label="",
+                        choices = results)
+    else
+        return("not found")
+}
 ## END: Display selection ##
 
 

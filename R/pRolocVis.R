@@ -265,10 +265,7 @@ pRolocVis <- function(object = NULL) {
             output$checkBoxUI <- renderUI(
                 .checkBoxdSelect(dSelect$PCA, dSelect$plotDist, dSelect$text)
             )
-                
-                
-        
-            
+                    
             ## reactive expressions for general search
             ## reactive expression to forward indices to 
             ## plot2D, plotDist and tabs quantitation
@@ -292,21 +289,10 @@ pRolocVis <- function(object = NULL) {
             })
             
             ## text-based search: protein und fvarLabels
-            output$searchUI <- renderUI({
-                if (!is.null(.dI()))
-                    selectInput("search", "", 
-                                choices = c("protein", fvarLabels(.dI()))
-                    )
-            })
-            
+            output$searchUI <- renderUI(.selVarText(.dI()))
+                        
             output$searchResultsUI <- renderUI(
-                if(!is.null(input$search)) {
-                    if (length(.searchResultsText()))
-                        selectInput("sRTextInput", label = "",
-                                    choices = .searchResultsText())
-                    else 
-                        return("not found")
-                }
+                .selResText(input$search, .searchResultsText())
             )
             
             ## reactive expressions for text based search
