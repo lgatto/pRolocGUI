@@ -278,19 +278,10 @@ pRolocVis <- function(object = NULL) {
             ## reactive expression to forward indices to 
             ## plot2D, plotDist and tabs quantitation
             ## and feature meta-data
-            .searchInd <- reactive({
-                searchInd <- NULL
-                if ("text" %in% input$chooseIdenSearch)
-                    searchInd <- c(searchInd, .protText$mult)
-                if ("mousePCA" %in% input$chooseIdenSearch)
-                    searchInd <- c(searchInd, .protPCA$mult)
-                if ("mousePlotDist" %in% input$chooseIdenSearch)
-                    searchInd <- c(searchInd, .protPlotDist$mult)
-                if ("savedSearches" %in% input$chooseIdenSearch &&
-                    !is.null(input$tagSelectList))
-                    searchInd <- c(searchInd, .whichNamesFOI())
-                unique(searchInd)
-            })
+            .searchInd <- reactive(
+                .sI(input$chooseIdenSearch, input$tagSelectList, .protText$mult, 
+                    .protPCA$mult, .protPlotDist$mult, .whichNamesFOI())
+            )
             
             ## Clear multiple points on click
             observe({
@@ -306,9 +297,9 @@ pRolocVis <- function(object = NULL) {
             
             ## text-based search: protein und fvarLabels
             output$searchUI <- renderUI({
-                if (!is.null(.colours()))
+                if (!is.null(.dI()))
                     selectInput("search", "", 
-                                choices = c("protein", .colours())
+                                choices = c("protein", fvarLabels(.dI()))
                     )
             })
             
@@ -366,13 +357,7 @@ pRolocVis <- function(object = NULL) {
                         
 
             ## TAB: PCA PLOT ##  
-            
-            ## colours
-            .colours <- reactive({
-                if(!is.null(.dI()))
-                    fvarLabels(.dI())
-            })
-            
+                        
             ## point size
             .fcex <- reactive({
                 ## check for numericcolums in fData(.dI()) 
@@ -394,17 +379,18 @@ pRolocVis <- function(object = NULL) {
                         plot=FALSE)
             })
             
-            ## render UI accordingly to .colours()
+            ## render colour selectInput accordingly to fvarLabels()
             output$fcoloursOutput <- renderUI({ 
-                selectInput("fcolours", "colour", c("none",.colours()),
-                            selected="none")
+                if (!is.null(.dI()))
+                    selectInput("fcolours", "colour", c("none",fvarLabels(.dI())),
+                                selected="none")
             })
             
             output$fsymboltypeOutput <- renderUI({ 
                 if (!is.null(input$fcolours) && 
                         input$fcolours %in% fvarLabels(.dI())) 
                     selectInput("fsymboltype", "symbol type", 
-                                c("none", .colours()),
+                                c("none", fvarLabels(.dI())),
                                 selected="none")
             })
             
@@ -412,7 +398,7 @@ pRolocVis <- function(object = NULL) {
                 ## initially !length(input$fcolours)
                 ## to avoid an error message we have an outer if statement
                 ## only show when there are numeric columns in fData (.fcex())
-                if (length(input$fcolours) && length(.fcex())){
+                if (length(input$fcolours) && length(.fcex())) {
                     if (input$fcolours != "none")
                         selectInput("fcex", "point size", c("1", .fcex()),
                                     selected = "1")
@@ -687,10 +673,10 @@ pRolocVis <- function(object = NULL) {
             )
             
             output$allOrganellesUI <- renderUI(
-                if(!is.null(.colours()))
+                if(!is.null(.dI()))
                     selectInput("fNamesplDist",
                                 "feature(s) in",
-                                choices = c("all", .colours()) 
+                                choices = c("all", fvarLabels(.dI())) 
                     )
             )
             

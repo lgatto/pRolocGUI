@@ -52,6 +52,22 @@
     return(ans)
 }
 
+## A function to forward indices of selected features to several 
+## reactive expressions
+.sI <- function(cIS, tagSelectList, protText, 
+                    protPCA, protPlotDist, protSearch) {
+    ans <- NULL
+    if ("text" %in% cIS)
+        ans <- c(ans, protText)
+    if ("mousePCA" %in% cIS)
+        ans <- c(ans, protPCA)
+    if ("mousePlotDist" %in% cIS)
+        ans <- c(ans, protPlotDist)
+    if ("savedSearches" %in% cIS && !is.null(tagSelectList))
+        ans <- c(ans, protSearch)
+    unique(ans)
+}
+
 ## Returns the feature names of the FeaturesOfInterest of
 ## FoICollection provided as input. If flist is TRUE, the 
 ## output is listed in the latter case.
