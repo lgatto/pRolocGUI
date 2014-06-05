@@ -315,22 +315,9 @@ pRolocVis <- function(object = NULL) {
             
             ## reactive expressions for text based search
             ## levels to search
-            .searchResultsText <- reactive({
-                subset(
-                    (
-                        if(input$search != "protein")
-                            names(table(fData(.dI())[input$search]))
-                        else
-                            row.names(.dI())
-                    ), 
-                    grepl(input$level.search,
-                          if(input$search != "protein")
-                              names(table(fData(.dI())[input$search]))
-                          else
-                              row.names(.dI())
-                          )
-                )
-            })
+            .searchResultsText <- reactive(
+                .sRsubset(.dI(), input$search, input$levelSearch)
+            )
             
             ## vector with reactive values
             .protText <- reactiveValues(mult=NULL)
@@ -742,7 +729,7 @@ pRolocVis <- function(object = NULL) {
                     as.data.frame(
                         ## cbind to display data properly
                         cbind(
-                            " " = row.names(exprs(.dI())),
+                            " " = rownames(exprs(.dI())),
                             exprs(.dI())
                         )
                     )
@@ -750,7 +737,7 @@ pRolocVis <- function(object = NULL) {
                     as.data.frame(
                         ## cbind to display data properly
                         cbind(
-                            " " = row.names(exprs(.dI()[.searchInd()])),
+                            " " = rownames(exprs(.dI()[.searchInd()])),
                             exprs(.dI()[.searchInd()])
                         )
                     )
@@ -775,7 +762,7 @@ pRolocVis <- function(object = NULL) {
                     as.data.frame(
                         ## cbind to display data properly
                         cbind(
-                            " " = row.names(fData(.dI())),
+                            " " = rownames(fData(.dI())),
                             fData(.dI())
                         )
                     )
@@ -783,7 +770,7 @@ pRolocVis <- function(object = NULL) {
                     as.data.frame(
                         ## cbind to display data properly
                         cbind(
-                            " " = row.names(fData(.dI()[.searchInd()])),
+                            " " = rownames(fData(.dI()[.searchInd()])),
                             fData(.dI()[.searchInd()])
                         )
                     )
@@ -798,7 +785,7 @@ pRolocVis <- function(object = NULL) {
                 as.data.frame(
                     ## cbind to display data properly
                     cbind(
-                        " " = row.names(pData(.dI())),
+                        " " = rownames(pData(.dI())),
                         pData(.dI())
                     )
                 )

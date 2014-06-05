@@ -44,7 +44,7 @@
             htmlOutput("searchUI"),
             ## a search field to facilitate the search for
             ## a certain level which ...
-            textInput("level.search", "Search for"),
+            textInput("levelSearch", "Search for"),
             ## has to be selected here
             htmlOutput("searchResultsUI"),
             ## action Button to add selected levels 

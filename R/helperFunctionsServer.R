@@ -1,3 +1,9 @@
+#############################
+## helper functions server ##
+#############################
+
+## START: Display selection ##
+
 ## A helper function to select the checkbox of "PCA" in the 
 ## Display selection widget, used in observer for assigning to dSelect$PCA
 .selPCA <- function(dPCA, PCAclick, protPCA) {
@@ -67,6 +73,28 @@
         ans <- c(ans, protSearch)
     unique(ans)
 }
+
+## A helper function to subset the selection in the query when entering 
+## a search string
+.sRsubset <- function(data, search, levelSearch) {
+    subset(
+        (
+            if(search != "protein")
+                names(table(fData(data)[search]))
+            else
+                rownames(data)
+        ), 
+        grepl(levelSearch,
+              if(search != "protein")
+                  names(table(fData(data)[search]))
+              else
+                  rownames(data)
+        )
+    )
+}
+
+## END: Display selection ##
+
 
 ## Returns the feature names of the FeaturesOfInterest of
 ## FoICollection provided as input. If flist is TRUE, the 
