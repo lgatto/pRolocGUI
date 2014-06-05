@@ -449,7 +449,7 @@ pRolocVis <- function(object = NULL) {
             .protPCA <- reactiveValues(mult=NULL)
             ## observe and concatenate new indices to .protPCA$mult
             observe({
-                .protPCA$mult <- .obsProtPCA(.protPCA$mult, 
+                .protPCA$mult <- .obsProtClick(.protPCA$mult, 
                                     minDist2dProtPCA(), 
                                     input$PCAclick)
             })
@@ -516,21 +516,13 @@ pRolocVis <- function(object = NULL) {
             ## Create a list-like object with reactive values
             .protPlotDist <- reactiveValues(mult=NULL)
             
-            ## observe and add new points to prot.plotDist$mult
-            observe({
-                ## will be empty initially
-                if(!is.null(input$plotDistclick)) {
-                    isolate({
-                        .protPlotDist$mult <-
-                            c(.protPlotDist$mult, .minDistProtPlotDist())
-                        ## remove indices when indices are double-clicked
-                        if (length(which((as.vector(table(.protPlotDist$mult)) > 1))))
-                            .protPlotDist$mult <- 
-                                .protPlotDist$mult[-which(.protPlotDist$mult
-                                    == names(which(table(.protPlotDist$mult) > 1)))]
-                    })
-                }
-            }) 
+            ## observe and add new points to .protplotDist$mult
+            observe(
+                .protPlotDist$mult <- .obsProtClick(
+                    .protPlotDist$mult, .minDistProtPlotDist(), 
+                    input$plotDistclick)
+            )
+            
             
             ## for Plot/Download button (needs a reactive expression)
             .plotDistReac <- reactive(
@@ -542,46 +534,25 @@ pRolocVis <- function(object = NULL) {
                 )
             )
             
-            ## organelle for all name
-            .organelleAllName <- reactive(
-                if (!is.null(input$fNamesplDist))
-                    if (input$fNamesplDist != "all")
-                        names(table(fData(.dI())[input$fNamesplDist]))
-                    else
-                        "all"
-            )
+            ## levels for plotDist to choose to plot
+            .organelleAllName <- reactive(.orgName(.dI(), input$fNamesplDist))             
             
-            output$allOrganellesUI <- renderUI(
-                if(!is.null(.dI()))
-                    selectInput("fNamesplDist",
-                                "feature(s) in",
-                                choices = c("all", fvarLabels(.dI())) 
-                    )
-            )
+            ## select fvarLabels or "all" for all features UI    
+            output$allOrganellesUI <- renderUI(.featuresPlotDist(.dI()))
             
+            ## UI for feature levels in fvarLabels or "all"
             output$organelleAllUI <- renderUI(
-                if(!is.null(.organelleAllName()) &&
-                       !is.null(input$fNamesplDist))
-                    selectInput("organelleAll",
-                                "assigned to",
-                                choices = .organelleAllName()
-                    )
+                .flevelPlotDist(.organelleAllName(), input$fNamesplDist)
             )
-            
-            output$numberPlotDistUI <- renderUI({
-                if (!as.numeric(input$quantityPlotDist) == 1) {
-                    sliderInput("numberPlotDist",
-                                "Selected plot",
-                                min = 1,
-                                max = as.numeric(input$quantityPlotDist), 
-                                value = 1,
-                                step = 1)
-                }
-            })
+                
+            ## UI for number of plots to plot            
+            output$numberPlotDistUI <- renderUI(
+                .numPlotDist(input$quantityPlotDist)
+            )
             
             output$plotdist <- renderPlot(
-                ## if(!is.null(.plotPlotDist()))
-                .plotPlotDist(data = .dI(), 
+                if(!is.null(.plotPlotDist()))
+                    .plotPlotDist(data = .dI(), 
                         levPlotDist = .listParams$levPlotDist,
                         levPlotDistOrg = .listParams$levPlotDistOrg,
                         quantity = input$quantityPlotDist,
