@@ -249,13 +249,13 @@ pRolocVis <- function(object = NULL) {
             dSelect <- reactiveValues(PCA = NULL, plotDist = NULL, text = NULL)
             
              observe({
-               dSelect$PCA <- .selClick(
-                   dSelect$PCA, input$PCAclick, .protPCA$mult, TRUE
-               )
-               dSelect$plotDist <- .selClick(
-                   dSelect$plotDist, input$plotDistclick, 
-                   .protPlotDist$mult, FALSE
-               )
+                dSelect$PCA <- .selClick(
+                    dSelect$PCA, input$PCAclick, .protPCA$mult, TRUE
+                )
+                dSelect$plotDist <- .selClick(
+                    dSelect$plotDist, input$plotDistclick, 
+                    .protPlotDist$mult, FALSE
+                )
                 dSelect$text <- .selText(
                     dSelect$text, input$saveText, input$resetMult, 
                     .protText$mult
@@ -278,7 +278,6 @@ pRolocVis <- function(object = NULL) {
             ## reactive expression to forward indices to 
             ## plot2D, plotDist and tabs quantitation
             ## and feature meta-data
-            
             .searchInd <- reactive({
                 .sI(input$chooseIdenSearch, input$tagSelectList, .protText$mult, 
                     .protPCA$mult, .protPlotDist$mult, 
