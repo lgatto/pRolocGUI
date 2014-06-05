@@ -350,77 +350,35 @@ pRolocVis <- function(object = NULL) {
             .valuesPCA <- reactive(.vPCA(.dI(), input$PCAn1, input$PCAn2))
             
             ## render colour selectInput accordingly to fvarLabels()
-            output$fcoloursOutput <- renderUI(.colourPCAUI(.dI())) 
+            output$fcoloursOutput <- renderUI(.colourPCA(.dI())) 
                 
             ## render symboltype selectInput accordingly to fvarLabels
             output$fsymboltypeOutput <- renderUI(
-                .symbolPCAUI(.dI(), input$fcolours)
+                .symbolPCA(.dI(), input$fcolours)
             )
             
             ## render point size selectInput accordingly to .fcex
-            output$fcexOutput <- renderUI(.fcexPCAUI(.dI(), input$fcolours))
+            output$fcexOutput <- renderUI(.fcexPCA(.dI(), input$fcolours))
             
             ## zoom function: parameters for x- and y-range for PCA plot
-            output$xrangeUI <- renderUI({
-                if(!is.null(.valuesPCA()))
-                    ## get max and min values of first principal component
-                    ## create a range slider
-                    sliderInput("xrange", "zoom x-axis", 
-                                min = min(.valuesPCA()[, 1]) - 1,
-                                max = max(.valuesPCA()[, 1]) + 1,
-                                value = c(min(.valuesPCA()[, 1]), 
-                                    max(.valuesPCA()[, 1]))
-                    )
-            })  
-            
-            output$yrangeUI <- renderUI({
-                if(!is.null(.valuesPCA()))
-                    ## get max and min values of second principal component
-                    ## create a range slider
-                    sliderInput("yrange", "zoom y-axis",
-                                min = min(.valuesPCA()[, 2]) - 1, 
-                                max = max(.valuesPCA()[, 2]) + 1,
-                                value = c(min(.valuesPCA()[, 2]), 
-                                    max(.valuesPCA()[, 2]))
-                    )
-            })
+            output$xrangeUI <- renderUI(.rangePCA(.valuesPCA(), 1))
+                    
+            output$yrangeUI <- renderUI(.rangePCA(.valuesPCA(), 2))
             
             ## compute number of principal components to look for 
             ## and change UI accordingly
-            output$PCAn1UI <- renderUI({
-                if (!is.null(.dI()))
-                    selectInput("PCAn1", "PC along x axis",
-                                selected = 1,
-                                choices = c(1:ncol(exprs(.dI())))
-                    )
-            })
+            output$PCAn1UI <- renderUI(.PC(.dI(), 1))
+        
+            output$PCAn2UI <- renderUI(.PC(.dI(), 2))
             
-            output$PCAn2UI <- renderUI({
-                if (!is.null(.dI()))
-                    selectInput("PCAn2", "PC along y axis",
-                                selected = 2,
-                                choices = c(1:ncol(exprs(.dI())))
-                    )
-            })
+            ## legend 
+            output$PCALegendUI <- renderUI(.legendPCA(.dI(), input$fcolours))
             
-            output$PCALegendUI <- renderUI({
-                if (length(input$fcolours))
-                    if (input$fcolours %in% fvarLabels(.dI()))
-                        ## tick box: add legend
-                        checkboxInput("legendyes", "legend", 
-                                value = FALSE)
-            })
+            output$PCALegendposUI <- renderUI(
+                .legendPosPCA(.dI(), input$fcolours)
+            )
+                
             
-            output$PCALegendposUI <- renderUI({
-                if (length(input$fcolours))
-                    if (input$fcolours %in% fvarLabels(.dI()))
-                        ## drop down menu for position of legend
-                        selectInput("legendpos", "position of legend",
-                                    choices = c("bottomright", "bottom",
-                                        "bottomleft","left", "topleft", "top",
-                                        "topright", "right","center"), 
-                                    selected="bottomright")
-            })
             
             ## Generate PCA plot, use fcolours for colours and add legend
             ## function (appearance and position dependent of user input)

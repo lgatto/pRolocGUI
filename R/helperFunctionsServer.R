@@ -120,14 +120,14 @@
 }
 
 ## UI for colours
-.colourPCAUI <- function(data) {
+.colourPCA <- function(data) {
     if (!is.null(data))
         selectInput("fcolours", "colour", c("none",fvarLabels(data)),
             selected="none")
 }
 
 ## UI for symbol type
-.symbolPCAUI <- function(data, colours) {
+.symbolPCA <- function(data, colours) {
     if (!is.null(colours) && 
             colours %in% fvarLabels(data)) 
         selectInput("fsymboltype", "symbol type", 
@@ -136,7 +136,7 @@
 }
 
 ## UI for point size
-.fcexPCAUI <- function(data, colours) {
+.fcexPCA <- function(data, colours) {
     ## initially !length(input$fcolours)
     ## to avoid an error message we have an outer if statement
     ## only show when there are numeric columns in fData (.fcex())
@@ -145,6 +145,53 @@
             selectInput("fcex", "point size", c("1", .fcex(data)),
                         selected = "1")
 }
+
+## UI for xrange or yrange (zoom)
+.rangePCA <- function(valuesPCA, dim) {
+    if(!is.null(valuesPCA))
+        ## get max and min values of first principal component
+        ## create a range slider
+        sliderInput(ifelse(dim == 1, "xrange", "yrange"),
+                    ifelse(dim == 1, "zoom x-axis", "zoom y-axis"),
+                    min = min(valuesPCA[, dim]) - 1,
+                    max = max(valuesPCA[, dim]) + 1,
+                    value = c(min(valuesPCA[, dim]), 
+                              max(valuesPCA[, dim]))
+        )  
+}
+
+## UI for principal components
+.PC <- function(data, dim) {
+    if (!is.null(data))
+        selectInput(
+            ifelse(dim == 1, "PCAn1", "PCAn2"),
+            ifelse(dim == 1, "PC along x-axis", "PC along y-axis"),
+            selected = ifelse(dim == 1, 1, 2),
+            choices = c(1:ncol(exprs(data)))
+        )
+}
+
+## checkBox UI for legend
+.legendPCA <- function(data, colours) {
+    if (length(colours))
+        if (colours %in% fvarLabels(data))
+            ## tick box: add legend
+            checkboxInput("legendyes", "legend", value = FALSE)
+}
+
+## position for legend, sliderInput
+.legendPosPCA <- function(data, colours) {
+    if (length(colours))
+        if (colours %in% fvarLabels(data))
+            ## drop down menu for position of legend
+            selectInput("legendpos", "position of legend",
+                        choices = c("bottomright", "bottom",
+                            "bottomleft","left", "topleft", "top",
+                            "topright", "right","center"), 
+                        selected="bottomright"
+            )
+}
+
 ## END: TAB Search
 
 
