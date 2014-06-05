@@ -327,7 +327,7 @@ pRolocVis <- function(object = NULL) {
                 sRText <- isolate(input$sRTextInput)
                 if (!is.null(input$search)) {
                     if (input$search == "protein")
-                        newInd <- which(rownames(andy2011) == sRText)
+                        newInd <- which(rownames(.dI()) == sRText)
                     else 
                         newInd <- which(fData(.dI())[input$search] == sRText)
                     if (!is.null(newInd)) {
@@ -344,55 +344,21 @@ pRolocVis <- function(object = NULL) {
                         
 
             ## TAB: PCA PLOT ##  
-                        
-            ## point size
-            .fcex <- reactive({
-                ## check for numericcolums in fData(.dI()) 
-                colNum <- which(sapply(fData(.dI()), is.numeric))
-                ## write indices in vector colNum
-                colNum <- as.vector(colNum)
-                if(length(colNum))
-                    ## return fvarLabels of numeric colums 
-                    fvarLabels(.dI())[colNum]
-            })
             
             ## values of PCA, dims is dependent on user input,
             ## so is xlim and ylim
-            .valuesPCA <- reactive({
-                if (!is.null(.dI()) && !is.null(input$PCAn1))
-                    plot2D(.dI(), fcol=NULL,
-                        dims=c(as.numeric(input$PCAn1),
-                        as.numeric(input$PCAn2)), 
-                        plot=FALSE)
-            })
+            .valuesPCA <- reactive(.vPCA(.dI(), input$PCAn1, input$PCAn2))
             
             ## render colour selectInput accordingly to fvarLabels()
-            output$fcoloursOutput <- renderUI({ 
-                if (!is.null(.dI()))
-                    selectInput("fcolours", "colour", c("none",fvarLabels(.dI())),
-                                selected="none")
-            })
+            output$fcoloursOutput <- renderUI(.colourPCAUI(.dI())) 
+                
+            ## render symboltype selectInput accordingly to fvarLabels
+            output$fsymboltypeOutput <- renderUI(
+                .symbolPCAUI(.dI(), input$fcolours)
+            )
             
-            output$fsymboltypeOutput <- renderUI({ 
-                if (!is.null(input$fcolours) && 
-                        input$fcolours %in% fvarLabels(.dI())) 
-                    selectInput("fsymboltype", "symbol type", 
-                                c("none", fvarLabels(.dI())),
-                                selected="none")
-            })
-            
-            output$fcexOutput <- renderUI({
-                ## initially !length(input$fcolours)
-                ## to avoid an error message we have an outer if statement
-                ## only show when there are numeric columns in fData (.fcex())
-                if (length(input$fcolours) && length(.fcex())) {
-                    if (input$fcolours != "none")
-                        selectInput("fcex", "point size", c("1", .fcex()),
-                                    selected = "1")
-                    else
-                        return()
-                }
-            })
+            ## render point size selectInput accordingly to .fcex
+            output$fcexOutput <- renderUI(.fcexPCAUI(.dI(), input$fcolours))
             
             ## zoom function: parameters for x- and y-range for PCA plot
             output$xrangeUI <- renderUI({

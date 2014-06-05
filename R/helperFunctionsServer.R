@@ -96,6 +96,58 @@
 ## END: Display selection ##
 
 
+
+## START: TAB Search ##
+
+## point size
+.fcex <- function(data) {
+    ## check for numericcolums in fData(data) 
+    colNum <- which(sapply(fData(data), is.numeric))
+    ## write indices in vector colNum
+    colNum <- as.vector(colNum)
+    if (length(colNum))
+        ## return fvarLabels of numeric colums 
+        fvarLabels(data)[colNum]
+}
+
+## values PCA
+.vPCA <- function(data, PCAn1, PCAn2) {
+    if (!is.null(data) && !is.null(PCAn1))
+        plot2D(data, fcol=NULL,
+               dims=c(as.numeric(PCAn1),
+                      as.numeric(PCAn2)), 
+               plot=FALSE)
+}
+
+## UI for colours
+.colourPCAUI <- function(data) {
+    if (!is.null(data))
+        selectInput("fcolours", "colour", c("none",fvarLabels(data)),
+            selected="none")
+}
+
+## UI for symbol type
+.symbolPCAUI <- function(data, colours) {
+    if (!is.null(colours) && 
+            colours %in% fvarLabels(data)) 
+        selectInput("fsymboltype", "symbol type", 
+                    c("none", fvarLabels(data)),
+                    selected="none")
+}
+
+## UI for point size
+.fcexPCAUI <- function(data, colours) {
+    ## initially !length(input$fcolours)
+    ## to avoid an error message we have an outer if statement
+    ## only show when there are numeric columns in fData (.fcex())
+    if (length(colours) && length(.fcex(data))) 
+        if (colours != "none")
+            selectInput("fcex", "point size", c("1", .fcex(data)),
+                        selected = "1")
+}
+## END: TAB Search
+
+
 ## Returns the feature names of the FeaturesOfInterest of
 ## FoICollection provided as input. If flist is TRUE, the 
 ## output is listed in the latter case.
