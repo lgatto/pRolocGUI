@@ -4,36 +4,24 @@
 
 ## START: Display selection ##
 
-## A helper function to select the checkbox of "PCA" in the 
-## Display selection widget, used in observer for assigning to dSelect$PCA
-.selPCA <- function(dPCA, PCAclick, protPCA) {
-    if (is.null(PCAclick) || is.null(protPCA))
-        dPCA <- NULL
+## A helper function to select the checkbox of "PCA" or "protein profiles" 
+## in the Display selection widget, used in observer for assigning to 
+## dSelect$PCA or dSelect$plotDist
+.selClick <- function(dBox, click, prot, PCA) {
+    if (is.null(click) || is.null(prot))
+        dBox <- NULL
     else {
         isolate({
-            PCAclick
-            dPCA <- "mousePCA"
+            click
+            dBox <- ifelse(PCA, "mousePCA", "mousePlotDist")
         })
     }
-    ans <- unique(dPCA)
+    ans <- sort(unique(dBox))
     return(ans)
 }
 
-## A helper function to select the checkbox of "protein profiles" in the 
-## Display selection widget, used in observer for assigning to dSelect$PCA
-.selPlotDist <- function(dplotDist, plotDistclick, protPlotDist) {
-    if (is.null(plotDistclick) || 
-            is.null(protPlotDist))
-        dplotDist <- NULL
-    else {
-        isolate({
-            plotDistclick
-            dplotDist <- "mousePlotDist"
-        })
-    }
-    ans <- unique(dplotDist)
-    return(ans)
-}
+
+
 
 ## A helper function to select the checkbox of "query" in the 
 ## Display selection widget, used in observer for assigning to dSelect$text
@@ -109,7 +97,7 @@
                 })
         }
     }
-    return(protText)
+    return(unique(protText))
 }
 
 ## concatenate new Indices to old ones when clicking, for PCA and plotDist
@@ -146,7 +134,7 @@
 
 ## values PCA
 .vPCA <- function(data, PCAn1, PCAn2) {
-    if (!is.null(data) && !is.null(PCAn1))
+    if (!is.null(data) && !is.null(PCAn1) && !is.null(PCAn2))
         plot2D(data, fcol=NULL,
                dims=c(as.numeric(PCAn1),
                       as.numeric(PCAn2)), 
@@ -472,7 +460,7 @@
     ## actionButton will only appear when 
     ## there is a description and features are selected
     if (nchar(descr) != 0 && length(indices) != 0) {
-        if(!(descr %in% description(coll)) || !length(coll))
+        if (!(descr %in% description(coll)) || !length(coll))
             actionButton("saveLists2SR",
                          "Create new features of interest")
         else
@@ -489,11 +477,11 @@
     if (!is.null(searchText)
         && !is.null(dataInput)
             && !is.null(sI)) {
-        newfoi <- FeaturesOfInterest(
+        ans <- FeaturesOfInterest(
             description = searchText,
             fnames = featureNames(dataInput)[sI],
             object = dataInput)
-        return(newfoi)
+        return(ans)
     }
 }
 

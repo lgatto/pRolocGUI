@@ -54,7 +54,7 @@
             ## action Button to delete internal assignments
             actionButton("resetMult", "Clear features"),
             ## link to help page
-            htmlOutput("linkDisplay")
+            htmlOutput("linkDisplayUI")
         )
     )
 }
@@ -67,7 +67,7 @@
             for organelle proteomics data."),
         helpText(""),
         ## link to help page
-        htmlOutput("linkData")
+        htmlOutput("linkDataUI")
     )
 }
 
@@ -77,11 +77,11 @@
         wellPanel(
             h4("Plot"),
             ## drop down menu for colours of PCA plot
-            htmlOutput("fcoloursOutput"),
+            htmlOutput("fcoloursUI"),
             ## drop down menu for symbol type of PCA plot
-            htmlOutput("fsymboltypeOutput"),
+            htmlOutput("fsymboltypeUI"),
             ## drow pown menu for point size of PCA plot
-            htmlOutput("fcexOutput"),
+            htmlOutput("fcexUI"),
             ## numeric Input for PCAn (first component)
             htmlOutput("PCAn1UI"),
             ## numeric Input for PCAn (second component)
@@ -93,7 +93,7 @@
             htmlOutput("xrangeUI"),
             htmlOutput("yrangeUI"),
             ## link to help page
-            htmlOutput("linkPCA")
+            htmlOutput("linkPCAUI")
         )
     )
 }
@@ -115,7 +115,7 @@
             ## in all assigned proteins'
             htmlOutput("organelleAllUI"),
             htmlOutput("numberPlotDistUI"),
-            htmlOutput("linkPP")
+            htmlOutput("linkPPUI")
         )
     )
 }
@@ -124,7 +124,7 @@
     conditionalPanel(
         condition = "input.tab1 == 'quantitation'",
         htmlOutput("exprsRadioUI"),
-        htmlOutput("linkExprs")
+        htmlOutput("linkExprsUI")
     )
 }
 
@@ -132,14 +132,14 @@
     conditionalPanel(
         condition = "input.tab1 == 'feature meta-data'",
         htmlOutput("fDataRadioUI"),
-        htmlOutput("linkfData")
+        htmlOutput("linkfDataUI")
     )
 }
 
 .pR_condTabpData <- function() {
     conditionalPanel(
         condition = "input.tab1 == 'sample meta-data'",
-        htmlOutput("linkpData")
+        htmlOutput("linkpDataUI")
     )
 }
 
@@ -155,7 +155,7 @@
         htmlOutput("initSaveUI"),
         ## action Button
         htmlOutput("saveLists2SRUI"),
-        htmlOutput("linkSearch")
+        htmlOutput("linkSearchUI")
     )
 }
 
@@ -166,9 +166,9 @@
 .pR_tabPanelData <- function() {
     tabPanel(
         "Data",
-        htmlOutput("Data1"),
-        htmlOutput("Data2"),
-        htmlOutput("Data3")
+        htmlOutput("Data1UI"),
+        htmlOutput("Data2UI"),
+        htmlOutput("Data3UI")
     )
 }
 
@@ -176,13 +176,13 @@
     tabPanel(
         "PCA",
         plotOutput(
-            "PCA", 
+            "PCAUI", 
             width = "100%",height="800px",
             clickId = "PCAclick",
             hoverId = "PCAhover", hoverDelay = 100,
             hoverDelayType = "throttle"
         ),
-        textOutput("hoverProtPCA"),
+        textOutput("hoverProtPCAUI"),
         downloadButton("plotPCADownload","Download Plot")
     )
 }
@@ -191,38 +191,38 @@
     tabPanel(
         "protein profiles",
         plotOutput(
-            "plotdist", 
+            "plotDistUI", 
             width="100%", height="800px",
             clickId = "plotDistclick",
             hoverId = "plotDisthover", hoverDelay = 100,
             hoverDelayType = "throttle"
         ),
-        textOutput("hoverProtPlotDist"),
+        textOutput("hoverProtPlotDistUI"),
         downloadButton("plotDistDownload","Download Plot")
     )
 }
 
 .pR_tabPanelQuantitation <- function() {
     tabPanel("quantitation", 
-             dataTableOutput("MSnExprs")
+             dataTableOutput("MSnExprsUI")
     )
 }    
 
 .pR_tabPanelfData <- function() {
     tabPanel("feature meta-data", 
-             dataTableOutput("MSnfData")
+             dataTableOutput("MSnfDataUI")
     )
 }
 
 .pR_tabPanelpData <- function() {
     tabPanel("sample meta-data", 
-             dataTableOutput("MSnpData")
+             dataTableOutput("MSnpDataUI")
     )
 }
 
 .pR_tabPanelSearch <- function() {
     tabPanel("search",
-             verbatimTextOutput("infoSavedSearch")
+             verbatimTextOutput("infoSavedSearchUI")
     )
 }
 

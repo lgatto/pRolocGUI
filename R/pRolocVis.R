@@ -89,56 +89,56 @@ pRolocVis <- function(object = NULL) {
                     package = "pRolocGUI"))
                 
             ## Links to vignette ##
-            output$linkDisplay <- renderUI({
+            output$linkDisplayUI <- renderUI({
                 if (nchar(vignette))
                     a(href="/doc/pRolocVis.html#display",
                       "?", target="_blank")
                     ##class = c("btn", "action-button"))
             })
                 
-            output$linkData <- renderUI({
+            output$linkDataUI <- renderUI({
                 if (nchar(vignette))
                     a(href="/doc/pRolocVis.html#tabspRolocVisData",
                         "?", target="_blank")
                 ##class = c("btn", "action-button"))
             })
             
-            output$linkPCA <- renderUI({
+            output$linkPCAUI <- renderUI({
                 if (nchar(vignette))
                     a(href="/doc/pRolocVis.html#tabspRolocVisPCA",
                         "?", target="_blank")
                 ##class = c("btn", "action-button"))
             })
             
-            output$linkPP <- renderUI({
+            output$linkPPUI <- renderUI({
                 if (nchar(vignette))
                     a(href="/doc/pRolocVis.html#tabspRolocVisPP",
                         "?", target="_blank")
                 ##class = c("btn", "action-button"))
             })
                 
-            output$linkExprs <- renderUI({
+            output$linkExprsUI <- renderUI({
                 if (nchar(vignette))
                     a(href="/doc/pRolocVis.html#tabspRolocVisExprs",
                         "?", target="_blank")
                     ##class = c("btn", "action-button"))
             })
             
-            output$linkfData <- renderUI({
+            output$linkfDataUI <- renderUI({
                 if (nchar(vignette))
                     a(href="/doc/pRolocVis.html#tabspRolocVisfData",
                         "?", target="_blank")
                 ##class = c("btn", "action-button"))
             })
                 
-            output$linkpData <- renderUI({
+            output$linkpDataUI <- renderUI({
                 if (nchar(vignette))
                     a(href="/doc/pRolocVis.html#tabspRolocVispData",
                         "?", target="_blank")
                 ##class = c("btn", "action-button"))
             })
                 
-            output$linkSearch <- renderUI({
+            output$linkSearchUI <- renderUI({
                 if (nchar(vignette))
                     a(href="/doc/pRolocVis.html#tabspRolocVisSearch",
                         "?", target="_blank")
@@ -154,7 +154,7 @@ pRolocVis <- function(object = NULL) {
             ## upload function for own data, access to data path implemented 
             ## by index "datapath", 
             ## see ?shiny::fileInput for further details
-            output$Data1 <- renderUI({
+            output$Data1UI <- renderUI({
                 ## choose Data source, a drop down list of
                 ## andy2011, dunkley2006, tan2009r1 (all example
                 ## data) or use your own data by selecting load
@@ -170,7 +170,7 @@ pRolocVis <- function(object = NULL) {
                                 "own data"))                                
             })
             
-            output$Data2 <- renderUI({
+            output$Data2UI <- renderUI({
                 if (is.null(object))
                     fileInput("owndata", 
                             "Select your own MSnSet file",
@@ -187,7 +187,7 @@ pRolocVis <- function(object = NULL) {
                 
             })
             
-            output$Data3 <- renderUI({
+            output$Data3UI <- renderUI({
                 if (is.null(object))
                     textOutput("warningowndataUI")
             })
@@ -250,11 +250,12 @@ pRolocVis <- function(object = NULL) {
             dSelect <- reactiveValues(PCA = NULL, plotDist = NULL, text = NULL)
             
             observe({
-                dSelect$PCA <- .selPCA(
-                    dSelect$PCA, input$PCAclick, .protPCA$mult
+                dSelect$PCA <- .selClick(
+                    dSelect$PCA, input$PCAclick, .protPCA$mult, TRUE
                 )
-                dSelect$plotDist <- .selPlotDist(
-                    dSelect$plotDist, input$plotDistclick, .protPlotDist$mult
+                dSelect$plotDist <- .selClick(
+                    dSelect$plotDist, input$plotDistclick, 
+                    .protPlotDist$mult, FALSE
                 )
                 dSelect$text <- .selText(
                     dSelect$text, input$saveText, input$resetMult, 
@@ -341,15 +342,15 @@ pRolocVis <- function(object = NULL) {
             .valuesPCA <- reactive(.vPCA(.dI(), input$PCAn1, input$PCAn2))
             
             ## render colour selectInput accordingly to fvarLabels()
-            output$fcoloursOutput <- renderUI(.colourPCA(.dI())) 
+            output$fcoloursUI <- renderUI(.colourPCA(.dI())) 
                 
             ## render symboltype selectInput accordingly to fvarLabels
-            output$fsymboltypeOutput <- renderUI(
+            output$fsymboltypeUI <- renderUI(
                 .symbolPCA(.dI(), input$fcolours)
             )
             
             ## render point size selectInput accordingly to .fcex
-            output$fcexOutput <- renderUI(.fcexPCA(.dI(), input$fcolours))
+            output$fcexUI <- renderUI(.fcexPCA(.dI(), input$fcolours))
             
             ## zoom function: parameters for x- and y-range for PCA plot
             output$xrangeUI <- renderUI(.rangePCA(.valuesPCA(), 1))
@@ -371,7 +372,7 @@ pRolocVis <- function(object = NULL) {
                 
             ## Generate PCA plot, use fcolours for colours and add legend
             ## function (appearance and position dependent of user input)
-            output$PCA <- renderPlot(
+            output$PCAUI <- renderPlot(
                 if (!is.null(.dI()))
                     .plotPCA(data = .dI(), 
                         fcolours = input$fcolours, 
@@ -405,7 +406,6 @@ pRolocVis <- function(object = NULL) {
                         cIS = input$chooseIdenSearch
                 )
             )
-            
             
             ## Download Handler for PCA plot
             output$plotPCADownload <- downloadHandler(
@@ -442,7 +442,7 @@ pRolocVis <- function(object = NULL) {
                 }
             )
             
-            output$hoverProtPCA <- renderText(
+            output$hoverProtPCAUI <- renderText(
                 featureNames(.dI())[minDist2dProtPCAHover()]
             )
             
@@ -510,7 +510,7 @@ pRolocVis <- function(object = NULL) {
                 }
             })
             
-            output$hoverProtPlotDist <- renderText(
+            output$hoverProtPlotDistUI <- renderText(
                 featureNames(.dI())[.minDistProtPlotDistHover()]
             )
             
@@ -552,7 +552,7 @@ pRolocVis <- function(object = NULL) {
             )
             
             ## renderPlot plotDist and assign parameters
-            output$plotdist <- renderPlot(
+            output$plotDistUI <- renderPlot(
                 .plotPlotDist(data = .dI(), 
                     levPlotDist = .listParams$levPlotDist,
                     levPlotDistOrg = .listParams$levPlotDistOrg,
@@ -581,7 +581,7 @@ pRolocVis <- function(object = NULL) {
             ## Generate the quantitation data
             output$exprsRadioUI <- renderUI(.radioButton(.searchInd(), TRUE))
 
-            output$MSnExprs <- renderDataTable(
+            output$MSnExprsUI <- renderDataTable(
                 .dTable(.dI(), "quant", input$exprsRadio, .searchInd())
             )
             ## END: QUANTITATION DATA ##
@@ -592,7 +592,7 @@ pRolocVis <- function(object = NULL) {
             ## Generate the feature meta-data
             output$fDataRadioUI <- renderUI(.radioButton(.searchInd(), FALSE))
             
-            output$MSnfData <- renderDataTable(
+            output$MSnfDataUI <- renderDataTable(
                 .dTable(.dI(), "fD", input$fDataRadio, .searchInd())
             )
             ## END: FEATURE META-DATA ##
@@ -601,7 +601,7 @@ pRolocVis <- function(object = NULL) {
             
             ## TAB: SAMPLE META-DATA ##
             ## Generate the sample meta-data
-            output$MSnpData <- renderDataTable(.dTable(.dI(), "pD"))
+            output$MSnpDataUI <- renderDataTable(.dTable(.dI(), "pD"))
             ## END: SAMPLE META-DATA ##
             
             
@@ -640,7 +640,7 @@ pRolocVis <- function(object = NULL) {
             ## display information about selected FoI
             .whichN <- reactive(.whichTag(input$tagSelectList, .pR_SR$foi))
             
-            output$infoSavedSearch <- renderText({
+            output$infoSavedSearchUI <- renderText({
                 if (!is.null(.pR_SR$foi) && length(.pR_SR$foi) != 0) {
                     showFOI <- .showFOI(.pR_SR$foi, .dI(), .whichN())
                     paste0(showFOI, sep = "\n", collapse = "")
