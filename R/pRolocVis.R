@@ -262,17 +262,12 @@ pRolocVis <- function(object = NULL) {
                 )  
             })
      
-            output$checkBoxUI <- renderUI({
-                checkboxGroupInput("chooseIdenSearch", 
-                                label = "",
-                                choices = c("PCA" = "mousePCA",
-                                    "protein profiles" = "mousePlotDist",
-                                    "saved searches" = "savedSearches",
-                                    "query" = "text"),
-                                selected = c(
-                                   dSelect$PCA, dSelect$plotDist, dSelect$text)
-                )
-            })
+            output$checkBoxUI <- renderUI(
+                .checkBoxdSelect(dSelect$PCA, dSelect$plotDist, dSelect$text)
+            )
+                
+                
+        
             
             ## reactive expressions for general search
             ## reactive expression to forward indices to 

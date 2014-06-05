@@ -118,6 +118,18 @@
     }
     return(protMult)
 }
+
+## checkBox helper function for Display selection
+.checkBoxdSelect <- function(dPCA, dPlotDist, dText) {
+    checkboxGroupInput("chooseIdenSearch", 
+        label = "",
+        choices = c("PCA" = "mousePCA",
+                "protein profiles" = "mousePlotDist",
+                "saved searches" = "savedSearches",
+                "query" = "text"),
+        selected = c(dPCA, dPlotDist, dText)
+    )
+}
 ## END: Display selection ##
 
 
