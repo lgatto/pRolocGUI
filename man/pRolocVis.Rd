@@ -7,7 +7,7 @@ pRolocVis(object = NULL)
 }
 \arguments{
 \item{object}{Pass a MSnSet to pRolocVis directly. Default \code{NULL} will
-enable possibility to upload MSnSet in pRolovVis.}
+enable possibility to upload MSnSet in pRolocVis.}
 }
 \description{
 A function to start a shiny session with one MSnSet data set.
