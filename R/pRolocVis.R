@@ -310,10 +310,10 @@ pRolocVis <- function(object = NULL) {
                                         input$saveText, input$sRTextInput, 
                                         input$search)
             })
-            
             ## END OF SEARCHING IMPLEMENTATION ##  
                         
 
+            
             ## TAB: PCA PLOT ##  
             
             ## values of PCA, dims is dependent on user input,

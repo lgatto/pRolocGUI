@@ -16,15 +16,12 @@
             if (PCA)
                 dBox <- "mousePCA"
             else
-                "mousePlotDist"
+                dBox <- "mousePlotDist"
         })
     }
     ans <- unique(dBox)
     return(ans)
 }
-
-
-
 
 ## A helper function to select the checkbox of "query" in the 
 ## Display selection widget, used in observer for assigning to dSelect$text
