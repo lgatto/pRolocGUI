@@ -550,6 +550,7 @@ pRolocVis <- function(object = NULL) {
                 .numPlotDist(input$quantityPlotDist)
             )
             
+            ## renderPlot plotDist and assign parameters
             output$plotdist <- renderPlot(
                     .plotPlotDist(data = .dI(), 
                         levPlotDist = .listParams$levPlotDist,
@@ -577,66 +578,22 @@ pRolocVis <- function(object = NULL) {
             
             ## TAB: QUANTITATION DATA ##
             ## Generate the quantitation data
-            output$exprsRadioUI <- renderUI({
-                radioButtons("exprsRadio","Features",
-                        choices = list("all or"="all", 
-                            "selected"="selected"),
-                        selected = ifelse(length(.searchInd()), 
-                            "selected", "all")
-                )
-            })
-            
-            output$MSnExprs <- renderDataTable({
-                if (input$exprsRadio == "all")
-                    as.data.frame(
-                        ## cbind to display data properly
-                        cbind(
-                            " " = rownames(exprs(.dI())),
-                            exprs(.dI())
-                        )
-                    )
-                else
-                    as.data.frame(
-                        ## cbind to display data properly
-                        cbind(
-                            " " = rownames(exprs(.dI()[.searchInd()])),
-                            exprs(.dI()[.searchInd()])
-                        )
-                    )
-            })
+            output$exprsRadioUI <- renderUI(.radioButton(.searchInd(), TRUE))
+
+            output$MSnExprs <- renderDataTable(
+                .dTable(.dI(), "quant", input$exprsRadio, .searchInd())
+            )
             ## END: QUANTITATION DATA ##
             
             
             
             ## TAB: FEATURE META-DATA ##
             ## Generate the feature meta-data
-            output$fDataRadioUI <- renderUI({
-                radioButtons("fDataRadio","Features",
-                        choices=list("all or" = "all", 
-                            "selected" = "selected"),
-                        selected = ifelse(length(.searchInd()), 
-                            "selected", "all")
-                )
-            })
+            output$fDataRadioUI <- renderUI(.radioButton(.searchInd(), FALSE))
             
-            output$MSnfData <- renderDataTable({
-                if (input$fDataRadio == "all")
-                    as.data.frame(
-                        ## cbind to display data properly
-                        cbind(
-                            " " = rownames(fData(.dI())),
-                            fData(.dI())
-                        )
-                    )
-                else
-                    as.data.frame(
-                        ## cbind to display data properly
-                        cbind(
-                            " " = rownames(fData(.dI()[.searchInd()])),
-                            fData(.dI()[.searchInd()])
-                        )
-                    )
-            })
+            output$MSnfData <- renderDataTable(
+                .dTable(.dI(), "fD", input$fDataRadio, .searchInd())
+            )
             ## END: FEATURE META-DATA ##
             
             
@@ -644,13 +601,7 @@ pRolocVis <- function(object = NULL) {
             ## TAB: SAMPLE META-DATA ##
             ## Generate the sample meta-data
             output$MSnpData <- renderDataTable(
-                as.data.frame(
-                    ## cbind to display data properly
-                    cbind(
-                        " " = rownames(pData(.dI())),
-                        pData(.dI())
-                    )
-                )
+                .dTable(.dI(), "pD")
             )
             ## END: SAMPLE META-DATA ##
             

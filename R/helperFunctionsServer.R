@@ -396,8 +396,41 @@
 
 ## START: TAB Quantitation Data ##
 
-## END: TAB Quantitation Data ##
+## END: TAB Quantitation Data and feature meta-data ##
 
+.radioButton <- function(indices, quant) {
+    radioButtons(
+        ifelse(quant == TRUE,"exprsRadio", "fDataRadio"),
+        "Features",
+        choices = list("all or"="all", 
+            "selected"="selected"),
+        selected = ifelse(length(indices), 
+            "selected", "all")
+    )
+}
+
+.dTable <- function(data, mdata, radiobutton = "all", indices = NULL) {
+    if (radiobutton == "all") {
+        ## cbind to display data properly
+        if(mdata == "quant")
+            ans <-  as.data.frame(cbind(" " = rownames(exprs(data)), exprs(data)))
+        if (mdata == "fD")
+            ans <- as.data.frame(cbind(" " = rownames(fData(data)), fData(data)))
+        if (mdata == "pD")
+            ans <- as.data.frame(cbind(" " = rownames(pData(data)), pData(data)))
+    } else {
+        ## cbind to display data properly
+        if(mdata == "quant") 
+            ans <- as.data.frame(cbind(" " = rownames(exprs(data)[indices]),
+                     exprs(data[indices])))
+        else
+            ans <- as.data.frame(cbind(" " = rownames(fData(data[indices])),
+                         fData(data[indices])))
+    }
+    return(ans)
+}
+
+## END: TAB Quantitation and feature meta-data ##
 
 
 ## START: TAB Search ##
