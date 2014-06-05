@@ -215,9 +215,9 @@
 .PC <- function(data, dim) {
     if (!is.null(data))
         selectInput(
-            ifelse(dim == 1, "PCAn1", "PCAn2"),
-            ifelse(dim == 1, "PC along x-axis", "PC along y-axis"),
-            selected = ifelse(dim == 1, 1, 2),
+            ifelse(dim == "x", "PCAn1", "PCAn2"),
+            ifelse(dim == "x", "PC along x-axis", "PC along y-axis"),
+            selected = ifelse(dim == "x", 1, 2),
             choices = c(1:ncol(exprs(data)))
         )
 }
