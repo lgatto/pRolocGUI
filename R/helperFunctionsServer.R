@@ -393,6 +393,14 @@
 ## END: TAB protein profiles ##
 
 
+
+## START: TAB Quantitation Data ##
+
+## END: TAB Quantitation Data ##
+
+
+
+## START: TAB Search ##
 ## Returns the feature names of the FeaturesOfInterest of
 ## FoICollection provided as input. If flist is TRUE, the 
 ## output is listed in the latter case.
@@ -422,5 +430,5 @@
     return(showFOI)
 }
 
-
+## END: TAB Search ##
 

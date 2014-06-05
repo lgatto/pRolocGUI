@@ -551,7 +551,6 @@ pRolocVis <- function(object = NULL) {
             )
             
             output$plotdist <- renderPlot(
-                if(!is.null(.plotPlotDist()))
                     .plotPlotDist(data = .dI(), 
                         levPlotDist = .listParams$levPlotDist,
                         levPlotDistOrg = .listParams$levPlotDistOrg,
