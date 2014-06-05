@@ -182,8 +182,7 @@ pRolocVis <- function(object = NULL) {
                     else 
                         helpText("object corrupt, 
                             MSnSet 'andy2011' will be used")
-                }
-                
+                }  
             })
             
             output$Data3UI <- renderUI({
@@ -250,15 +249,15 @@ pRolocVis <- function(object = NULL) {
             
              observe({
                 dSelect$PCA <- .selClick(
-                    dSelect$PCA, input$PCAclick, .protPCA$mult, TRUE
+                    dSelect$PCA, input$PCAclick, .prot$PCA, TRUE
                 )
                 dSelect$plotDist <- .selClick(
                     dSelect$plotDist, input$plotDistclick, 
-                    .protPlotDist$mult, FALSE
+                    .prot$plotDist, FALSE
                 )
                 dSelect$text <- .selText(
                     dSelect$text, input$saveText, input$resetMult, 
-                    .protText$mult
+                    .prot$text
                 )  
             })
      
@@ -271,17 +270,17 @@ pRolocVis <- function(object = NULL) {
             ## plot2D, plotDist and tabs quantitation
             ## and feature meta-data
             .searchInd <- reactive({
-                .sI(input$chooseIdenSearch, input$tagSelectList, .protText$mult, 
-                    .protPCA$mult, .protPlotDist$mult, 
+                .sI(input$chooseIdenSearch, input$tagSelectList, .prot$text, 
+                    .prot$PCA, .prot$plotDist, 
                     .whichFOI(.dI(), .pR_SR$foi, .whichN()))
             })
             
             ## Clear multiple points on click
             observe({
                 if (input$resetMult > 0) {
-                    .protPCA$mult <- NULL
-                    .protPlotDist$mult <- NULL
-                    .protText$mult <- NULL
+                    .prot$PCA <- NULL
+                    .prot$plotDist <- NULL
+                    .prot$text <- NULL
                     dSelect$PCA <- NULL
                     dSelect$plotDist <- NULL
                     dSelect$text <- NULL
@@ -302,13 +301,18 @@ pRolocVis <- function(object = NULL) {
             )
             
             ## vector with reactive values
-            .protText <- reactiveValues(mult=NULL)
+            .prot <- reactiveValues(PCA = NULL, plotDist = NULL, text = NULL)
             
-            ## observe indices and concatenate to protText$mult
+            ## observe indices and concatenate to .prot$PCA, .prot$plotDist
+            ## and .prot$text
             observe({
-                .protText$mult <- .obsProtText(.dI(), .protText$mult, 
-                                        input$saveText, input$sRTextInput, 
-                                        input$search)
+                .prot$PCA <- .obsProtClick(
+                    .prot$PCA, minDist2dProtPCA(), input$PCAclick)
+                .prot$plotDist <- .obsProtClick(
+                    .prot$plotDist, .minDistProtPlotDist(), input$plotDistclick)
+                .prot$text <- .obsProtText(
+                    .dI(), .prot$text, input$saveText, 
+                    input$sRTextInput, input$search)
             })
             ## END OF SEARCHING IMPLEMENTATION ##  
                         
@@ -424,16 +428,6 @@ pRolocVis <- function(object = NULL) {
             output$hoverProtPCAUI <- renderText(
                 featureNames(.dI())[minDist2dProtPCAHover()]
             )
-            
-            ## Multiple points list
-            ## Create a list-like object with reactive values
-            .protPCA <- reactiveValues(mult=NULL)
-            ## observe and concatenate new indices to .protPCA$mult
-            observe({
-                .protPCA$mult <- .obsProtClick(.protPCA$mult, 
-                                    minDist2dProtPCA(), 
-                                    input$PCAclick)
-            })
             ## END: PCA PLOT ##
 
             ## TAB: PLOTDIST ##            
@@ -491,17 +485,6 @@ pRolocVis <- function(object = NULL) {
             
             output$hoverProtPlotDistUI <- renderText(
                 featureNames(.dI())[.minDistProtPlotDistHover()]
-            )
-            
-            ## Multiple points list
-            ## Create a list-like object with reactive values
-            .protPlotDist <- reactiveValues(mult=NULL)
-            
-            ## observe and add new points to .protplotDist$mult
-            observe(
-                .protPlotDist$mult <- .obsProtClick(
-                    .protPlotDist$mult, .minDistProtPlotDist(), 
-                    input$plotDistclick)
             )
             
             ## for Plot/Download button (needs a reactive expression)
