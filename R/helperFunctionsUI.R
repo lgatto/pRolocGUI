@@ -150,7 +150,7 @@
         htmlOutput("savedSearchTextUI"),
         ## selectInput for choosing between the different 
         ## search Results
-        htmlOutput("tagsListSearchResultUI"),
+        htmlOutput("tagsListSearchUI"),
         ## initilialize search
         htmlOutput("initSaveUI"),
         ## action Button

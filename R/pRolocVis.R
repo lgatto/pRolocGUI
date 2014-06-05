@@ -525,7 +525,6 @@ pRolocVis <- function(object = NULL) {
                     input$plotDistclick)
             )
             
-            
             ## for Plot/Download button (needs a reactive expression)
             .plotDistReac <- reactive(
                 .plotPlotDist(data = .dI(), 
@@ -554,11 +553,11 @@ pRolocVis <- function(object = NULL) {
             
             ## renderPlot plotDist and assign parameters
             output$plotdist <- renderPlot(
-                    .plotPlotDist(data = .dI(), 
-                        levPlotDist = .listParams$levPlotDist,
-                        levPlotDistOrg = .listParams$levPlotDistOrg,
-                        quantity = input$quantityPlotDist,
-                        sI = .searchInd()
+                .plotPlotDist(data = .dI(), 
+                    levPlotDist = .listParams$levPlotDist,
+                    levPlotDistOrg = .listParams$levPlotDistOrg,
+                    quantity = input$quantityPlotDist,
+                    sI = .searchInd()
                 )
             )
             
@@ -602,14 +601,13 @@ pRolocVis <- function(object = NULL) {
             
             ## TAB: SAMPLE META-DATA ##
             ## Generate the sample meta-data
-            output$MSnpData <- renderDataTable(
-                .dTable(.dI(), "pD")
-            )
+            output$MSnpData <- renderDataTable(.dTable(.dI(), "pD"))
             ## END: SAMPLE META-DATA ##
             
             
             
             ## TAB: SEARCH ##
+            ## create object pRolocGUI_SearchResults in .GlobalEnv on exit
             observe({
                 if (length(.pR_SR$foi) > 0)
                     on.exit(assign("pRolocGUI_SearchResults",
@@ -638,8 +636,6 @@ pRolocVis <- function(object = NULL) {
                 )
             }) 
             
-         
-            
             ## text field to assign name to search results
             ## display information about selected FoI
             .whichN <- reactive(.whichTag(input$tagSelectList, .pR_SR$foi))
@@ -653,9 +649,7 @@ pRolocVis <- function(object = NULL) {
             })
             
             ## select Input for the tag names of the list
-            output$tagsListSearchResultUI <- renderUI(
-                .tagListSearch(.pR_SR$foi)
-            )
+            output$tagsListSearchUI <- renderUI(.tagListSearch(.pR_SR$foi))
             
             ## text input to enter description 
             output$savedSearchTextUI <- renderUI(.textDescription())
