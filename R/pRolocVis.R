@@ -4,7 +4,7 @@
 #'@author Thomas Naake <tn299@@cam.ac.uk>
 #'@usage pRolocVis(object = NULL)
 #'@param object Pass a MSnSet to pRolocVis directly. Default \code{NULL} will
-#'enable possibility to upload MSnSet in pRolovVis. 
+#'enable possibility to upload MSnSet in pRolocVis. 
 #'@description A function to start a shiny session with one MSnSet data set. 
 #'Run \code{pRolocVis()} to start the shiny application and choose between
 #'three example MSnSet originating from \code{pRolocdata} or upload your
@@ -79,7 +79,6 @@ pRolocVis <- function(object = NULL) {
             ),
         
         server = function(input, output) {   
-            
             ## START: links to vignette ## 
             vignette <- system.file("doc/pRolocVis.html", package="pRolocGUI")  
                 
@@ -249,20 +248,20 @@ pRolocVis <- function(object = NULL) {
             ## check boxes by clicking on plots PCA and plotDist
             dSelect <- reactiveValues(PCA = NULL, plotDist = NULL, text = NULL)
             
-            observe({
-                dSelect$PCA <- .selClick(
-                    dSelect$PCA, input$PCAclick, .protPCA$mult, TRUE
-                )
-                dSelect$plotDist <- .selClick(
-                    dSelect$plotDist, input$plotDistclick, 
-                    .protPlotDist$mult, FALSE
-                )
+             observe({
+               dSelect$PCA <- .selClick(
+                   dSelect$PCA, input$PCAclick, .protPCA$mult, TRUE
+               )
+               dSelect$plotDist <- .selClick(
+                   dSelect$plotDist, input$plotDistclick, 
+                   .protPlotDist$mult, FALSE
+               )
                 dSelect$text <- .selText(
                     dSelect$text, input$saveText, input$resetMult, 
                     .protText$mult
                 )  
             })
-            
+     
             output$checkBoxUI <- renderUI({
                 checkboxGroupInput("chooseIdenSearch", 
                                 label = "",
@@ -271,7 +270,7 @@ pRolocVis <- function(object = NULL) {
                                     "saved searches" = "savedSearches",
                                     "query" = "text"),
                                 selected = c(
-                                    dSelect$PCA, dSelect$plotDist, dSelect$text)
+                                   dSelect$PCA, dSelect$plotDist, dSelect$text)
                 )
             })
             
@@ -279,12 +278,12 @@ pRolocVis <- function(object = NULL) {
             ## reactive expression to forward indices to 
             ## plot2D, plotDist and tabs quantitation
             ## and feature meta-data
-            .searchInd <- reactive(
+            
+            .searchInd <- reactive({
                 .sI(input$chooseIdenSearch, input$tagSelectList, .protText$mult, 
                     .protPCA$mult, .protPlotDist$mult, 
                     .whichFOI(.dI(), .pR_SR$foi, .whichN()))
-                    
-            )
+            })
             
             ## Clear multiple points on click
             observe({

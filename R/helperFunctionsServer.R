@@ -13,10 +13,13 @@
     else {
         isolate({
             click
-            dBox <- ifelse(PCA, "mousePCA", "mousePlotDist")
+            if (PCA)
+                dBox <- "mousePCA"
+            else
+                "mousePlotDist"
         })
     }
-    ans <- sort(unique(dBox))
+    ans <- unique(dBox)
     return(ans)
 }
 
@@ -441,7 +444,7 @@
 
 ## returns indices of collection of features which are selected in tab search
 .whichFOI <- function(data, coll, index) 
-    which(!is.na(match(rownames(data), .fnamesFOI(coll)[[index]])))
+    which((match(rownames(data), .fnamesFOI(coll)[[index]])) != NA)
 
 ## selectInput for collection of features to choose between in tab search
 .tagListSearch <- function(coll) {
