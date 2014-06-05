@@ -324,22 +324,31 @@ pRolocVis <- function(object = NULL) {
             
             ## observe indices and concatenate to protText$mult
             observe({
-                sRText <- isolate(input$sRTextInput)
-                if (!is.null(input$search)) {
-                    if (input$search == "protein")
-                        newInd <- which(rownames(.dI()) == sRText)
-                    else 
-                        newInd <- which(fData(.dI())[input$search] == sRText)
-                    if (!is.null(newInd)) {
-                        if (input$saveText > 0 && length(newInd > 0))
-                            isolate({
-                                input$saveText
-                                .protText$mult <- 
-                                    isolate(c(.protText$mult, newInd))
-                            })
-                    }
-                }
+                .protText$mult <- .obsProtText(.dI(), .protText$mult, 
+                                        input$saveText, input$sRTextInput, 
+                                        input$search)
             })
+                
+                
+                
+                    
+                    
+            #sRText <- isolate(input$sRTextInput)
+            #    if (!is.null(input$search)) {
+            #        if (input$search == "protein")
+            #            newInd <- which(rownames(.dI()) == sRText)
+            #        else 
+            #            newInd <- which(fData(.dI())[input$search] == sRText)
+            #        if (!is.null(newInd)) {
+            #            if (input$saveText > 0 && length(newInd > 0))
+            #                isolate({
+            #                    input$saveText
+            #                    .protText$mult <- 
+            #                        isolate(c(.protText$mult, newInd))
+            #                })
+            #        }
+           #     }
+           # })
             ## END OF SEARCHING IMPLEMENTATION ##  
                         
 
@@ -378,8 +387,6 @@ pRolocVis <- function(object = NULL) {
                 .legendPosPCA(.dI(), input$fcolours)
             )
                 
-            
-            
             ## Generate PCA plot, use fcolours for colours and add legend
             ## function (appearance and position dependent of user input)
             output$PCA <- renderPlot(
@@ -462,35 +469,16 @@ pRolocVis <- function(object = NULL) {
             .protPCA <- reactiveValues(mult=NULL)
             ## observe and concatenate new indices to .protPCA$mult
             observe({
-                ## will be empty initially
-                if(!is.null(input$PCAclick)) {
-                    isolate({
-                        .protPCA$mult <- c(.protPCA$mult, minDist2dProtPCA())
-                        ## remove indices when indices are clicked another time
-                        if (length(which(as.vector(table(.protPCA$mult)) > 1))) 
-                            .protPCA$mult <- 
-                                .protPCA$mult[
-                                    -which(.protPCA$mult 
-                                        == names(which(table(.protPCA$mult) > 1)))
-                                              ]
-                    })   
-                }
-            }) 
+                .protPCA$mult <- .obsProtPCA(.protPCA$mult, 
+                                    minDist2dProtPCA(), 
+                                    input$PCAclick)
+            })
             ## END: PCA PLOT ##
 
-            ## TAB: PLOTDIST ##
-            
-            ## reactive expressions for plotDist
-            
+            ## TAB: PLOTDIST ##            
             ## Index of element in list where parameters are stored
-            .nCol <- reactive({
-                if (is.null(input$numberPlotDist) || 
-                        input$quantityPlotDist == "1")
-                    1
-                else
-                    as.numeric(input$numberPlotDist)
-            })
-            
+            .nCol <- reactive(.nC(input$numberPlotDist, input$quantityPlotDist))
+                
             ## list where parameters for plot are stored
             ## create a list with reactive values
             .listParams <- reactiveValues(

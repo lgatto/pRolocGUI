@@ -93,11 +93,30 @@
     )
 }
 
+.obsProtText <- function(data, protText, button, 
+                         sRTextInput, search) {
+    sRText <- isolate(sRTextInput)
+    if (!is.null(search)) {
+        if (search == "protein")
+            newInd <- which(rownames(data) == sRText)
+        else 
+            newInd <- which(fData(data)[search] == sRText)
+        if (!is.null(newInd)) {
+            if (button > 0 && length(newInd > 0))
+                isolate({
+                    button
+                    protText <- isolate(c(protText, newInd))
+                })
+        }
+    }
+    return(protText)
+}
+
 ## END: Display selection ##
 
 
 
-## START: TAB Search ##
+## START: TAB PCA ##
 
 ## point size
 .fcex <- function(data) {
@@ -192,7 +211,32 @@
             )
 }
 
-## END: TAB Search
+## concatenate new Indices to old ones
+.obsProtPCA <- function(protPCA, minDist, PCAclick) {
+    if(!is.null(PCAclick)) {
+        isolate({
+            protPCA <- c(protPCA, minDist)
+            ## remove indices when indices are clicked another time
+            if (length(which(as.vector(table(protPCA)) > 1))) 
+                protPCA <- protPCA[
+                    -which(protPCA  == names(which(table(protPCA) > 1)))
+                    ]
+        })   
+       return(protPCA)
+    }  
+}
+
+## END: TAB PCA ## 
+
+## START: TAB protein profiles ##
+.nC <- function(numberPlotDist, quantityPlotDist) {
+    if (quantityPlotDist == "1")
+        1
+    else
+        as.numeric(numberPlotDist)
+}
+
+## END: TAB protein profiles ##
 
 
 ## Returns the feature names of the FeaturesOfInterest of
