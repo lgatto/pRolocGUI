@@ -280,7 +280,9 @@ pRolocVis <- function(object = NULL) {
             ## and feature meta-data
             .searchInd <- reactive(
                 .sI(input$chooseIdenSearch, input$tagSelectList, .protText$mult, 
-                    .protPCA$mult, .protPlotDist$mult, .whichNamesFOI())
+                    .protPCA$mult, .protPlotDist$mult, 
+                    .whichFOI(.dI(), .pR_SR$foi, .whichN()))
+                    
             )
             
             ## Clear multiple points on click
@@ -615,29 +617,33 @@ pRolocVis <- function(object = NULL) {
                     )
             })
             
+            ## create reactiveValues for FoIColection
             .pR_SR <- reactiveValues(foi = sr)
             
             if ((is.null(sr))) {
                 .pR_SR$foi <- FoICollection()
             }
             
+            ## create reactiveValues for new features of Interest
+            .newfoi <- reactiveValues(ind = NULL)
+            
             observe({
-                newFOI <- .newfoi$ind
-                if (input$saveLists2SR > 0
-                    && !is.null(input$saveLists2SR)
-                        && length(.searchInd()) > 0) {
-                    isolate(
-                        if (!(input$savedSearchText %in% 
-                            description(.pR_SR$foi))) {
-                            .pR_SR$foi <- addFeaturesOfInterest(
-                                            newFOI, .pR_SR$foi)
-                        }
-                    )
-                }
-            })
+                .newfoi$ind <- .obsNewFoI(
+                    .dI(), .searchInd(), 
+                    input$savedSearchText, input$saveLists2SR
+                )
+                .pR_SR$foi <- .obsSavedSearch(
+                    .pR_SR$foi, .newfoi$ind, .searchInd(), 
+                    input$saveLists2SR, input$savedSearchText
+                )
+            }) 
+            
+         
             
             ## text field to assign name to search results
             ## display information about selected FoI
+            .whichN <- reactive(.whichTag(input$tagSelectList, .pR_SR$foi))
+            
             output$infoSavedSearch <- renderText({
                 if (!is.null(.pR_SR$foi) && length(.pR_SR$foi) != 0) {
                     showFOI <- .showFOI(.pR_SR$foi, .dI(), .whichN())
@@ -646,71 +652,18 @@ pRolocVis <- function(object = NULL) {
                     return("pRolocGUI_SearchResults not found in workspace")
             })
             
-            .tagsList <- reactive({description(.pR_SR$foi)})
-            
-            .whichN <- reactive({
-                which(
-                    input$tagSelectList ==
-                        description(.pR_SR$foi)
-                 )[1]
-            })
-            
-            .whichNamesFOI <- reactive({
-                which(
-                    match(
-                        rownames(.dI()),
-                        .fnamesFOI(.pR_SR$foi)[[.whichN()]]
-                    ) != "NA"
-                )
-            })
-            
             ## select Input for the tag names of the list
             output$tagsListSearchResultUI <- renderUI(
-                if(length(.pR_SR$foi) != 0)
-                    selectInput("tagSelectList",
-                            "Select search result",
-                            choices = .tagsList()
-                    )
+                .tagListSearch(.pR_SR$foi)
             )
             
-            output$savedSearchTextUI <- renderUI(
-                textInput("savedSearchText",
-                            "Description",
-                            value="new search result"
-                )
-            )
-            
+            ## text input to enter description 
+            output$savedSearchTextUI <- renderUI(.textDescription())
+                
             ## action button to save new FoIs
-            output$saveLists2SRUI <- renderUI({
-                ## actionButton will only appear when 
-                ## there is a description and features are selected
-                if (nchar(input$savedSearchText) != 0 && 
-                    length(.searchInd()) != 0) {
-                    if(!(input$savedSearchText %in%
-                        description(.pR_SR$foi)) ||
-                            length(.pR_SR$foi) == 0)
-                        actionButton("saveLists2SR",
-                                "Create new features of interest")
-                else
-                    return("name already exists, choose another name")
-                }
-            })
-                        
-            .newfoi <- reactiveValues(ind = NULL)
-            
-            observe({
-                input$saveLists2SR
-                sI <- isolate(.searchInd())
-                searchText <- isolate(input$savedSearchText)
-                dataInput <- isolate(.dI())
-                if (!is.null(searchText)
-                    && !is.null(dataInput)
-                        && !is.null(sI))
-                    .newfoi$ind <- FeaturesOfInterest(
-                        description = searchText,
-                        fnames = featureNames(dataInput)[sI],
-                        object = dataInput)
-            })
+            output$saveLists2SRUI <- renderUI(
+                .buttonSearch(.pR_SR$foi, .searchInd(), input$savedSearchText)
+            )
             ### END: SEARCH ###
         
         } ## end server function        

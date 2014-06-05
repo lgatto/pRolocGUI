@@ -434,6 +434,69 @@
 
 
 ## START: TAB Search ##
+.obsSavedSearch <- function(coll, newfeat, indices, button, descr) {
+    if (!is.null(button)
+        && button > 0
+            && length(indices) > 0) {
+        isolate(
+            if (!(descr %in% description(coll))) {
+                coll <- addFeaturesOfInterest(newfeat, coll)
+            }
+        )
+    }
+    return(coll)
+}
+
+## which features of interests are selected in the drop-down menu
+.whichTag <- function(tag, coll)
+    which(tag == description(coll))[1]
+
+## returns indices of collection of features which are selected in tab search
+.whichFOI <- function(data, coll, index) 
+    which(!is.na(match(rownames(data), .fnamesFOI(coll)[[index]])))
+
+## selectInput for collection of features to choose between in tab search
+.tagListSearch <- function(coll) {
+    if(length(coll) != 0)
+        selectInput("tagSelectList", "Select search result", 
+            choices = description(coll)
+        )
+}
+
+## text Input to enter description for new features of interest
+.textDescription <- function() 
+    textInput("savedSearchText", "Description", value="new search result")
+
+## actionButton to save features to FoICollection
+.buttonSearch <- function(coll, indices, descr) {
+    ## actionButton will only appear when 
+    ## there is a description and features are selected
+    if (nchar(descr) != 0 && length(indices) != 0) {
+        if(!(descr %in% description(coll)) || !length(coll))
+            actionButton("saveLists2SR",
+                         "Create new features of interest")
+        else
+            return("name already exists, choose another name")
+    }   
+}
+
+## helper function to create new features 
+.obsNewFoI <- function(data, indices, descr, button) {
+    button
+    sI <- isolate(indices)
+    searchText <- isolate(descr)
+    dataInput <- isolate(data)
+    if (!is.null(searchText)
+        && !is.null(dataInput)
+            && !is.null(sI)) {
+        newfoi <- FeaturesOfInterest(
+            description = searchText,
+            fnames = featureNames(dataInput)[sI],
+            object = dataInput)
+        return(newfoi)
+    }
+}
+
 ## Returns the feature names of the FeaturesOfInterest of
 ## FoICollection provided as input. If flist is TRUE, the 
 ## output is listed in the latter case.
