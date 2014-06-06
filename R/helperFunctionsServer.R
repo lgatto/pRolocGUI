@@ -2,6 +2,28 @@
 ## helper functions server ##
 #############################
 
+## is there a pRolocGUI_SearchResults in .GlobalEnv? is so load it.
+## if FeaturesOfInterest -> create FoICollection
+## if FoICollection -> FoICollection
+## else NULL
+.createSR <- function () {
+    if (exists("pRolocGUI_SearchResults", .GlobalEnv)) {
+        sr <- get("pRolocGUI_SearchResults", .GlobalEnv)
+        if (inherits(sr, "FoICollection"))
+            ans <- sr
+        else {
+            if (inherits(sr, "FeaturesOfInterest")) { 
+                coll <- FoICollection()
+                ans <- addFeaturesOfInterest(sr, coll)
+            } else
+                ans <- NULL
+        }
+    } else {
+        ans <- NULL
+    }
+    return(ans)
+}
+
 ## START: Display selection ##
 
 ## A helper function to select the checkbox of "PCA" or "protein profiles" 

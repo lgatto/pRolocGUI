@@ -23,23 +23,8 @@ pRolocVis <- function(object = NULL) {
     ## increase upload limit to 20 MB
     options(shiny.maxRequestSize = 20*1024^2)
     
-    ## is there a pRolocGUI_SearchResults? is so load it.
-    ## possibly FeaturesOfInterest -> FoICollection
-    ## else empty FoICollection
-    if (exists("pRolocGUI_SearchResults", .GlobalEnv)) {
-        sr <- get("pRolocGUI_SearchResults", .GlobalEnv)
-        if (inherits(sr, "FoICollection"))
-            sr <- sr
-        else {
-            if (inherits(sr, "FeaturesOfInterest")) { 
-                coll <- FoICollection()
-                sr <- addFeaturesOfInterest(sr, coll)
-            } else
-                sr <- NULL
-        }
-    } else {
-        sr <- NULL
-    }
+    ## pRolocGUI_SearchResults
+    sr <- .createSR()
         
     app <- list(  
         ui = 
@@ -269,11 +254,11 @@ pRolocVis <- function(object = NULL) {
             ## reactive expression to forward indices to 
             ## plot2D, plotDist and tabs quantitation
             ## and feature meta-data
-            .searchInd <- reactive({
+            .searchInd <- reactive(
                 .sI(input$chooseIdenSearch, input$tagSelectList, .prot$text, 
                     .prot$PCA, .prot$plotDist, 
                     .whichFOI(.dI(), .pR_SR$foi, .whichN()))
-            })
+            )
             
             ## Clear multiple points on click
             observe({
