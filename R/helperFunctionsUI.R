@@ -6,6 +6,9 @@
 .pRn1_setTitlePanel <- function() 
     titlePanel(title="", windowTitle="pRolocVis")
 
+.pRn2_setTitlePanel <- function() 
+    titlePanel(title="", windowTitle="pRolocComp")
+
 ## START: sidebar Panel ## 
 .pR_tags <- function() {
     tags$head(
@@ -98,6 +101,35 @@
     )
 }
 
+.pR2_condPCA <- function() {
+    conditionalPanel(
+        condition = "input.tab1 == 'PCA'",
+        wellPanel(
+            h4("Plot"),
+            radioButtons("selPlotPCA", "select plot", 
+                        choices = c("upper", "lower"), selected = "upper"),
+            ## drop down menu for colours of PCA plot
+            htmlOutput("fcoloursOutput"),
+            ## drop down menu for symbol type of PCA plot
+            htmlOutput("fsymboltypeOutput"),
+            ## drow pown menu for point size of PCA plot
+            htmlOutput("fcexOutput"),
+            ## numeric Input for PCAn (first component)
+            htmlOutput("PCAn1UI"),
+            ## numeric Input for PCAn (second component)
+            htmlOutput("PCAn2UI"),
+            ## legend, will be added when colours != "none"
+            htmlOutput("PCALegendUI"),
+            htmlOutput("PCALegendposUI"),
+            ## zoom slider for x and y axis
+            htmlOutput("xrangeUI"),
+            htmlOutput("yrangeUI"),
+            ## link to help page
+            htmlOutput("linkPCA")
+        )
+    )
+}
+
 .pR_condTabProteinProfiles <- function() {
     conditionalPanel(
         condition = "input.tab1 == 'protein profiles'",
@@ -159,6 +191,7 @@
     )
 }
 
+
 ## END: Sidebar panel ##
 
 ## START: Main Panel ## 
@@ -184,6 +217,26 @@
         ),
         textOutput("hoverProtPCAUI"),
         downloadButton("plotPCADownload","Download Plot")
+    )
+}
+
+.pRn2_condPCA <- function() {
+    tabPanel("PCA",
+             plotOutput("PCA1", width = "100%",height="600px",
+                        clickId = "PCA1click",
+                        hoverId = "PCA1hover",
+                        hoverDelay = 100,
+                        hoverDelayType = "throttle"
+             ),
+             textOutput("hoverProt1PCA"),
+             plotOutput("PCA2", width = "100%",height="600px",
+                        clickId = "PCA2click",
+                        hoverId = "PCA2hover",
+                        hoverDelay = 100,
+                        hoverDelayType = "throttle"
+             ),
+             textOutput("hoverProt2PCA"),                     
+             downloadButton("plotPCADownload","Download Plot")   
     )
 }
 
