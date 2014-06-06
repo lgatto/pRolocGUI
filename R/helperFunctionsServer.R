@@ -83,42 +83,48 @@
 
 ## A helper function to subset the selection in the query when entering 
 ## a search string
-.sRsubset <- function(data, search, levelSearch) {
-    data <- data[[1]]
-    subset(
-        (
-            if(search != "protein")
-                names(table(fData(data)[search]))
-            else
-                rownames(data)
-        ), 
-        grepl(levelSearch,
-              if(search != "protein")
-                  names(table(fData(data)[search]))
-              else
-                  rownames(data)
+.sRsubset <- function(obj, search, levelSearch, ind = c("object1", "object2")) {
+    if (length(obj) != 0) {
+        ind <- match.arg(ind)
+        obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
+        subset(
+            (
+                if(search != "protein")
+                    names(table(fData(obj)[search]))
+                else
+                    rownames(obj)
+            ), 
+            grepl(levelSearch,
+                if(search != "protein")
+                    names(table(fData(obj)[search]))
+                else
+                    rownames(obj)
+            )
         )
-    )
+    }
 }
 
-.obsProtText <- function(data, protText, button, 
-                         sRTextInput, search) {
-    data <- data[[1]]
-    sRText <- isolate(sRTextInput)
-    if (!is.null(search)) {
-        if (search == "protein")
-            newInd <- which(rownames(data) == sRText)
-        else 
-            newInd <- which(fData(data)[search] == sRText)
-        if (!is.null(newInd)) {
-            if (button > 0 && length(newInd > 0))
-                isolate({
-                    button
-                    protText <- isolate(c(protText, newInd))
-                })
+.obsProtText <- function(obj, protText, button, 
+                         sRTextInput, search, ind = c("object1", "object2")) {
+    if (length(obj) != 0) {
+        ind <- match.arg(ind)
+        obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
+        sRText <- isolate(sRTextInput)
+        if (!is.null(search)) {
+            if (search == "protein")
+                newInd <- which(rownames(obj) == sRText)
+            else 
+                newInd <- which(fData(obj)[search] == sRText)
+            if (!is.null(newInd)) {
+                if (button > 0 && length(newInd > 0))
+                    isolate({
+                        button
+                        protText <- isolate(c(protText, newInd))
+                    })
+            }
         }
+        return(unique(protText))
     }
-    return(unique(protText))
 }
 
 ## concatenate new Indices to old ones when clicking, for PCA and plotDist
@@ -149,12 +155,13 @@
     )
 }
 
-## select Input helper for Display selection
-.selVarText <- function(data) {
-    if (!is.null(data)) {
-        data <- data[[1]]
+## selectInput helper for Display selection
+.selVarText <- function(obj, ind = c("object1", "object2")) {
+    if (length(obj) != 0) {
+        ind <- match.arg(ind)
+        obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
         selectInput("search", "", 
-                    choices = c("protein", fvarLabels(data)))
+                    choices = c("protein", fvarLabels(obj)))
     }
 }
 
@@ -173,105 +180,130 @@
 
 ## START: TAB PCA ##
 
-## point size
-.fcex <- function(object1, object2 = NULL, ind = "object1") {
-    if (ind == "object1") 
-        obj <- object1
-    else 
-        obj <- object2
-    ## check for numericcolums in fData(data) 
-    colNum <- which(sapply(fData(obj), is.numeric))
-    ## write indices in vector colNum
-    colNum <- as.vector(colNum)
-    if (length(colNum))
-        ## return fvarLabels of numeric colums 
-        fvarLabels(obj)[colNum]
-}
-
 ## values PCA
 .vPCA <- function(obj, PCAn1, PCAn2, ind = c("object1", "object2")) {
-    ind <- match.arg(ind)
-    if (!is.null(obj) && !is.null(PCAn1) && !is.null(PCAn2)) {
+    if (length(obj) != 0) {
+        ind <- match.arg(ind)
         obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
-        plot2D(obj, fcol=NULL,
-               dims=c(as.numeric(PCAn1), as.numeric(PCAn2)), 
-               plot=FALSE)
+        if (!is.null(PCAn1) && !is.null(PCAn2)) {
+            ans <- plot2D(obj, fcol=NULL,
+                    dims=c(as.numeric(PCAn1), as.numeric(PCAn2)), 
+                    plot=FALSE)
+            return(ans)
+        }
     }
 }
 
 ## UI for colours
 .colourPCA <- function(obj, sel = "none", ind = c("object1", "object2")) {
-    ind <- match.arg(ind)
-    obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
-    selectInput("fcolours", "colour", c("none", fvarLabels(obj)),
-                selected = sel)
+    if (length(obj) != 0) {
+        ind <- match.arg(ind)
+        obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
+        ans <- selectInput("fcolours", "colour", c("none", fvarLabels(obj)),
+                    selected = sel)
+        return(ans)
+    }
+}
+
+## point size
+## obj will be MSnSet
+.fcex <- function(obj) {
+    if (length(obj) != 0) {
+        ## check for numericcolums in fData(data) 
+        colNum <- which(sapply(fData(obj), is.numeric))
+        ## write indices in vector colNum
+        colNum <- as.vector(colNum)
+        if (length(colNum))
+            ## return fvarLabels of numeric colums 
+            fvarLabels(obj)[colNum]
+    }
 }
 
 ## UI for point size
-.fcexPCA <- function(obj, col, sel = "1", ind = c("object1", "object2")) {
-    ind <- match.arg(ind)
-    obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
-    ## only show when there are numeric columns in fData (.fcex())
-    if (length(col) > 0 && length(.fcex(obj)) > 0) 
-        if (col != "none")
-            selectInput("fcex", "point size", c("1", .fcex(obj)),
+.fcexPCA <- function(obj, colours, sel = "1", ind = c("object1", "object2")) {
+    if (length(obj) != 0) {
+        ind <- match.arg(ind)
+        obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
+        ## only show when there are numeric columns in fData (.fcex())
+        if (length(colours) > 0 && length(.fcex(obj)) > 0) 
+            if (colours != "none") {
+                ans <- selectInput("fcex", "point size", c("1", .fcex(obj)),
                         selected = sel)
+                return(ans)
+            }
+    }
 }
 
 ## UI for symbol type
-.symbolPCA <- function(obj, colours) {
-    obj <- obj[[1]]
-    if (!is.null(colours) && 
-            colours %in% fvarLabels(obj)) 
-        selectInput("fsymboltype", "symbol type", 
-                    c("none", fvarLabels(obj)),
-                    selected="none")
+.symbolPCA <- function(obj, colours, sel = "none", ind = c("object1", "object2")) {
+    if (length(obj) != 0) {
+        ind <- match.arg(ind)
+        obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
+        if (!is.null(colours) && colours %in% fvarLabels(obj)) {
+            ans <- selectInput("fsymboltype", "symbol type", 
+                    c("none", fvarLabels(obj)), selected = sel)
+            return(ans)
+        }
+    }
 }
 
 ## UI for xrange or yrange (zoom)
-.rangePCA <- function(valuesPCA, dim) {
+.rangePCA <- function(valuesPCA, col) {
     if(!is.null(valuesPCA))
         ## get max and min values of first principal component
         ## create a range slider
-        sliderInput(ifelse(dim == 1, "xrange", "yrange"),
-                    ifelse(dim == 1, "zoom x-axis", "zoom y-axis"),
-                    min = min(valuesPCA[, dim]) - 1,
-                    max = max(valuesPCA[, dim]) + 1,
-                    value = c(min(valuesPCA[, dim]), 
-                              max(valuesPCA[, dim]))
+        sliderInput(ifelse(col == 1, "xrange", "yrange"),
+                    ifelse(col == 1, "zoom x-axis", "zoom y-axis"),
+                    min = min(valuesPCA[, col]) - 1,
+                    max = max(valuesPCA[, col]) + 1,
+                    value = c(min(valuesPCA[, col]), 
+                              max(valuesPCA[, col]))
         )  
 }
 
 ## UI for principal components
-.PC <- function(data, dim) {
-    if (!is.null(data))
-        selectInput(
-            ifelse(dim == "x", "PCAn1", "PCAn2"),
-            ifelse(dim == "x", "PC along x-axis", "PC along y-axis"),
-            selected = ifelse(dim == "x", 1, 2),
-            choices = c(1:nrow(pData(data[[1]])))
-        )
+.PC <- function(obj, axis, ind = c("object1", "object2")) {
+    if (length(obj) != 0) {
+        ind <- match.arg(ind)
+        obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
+        ans <- selectInput(
+                    ifelse(axis == "x", "PCAn1", "PCAn2"),
+                    ifelse(axis == "x", "PC along x-axis", "PC along y-axis"),
+                    selected = ifelse(axis == "x", 1, 2),
+                    choices = c(1:nrow(pData(obj))))
+        return(ans)
+        }
+    }
 }
 
 ## checkBox UI for legend
-.legendPCA <- function(data, colours) {
-    if (length(colours))
-        if (colours %in% fvarLabels(data[[1]]))
-            ## tick box: add legend
-            checkboxInput("legendyes", "legend", value = FALSE)
+.legendPCA <- function(obj, colours, ind = c("object1", "object2")) {
+    if (length(obj) != 0) {
+        ind <- match.arg(ind)
+        obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
+        if (length(colours) && colours %in% fvarLabels(obj)) {
+            ans <- checkboxInput("legendyes", "legend", value = FALSE)
+            return(ans)
+        }
+    }
 }
 
 ## position for legend, sliderInput
-.legendPosPCA <- function(data, colours) {
-    if (length(colours))
-        if (colours %in% fvarLabels(data[[1]]))
-            ## drop down menu for position of legend
-            selectInput("legendpos", "position of legend",
+.legendPosPCA <- function(obj, colours, ind = c("object1", "object2")) {
+    if (length(obj) != 0) {
+        ind <- match.arg(ind)
+        obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
+        if (length(colours))
+            if (colours %in% fvarLabels(obj)) {
+                ## drop down menu for position of legend
+                ans <- selectInput("legendpos", "position of legend",
                         choices = c("bottomright", "bottom",
                             "bottomleft","left", "topleft", "top",
                             "topright", "right","center"), 
-                        selected="bottomright"
-            )
+                        selected="bottomright")
+                return(ans)
+            }
+    }
 }
 
 ## a helper function for plotting the PCA plot and highlighting
@@ -279,70 +311,71 @@
 .plotPCA <- function(obj, fcolours, fcex, xrange, yrange,
                      sb, PCAn1, PCAn2, legend, legendpos,
                      sI, cIS, ind = c("object1", "object2")) {
+    if (length(obj) != 0) {
+        ind <- match.arg(ind)
+        obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
+        
+        if (length(fcolours)) {
+            if (fcolours %in% fvarLabels(obj))
+                colour <- fcolours
+            else
+                colour <- NULL
+        }
     
-    ind <- match.arg(ind)
-    obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
-    
-    if (length(fcolours)) {
-        if (fcolours %in% fvarLabels(obj))
-            colour <- fcolours
+        if (length(fcex)) {
+            if (fcex %in% fvarLabels(obj))
+                fcex <- fData(obj)[, fcex]
+            else
+                fcex <- 1  ## as.numeric(fcex)
+        } 
         else
-            colour <- NULL
-    }
+            fcex <- 1
     
-    if (length(fcex)) {
-        if (fcex %in% fvarLabels(obj))
-            fcex <- fData(obj)[, fcex]
-        else
-            fcex <- 1  ## as.numeric(fcex)
-    } 
-    else
-        fcex <- 1
+        if (!is.null(xrange)) { 
+            if (is.null(sb) || sb == "none") 
+                ## create plot2D and assign reactive variables to 
+                ## arguments, do not assign fpch (no symboltypes 
+                ## are plotted)
+                plot2D(obj, fcol = colour,
+                       xlim = c(xrange[1], xrange[2]),
+                       ylim = c(yrange[1], yrange[2]),
+                       dims = c(as.numeric(PCAn1),
+                                as.numeric(PCAn2)),
+                       cex = fcex)
+            else
+                ## create plot2D and assign reactive variables to 
+                ## arguments take input$fsymboltype for symboltype
+                plot2D(obj, fcol = colour, fpch = sb,
+                       xlim = c(xrange[1], xrange[2]),
+                       ylim = c(yrange[1], yrange[2]),
+                       dims = c(as.numeric(PCAn1),
+                                as.numeric(PCAn2)),
+                       cex = fcex)
+        }
     
-    if (!is.null(xrange)) { 
-        if (is.null(sb) || sb == "none") 
-            ## create plot2D and assign reactive variables to 
-            ## arguments, do not assign fpch (no symboltypes 
-            ## are plotted)
-            plot2D(obj, fcol = colour,
-                   xlim = c(xrange[1], xrange[2]),
-                   ylim = c(yrange[1], yrange[2]),
-                   dims = c(as.numeric(PCAn1),
-                            as.numeric(PCAn2)),
-                   cex = fcex)
-        else
-            ## create plot2D and assign reactive variables to 
-            ## arguments take input$fsymboltype for symboltype
-            plot2D(obj, fcol = colour, fpch = sb,
-                   xlim = c(xrange[1], xrange[2]),
-                   ylim = c(yrange[1], yrange[2]),
-                   dims = c(as.numeric(PCAn1),
-                            as.numeric(PCAn2)),
-                   cex = fcex)
-    }
+        if (length(legend)) 
+            if (fcolours %in% fvarLabels(obj) && legend)
+                ## add a legend to the plot with reactive 
+                ## variable as arguments
+                addLegend(obj, fcol = colour, 
+                          where = legendpos,
+                          bty = "n", cex = 1)
     
-    if (length(legend)) 
-        if (fcolours %in% fvarLabels(obj) && legend)
-            ## add a legend to the plot with reactive 
-            ## variable as arguments
-            addLegend(obj, fcol = colour, 
-                      where = legendpos,
-                      bty = "n", cex = 1)
-    
-    if (length(sI) && length(cIS)) {
-        foiPCA <- FeaturesOfInterest(description = "hoP",
-                                     fnames = featureNames(obj)[sI],
-                                     object = obj)
-        highlightOnPlot(obj, foiPCA, 
-                        args = list(
-                            fcol = fvarLabels(obj)[1],
-                            xlim = c(xrange[1], 
-                                     xrange[2]),
-                            ylim = c(yrange[1], 
-                                     yrange[2]),
-                            dims = c(as.numeric(PCAn1),
-                                     as.numeric(PCAn2))),
-                        col="black", cex=1.5)
+        if (length(sI) && length(cIS)) {
+            foiPCA <- FeaturesOfInterest(description = "hoP",
+                                         fnames = featureNames(obj)[sI],
+                                         object = obj)
+            highlightOnPlot(obj, foiPCA, 
+                            args = list(
+                                fcol = fvarLabels(obj)[1],
+                                xlim = c(xrange[1], 
+                                         xrange[2]),
+                                ylim = c(yrange[1], 
+                                         yrange[2]),
+                                dims = c(as.numeric(PCAn1),
+                                         as.numeric(PCAn2))),
+                            col="black", cex=1.5)
+        }
     }
 }
 ## END: TAB PCA ## 
@@ -356,30 +389,37 @@
 }
 
 ## organelle names, levels in fData
-.orgName <- function(data, fnames) {
-    if (!is.null(fnames))
-        if (fnames != "all")
-            names(table(fData(data[[1]])[fnames]))
-    else
-        "all"
+.orgName <- function(obj, fnames, ind = c("object1", "object2")) {
+    if (length(obj) != 0) {
+        ind <- match.arg(ind)
+        obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
+        if (!is.null(fnames)) {
+            if (fnames != "all")
+                ans <- names(table(fData(obj)[fnames]))
+            else
+                ans <- "all"
+            return(ans)
+        }
+    }
 }
 
 ## selectInput for fvarLabels/"all" to select for plotDist
-.featuresPlotDist <- function(data) {
-    if(!is.null(data))
-        selectInput("fNamesplDist",
+.featuresPlotDist <- function(obj, ind = c("object1", "object2")) {
+    if (length(obj) != 0) {
+        ind <- match.arg(ind)
+        obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
+        ans <- selectInput("fNamesplDist",
                     "feature(s) in",
-                    choices = c("all", fvarLabels(data[[1]])) 
-        ) 
+                    choices = c("all", fvarLabels(obj))) 
+        return(ans)
+    }
 }
 ## selectInput for levels in fvarLabels or "all"
 .flevelPlotDist <- function(flevels, fnames) {
-    if (!is.null(flevels) &&
-            !is.null(fnames))
+    if (!is.null(flevels) && !is.null(fnames))
         selectInput("organelleAll",
                     "assigned to",
-                    choices = flevels
-        )
+                    choices = flevels)
 }
 
 ## sliderInput for number of plots to plot
@@ -393,54 +433,54 @@
 
 ## A helper function for plotting protein profile plots 
 ## and highlighting FeaturesOfInterest
-.plotPlotDist <- function(data, levPlotDist,
-                          levPlotDistOrg,
-                          quantity, sI) {
+.plotPlotDist <- function(obj, levPlotDist, levPlotDistOrg,
+                            quantity, sI, ind = c("object1", "object2")) {
+    if (length(obj) != 0) {
+        ind <- match.arg(ind)
+        obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
     
-    if (!is.null(data) &&
-        !is.null(levPlotDist) &&
-            !(is.null(levPlotDistOrg))) {
+        if (!is.null(levPlotDist) &&
+                !(is.null(levPlotDistOrg))) {
         
-        data <- data[[1]]
-        
-        if (as.numeric(quantity) %% 2 == 0)
-            col <- as.numeric(quantity) / 2
-        else
-            col <- (as.numeric(quantity) + 1) / 2
-        
-        if (as.numeric(quantity) == 1)
-            par(mfrow=c(1, 1))
-        else
-            par(mfrow=c(2, col))
-        
-        
-        ## Actual plotting
-        for (i in 1:min(quantity, length(levPlotDist))) { 
-        
-            if (levPlotDist[i] == "all")
-                objPlotDist <- data
+            if (as.numeric(quantity) %% 2 == 0)
+                col <- as.numeric(quantity) / 2
             else
-                objPlotDist <- subset(data, 
-                            fData(data)[, levPlotDist[i]] == levPlotDistOrg[i])
+                col <- (as.numeric(quantity) + 1) / 2
+        
+            if (as.numeric(quantity) == 1)
+                par(mfrow=c(1, 1))
+            else
+                par(mfrow=c(2, col))
+        
+        
+            ## Actual plotting
+            for (i in 1:min(quantity, length(levPlotDist))) { 
+        
+                if (levPlotDist[i] == "all")
+                    objPlotDist <- obj
+                else
+                    objPlotDist <- subset(obj, 
+                            fData(obj)[, levPlotDist[i]] == levPlotDistOrg[i])
             
-            if (is.null(sI))
-                ylim <- range(exprs(objPlotDist))
-            else {
-                ylim1 <- range(exprs(objPlotDist))
-                if (length(sI)) {
-                    ylim2 <- range(exprs(data)[sI,])
-                    ylim <- range(ylim1, ylim2)
+                if (is.null(sI))
+                    ylim <- range(exprs(objPlotDist))
+                else {
+                    ylim1 <- range(exprs(objPlotDist))
+                    if (length(sI)) {
+                        ylim2 <- range(exprs(obj)[sI,])
+                        ylim <- range(ylim1, ylim2)
+                    }
+                    else 
+                        ylim <- ylim1
                 }
-                else 
-                    ylim <- ylim1
-            }
             
-            plotDist(objPlotDist, ylim = ylim)
+                plotDist(objPlotDist, ylim = ylim)
             
-            if (!is.null(sI) && length(sI) > 0)
-                apply(X = exprs(data[sI, ]), MARGIN = 1, FUN = lines)
-            title(levPlotDistOrg[i])            
-        } ## end for loop
+                if (!is.null(sI) && length(sI) > 0)
+                    apply(X = exprs(obj[sI, ]), MARGIN = 1, FUN = lines)
+                title(levPlotDistOrg[i])            
+            } ## end for loop
+        }
     }
 }
 ## END: TAB protein profiles ##
@@ -453,36 +493,42 @@
 
 .radioButton <- function(indices, quant) {
     radioButtons(
-        ifelse(quant == TRUE,"exprsRadio", "fDataRadio"),
+        ifelse(quant == TRUE, "exprsRadio", "fDataRadio"),
         "Features",
-        choices = list("all or"="all", 
-            "selected"="selected"),
-        selected = ifelse(length(indices), 
-            "selected", "all")
+        choices = list("all or"="all", "selected"="selected"),
+        selected = ifelse(length(indices), "selected", "all")
     )
 }
 
-.dTable <- function(data, mdata, radiobutton = "all", indices = NULL) {
-    if (radiobutton == "all") {
-        ## cbind to display data properly
-        if(mdata == "quant")
-            ans <-  as.data.frame(cbind(" " = rownames(exprs(data[[1]])), exprs(data[[1]])))
-        if (mdata == "fD")
-            ans <- as.data.frame(cbind(" " = rownames(fData(data[[1]])), fData(data[[1]])))
-        if (mdata == "pD")
-            ans <- as.data.frame(cbind(" " = rownames(pData(data[[1]])), pData(data[[1]])))
-    } else {
-        ## cbind to display data properly
-        if(mdata == "quant") 
-            ans <- as.data.frame(cbind(" " = rownames(exprs(data[[1]])[indices]),
-                     exprs(data[[1]][indices])))
-        else
-            ans <- as.data.frame(cbind(" " = rownames(fData(data[[1]][indices])),
-                         fData(data[[1]][indices])))
+.dTable <- function(obj, mdata, radiobutton = "all", 
+                    indices = NULL, ind = c("object1", "object2")) {
+    if (length(obj) != 0) {
+        ind <- match.arg(ind)
+        obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
+    
+        if (radiobutton == "all") {
+            ## cbind to display data properly
+            if(mdata == "quant")
+                ans <- as.data.frame(
+                    cbind(" " = rownames(exprs(obj)), exprs(obj)))
+            if (mdata == "fD")
+                ans <- as.data.frame(
+                    cbind(" " = rownames(fData(obj)), fData(obj)))
+            if (mdata == "pD")
+                ans <- as.data.frame(
+                    cbind(" " = rownames(pData(obj)), pData(obj)))
+        } else {
+            ## cbind to display data properly
+            if(mdata == "quant") 
+                ans <- as.data.frame(cbind(" " = rownames(exprs(obj[indices])), 
+                                       exprs(obj[indices])))
+            else
+                ans <- as.data.frame(cbind(" " = rownames(fData(obj[indices])),
+                         fData(obj[indices])))
+        }
+        return(ans)
     }
-    return(ans)
 }
-
 ## END: TAB Quantitation and feature meta-data ##
 
 
@@ -505,8 +551,14 @@
     which(tag == description(coll))[1]
 
 ## returns indices of collection of features which are selected in tab search
-.whichFOI <- function(data, coll, index) 
-    which((match(rownames(data[[1]]), .fnamesFOI(coll)[[index]])) != NA)
+.whichFOI <- function(obj, coll, index, ind = c("object1", "object2"))  {
+    if (length(obj) != 0) {
+        ind <- match.arg(ind)
+        obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
+        ans <- which((match(rownames(obj), .fnamesFOI(coll)[[index]])) != NA)
+        return(ans)
+    }
+}
 
 ## selectInput for collection of features to choose between in tab search
 .tagListSearch <- function(coll) {
@@ -534,19 +586,24 @@
 }
 
 ## helper function to create new features 
-.obsNewFoI <- function(data, indices, descr, button) {
-    button
-    sI <- isolate(indices)
-    searchText <- isolate(descr)
-    dataInput <- isolate(data[[1]])
-    if (!is.null(searchText)
-        && !is.null(dataInput)
-            && !is.null(sI)) {
-        ans <- FeaturesOfInterest(
-            description = searchText,
-            fnames = featureNames(dataInput)[sI],
-            object = dataInput)
-        return(ans)
+.obsNewFoI <- function(obj, indices, descr, 
+                       button, ind = c("object1", "object2")) {
+    if (length(obj) != 0) {
+        ind <- match.arg(ind)
+        obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
+        button
+        sI <- isolate(indices)
+        searchText <- isolate(descr)
+        dataInput <- isolate(obj)
+        if (!is.null(searchText)
+            && !is.null(dataInput)
+                && !is.null(sI)) {
+            ans <- FeaturesOfInterest(
+                description = searchText,
+                fnames = featureNames(dataInput)[sI],
+                object = dataInput)
+            return(ans)
+        }
     }
 }
 

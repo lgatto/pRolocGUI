@@ -198,33 +198,32 @@ pRolocVis <- function(object = NULL) {
             ## .dI
             .dI <- reactive({
                 if (!is.null(input$data))
-                    list(
                         switch(input$data,
-                            "andy2011" = andy2011,
-                            "dunkley2006" = dunkley2006,
-                            "tan2009r1" = tan2009r1,
-                            "own data" = 
-                                if (is.null(object)) {
-                                    .dIownData()
-                                } else {
-                                    if (inherits(object, "MSnSet"))
-                                        object
-                                    else 
-                                        andy2011
-                                }
-                        )
-                    )
+                            "andy2011" = list(andy2011),
+                            "dunkley2006" = list(dunkley2006),
+                            "tan2009r1" = list(tan2009r1),
+                            "own data" = list(
+                                    if (is.null(object)) {
+                                        .dIownData()
+                                    } else {
+                                        if (inherits(object, "MSnSet"))
+                                            object
+                                        else
+                                            andy2011
+                                    }
+                                )
+                        )    
             })
 
             output$warningowndataUI <- renderText({
-                if (input$data == "own data") {
-                    if (identical(.dI()[[1]], andy2011))
-                        return("noMSnSet selected, 
-                                MSnSet 'andy2011' will be used")
-                    else
+                    if (input$data == "own data") {
+                        if (identical(.dI()[[1]], andy2011))
+                            return("noMSnSet selected, 
+                                    MSnSet 'andy2011' will be used")
+                        else
+                            return()
+                    } else
                         return()
-                } else
-                    return()
             })  
             ## END: UPLOAD ##
             
@@ -257,9 +256,9 @@ pRolocVis <- function(object = NULL) {
             ## plot2D, plotDist and tabs quantitation
             ## and feature meta-data
             .searchInd <- reactive(
-                .sI(input$chooseIdenSearch, input$tagSelectList, .prot$text, 
-                    .prot$PCA, .prot$plotDist, 
-                    .whichFOI(.dI(), .pR_SR$foi, .whichN()))
+                    .sI(input$chooseIdenSearch, input$tagSelectList, .prot$text, 
+                        .prot$PCA, .prot$plotDist, 
+                        .whichFOI(.dI(), .pR_SR$foi, .whichN()))
             )
             
             ## Clear multiple points on click
@@ -284,7 +283,7 @@ pRolocVis <- function(object = NULL) {
             ## reactive expressions for text based search
             ## levels to search
             .searchResultsText <- reactive(
-                .sRsubset(.dI(), input$search, input$levelSearch)
+                    .sRsubset(.dI(), input$search, input$levelSearch)
             )
             
             ## vector with reactive values
@@ -293,13 +292,13 @@ pRolocVis <- function(object = NULL) {
             ## observe indices and concatenate to .prot$PCA, .prot$plotDist
             ## and .prot$text
             observe({
-                .prot$PCA <- .obsProtClick(
-                    .prot$PCA, minDist2dProtPCA(), input$PCAclick)
-                .prot$plotDist <- .obsProtClick(
-                    .prot$plotDist, .minDistProtPlotDist(), input$plotDistclick)
-                .prot$text <- .obsProtText(
-                    .dI(), .prot$text, input$saveText, 
-                    input$sRTextInput, input$search)
+                    .prot$PCA <- .obsProtClick(
+                        .prot$PCA, minDist2dProtPCA(), input$PCAclick)
+                    .prot$plotDist <- .obsProtClick(
+                        .prot$plotDist, .minDistProtPlotDist(), input$plotDistclick)
+                    .prot$text <- .obsProtText(
+                        .dI(), .prot$text, input$saveText, 
+                        input$sRTextInput, input$search)
             })
             ## END OF SEARCHING IMPLEMENTATION ##  
                         
@@ -312,14 +311,10 @@ pRolocVis <- function(object = NULL) {
             .valuesPCA <- reactive(.vPCA(.dI(), input$PCAn1, input$PCAn2))
             
             ## render colour selectInput accordingly to fvarLabels()
-            output$fcoloursUI <- renderUI(
-                if (!is.null(.dI()))
-                    .colourPCA(.dI())) 
+            output$fcoloursUI <- renderUI(.colourPCA(.dI())) 
                 
             ## render symboltype selectInput accordingly to fvarLabels
-            output$fsymboltypeUI <- renderUI(
-                .symbolPCA(.dI(), input$fcolours)
-            )
+            output$fsymboltypeUI <- renderUI(.symbolPCA(.dI(), input$fcolours))
             
             ## render point size selectInput accordingly to .fcex
             output$fcexUI <- renderUI(.fcexPCA(.dI(), input$fcolours))
@@ -345,7 +340,6 @@ pRolocVis <- function(object = NULL) {
             ## Generate PCA plot, use fcolours for colours and add legend
             ## function (appearance and position dependent of user input)
             output$PCAUI <- renderPlot(
-                if (!is.null(.dI()[[1]]))
                     .plotPCA(obj = .dI(), 
                         fcolours = input$fcolours, 
                         fcex = input$fcex,
@@ -365,7 +359,6 @@ pRolocVis <- function(object = NULL) {
             
             ## for Plot/Download button (needs a reactive expression)
             .PCAPlotReac <- reactive(
-                if (!is.null(.dI()[[1]]))
                     .plotPCA(obj = .dI(), 
                         fcolours = input$fcolours, 
                         fcex = input$fcex,
@@ -418,7 +411,7 @@ pRolocVis <- function(object = NULL) {
             )
             
             output$hoverProtPCAUI <- renderText(
-                featureNames(.dI())[minDist2dProtPCAHover()]
+                    featureNames(.dI())[minDist2dProtPCAHover()]
             )
             ## END: PCA PLOT ##
 
@@ -446,7 +439,7 @@ pRolocVis <- function(object = NULL) {
             
             ## calculate protein nearest to user input
             .minDistProtPlotDist <- reactive(
-                if (!is.null(input$plotDistclick)) { 
+                if (length(.dI()) != 0 && !is.null(input$plotDistclick)) { 
                     if (input$plotDistclick$x < (nrow(pData(.dI()[[1]])) + .3) &&
                         input$plotDistclick$x > 0.5 &&
                             !is.null(input$quantityPlotDist) && 
@@ -461,7 +454,7 @@ pRolocVis <- function(object = NULL) {
             )
                         
             .minDistProtPlotDistHover <- reactive({
-                if (!is.null(input$plotDisthover$x)) {
+                if (length(.dI()) != 0 && !is.null(input$plotDisthover$x)) {
                     if (input$plotDisthover$x < (nrow(pData(.dI()[[1]])) + .3) &&
                         input$plotDisthover$x > 0.5 && 
                             !is.null(input$quantityPlotDist) && 
@@ -476,24 +469,26 @@ pRolocVis <- function(object = NULL) {
             })
             
             output$hoverProtPlotDistUI <- renderText(
-                featureNames(.dI()[[1]])[.minDistProtPlotDistHover()]
+                    featureNames(.dI()[[1]])[.minDistProtPlotDistHover()]
             )
             
             ## for Plot/Download button (needs a reactive expression)
             .plotDistReac <- reactive(
-                .plotPlotDist(data = .dI(), 
-                            levPlotDist = .listParams$levPlotDist,
-                            levPlotDistOrg = .listParams$levPlotDistOrg,
-                            quantity = input$quantityPlotDist,
-                            sI = .searchInd()
+                    .plotPlotDist(obj = .dI(), 
+                        levPlotDist = .listParams$levPlotDist,
+                        levPlotDistOrg = .listParams$levPlotDistOrg,
+                        quantity = input$quantityPlotDist,
+                        sI = .searchInd()
                 )
             )
             
             ## levels for plotDist to choose to plot
-            .organelleAllName <- reactive(.orgName(.dI(), input$fNamesplDist))             
+            .organelleAllName <- reactive(
+                    .orgName(.dI(), input$fNamesplDist))             
             
             ## select fvarLabels or "all" for all features UI    
-            output$allOrganellesUI <- renderUI(.featuresPlotDist(.dI()))
+            output$allOrganellesUI <- renderUI(
+                    .featuresPlotDist(.dI()))
             
             ## UI for feature levels in fvarLabels or "all"
             output$organelleAllUI <- renderUI(
@@ -507,11 +502,11 @@ pRolocVis <- function(object = NULL) {
             
             ## renderPlot plotDist and assign parameters
             output$plotDistUI <- renderPlot(
-                .plotPlotDist(data = .dI(), 
-                    levPlotDist = .listParams$levPlotDist,
-                    levPlotDistOrg = .listParams$levPlotDistOrg,
-                    quantity = input$quantityPlotDist,
-                    sI = .searchInd()
+                    .plotPlotDist(obj = .dI(), 
+                        levPlotDist = .listParams$levPlotDist,
+                        levPlotDistOrg = .listParams$levPlotDistOrg,
+                        quantity = input$quantityPlotDist,
+                        sI = .searchInd()
                 )
             )
             
@@ -536,7 +531,7 @@ pRolocVis <- function(object = NULL) {
             output$exprsRadioUI <- renderUI(.radioButton(.searchInd(), TRUE))
 
             output$MSnExprsUI <- renderDataTable(
-                .dTable(.dI(), "quant", input$exprsRadio, .searchInd())
+                    .dTable(.dI(), "quant", input$exprsRadio, .searchInd())
             )
             ## END: QUANTITATION DATA ##
             
@@ -547,7 +542,7 @@ pRolocVis <- function(object = NULL) {
             output$fDataRadioUI <- renderUI(.radioButton(.searchInd(), FALSE))
             
             output$MSnfDataUI <- renderDataTable(
-                .dTable(.dI(), "fD", input$fDataRadio, .searchInd())
+                    .dTable(.dI(), "fD", input$fDataRadio, .searchInd())
             )
             ## END: FEATURE META-DATA ##
             
@@ -555,7 +550,8 @@ pRolocVis <- function(object = NULL) {
             
             ## TAB: SAMPLE META-DATA ##
             ## Generate the sample meta-data
-            output$MSnpDataUI <- renderDataTable(.dTable(.dI(), "pD"))
+            output$MSnpDataUI <- renderDataTable(
+                    .dTable(.dI(), "pD"))
             ## END: SAMPLE META-DATA ##
             
             
@@ -580,14 +576,14 @@ pRolocVis <- function(object = NULL) {
             .newfoi <- reactiveValues(ind = NULL)
             
             observe({
-                .newfoi$ind <- .obsNewFoI(
-                    .dI(), .searchInd(), 
-                    input$savedSearchText, input$saveLists2SR
-                )
-                .pR_SR$foi <- .obsSavedSearch(
-                    .pR_SR$foi, .newfoi$ind, .searchInd(), 
-                    input$saveLists2SR, input$savedSearchText
-                )
+                    .newfoi$ind <- .obsNewFoI(
+                        .dI(), .searchInd(), 
+                        input$savedSearchText, input$saveLists2SR
+                    )
+                    .pR_SR$foi <- .obsSavedSearch(
+                        .pR_SR$foi, .newfoi$ind, .searchInd(), 
+                        input$saveLists2SR, input$savedSearchText
+                    )
             }) 
             
             ## text field to assign name to search results
@@ -595,7 +591,7 @@ pRolocVis <- function(object = NULL) {
             .whichN <- reactive(.whichTag(input$tagSelectList, .pR_SR$foi))
             
             output$infoSavedSearchUI <- renderText({
-                if (!is.null(.pR_SR$foi) && length(.pR_SR$foi) != 0) {
+                if (length(.dI()) != 0 && !is.null(.pR_SR$foi) && length(.pR_SR$foi) != 0) {
                     showFOI <- .showFOI(.pR_SR$foi, .dI(), .whichN())
                     paste0(showFOI, sep = "\n", collapse = "")
                 } else
