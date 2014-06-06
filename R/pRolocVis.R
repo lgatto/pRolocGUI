@@ -346,7 +346,7 @@ pRolocVis <- function(object = NULL) {
             ## function (appearance and position dependent of user input)
             output$PCAUI <- renderPlot(
                 if (!is.null(.dI()[[1]]))
-                    .plotPCA(data = .dI(), 
+                    .plotPCA(obj = .dI(), 
                         fcolours = input$fcolours, 
                         fcex = input$fcex,
                         xrange = input$xrange,
@@ -357,14 +357,16 @@ pRolocVis <- function(object = NULL) {
                         legend = input$legendyes, 
                         legendpos = input$legendpos,
                         sI = .searchInd(),
-                        cIS = input$chooseIdenSearch
+                        cIS = input$chooseIdenSearch,
+                        ind = "object1"
                     )
                 )
             
             
             ## for Plot/Download button (needs a reactive expression)
             .PCAPlotReac <- reactive(
-                    .plotPCA(data = .dI(), 
+                if (!is.null(.dI()[[1]]))
+                    .plotPCA(obj = .dI(), 
                         fcolours = input$fcolours, 
                         fcex = input$fcex,
                         xrange = input$xrange,
@@ -375,7 +377,8 @@ pRolocVis <- function(object = NULL) {
                         legend = input$legendyes, 
                         legendpos = input$legendpos,
                         sI = .searchInd(),
-                        cIS = input$chooseIdenSearch
+                        cIS = input$chooseIdenSearch,
+                        ind = "object1"
                 )
             )
             

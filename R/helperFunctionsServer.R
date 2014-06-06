@@ -189,9 +189,10 @@
 }
 
 ## values PCA
-.vPCA <- function(obj, PCAn1, PCAn2) {
+.vPCA <- function(obj, PCAn1, PCAn2, ind = c("object1", "object2")) {
+    ind <- match.arg(ind)
     if (!is.null(obj) && !is.null(PCAn1) && !is.null(PCAn2)) {
-        obj <- obj[[1]]
+        obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
         plot2D(obj, fcol=NULL,
                dims=c(as.numeric(PCAn1), as.numeric(PCAn2)), 
                plot=FALSE)
@@ -199,13 +200,24 @@
 }
 
 ## UI for colours
-.colourPCA <- function(obj, sel = "none", which = c("object1", "object2")) {
-    which <- match.arg(which)
-    obj <- ifelse(which == "object1", obj, obj)[[1]]
+.colourPCA <- function(obj, sel = "none", ind = c("object1", "object2")) {
+    ind <- match.arg(ind)
+    obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
     selectInput("fcolours", "colour", c("none", fvarLabels(obj)),
                 selected = sel)
-
 }
+
+## UI for point size
+.fcexPCA <- function(obj, col, sel = "1", ind = c("object1", "object2")) {
+    ind <- match.arg(ind)
+    obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
+    ## only show when there are numeric columns in fData (.fcex())
+    if (length(col) > 0 && length(.fcex(obj)) > 0) 
+        if (col != "none")
+            selectInput("fcex", "point size", c("1", .fcex(obj)),
+                        selected = sel)
+}
+
 ## UI for symbol type
 .symbolPCA <- function(obj, colours) {
     obj <- obj[[1]]
@@ -214,17 +226,6 @@
         selectInput("fsymboltype", "symbol type", 
                     c("none", fvarLabels(obj)),
                     selected="none")
-}
-
-## UI for point size
-.fcexPCA <- function(object1, colours) {
-    ## initially !length(input$fcolours)
-    ## to avoid an error message we have an outer if statement
-    ## only show when there are numeric columns in fData (.fcex())
-    if (length(colours) && length(.fcex(object1[[1]]))) 
-        if (colours != "none")
-            selectInput("fcex", "point size", c("1", .fcex(object1[[1]])),
-                        selected = "1")
 }
 
 ## UI for xrange or yrange (zoom)
@@ -275,21 +276,23 @@
 
 ## a helper function for plotting the PCA plot and highlighting
 ## FeaturesOfInterest using highlightOnPlot
-.plotPCA <- function(data, fcolours, fcex, xrange, yrange,
+.plotPCA <- function(obj, fcolours, fcex, xrange, yrange,
                      sb, PCAn1, PCAn2, legend, legendpos,
-                     sI, cIS) {
-    par(mfrow=c(1, 1))
-    data <- data[[1]]
+                     sI, cIS, ind = c("object1", "object2")) {
+    
+    ind <- match.arg(ind)
+    obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
+    
     if (length(fcolours)) {
-        if (fcolours %in% fvarLabels(data))
+        if (fcolours %in% fvarLabels(obj))
             colour <- fcolours
         else
             colour <- NULL
     }
     
     if (length(fcex)) {
-        if (fcex %in% fvarLabels(data))
-            fcex <- fData(data)[, fcex]
+        if (fcex %in% fvarLabels(obj))
+            fcex <- fData(obj)[, fcex]
         else
             fcex <- 1  ## as.numeric(fcex)
     } 
@@ -301,7 +304,7 @@
             ## create plot2D and assign reactive variables to 
             ## arguments, do not assign fpch (no symboltypes 
             ## are plotted)
-            plot2D(data, fcol = colour,
+            plot2D(obj, fcol = colour,
                    xlim = c(xrange[1], xrange[2]),
                    ylim = c(yrange[1], yrange[2]),
                    dims = c(as.numeric(PCAn1),
@@ -310,7 +313,7 @@
         else
             ## create plot2D and assign reactive variables to 
             ## arguments take input$fsymboltype for symboltype
-            plot2D(data, fcol = colour, fpch = sb,
+            plot2D(obj, fcol = colour, fpch = sb,
                    xlim = c(xrange[1], xrange[2]),
                    ylim = c(yrange[1], yrange[2]),
                    dims = c(as.numeric(PCAn1),
@@ -319,20 +322,20 @@
     }
     
     if (length(legend)) 
-        if (fcolours %in% fvarLabels(data) && legend)
+        if (fcolours %in% fvarLabels(obj) && legend)
             ## add a legend to the plot with reactive 
             ## variable as arguments
-            addLegend(data, fcol = colour, 
+            addLegend(obj, fcol = colour, 
                       where = legendpos,
                       bty = "n", cex = 1)
     
     if (length(sI) && length(cIS)) {
         foiPCA <- FeaturesOfInterest(description = "hoP",
-                                     fnames = featureNames(data)[sI],
-                                     object=data)
-        highlightOnPlot(data, foiPCA, 
+                                     fnames = featureNames(obj)[sI],
+                                     object = obj)
+        highlightOnPlot(obj, foiPCA, 
                         args = list(
-                            fcol = fvarLabels(data)[1],
+                            fcol = fvarLabels(obj)[1],
                             xlim = c(xrange[1], 
                                      xrange[2]),
                             ylim = c(yrange[1], 
