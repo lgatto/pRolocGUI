@@ -197,26 +197,28 @@ pRolocVis <- function(object = NULL) {
             
             ## .dI
             .dI <- reactive({
-                if (is.null(object)) {
-                    if (!is.null(input$data))
+                if (!is.null(input$data))
+                    list(
                         switch(input$data,
                             "andy2011" = andy2011,
                             "dunkley2006" = dunkley2006,
                             "tan2009r1" = tan2009r1,
-                            "own data" = .dIownData()
-                        ) 
-                } else {
-                    if (inherits(object, "MSnSet"))
-                        object
-                    else 
-                        andy2011
-                }
-                
+                            "own data" = 
+                                if (is.null(object)) {
+                                    .dIownData()
+                                } else {
+                                    if (inherits(object, "MSnSet"))
+                                        object
+                                    else 
+                                        andy2011
+                                }
+                        )
+                    )
             })
-            
+
             output$warningowndataUI <- renderText({
                 if (input$data == "own data") {
-                    if (identical(.dI(), andy2011))
+                    if (identical(.dI()[[1]], andy2011))
                         return("noMSnSet selected, 
                                 MSnSet 'andy2011' will be used")
                     else
@@ -310,7 +312,9 @@ pRolocVis <- function(object = NULL) {
             .valuesPCA <- reactive(.vPCA(.dI(), input$PCAn1, input$PCAn2))
             
             ## render colour selectInput accordingly to fvarLabels()
-            output$fcoloursUI <- renderUI(.colourPCA(.dI())) 
+            output$fcoloursUI <- renderUI(
+                if (!is.null(.dI()))
+                    .colourPCA(.dI())) 
                 
             ## render symboltype selectInput accordingly to fvarLabels
             output$fsymboltypeUI <- renderUI(
@@ -341,7 +345,7 @@ pRolocVis <- function(object = NULL) {
             ## Generate PCA plot, use fcolours for colours and add legend
             ## function (appearance and position dependent of user input)
             output$PCAUI <- renderPlot(
-                if (!is.null(.dI()))
+                if (!is.null(.dI()[[1]]))
                     .plotPCA(data = .dI(), 
                         fcolours = input$fcolours, 
                         fcex = input$fcex,
@@ -360,7 +364,7 @@ pRolocVis <- function(object = NULL) {
             
             ## for Plot/Download button (needs a reactive expression)
             .PCAPlotReac <- reactive(
-                .plotPCA(data = .dI(), 
+                    .plotPCA(data = .dI(), 
                         fcolours = input$fcolours, 
                         fcex = input$fcex,
                         xrange = input$xrange,
@@ -440,7 +444,7 @@ pRolocVis <- function(object = NULL) {
             ## calculate protein nearest to user input
             .minDistProtPlotDist <- reactive(
                 if (!is.null(input$plotDistclick)) { 
-                    if (input$plotDistclick$x < (nrow(pData(.dI())) + .3) &&
+                    if (input$plotDistclick$x < (nrow(pData(.dI()[[1]])) + .3) &&
                         input$plotDistclick$x > 0.5 &&
                             !is.null(input$quantityPlotDist) && 
                                 input$quantityPlotDist == "1")
@@ -455,7 +459,7 @@ pRolocVis <- function(object = NULL) {
                         
             .minDistProtPlotDistHover <- reactive({
                 if (!is.null(input$plotDisthover$x)) {
-                    if (input$plotDisthover$x < (nrow(pData(.dI())) + .3) &&
+                    if (input$plotDisthover$x < (nrow(pData(.dI()[[1]])) + .3) &&
                         input$plotDisthover$x > 0.5 && 
                             !is.null(input$quantityPlotDist) && 
                                 input$quantityPlotDist == "1") 
@@ -469,7 +473,7 @@ pRolocVis <- function(object = NULL) {
             })
             
             output$hoverProtPlotDistUI <- renderText(
-                featureNames(.dI())[.minDistProtPlotDistHover()]
+                featureNames(.dI()[[1]])[.minDistProtPlotDistHover()]
             )
             
             ## for Plot/Download button (needs a reactive expression)

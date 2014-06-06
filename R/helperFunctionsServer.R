@@ -35,10 +35,7 @@
     else {
         isolate({
             click
-            if (PCA)
-                dBox <- "mousePCA"
-            else
-                dBox <- "mousePlotDist"
+            dBox <- ifelse(PCA, "mousePCA", "mousePlotDist")
         })
     }
     ans <- unique(dBox)
@@ -87,6 +84,7 @@
 ## A helper function to subset the selection in the query when entering 
 ## a search string
 .sRsubset <- function(data, search, levelSearch) {
+    data <- data[[1]]
     subset(
         (
             if(search != "protein")
@@ -105,6 +103,7 @@
 
 .obsProtText <- function(data, protText, button, 
                          sRTextInput, search) {
+    data <- data[[1]]
     sRText <- isolate(sRTextInput)
     if (!is.null(search)) {
         if (search == "protein")
@@ -152,9 +151,11 @@
 
 ## select Input helper for Display selection
 .selVarText <- function(data) {
-    if (!is.null(data))
+    if (!is.null(data)) {
+        data <- data[[1]]
         selectInput("search", "", 
                     choices = c("protein", fvarLabels(data)))
+    }
 }
 
 ## selectInput helper for Display selection, to select results
@@ -188,28 +189,30 @@
 }
 
 ## values PCA
-.vPCA <- function(data, PCAn1, PCAn2) {
-    if (!is.null(data) && !is.null(PCAn1) && !is.null(PCAn2))
-        plot2D(data, fcol=NULL,
-               dims=c(as.numeric(PCAn1),
-                      as.numeric(PCAn2)), 
+.vPCA <- function(obj, PCAn1, PCAn2) {
+    if (!is.null(obj) && !is.null(PCAn1) && !is.null(PCAn2)) {
+        obj <- obj[[1]]
+        plot2D(obj, fcol=NULL,
+               dims=c(as.numeric(PCAn1), as.numeric(PCAn2)), 
                plot=FALSE)
+    }
 }
 
 ## UI for colours
-.colourPCA <- function(obj1, obj2 = NULL, sel = "none", which = c("object1", "object2")) {
+.colourPCA <- function(obj, sel = "none", which = c("object1", "object2")) {
     which <- match.arg(which)
-    obj <- ifelse(which == "object1", obj1, obj2)[[1]]
+    obj <- ifelse(which == "object1", obj, obj)[[1]]
     selectInput("fcolours", "colour", c("none", fvarLabels(obj)),
                 selected = sel)
 
 }
 ## UI for symbol type
 .symbolPCA <- function(obj, colours) {
+    obj <- obj[[1]]
     if (!is.null(colours) && 
             colours %in% fvarLabels(obj)) 
         selectInput("fsymboltype", "symbol type", 
-                    c("none", fvarLabels(data)),
+                    c("none", fvarLabels(obj)),
                     selected="none")
 }
 
@@ -218,9 +221,9 @@
     ## initially !length(input$fcolours)
     ## to avoid an error message we have an outer if statement
     ## only show when there are numeric columns in fData (.fcex())
-    if (length(colours) && length(.fcex(object1))) 
+    if (length(colours) && length(.fcex(object1[[1]]))) 
         if (colours != "none")
-            selectInput("fcex", "point size", c("1", .fcex(data)),
+            selectInput("fcex", "point size", c("1", .fcex(object1[[1]])),
                         selected = "1")
 }
 
@@ -245,14 +248,14 @@
             ifelse(dim == "x", "PCAn1", "PCAn2"),
             ifelse(dim == "x", "PC along x-axis", "PC along y-axis"),
             selected = ifelse(dim == "x", 1, 2),
-            choices = c(1:ncol(exprs(data)))
+            choices = c(1:nrow(pData(data[[1]])))
         )
 }
 
 ## checkBox UI for legend
 .legendPCA <- function(data, colours) {
     if (length(colours))
-        if (colours %in% fvarLabels(data))
+        if (colours %in% fvarLabels(data[[1]]))
             ## tick box: add legend
             checkboxInput("legendyes", "legend", value = FALSE)
 }
@@ -260,7 +263,7 @@
 ## position for legend, sliderInput
 .legendPosPCA <- function(data, colours) {
     if (length(colours))
-        if (colours %in% fvarLabels(data))
+        if (colours %in% fvarLabels(data[[1]]))
             ## drop down menu for position of legend
             selectInput("legendpos", "position of legend",
                         choices = c("bottomright", "bottom",
@@ -276,7 +279,7 @@
                      sb, PCAn1, PCAn2, legend, legendpos,
                      sI, cIS) {
     par(mfrow=c(1, 1))
-    
+    data <- data[[1]]
     if (length(fcolours)) {
         if (fcolours %in% fvarLabels(data))
             colour <- fcolours
@@ -307,7 +310,7 @@
         else
             ## create plot2D and assign reactive variables to 
             ## arguments take input$fsymboltype for symboltype
-            plot2D(data,fcol = colour, fpch = sb,
+            plot2D(data, fcol = colour, fpch = sb,
                    xlim = c(xrange[1], xrange[2]),
                    ylim = c(yrange[1], yrange[2]),
                    dims = c(as.numeric(PCAn1),
@@ -353,7 +356,7 @@
 .orgName <- function(data, fnames) {
     if (!is.null(fnames))
         if (fnames != "all")
-            names(table(fData(data)[fnames]))
+            names(table(fData(data[[1]])[fnames]))
     else
         "all"
 }
@@ -363,7 +366,7 @@
     if(!is.null(data))
         selectInput("fNamesplDist",
                     "feature(s) in",
-                    choices = c("all", fvarLabels(data)) 
+                    choices = c("all", fvarLabels(data[[1]])) 
         ) 
 }
 ## selectInput for levels in fvarLabels or "all"
@@ -390,9 +393,12 @@
 .plotPlotDist <- function(data, levPlotDist,
                           levPlotDistOrg,
                           quantity, sI) {
+    
     if (!is.null(data) &&
-            !is.null(levPlotDist) &&
+        !is.null(levPlotDist) &&
             !(is.null(levPlotDistOrg))) {
+        
+        data <- data[[1]]
         
         if (as.numeric(quantity) %% 2 == 0)
             col <- as.numeric(quantity) / 2
@@ -407,12 +413,12 @@
         
         ## Actual plotting
         for (i in 1:min(quantity, length(levPlotDist))) { 
-            
+        
             if (levPlotDist[i] == "all")
                 objPlotDist <- data
             else
                 objPlotDist <- subset(data, 
-                                      fData(data)[, levPlotDist[i]] == levPlotDistOrg[i])
+                            fData(data)[, levPlotDist[i]] == levPlotDistOrg[i])
             
             if (is.null(sI))
                 ylim <- range(exprs(objPlotDist))
@@ -457,19 +463,19 @@
     if (radiobutton == "all") {
         ## cbind to display data properly
         if(mdata == "quant")
-            ans <-  as.data.frame(cbind(" " = rownames(exprs(data)), exprs(data)))
+            ans <-  as.data.frame(cbind(" " = rownames(exprs(data[[1]])), exprs(data[[1]])))
         if (mdata == "fD")
-            ans <- as.data.frame(cbind(" " = rownames(fData(data)), fData(data)))
+            ans <- as.data.frame(cbind(" " = rownames(fData(data[[1]])), fData(data[[1]])))
         if (mdata == "pD")
-            ans <- as.data.frame(cbind(" " = rownames(pData(data)), pData(data)))
+            ans <- as.data.frame(cbind(" " = rownames(pData(data[[1]])), pData(data[[1]])))
     } else {
         ## cbind to display data properly
         if(mdata == "quant") 
-            ans <- as.data.frame(cbind(" " = rownames(exprs(data)[indices]),
-                     exprs(data[indices])))
+            ans <- as.data.frame(cbind(" " = rownames(exprs(data[[1]])[indices]),
+                     exprs(data[[1]][indices])))
         else
-            ans <- as.data.frame(cbind(" " = rownames(fData(data[indices])),
-                         fData(data[indices])))
+            ans <- as.data.frame(cbind(" " = rownames(fData(data[[1]][indices])),
+                         fData(data[[1]][indices])))
     }
     return(ans)
 }
@@ -497,7 +503,7 @@
 
 ## returns indices of collection of features which are selected in tab search
 .whichFOI <- function(data, coll, index) 
-    which((match(rownames(data), .fnamesFOI(coll)[[index]])) != NA)
+    which((match(rownames(data[[1]]), .fnamesFOI(coll)[[index]])) != NA)
 
 ## selectInput for collection of features to choose between in tab search
 .tagListSearch <- function(coll) {
@@ -529,7 +535,7 @@
     button
     sI <- isolate(indices)
     searchText <- isolate(descr)
-    dataInput <- isolate(data)
+    dataInput <- isolate(data[[1]])
     if (!is.null(searchText)
         && !is.null(dataInput)
             && !is.null(sI)) {
@@ -557,7 +563,9 @@
 ## Returns information about FoICollection or FeaturesOfInterest
 ## and the number of features present in the MSnSet
 .showFOI <- function(x, fMSnSet, index=1) {
+    fMSnSet <- fMSnSet[[1]]
     if (inherits(x, "FoICollection")) {
+        
         n <- fnamesIn(foi(x)[[index]], fMSnSet, TRUE)
         showFOI <- c(capture.output(show(foi(x)[[index]])),
                     paste("Therefrom in selected MSnSet:", n))

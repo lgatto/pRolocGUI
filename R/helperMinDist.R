@@ -14,14 +14,14 @@
 ## calculate protein nearest to user input
 .minDistPlotDist <- function(data, marker, org, inputx, inputy) {
     if (marker == "all")
-        j <- 1:nrow(data)
+        j <- 1:nrow(data[[1]])
     else {
         j <- match(
-            subset(featureNames(data), fData(data)[, marker] == org),
-                featureNames(data)
+            subset(featureNames(data[[1]]), fData(data)[, marker] == org),
+                featureNames(data[[1]])
         )
     }
-    dist <- abs(inputy - exprs(data)[j, round(inputx, 0)])
+    dist <- abs(inputy - exprs(data[[1]])[j, round(inputx, 0)])
     minDist <- min(dist)
     whichMinDist <- which(minDist == dist)
     ## return index
