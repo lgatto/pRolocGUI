@@ -173,7 +173,11 @@
 ## START: TAB PCA ##
 
 ## point size
-.fcex <- function(data) {
+.fcex <- function(object1, object2 = NULL, ind = "object1") {
+    if (ind == "object1") 
+        data <- object1
+    else 
+        data <- object2
     ## check for numericcolums in fData(data) 
     colNum <- which(sapply(fData(data), is.numeric))
     ## write indices in vector colNum
@@ -193,10 +197,16 @@
 }
 
 ## UI for colours
-.colourPCA <- function(data) {
-    if (!is.null(data))
-        selectInput("fcolours", "colour", c("none",fvarLabels(data)),
-            selected="none")
+.colourPCA <- function(object1, object2 = NULL, sel = "none", ind = "object1") {
+    if (!is.null(object1)) {
+        if (ind == "object1")
+            selectInput("fcolours", "colour", c("none",fvarLabels(object1)),
+                selected = sel)
+        else 
+            selectInput("fcolours", "colour", c("none",fvarLabels(object2)),
+                        selected = sel)
+            
+    }
 }
 
 ## UI for symbol type
@@ -209,11 +219,11 @@
 }
 
 ## UI for point size
-.fcexPCA <- function(data, colours) {
+.fcexPCA <- function(object1, colours) {
     ## initially !length(input$fcolours)
     ## to avoid an error message we have an outer if statement
     ## only show when there are numeric columns in fData (.fcex())
-    if (length(colours) && length(.fcex(data))) 
+    if (length(colours) && length(.fcex(object1))) 
         if (colours != "none")
             selectInput("fcex", "point size", c("1", .fcex(data)),
                         selected = "1")
