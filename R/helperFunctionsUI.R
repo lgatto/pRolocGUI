@@ -101,13 +101,13 @@
     )
 }
 
-.pR2_condPCA <- function() {
+.pRn2_condTabPCA <- function() {
     conditionalPanel(
         condition = "input.tab1 == 'PCA'",
         wellPanel(
             h4("Plot"),
             radioButtons("selPlotPCA", "select plot", 
-                        choices = c("upper", "lower"), selected = "upper"),
+                        choices = c("object1", "object2"), selected = "object1"),
             ## drop down menu for colours of PCA plot
             htmlOutput("fcoloursOutput"),
             ## drop down menu for symbol type of PCA plot
@@ -220,8 +220,9 @@
     )
 }
 
-.pRn2_condPCA <- function() {
+.pRn2_tabPanelPCA <- function() {
     tabPanel("PCA",
+             verbatimTextOutput("helpPCA"),
              plotOutput("PCA1", width = "100%",height="600px",
                         clickId = "PCA1click",
                         hoverId = "PCA1hover",

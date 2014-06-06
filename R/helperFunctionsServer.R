@@ -175,16 +175,16 @@
 ## point size
 .fcex <- function(object1, object2 = NULL, ind = "object1") {
     if (ind == "object1") 
-        data <- object1
+        obj <- object1
     else 
-        data <- object2
+        obj <- object2
     ## check for numericcolums in fData(data) 
-    colNum <- which(sapply(fData(data), is.numeric))
+    colNum <- which(sapply(fData(obj), is.numeric))
     ## write indices in vector colNum
     colNum <- as.vector(colNum)
     if (length(colNum))
         ## return fvarLabels of numeric colums 
-        fvarLabels(data)[colNum]
+        fvarLabels(obj)[colNum]
 }
 
 ## values PCA
@@ -197,22 +197,17 @@
 }
 
 ## UI for colours
-.colourPCA <- function(object1, object2 = NULL, sel = "none", ind = "object1") {
-    if (!is.null(object1)) {
-        if (ind == "object1")
-            selectInput("fcolours", "colour", c("none",fvarLabels(object1)),
+.colourPCA <- function(obj1, obj2 = NULL, sel = "none", which = c("object1", "object2")) {
+    which <- match.arg(which)
+    obj <- ifelse(which == "object1", obj1, obj2)[[1]]
+    selectInput("fcolours", "colour", c("none", fvarLabels(obj)),
                 selected = sel)
-        else 
-            selectInput("fcolours", "colour", c("none",fvarLabels(object2)),
-                        selected = sel)
-            
-    }
-}
 
+}
 ## UI for symbol type
-.symbolPCA <- function(data, colours) {
+.symbolPCA <- function(obj, colours) {
     if (!is.null(colours) && 
-            colours %in% fvarLabels(data)) 
+            colours %in% fvarLabels(obj)) 
         selectInput("fsymboltype", "symbol type", 
                     c("none", fvarLabels(data)),
                     selected="none")
