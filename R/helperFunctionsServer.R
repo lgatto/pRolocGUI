@@ -262,17 +262,16 @@
 }
 
 ## UI for principal components
-.PC <- function(obj, axis, ind = c("object1", "object2")) {
+.PC <- function(obj, axis, sel, ind = c("object1", "object2")) {
     if (length(obj) != 0) {
         ind <- match.arg(ind)
         obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
         ans <- selectInput(
                     ifelse(axis == "x", "PCAn1", "PCAn2"),
                     ifelse(axis == "x", "PC along x-axis", "PC along y-axis"),
-                    selected = ifelse(axis == "x", 1, 2),
-                    choices = c(1:nrow(pData(obj))))
+                    selected = sel,
+                    choices = isolate(c(1:nrow(pData(obj)))))
         return(ans)
-        }
     }
 }
 

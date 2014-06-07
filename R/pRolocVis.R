@@ -326,9 +326,9 @@ pRolocVis <- function(object = NULL) {
             
             ## compute number of principal components to look for 
             ## and change UI accordingly
-            output$PCAn1UI <- renderUI(.PC(.dI(), "x"))
+            output$PCAn1UI <- renderUI(.PC(.dI(), "x", 1))
         
-            output$PCAn2UI <- renderUI(.PC(.dI(), "y"))
+            output$PCAn2UI <- renderUI(.PC(.dI(), "y", 2))
             
             ## legend 
             output$PCALegendUI <- renderUI(.legendPCA(.dI(), input$fcolours))

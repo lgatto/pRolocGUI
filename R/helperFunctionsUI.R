@@ -106,7 +106,7 @@
         condition = "input.tab1 == 'PCA'",
         wellPanel(
             h4("Plot"),
-            radioButtons("selPlotPCA", "select plot", 
+            radioButtons("selObj", "select plot", 
                         choices = c("object1", "object2"), selected = "object1"),
             ## drop down menu for colours of PCA plot
             htmlOutput("fcoloursOutput"),
