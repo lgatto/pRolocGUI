@@ -35,27 +35,25 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
             ## START: TAB PCA ##
             ## colours
             .params <- reactiveValues(
-                colours = c("none", "none"), fcex = c(1, 1), PCAn1 = c(1, 1), PCAn2 = c(2, 2))
-            
-         #   fcex = input$fcex,
-          #  xrange = input$xrange,
-         #   yrange = input$yrange,
-         #   sb = input$fsymboltype,
-        #    legend = input$legendyes, 
-        #    legendpos = input$legendpos,
-        #    sI = .searchInd(),
-        #    cIS = input$chooseIdenSearch
+                colours = c("none", "none"), fcex = c(1, 1), 
+                symbol = c("none", "none"), 
+                PCAn1 = c(1, 1), PCAn2 = c(2, 2),
+                legend = FALSE
+            )
         
-            
-            
-            output$helpPCA <- renderText(c(.ind$params, input$selObj, .params$PCAn2, isolate({.params$PCAn1[.ind$params]})))
-            
-            
-            .colours <- reactive({
-                if (input$selObj == "object1")
-                    fvarLabels(obj[[1]])
-                if (input$selObj == "object2")
-                    fvarLabels(obj[[2]])
+            observe({
+                if (!is.null(input$fcolours)) {
+                    .params$colours[.ind$params] <- input$fcolours}
+                if (!is.null(input$fcex)) {
+                    .params$fcex[.ind$params] <- input$fcex}
+                if (!is.null(input$PCAn1) && !is.null(input$PCAn2)) {
+                    .params$PCAn1[.ind$params] <- input$PCAn1
+                    .params$PCAn2[.ind$params] <- input$PCAn2 
+                }
+                if (!is.null(input$fsymboltype)) {
+                    .params$symbol[.ind$params] <- input$fsymboltype}
+                if (!is.null(input$legendyes)) {
+                    .params$legend <- input$legendyes}
             })
         
             ## reactive Values for object selected
@@ -71,7 +69,7 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
             ## values of PCA, dims is dependent on user input,
             ## so is xlim and ylim
             .valuesPCA <- reactive(.vPCA(obj, .params$PCAn1[.ind$params], 
-                                    .params$PCAn2[.ind$params], input$selObj)) #.params$PCAn1[.ind$params], .params$PCAn2[.ind$params], input$selObj))
+                                    .params$PCAn2[.ind$params], input$selObj))
                        
             ## selectInput for colours
             output$fcoloursOutput <- renderUI({ 
@@ -95,93 +93,61 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
                     isolate(.params$fcex)[.ind$params], input$selObj)
             )
             
-            observe({
-                if (!is.null(input$fcolours)) {
-                    .params$colours[.ind$params] <- input$fcolours}
-                if (!is.null(input$fcex)) {
-                    .params$fcex[.ind$params] <- input$fcex}
-                if (!is.null(input$PCAn1) && !is.null(input$PCAn2)) {
-                    .params$PCAn1[.ind$params] <- input$PCAn1
-                    .params$PCAn2[.ind$params] <- input$PCAn2 
-                }
-            })    
-        
-            output$fsymboltypeOutput <- renderUI({ 
-                if (!is.null(input$fcolours) && 
-                        input$fcolours %in% fvarLabels(obj[[1]])) 
-                    selectInput("fsymboltype", "symbol type", 
-                                c("none", .colours()),
-                                selected="none")
-            })
-            
-           
-            
-            ## zoom function: parameters for x- and y-range for PCA plot
-            output$xrangeUI <- renderUI({
-                .rangePCA(.valuesPCA(), 1)
-            })  
-            
-            output$yrangeUI <- renderUI({
-                .rangePCA(.valuesPCA(), 1)
-                })
-            
-           
-            
-            output$PCALegendUI <- renderUI({
-                if (length(input$fcolours))
-                    if (input$fcolours %in% fvarLabels(obj[[1]]))
-                        ## tick box: add legend
-                        checkboxInput("legendyes", "legend", 
-                                      value = FALSE)
-            })
-            
-            output$PCALegendposUI <- renderUI({
-                if (length(input$fcolours))
-                    if (input$fcolours %in% fvarLabels(obj[[1]]))
-                        ## drop down menu for position of legend
-                        selectInput("legendpos", "position of legend",
-                                    choices = c("bottomright", "bottom",
-                                        "bottomleft","left", "topleft", "top",
-                                        "topright", "right","center"), 
-                                    selected="bottomright")
-            })
-            
-            output$PCA1 <- renderPlot(
-             #  if (!is.null(obj[[1]]))
-                    .plotPCA(obj = obj, 
-                            fcolours = .params$colours[1], 
-                            fcex = .params$fcex[1],
-                            xrange = input$xrange,
-                            yrange = input$yrange,
-                            sb = input$fsymboltype,
-                            PCAn1 = .params$PCAn1[1],
-                            PCAn2 = .params$PCAn2[1],
-                            legend = input$legendyes, 
-                            legendpos = input$legendpos,
-                            sI = .searchInd(),
-                            cIS = input$chooseIdenSearch,
-                            ind = "object1" 
-                    )
-                    )
-            
-            output$PCA2 <- renderPlot(
-                if (!is.null(obj))
-                    .plotPCA(obj = obj, 
-                             fcolours = .params$colours[2], 
-                             fcex = .params$fcex[2],
-                             xrange = input$xrange,
-                             yrange = input$yrange,
-                             sb = input$fsymboltype,
-                             PCAn1 = .params$PCAn1[2],
-                             PCAn2 = .params$PCAn2[2],
-                             legend = input$legendyes, 
-                             legendpos = input$legendpos,
-                             sI = .searchInd(),
-                             cIS = input$chooseIdenSearch,
-                             ind = "object2"
-                    )
+            ## selectInput for symboltype
+            output$fsymboltypeOutput <- renderUI(
+                .symbolPCA(obj, input$fcolours, 
+                           isolate(.params$symbol)[.ind$params], input$selObj)
             )
             
+            ## zoom function: parameters for x- and y-range for PCA plot
+            output$xrangeUI <- renderUI(.rangePCA(.valuesPCA(), 1))  
+        
+            output$yrangeUI <- renderUI(.rangePCA(.valuesPCA(), 1))
+            
+            ## legend
+            output$PCALegendUI <- renderUI(
+                .legendPCA(obj, .params$colours[.ind$params], .params$legend, 
+                    input$selObj)
+            )
+            
+            output$PCALegendposUI <- renderUI(
+                .legendPosPCA(obj, .params$colours[.ind$params], input$selObj)
+            )
+            
+            ## Plots
+            output$PCA1 <- renderPlot(
+                .plotPCA(obj = obj, 
+                    fcolours = .params$colours[1], 
+                    fcex = .params$fcex[1],
+                    xrange = input$xrange,
+                    yrange = input$yrange,
+                    sb = .params$symbol[1],
+                    PCAn1 = .params$PCAn1[1],
+                    PCAn2 = .params$PCAn2[1],
+                    legend = input$legendyes, 
+                    legendpos = input$legendpos,
+                    sI = .searchInd(),
+                    cIS = input$chooseIdenSearch,
+                    ind = "object1" 
+                )
+            )
+            
+            output$PCA2 <- renderPlot(
+                .plotPCA(obj = obj, 
+                     fcolours = .params$colours[2], 
+                     fcex = .params$fcex[2],
+                     xrange = input$xrange,
+                     yrange = input$yrange,
+                     sb = .params$symbol[2],
+                     PCAn1 = .params$PCAn1[2],
+                     PCAn2 = .params$PCAn2[2],
+                     legend = input$legendyes, 
+                     legendpos = input$legendpos,
+                     sI = .searchInd(),
+                     cIS = input$chooseIdenSearch,
+                     ind = "object2"
+                )
+            )
             ## END: TAB PCA ## 
             
         }
