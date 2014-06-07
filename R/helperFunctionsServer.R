@@ -276,12 +276,12 @@
 }
 
 ## checkBox UI for legend
-.legendPCA <- function(obj, colours, ind = c("object1", "object2")) {
+.legendPCA <- function(obj, colours, sel = c(FALSE, TRUE), ind = c("object1", "object2")) {
     if (length(obj) != 0) {
         ind <- match.arg(ind)
         obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
         if (length(colours) && colours %in% fvarLabels(obj)) {
-            ans <- checkboxInput("legendyes", "legend", value = FALSE)
+            ans <- checkboxInput("legendyes", "legend", value = sel)
             return(ans)
         }
     }
