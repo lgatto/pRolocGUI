@@ -397,7 +397,8 @@ pRolocVis <- function(object = NULL) {
                     .minDistPCA(inputx = input$PCAclick$x, 
                                 inputy = input$PCAclick$y,
                                 valuesx = .valuesPCA()[,1],
-                                valuesy = .valuesPCA()[,2])
+                                valuesy = .valuesPCA()[,2],
+                                name = FALSE)
                 }
             )
             
@@ -406,7 +407,8 @@ pRolocVis <- function(object = NULL) {
                     .minDistPCA(inputx = input$PCAhover$x, 
                                 inputy = input$PCAhover$y,
                                 valuesx = .valuesPCA()[,1], 
-                                valuesy = .valuesPCA()[,2])
+                                valuesy = .valuesPCA()[,2],
+                                name = FALSE)
                 }
             )
             
@@ -444,11 +446,11 @@ pRolocVis <- function(object = NULL) {
                         input$plotDistclick$x > 0.5 &&
                             !is.null(input$quantityPlotDist) && 
                                 input$quantityPlotDist == "1")
-                        .minDistPlotDist(data = .dI(), 
+                        .minDistPlotDist(obj = .dI(), 
                                 marker = .listParams$levPlotDist[1],
                                 org = .listParams$levPlotDistOrg[1],
                                 inputx = input$plotDistclick$x,
-                                inputy = input$plotDistclick$y
+                                inputy = input$plotDistclick$y,
                     )
                 }
             )
@@ -459,7 +461,7 @@ pRolocVis <- function(object = NULL) {
                         input$plotDisthover$x > 0.5 && 
                             !is.null(input$quantityPlotDist) && 
                                 input$quantityPlotDist == "1") 
-                        .minDistPlotDist(data = .dI(),
+                        .minDistPlotDist(obj = .dI(),
                                 marker = .listParams$levPlotDist[1],
                                 org = .listParams$levPlotDistOrg[1],
                                 inputx = input$plotDisthover$x,
