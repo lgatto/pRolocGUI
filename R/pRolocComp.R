@@ -4,6 +4,12 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
     
     obj <- list(obj1, obj2)
     
+    ## increase upload limit to 20 MB
+    options(shiny.maxRequestSize = 20*1024^2)
+    
+    ## pRolocGUI_SearchResults
+    sr <- .createSR()
+    
     app <- list(
         ui = bootstrapPage(
                 fluidPage(
@@ -27,10 +33,82 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
             ),
         
         server = function(input, output) {
+            ## START OF SEARCH IMPLEMENTATION ##
             
-            #.dI <- reactive(tan2009r1)
+            ## check boxes by clicking on plots PCA and plotDist
+            dSelect <- reactiveValues(PCA = NULL, plotDist = NULL, text = NULL)
             
-            .searchInd <- reactive(NULL)
+            observe({
+                dSelect$PCA <- .selClick(
+                    dSelect$PCA, input$PCA1click, .prot$PCA, TRUE
+                )
+                dSelect$plotDist <- .selClick(
+                    dSelect$plotDist, input$plotDistclick, 
+                    .prot$plotDist, FALSE
+                )
+                dSelect$text <- .selText(
+                    dSelect$text, input$saveText, input$resetMult, 
+                    .prot$text
+                )  
+            })
+            
+            output$checkBoxUI <- renderUI(
+                .checkBoxdSelect(dSelect$PCA, dSelect$plotDist, dSelect$text)
+            )
+            
+            ## reactive expressions for general search
+            ## reactive expression to forward indices to 
+            ## plot2D, plotDist and tabs quantitation
+            ## and feature meta-data
+       #     .searchInd <- reactive(NULL)
+             .searchInd <- reactive(
+                 .sI(input$chooseIdenSearch, input$tagSelectList, .prot$text, 
+                     .prot$PCA, .prot$plotDist, 
+                     .whichFOI(obj, .pR_SR$foi, .whichN(), input$selObj))
+             )
+            
+            ## Clear multiple points on click
+            observe({
+                if (input$resetMult > 0) {
+                    .prot$PCA <- NULL
+                    .prot$plotDist <- NULL
+                    .prot$text <- NULL
+                    dSelect$PCA <- NULL
+                    dSelect$plotDist <- NULL
+                    dSelect$text <- NULL
+                }
+            })
+            
+            ## text-based search: protein und fvarLabels
+            output$searchUI <- renderUI(.selVarText(obj, input$selObj))
+            
+            output$searchResultsUI <- renderUI(
+                .selResText(input$search, .searchResultsText())
+            )
+            
+            ## reactive expressions for text based search
+            ## levels to search
+            .searchResultsText <- reactive(
+                .sRsubset(obj, input$search, input$levelSearch, input$selObj)
+            )
+            
+            ## vector with reactive values
+            .prot <- reactiveValues(PCA = NULL, plotDist = NULL, text = NULL)
+            
+            ## observe indices and concatenate to .prot$PCA, .prot$plotDist
+            ## and .prot$text
+            observe({
+                .prot$PCA <- .obsProtClick(
+                    .prot$PCA, minDist2dProtPCA(), input$PCA1click)
+                .prot$plotDist <- .obsProtClick(
+                    .prot$plotDist, .minDistProtPlotDist(), input$plotDistclick)
+                .prot$text <- .obsProtText(
+                    obj, .prot$text, input$saveText, 
+                    input$sRTextInput, input$search, input$selObj)
+            })
+            ## END OF SEARCHING IMPLEMENTATION ##  
+            
+           output$helpPCA <- renderText(c(input$PCA1hover$x, input$PCA1hover$y))
             
             ## START: TAB PCA ##
             ## colours
@@ -148,6 +226,19 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
                      ind = "object2"
                 )
             )
+       
+            minDist2dProtPCA <- reactive(
+                ## will be empty initially
+                if (!is.null(input$PCA1click) && !is.null(.valuesPCA())) {
+                    ## compute 2D distances from click input to each component 
+                    ## of the PCA plot, input$PCAclick$x and input$PCAclick$y
+                    ## is user input (index will be returned)
+                    .minDistPCA(inputx = input$PCA1click$x, 
+                           inputy = input$PCA1click$y,
+                           valuesx = .valuesPCA()[,1],
+                           valuesy = .valuesPCA()[,2])
+           }
+       )
             ## END: TAB PCA ## 
             
         }
