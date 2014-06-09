@@ -63,7 +63,7 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
             .searchInd1 <- reactive(
                 .sI(cIS = input$chooseIdenSearch, 
                     tagSelectList = input$tagSelectList, 
-                    protText = NULL, ##.prot$text, 
+                    protText = .computeInd(obj, .prot$text, ind = "object1"), 
                     protPCA = .computeInd(obj, .prot$PCA, ind = "object1"),
                     protPlotDist = NULL, 
                     protSearch = NULL) 
@@ -72,7 +72,7 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
             .searchInd2 <- reactive(
                 .sI(cIS = input$chooseIdenSearch, 
                     tagSelectList = input$tagSelectList, 
-                    protText = NULL, ##.prot$text, 
+                    protText = .computeInd(obj, .prot$text, ind = "object2"), 
                     protPCA = .computeInd(obj, .prot$PCA, ind = "object2"),
                     protPlotDist = NULL, 
                     protSearch = NULL) 
@@ -92,11 +92,19 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
                 }
             })
             
+            
+            
+            
+            output$saveTextUI <- renderUI(
+                if (!.checkFeatText(obj, .prot$text, input$sRTextInput, input$search, input$selObj, name = TRUE))
+                    actionButton("saveText", "Submit selection")
+            )
+            
             ## text-based search: protein und fvarLabels
             output$searchUI <- renderUI(.selVarText(obj, input$selObj))
             
             output$searchResultsUI <- renderUI(
-                .selResText(input$search, .searchResultsText())
+                    .selResText(input$search, .searchResultsText())
             )
             
             ## reactive expressions for text based search
@@ -106,7 +114,9 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
             )
             
             ## vector with reactive values
-            .prot <- reactiveValues(PCA1 = NULL, PCA2 = NULL, PCA = NULL, plotDist = NULL, text = NULL)
+            .prot <- reactiveValues(PCA1 = NULL, PCA2 = NULL, PCA = NULL, 
+                                    plotDist = NULL, 
+                                    text1 = NULL, text2 = NULL, text = NULL)
             
             ## observe indices and concatenate to .prot$PCA, .prot$plotDist
             ## and .prot$text
@@ -119,22 +129,42 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
                     .prot$PCA2, minDist2dProt2PCA(), input$PCA2click)
             })
             observe({
-                .prot$PCA <- c(.prot$PCA1, .prot$PCA2)
+                .prot$PCA <- c(unique(.prot$PCA1, .prot$PCA2))
             })
             observe({
                 .prot$plotDist <- .obsProtClick(
                     .prot$plotDist, .minDistProtPlotDist(), input$plotDistclick)
             })
-            observe({
-                .prot$text <- .obsProtText(
-                    obj, .prot$text, input$saveText, 
-                    input$sRTextInput, input$search, input$selObj, names = TRUE)
-            })
             
+            
+            
+            
+            observe({
+                if (!is.null(input$saveText)) {
+                    .prot$text <- .obsProtText(
+                        obj, .prot$text, input$saveText, 
+                        isolate(input$sRTextInput), isolate(input$search), 
+                        isolate(input$selObj), names = TRUE)
+                
+                   
+                
+            #    })
+#                 else 
+#                     .prot$text2 <- .obsProtText(
+#                         obj, .prot$text2, input$saveText, 
+#                         input$sRTextInput, input$search, "object2", names = TRUE)
+            }})
+            
+#             observe({
+#                 .prot$text2 <- .obsProtText(
+#                     obj, .prot$text2, input$saveText, 
+#                     input$sRTextInput, input$search, "object2", names = TRUE)
+#             })
+         #   observe({.prot$text <- c(unique(.prot$text1, .prot$text2))})
             
             ## END OF SEARCHING IMPLEMENTATION ##  
             
-            output$helpPCA <- renderText(c(.prot$text, input$saveText, isolate(input$sRTextInput), input$search, input$selObj))
+            output$helpPCA <- renderText(c(.prot$text, input$saveText))
             
             ## START: TAB PCA ##
             ## colours  
