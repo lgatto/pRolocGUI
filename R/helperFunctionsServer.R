@@ -114,17 +114,78 @@
     }
 }
 
-.obsProtText <- function(obj, protText, button, 
-            sRTextInput, search, ind = c("object1", "object2"), names = FALSE) {
+# .obsProtText <- function(obj, protText, button, 
+#             sRTextInput, search, ind = c("object1", "object2"), names = FALSE) {
+#     if (length(obj) != 0) {
+#         ind <- match.arg(ind)
+#         obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
+#         if (button == 0)
+#             sRText <- sRTextInput
+#         else
+#             sRText <- isolate(sRTextInput)
+#         
+#         if (!is.null(search) && button != 0) {
+#             if (!names) {
+#                 if (search == "protein") 
+#                     newFeat <- which(rownames(obj) == sRText)
+#                 else 
+#                     newFeat <- which(fData(obj)[search] == sRText)
+#             } else {
+#                 if (search == "protein") 
+#                     newFeat <- sRText
+#                 else 
+#                     newFeat <- rownames(obj)[which(fData(obj)[search] == sRText)]
+#             }
+#                
+#             if (!is.null(newFeat)) {
+#                 if (button > 0 && length(newFeat > 0)) 
+#                     isolate({
+#                         button
+#                         protText <- isolate(c(protText, newFeat))
+#                     })
+#             }
+#         }
+#         return(unique(protText))
+#     }
+# }
+
+## a check function to test if features are already internally stored
+## returning TRUE or FALSE
+.checkFeatText <- function(obj, protText, sRText, 
+                           search, ind = c("object1", "object2"), name = FALSE) {
     if (length(obj) != 0) {
+        
         ind <- match.arg(ind)
         obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
-        if (button == 0)
-            sRText <- sRTextInput
-        else
-            sRText <- isolate(sRTextInput)
+        if (!name)
+            protText <- rownames(obj)[protText]
+        if (search == "protein") 
+            ans <- length(which(sRText %in% protText)) == length(sRText)
+        else {
+            feat <- fData(obj)[search]
+            indices <- which(feat == sRText)
+            Feat <- which(rownames(obj)[indices] %in% protText)
+            ans <- length(Feat) == length(indices)
+        }
+    }
+}
+
+
+.obsProtText <- function(obj, protText, button, 
+                         sRText, search, ind = c("object1", "object2"), names = FALSE) {
+    if (length(obj) != 0 && !is.null(button)) {        
         
-        if (!is.null(search) && button != 0) {
+        if (!.checkFeatText(obj, protText, sRText, search, ind, names))
+            add <- 1
+        else 
+            add <- 0
+            
+        ind <- match.arg(ind)
+    
+        obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
+        
+        
+        if (!is.null(search)) {
             if (!names) {
                 if (search == "protein") 
                     newFeat <- which(rownames(obj) == sRText)
@@ -136,14 +197,17 @@
                 else 
                     newFeat <- rownames(obj)[which(fData(obj)[search] == sRText)]
             }
-               
+            
             if (!is.null(newFeat)) {
-                if (button > 0 && length(newFeat > 0)) 
+                if (button == 1 && length(newFeat > 0) && add == 1) 
                     isolate({
-                        button
-                        protText <- isolate(c(protText, newFeat))
+                       # button
+                        protText <- isolate(c(protText, isolate(newFeat)))
+                
                     })
             }
+       
+        
         }
         return(unique(protText))
     }
