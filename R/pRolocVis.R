@@ -320,9 +320,9 @@ pRolocVis <- function(object = NULL) {
             output$fcexUI <- renderUI(.fcexPCA(.dI(), input$fcolours))
             
             ## zoom function: parameters for x- and y-range for PCA plot
-            output$xrangeUI <- renderUI(.rangePCA(.valuesPCA(), 1))
+            output$xrangeUI <- renderUI(.rangePCA(.valuesPCA(), 1, "xrange"))
                     
-            output$yrangeUI <- renderUI(.rangePCA(.valuesPCA(), 2))
+            output$yrangeUI <- renderUI(.rangePCA(.valuesPCA(), 2, "yrange"))
             
             ## compute number of principal components to look for 
             ## and change UI accordingly
@@ -408,13 +408,12 @@ pRolocVis <- function(object = NULL) {
                                 inputy = input$PCAhover$y,
                                 valuesx = .valuesPCA()[,1], 
                                 valuesy = .valuesPCA()[,2],
-                                name = FALSE)
+                                name = TRUE)
                 }
             )
             
-            output$hoverProtPCAUI <- renderText(
-                    featureNames(.dI())[minDist2dProtPCAHover()]
-            )
+            ## display name of 2D-nearest protein in PCA plot
+            output$hoverProtPCAUI <- renderText(minDist2dProtPCAHover())
             ## END: PCA PLOT ##
 
             ## TAB: PLOTDIST ##            
