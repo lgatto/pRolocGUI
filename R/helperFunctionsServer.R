@@ -124,7 +124,7 @@
         else
             sRText <- isolate(sRTextInput)
         
-        if (!is.null(search)) {
+        if (!is.null(search) && button != 0) {
             if (!names) {
                 if (search == "protein") 
                     newFeat <- which(rownames(obj) == sRText)
@@ -395,7 +395,8 @@
                                          yrange[2]),
                                 dims = c(as.numeric(PCAn1),
                                          as.numeric(PCAn2))),
-                            col="black", cex=1.5)
+                                col=ifelse(fcolours == "none", "red", "black"), 
+                                cex=1.5)
         }
     }
 }
