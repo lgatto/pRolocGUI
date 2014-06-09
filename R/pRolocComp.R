@@ -60,16 +60,29 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
             ## reactive expression to forward indices to 
             ## plot2D, plotDist and tabs quantitation
             ## and feature meta-data
-            .searchInd <- reactive(NULL)
-        #     .searchInd <- reactive(
-        #         .sI(input$chooseIdenSearch, input$tagSelectList, .prot$text, 
-        #             .prot$PCA, .prot$plotDist, 
-        #             .whichFOI(obj, .pR_SR$foi, .whichN(), input$selObj))
-        #     )
+            .searchInd1 <- reactive(
+                .sI(cIS = input$chooseIdenSearch, 
+                    tagSelectList = input$tagSelectList, 
+                    protText = NULL, ##.prot$text, 
+                    protPCA = .computeInd(obj, .prot$PCA, ind = "object1"),
+                    protPlotDist = NULL, 
+                    protSearch = NULL) 
+            )
+            
+            .searchInd2 <- reactive(
+                .sI(cIS = input$chooseIdenSearch, 
+                    tagSelectList = input$tagSelectList, 
+                    protText = NULL, ##.prot$text, 
+                    protPCA = .computeInd(obj, .prot$PCA, ind = "object2"),
+                    protPlotDist = NULL, 
+                    protSearch = NULL) 
+            )
             
             ## Clear multiple points on click
             observe({
                 if (input$resetMult > 0) {
+                    .prot$PCA1 <- NULL
+                    .prot$PCA2 <- NULL
                     .prot$PCA <- NULL
                     .prot$plotDist <- NULL
                     .prot$text <- NULL
@@ -93,27 +106,38 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
             )
             
             ## vector with reactive values
-            .prot <- reactiveValues(PCA = NULL, plotDist = NULL, text = NULL)
+            .prot <- reactiveValues(PCA1 = NULL, PCA2 = NULL, PCA = NULL, plotDist = NULL, text = NULL)
             
             ## observe indices and concatenate to .prot$PCA, .prot$plotDist
             ## and .prot$text
             observe({
-                .prot$PCA <- .obsProtClick(
-                    .prot$PCA, minDist2dProt1PCA(), input$PCA1click)
-             #   .prot$PCA <- .obsProtClick(
-             #       .prot$PCA, minDist2dProt2PCA(), input$PCA2click)
+                .prot$PCA1 <- .obsProtClick(
+                    .prot$PCA1, minDist2dProt1PCA(), input$PCA1click)
+            })
+            observe({
+                .prot$PCA2 <- .obsProtClick(
+                    .prot$PCA2, minDist2dProt2PCA(), input$PCA2click)
+            })
+            observe({
+                .prot$PCA <- c(.prot$PCA1, .prot$PCA2)
+            })
+            observe({
                 .prot$plotDist <- .obsProtClick(
                     .prot$plotDist, .minDistProtPlotDist(), input$plotDistclick)
+            })
+            observe({
                 .prot$text <- .obsProtText(
                     obj, .prot$text, input$saveText, 
-                    input$sRTextInput, input$search, input$selObj)
+                    input$sRTextInput, input$search, input$selObj, names = TRUE)
             })
+            
+            
             ## END OF SEARCHING IMPLEMENTATION ##  
             
-           output$helpPCA <- renderText(c(.prot$PCA))
+            output$helpPCA <- renderText(c(.prot$text, input$saveText, isolate(input$sRTextInput), input$search, input$selObj))
             
             ## START: TAB PCA ##
-            ## colours
+            ## colours  
             .params <- reactiveValues(
                 colours = c("none", "none"), fcex = c(1, 1), 
                 symbol = c("none", "none"), 
@@ -122,8 +146,10 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
                             max(.vPCA(obj, 1, 2, "object1")[, 1])),
                 xrange2 = c(min(.vPCA(obj, 1, 2, "object2")[, 1]), 
                             max(.vPCA(obj, 1, 2, "object2")[, 1])),
-                yrange1 = c(min(.valuesPCA1()[, 2]), max(.valuesPCA1()[, 2])),
-                yrange2 = c(min(.valuesPCA2()[, 2]), max(.valuesPCA2()[, 2])),
+                yrange1 = c(min(.vPCA(obj, 1, 2, "object1")[, 2]), 
+                            max(.vPCA(obj, 1, 2, "object1")[, 2])),
+                yrange2 = c(min(.vPCA(obj, 1, 2, "object2")[, 2]), 
+                            max(.vPCA(obj, 1, 2, "object2")[, 2])),
                 legend = FALSE
             )
         
@@ -157,7 +183,6 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
                     isolate(.ind$params <- 1)
                 else
                     isolate(.ind$params <- 2)
-                    
             })
             
             ## values of PCA, dims is dependent on user input,
@@ -228,7 +253,7 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
                     PCAn2 = .params$PCAn2[1],
                     legend = input$legendyes, 
                     legendpos = input$legendpos,
-                    sI = .searchInd(),
+                    sI = .searchInd1(),
                     cIS = input$chooseIdenSearch,
                     ind = "object1" 
                 )
@@ -248,7 +273,7 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
                      PCAn2 = .params$PCAn2[2],
                      legend = input$legendyes, 
                      legendpos = input$legendpos,
-                     sI = .searchInd(),
+                     sI = .searchInd2(),
                      cIS = input$chooseIdenSearch,
                      ind = "object2"
                 )
