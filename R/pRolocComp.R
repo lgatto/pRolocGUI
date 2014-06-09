@@ -60,12 +60,12 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
             ## reactive expression to forward indices to 
             ## plot2D, plotDist and tabs quantitation
             ## and feature meta-data
-       #     .searchInd <- reactive(NULL)
-             .searchInd <- reactive(
-                 .sI(input$chooseIdenSearch, input$tagSelectList, .prot$text, 
-                     .prot$PCA, .prot$plotDist, 
-                     .whichFOI(obj, .pR_SR$foi, .whichN(), input$selObj))
-             )
+            .searchInd <- reactive(NULL)
+        #     .searchInd <- reactive(
+        #         .sI(input$chooseIdenSearch, input$tagSelectList, .prot$text, 
+        #             .prot$PCA, .prot$plotDist, 
+        #             .whichFOI(obj, .pR_SR$foi, .whichN(), input$selObj))
+        #     )
             
             ## Clear multiple points on click
             observe({
@@ -99,7 +99,9 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
             ## and .prot$text
             observe({
                 .prot$PCA <- .obsProtClick(
-                    .prot$PCA, minDist2dProtPCA(), input$PCA1click)
+                    .prot$PCA, minDist2dProt1PCA(), input$PCA1click)
+             #   .prot$PCA <- .obsProtClick(
+             #       .prot$PCA, minDist2dProt2PCA(), input$PCA2click)
                 .prot$plotDist <- .obsProtClick(
                     .prot$plotDist, .minDistProtPlotDist(), input$plotDistclick)
                 .prot$text <- .obsProtText(
@@ -108,7 +110,7 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
             })
             ## END OF SEARCHING IMPLEMENTATION ##  
             
-           output$helpPCA <- renderText(c(input$PCA1hover$x, input$PCA1hover$y))
+           output$helpPCA <- renderText(c(.prot$PCA))
             
             ## START: TAB PCA ##
             ## colours
@@ -116,6 +118,12 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
                 colours = c("none", "none"), fcex = c(1, 1), 
                 symbol = c("none", "none"), 
                 PCAn1 = c(1, 1), PCAn2 = c(2, 2),
+                xrange1 = c(min(.vPCA(obj, 1, 2, "object1")[, 1]), 
+                            max(.vPCA(obj, 1, 2, "object1")[, 1])),
+                xrange2 = c(min(.vPCA(obj, 1, 2, "object2")[, 1]), 
+                            max(.vPCA(obj, 1, 2, "object2")[, 1])),
+                yrange1 = c(min(.valuesPCA1()[, 2]), max(.valuesPCA1()[, 2])),
+                yrange2 = c(min(.valuesPCA2()[, 2]), max(.valuesPCA2()[, 2])),
                 legend = FALSE
             )
         
@@ -132,6 +140,14 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
                     .params$symbol[.ind$params] <- input$fsymboltype}
                 if (!is.null(input$legendyes)) {
                     .params$legend <- input$legendyes}
+                if (!is.null(input$xrange1) && !is.null(input$yrange1)) {
+                    .params$xrange1 <- input$xrange1
+                    .params$yrange1 <- input$yrange1
+                }
+                if (!is.null(input$xrange2) && !is.null(input$yrange2)) {
+                    .params$xrange2 <- input$xrange2
+                    .params$yrange2 <- input$yrange2
+                }
             })
         
             ## reactive Values for object selected
@@ -146,8 +162,11 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
             
             ## values of PCA, dims is dependent on user input,
             ## so is xlim and ylim
-            .valuesPCA <- reactive(.vPCA(obj, .params$PCAn1[.ind$params], 
-                                    .params$PCAn2[.ind$params], input$selObj))
+            .valuesPCA1 <- reactive(.vPCA(obj, .params$PCAn1[1], 
+                                    .params$PCAn2[1], "object1"))
+       
+            .valuesPCA2 <- reactive(.vPCA(obj, .params$PCAn1[2], 
+                                          .params$PCAn2[2], "object2"))
                        
             ## selectInput for colours
             output$fcoloursOutput <- renderUI({ 
@@ -178,9 +197,14 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
             )
             
             ## zoom function: parameters for x- and y-range for PCA plot
-            output$xrangeUI <- renderUI(.rangePCA(.valuesPCA(), 1))  
-        
-            output$yrangeUI <- renderUI(.rangePCA(.valuesPCA(), 1))
+            output$xrange1UI <- renderUI(if (input$selObj == "object1")
+                .rangePCA(.valuesPCA1(), 1, "xrange1"))  
+            output$xrange2UI <- renderUI(if (input$selObj == "object2")
+                .rangePCA(.valuesPCA2(), 1, "xrange2"))
+            output$yrange1UI <- renderUI(if (input$selObj == "object1")
+                .rangePCA(.valuesPCA1(), 2, "yrange1"))
+            output$yrange2UI <- renderUI(if (input$selObj == "object2")
+                .rangePCA(.valuesPCA2(), 2, "yrange2"))
             
             ## legend
             output$PCALegendUI <- renderUI(
@@ -197,8 +221,8 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
                 .plotPCA(obj = obj, 
                     fcolours = .params$colours[1], 
                     fcex = .params$fcex[1],
-                    xrange = input$xrange,
-                    yrange = input$yrange,
+                    xrange = .params$xrange1,
+                    yrange = .params$yrange1,
                     sb = .params$symbol[1],
                     PCAn1 = .params$PCAn1[1],
                     PCAn2 = .params$PCAn2[1],
@@ -210,12 +234,15 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
                 )
             )
             
+            ## display 2D-nearest protein for obj1 in PCA plot
+            output$hoverProt1PCA <- renderText(minDist2dProt1PCAHover())
+            
             output$PCA2 <- renderPlot(
                 .plotPCA(obj = obj, 
                      fcolours = .params$colours[2], 
                      fcex = .params$fcex[2],
-                     xrange = input$xrange,
-                     yrange = input$yrange,
+                     xrange = .params$xrange2,
+                     yrange = .params$yrange2,
                      sb = .params$symbol[2],
                      PCAn1 = .params$PCAn1[2],
                      PCAn2 = .params$PCAn2[2],
@@ -226,19 +253,61 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
                      ind = "object2"
                 )
             )
-       
-            minDist2dProtPCA <- reactive(
+            
+            ## display 2D-nearest protein for obj2 in PCA plot
+            output$hoverProt2PCA <- renderText(minDist2dProt2PCAHover())
+            
+            ## compute name of 2D-nearest protein for obj1 in PCA plot (click)
+            minDist2dProt1PCA <- reactive(
                 ## will be empty initially
-                if (!is.null(input$PCA1click) && !is.null(.valuesPCA())) {
+                if (!is.null(input$PCA1click) && !is.null(.valuesPCA1())) {
                     ## compute 2D distances from click input to each component 
-                    ## of the PCA plot, input$PCAclick$x and input$PCAclick$y
-                    ## is user input (index will be returned)
+                    ## of the PCA plot, input$PCAclick1$x and input$PCAclick1$y
+                    ## is user input (name will be returned)
                     .minDistPCA(inputx = input$PCA1click$x, 
                            inputy = input$PCA1click$y,
-                           valuesx = .valuesPCA()[,1],
-                           valuesy = .valuesPCA()[,2])
-           }
-       )
+                           valuesx = .valuesPCA1()[,1],
+                           valuesy = .valuesPCA1()[,2],
+                           name = TRUE)
+                }
+            )
+            
+            ## compute name of 2D-nearest protein for obj1 in PCA plot (hover)
+            minDist2dProt1PCAHover <- reactive(
+                if (!is.null(input$PCA1hover) && !is.null(.valuesPCA1())) {
+                    .minDistPCA(inputx = input$PCA1hover$x, 
+                            inputy = input$PCA1hover$y,
+                            valuesx = .valuesPCA1()[,1], 
+                            valuesy = .valuesPCA1()[,2],
+                            name = TRUE)
+                }
+            )
+                
+            ## compute name of 2D-nearest protein for obj2 in PCA plot (click)
+            minDist2dProt2PCA <- reactive(
+            ## will be empty initially
+                if (!is.null(input$PCA2click) && !is.null(.valuesPCA2())) {
+                ## compute 2D distances from click input to each component 
+                ## of the PCA plot, input$PCAclick2$x and input$PCAclick2$y
+                ## is user input (name will be returned)
+                .minDistPCA(inputx = input$PCA2click$x, 
+                            inputy = input$PCA2click$y,
+                            valuesx = .valuesPCA2()[,1],
+                            valuesy = .valuesPCA2()[,2],
+                            name = TRUE)
+                }
+            )
+            
+            ## compute name of 2D-nearest protein for obj2 in PCA plot (hover)
+            minDist2dProt2PCAHover <- reactive(
+                if (!is.null(input$PCA2hover) && !is.null(.valuesPCA2())) {
+                    .minDistPCA(inputx = input$PCA2hover$x, 
+                            inputy = input$PCA2hover$y,
+                            valuesx = .valuesPCA2()[,1], 
+                            valuesy = .valuesPCA2()[,2],
+                            name = TRUE)
+                }
+            )
             ## END: TAB PCA ## 
             
         }
