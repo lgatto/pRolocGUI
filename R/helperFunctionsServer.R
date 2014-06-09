@@ -65,6 +65,16 @@
     return(ans)
 }
 
+## A function to compute indices from feature names
+.computeInd <- function(obj, fnames, ind = c("object1", "object2")) {
+    ind <- match.arg(ind)
+    obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
+    ans <- match(fnames, rownames(obj))
+    if (NA %in% ans)
+        ans <- ans[-which(is.na(ans))]
+    return(ans)
+}
+
 ## A function to forward indices of selected features to several 
 ## reactive expressions
 .sI <- function(cIS, tagSelectList, protText, 
@@ -105,21 +115,33 @@
 }
 
 .obsProtText <- function(obj, protText, button, 
-                         sRTextInput, search, ind = c("object1", "object2")) {
+            sRTextInput, search, ind = c("object1", "object2"), names = FALSE) {
     if (length(obj) != 0) {
         ind <- match.arg(ind)
         obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
-        sRText <- isolate(sRTextInput)
+        if (button == 0)
+            sRText <- sRTextInput
+        else
+            sRText <- isolate(sRTextInput)
+        
         if (!is.null(search)) {
-            if (search == "protein")
-                newInd <- which(rownames(obj) == sRText)
-            else 
-                newInd <- which(fData(obj)[search] == sRText)
-            if (!is.null(newInd)) {
-                if (button > 0 && length(newInd > 0))
+            if (!names) {
+                if (search == "protein") 
+                    newFeat <- which(rownames(obj) == sRText)
+                else 
+                    newFeat <- which(fData(obj)[search] == sRText)
+            } else {
+                if (search == "protein") 
+                    newFeat <- sRText
+                else 
+                    newFeat <- rownames(obj)[which(fData(obj)[search] == sRText)]
+            }
+               
+            if (!is.null(newFeat)) {
+                if (button > 0 && length(newFeat > 0)) 
                     isolate({
                         button
-                        protText <- isolate(c(protText, newInd))
+                        protText <- isolate(c(protText, newFeat))
                     })
             }
         }
