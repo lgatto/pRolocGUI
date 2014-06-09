@@ -286,6 +286,13 @@ pRolocVis <- function(object = NULL) {
                     .sRsubset(.dI(), input$search, input$levelSearch)
             )
             
+            output$saveTextUI <- renderUI(
+                if (!is.null(.dI()) && !is.null(input$search))
+                if (!.checkFeatText(.dI(), .prot$text, input$sRTextInput, input$search))
+                    actionButton("saveText", "Submit selection")
+            )
+            
+            
             ## vector with reactive values
             .prot <- reactiveValues(PCA = NULL, plotDist = NULL, text = NULL)
             
@@ -298,7 +305,7 @@ pRolocVis <- function(object = NULL) {
                         .prot$plotDist, .minDistProtPlotDist(), input$plotDistclick)
                     .prot$text <- .obsProtText(
                         .dI(), .prot$text, input$saveText, 
-                        input$sRTextInput, input$search)
+                        isolate(input$sRTextInput), input$search)
             })
             ## END OF SEARCHING IMPLEMENTATION ##  
                         
