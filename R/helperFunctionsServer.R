@@ -248,11 +248,11 @@
 }
 
 ## UI for xrange or yrange (zoom)
-.rangePCA <- function(valuesPCA, col) {
+.rangePCA <- function(valuesPCA, col, id = "xrange") {
     if(!is.null(valuesPCA))
         ## get max and min values of first principal component
         ## create a range slider
-        sliderInput(ifelse(col == 1, "xrange", "yrange"),
+        sliderInput(id,
                     ifelse(col == 1, "zoom x-axis", "zoom y-axis"),
                     min = min(valuesPCA[, col]) - 1,
                     max = max(valuesPCA[, col]) + 1,
