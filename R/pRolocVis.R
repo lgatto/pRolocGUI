@@ -38,7 +38,7 @@ pRolocVis <- function(object = NULL) {
                         .pR_tags(), 
                         .pR_condDisplaySelection(),
                         .pR_condTabData(),
-                        .pR_condTabPCA(),
+                        .pRn1_condTabPCA(),
                         .pR_condTabProteinProfiles(),
                         .pR_condTabQuantitation(),
                         .pR_condTabfData(),
@@ -50,7 +50,7 @@ pRolocVis <- function(object = NULL) {
                     mainPanel(
                         tabsetPanel(
                             .pR_tabPanelData(),
-                            .pR_tabPanelPCA(),
+                            .pRn1_tabPanelPCA(),
                             .pR_tabPanelProteinProfiles(),
                             .pR_tabPanelQuantitation(),
                             .pR_tabPanelfData(),
@@ -261,16 +261,20 @@ pRolocVis <- function(object = NULL) {
                         .whichFOI(.dI(), .pR_SR$foi, .whichN()))
             )
             
+            ## reset button
+            output$resetMultUI <- renderUI(.reset(.searchInd()))
+            
             ## Clear multiple points on click
             observe({
-                if (input$resetMult > 0) {
-                    .prot$PCA <- NULL
-                    .prot$plotDist <- NULL
-                    .prot$text <- NULL
-                    dSelect$PCA <- NULL
-                    dSelect$plotDist <- NULL
-                    dSelect$text <- NULL
-                }
+                if (!is.null(input$resetMult))
+                    if (input$resetMult > 0) {
+                        .prot$PCA <- NULL
+                        .prot$plotDist <- NULL
+                        .prot$text <- NULL
+                        dSelect$PCA <- NULL
+                        dSelect$plotDist <- NULL
+                        dSelect$text <- NULL
+                    }
             })
             
             ## text-based search: protein und fvarLabels
@@ -300,14 +304,26 @@ pRolocVis <- function(object = NULL) {
             ## observe indices and concatenate to .prot$PCA, .prot$plotDist
             ## and .prot$text
             observe({
+                isolate({
                     .prot$PCA <- .obsProtClick(
                         .prot$PCA, minDist2dProtPCA(), input$PCAclick)
-                    .prot$plotDist <- .obsProtClick(.prot$plotDist, 
-                        .minDistProtPlotDist(), input$plotDistclick)
-                    .prot$text <- .obsProtText(
+                })
+                .prot$plotDist <- .obsProtClick(.prot$plotDist, 
+                            .minDistProtPlotDist(), input$plotDistclick)
+                .prot$text <- .obsProtText(
                         .dI(), .prot$text, input$saveText, 
                         isolate(input$sRTextInput), input$search)
+                    
             })
+            
+#             observe({
+#                 
+#             })
+#             
+#             observe({
+#                     input$saveText
+#                     
+#             })
             ## END OF SEARCHING IMPLEMENTATION ##  
                         
 
@@ -458,6 +474,7 @@ pRolocVis <- function(object = NULL) {
                                 org = .listParams$levPlotDistOrg[1],
                                 inputx = input$plotDistclick$x,
                                 inputy = input$plotDistclick$y,
+                                name = FALSE
                     )
                 }
             )
@@ -472,13 +489,14 @@ pRolocVis <- function(object = NULL) {
                                 marker = .listParams$levPlotDist[1],
                                 org = .listParams$levPlotDistOrg[1],
                                 inputx = input$plotDisthover$x,
-                                inputy = input$plotDisthover$y
+                                inputy = input$plotDisthover$y,
+                                name = TRUE
                         )
                 }
             })
             
             output$hoverProtPlotDistUI <- renderText(
-                    featureNames(.dI()[[1]])[.minDistProtPlotDistHover()]
+                    .minDistProtPlotDistHover()
             )
             
             ## for Plot/Download button (needs a reactive expression)
@@ -503,10 +521,14 @@ pRolocVis <- function(object = NULL) {
             output$organelleAllUI <- renderUI(
                 .flevelPlotDist(.organelleAllName(), input$fNamesplDist)
             )
-                
+            
+            ## UI for quanity of plots to plot
+            output$quantityPlotDistUI <- renderUI(.quantPlotDist(1:8, 1))
+            
             ## UI for number of plots to plot            
             output$numberPlotDistUI <- renderUI(
-                .numPlotDist(input$quantityPlotDist)
+                if (!is.null(input$quantityPlotDist))
+                    .numPlotDist(input$quantityPlotDist)
             )
             
             ## renderPlot plotDist and assign parameters

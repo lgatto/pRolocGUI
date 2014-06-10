@@ -50,34 +50,18 @@
             dtext <- "text"
         else
             dtext <- dtext
-        isolate({
-            resetMult
-            if (resetMult > 0 && length(protText) < 1)
-                dtext <- NULL
-        })
+        
+        if (!is.null(resetMult)) {
+            isolate({
+                resetMult
+                if (resetMult > 0 && length(protText) < 1)
+                    dtext <- NULL
+            })
+        }
         ans <- unique(dtext)
         return(ans)
     
     }}
-#     if (is.null(saveText) || saveText == 0)
-#         dtext <- NULL
-#     else  {
-#         dtext <- NULL
-#         isolate({
-#             isolate(saveText)
-#             if (saveText > 0)
-#                 dtext <- "text"
-#         })
-#         
-#         isolate({
-#             resetMult
-#             if (resetMult > 0 && length(protText) < 1)
-#                 dtext <- NULL
-#         })      
-#     }
-#     ans <- unique(dtext)
-#     return(ans)
-#}
 
 ## A function to compute indices from feature names
 .computeInd <- function(obj, fnames, ind = c("object1", "object2")) {
@@ -153,16 +137,9 @@
 .obsProtText <- function(obj, protText, button, 
                          sRText, search, ind = c("object1", "object2"), names = FALSE) {
     if (length(obj) != 0 && !is.null(button)) {        
-        
-#         if (!.checkFeatText(obj, protText, sRText, search, ind, names))
-#             add <- 1
-#         else 
-#             add <- 0
-            
+                    
         ind <- match.arg(ind)
-    
         obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
-        
         
         if (!is.null(search)) {
             if (!names) {
@@ -176,16 +153,12 @@
                 else 
                     newFeat <- rownames(obj)[which(fData(obj)[search] == sRText)]
             }
-            
             if (!is.null(newFeat)) {
                 if (button == 1 && length(newFeat > 0))## && add == 1) 
                     isolate({
                         protText <- isolate(c(protText, isolate(newFeat)))
-                
                     })
             }
-       
-        
         }
         return(unique(protText))
     }
@@ -237,6 +210,13 @@
                         choices = results)
     else
         return("not found")
+}
+
+## reset Button
+.reset <- function(ind1, ind2 = NULL) {
+    if (!is.null(ind1) || !is.null(ind2))
+        if (length(ind1) > 0 || length(ind2) > 0)
+            actionButton("resetMult", "Clear features")
 }
 ## END: Display selection ##
 
@@ -445,6 +425,12 @@
 ## END: TAB PCA ## 
 
 ## START: TAB protein profiles ##
+
+.quantPlotDist <- function(choices, sel) {
+    selectInput("quantityPlotDist", "number of plots to display",
+        choices = choices, selected = sel)
+}
+
 .nC <- function(numberPlotDist, quantityPlotDist) {
     if (quantityPlotDist == "1")
         1
