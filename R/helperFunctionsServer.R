@@ -29,18 +29,22 @@
 ## A helper function to select the checkbox of "PCA" or "protein profiles" 
 ## in the Display selection widget, used in observer for assigning to 
 ## dSelect$PCA or dSelect$plotDist
-.selClick <- function(dBox, click, prot, PCA) {
-    if (is.null(click) || is.null(prot))
-        dBox <- NULL
-    else {
+.selClick <- function(dBox, click1, prot, PCA, click2 = NULL) {
+    if (!is.null(click1) || !is.null(click2)) {
         isolate({
-            click
+            click1
+            click2
             dBox <- ifelse(PCA, "mousePCA", "mousePlotDist")
         })
-    }
+    } else
+        dBox <- NULL
+    if (is.null(prot))
+        dBox <- NULL
     ans <- unique(dBox)
     return(ans)
 }
+
+
 
 ## A helper function to select the checkbox of "query" in the 
 ## Display selection widget, used in observer for assigning to dSelect$text
@@ -60,8 +64,8 @@
         }
         ans <- unique(dtext)
         return(ans)
-    
-    }}
+    }
+}
 
 ## A function to compute indices from feature names
 .computeInd <- function(obj, fnames, ind = c("object1", "object2")) {

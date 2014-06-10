@@ -43,13 +43,16 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
             dSelect <- reactiveValues(PCA = NULL, plotDist = NULL, text = NULL)
             
             observe({
-                dSelect$PCA <- .selClick(
-                    dSelect$PCA, input$PCA1click, .prot$PCA, TRUE
-                )
-                dSelect$plotDist <- .selClick(
-                    dSelect$plotDist, input$plotDistclick, 
-                    .prot$plotDist, FALSE
-                )
+                dSelect$PCA <- .selClick(dSelect$PCA, input$PCA1click, 
+                        .prot$PCA, TRUE, input$PCA2click)
+            })
+
+            
+             observe({
+#                 dSelect$plotDist <- .selClick(
+#                     dSelect$plotDist, input$plotDistclick, 
+#                     .prot$plotDist, FALSE
+#                 )
                 dSelect$text <- .selText(
                     dSelect$text, input$saveText, input$resetMult, 
                     .prot$text
@@ -84,16 +87,17 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
             
             ## Clear multiple points on click
             observe({
-                if (input$resetMult > 0) {
-                    .prot$PCA1 <- NULL
-                    .prot$PCA2 <- NULL
-                    .prot$PCA <- NULL
-                    .prot$plotDist <- NULL
-                    .prot$text <- NULL
-                    dSelect$PCA <- NULL
-                    dSelect$plotDist <- NULL
-                    dSelect$text <- NULL
-                }
+                if (!is.null(input$resetMult))
+                    if (input$resetMult > 0) {
+                        .prot$PCA1 <- NULL
+                        .prot$PCA2 <- NULL
+                        .prot$PCA <- NULL
+                        .prot$plotDist <- NULL
+                        .prot$text <- NULL
+                        dSelect$PCA <- NULL
+                        dSelect$plotDist <- NULL
+                        dSelect$text <- NULL
+                    }
             })
             
             ## action button to submit
@@ -103,6 +107,9 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
                                 input$search, input$selObj, name = TRUE))
                         actionButton("saveText", "Submit selection")
             )
+            
+            ## reset button
+            output$resetMultUI <- renderUI(.reset(.searchInd1(), .searchInd2()))
             
             ## text-based search: protein und fvarLabels
             output$searchUI <- renderUI(.selVarText(obj, input$selObj))
@@ -133,7 +140,7 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
                     .prot$PCA2, minDist2dProt2PCA(), input$PCA2click)
             })
             observe({
-                .prot$PCA <- c(unique(.prot$PCA1, .prot$PCA2))
+                .prot$PCA <- c(.prot$PCA1, .prot$PCA2)
             })
             observe({
                 .prot$plotDist <- .obsProtClick(
@@ -151,7 +158,7 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
         
             ## END OF SEARCHING IMPLEMENTATION ##  
             
-            output$helpPCA <- renderText(c(.prot$text, input$saveText))
+            output$helpPCA <- renderText(c(.prot$PCA))
             
             ## START: TAB PCA ##
             ## colours  
@@ -208,7 +215,7 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
                                     .params$PCAn2[1], "object1"))
        
             .valuesPCA2 <- reactive(.vPCA(obj, .params$PCAn1[2], 
-                                          .params$PCAn2[2], "object2"))
+                                    .params$PCAn2[2], "object2"))
                        
             ## selectInput for colours
             output$fcoloursOutput <- renderUI({ 
@@ -332,7 +339,7 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
                 ## compute 2D distances from click input to each component 
                 ## of the PCA plot, input$PCAclick2$x and input$PCAclick2$y
                 ## is user input (name will be returned)
-                .minDistPCA(inputx = input$PCA2click$x, 
+                    .minDistPCA(inputx = input$PCA2click$x, 
                             inputy = input$PCA2click$y,
                             valuesx = .valuesPCA2()[,1],
                             valuesy = .valuesPCA2()[,2],
