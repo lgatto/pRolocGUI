@@ -51,7 +51,7 @@ pRolocVis <- function(object = NULL) {
                         tabsetPanel(
                             .pR_tabPanelData(),
                             .pRn1_tabPanelPCA(),
-                            .pR_tabPanelProteinProfiles(),
+                            .pRn1_tabPanelProteinProfiles(),
                             .pR_tabPanelQuantitation(),
                             .pR_tabPanelfData(),
                             .pR_tabPanelpData(),
