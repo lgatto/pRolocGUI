@@ -28,7 +28,7 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
                     mainPanel(
                         tabsetPanel(
                             .pRn2_tabPanelPCA(),
-                            .pR_tabPanelProteinProfiles(),
+                            .pRn2_tabPanelProteinProfiles(),
                             id = "tab1" 
                         ),
                         width = 9
@@ -48,11 +48,13 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
             })
 
             
-             observe({
+#             observe({
 #                 dSelect$plotDist <- .selClick(
 #                     dSelect$plotDist, input$plotDistclick, 
 #                     .prot$plotDist, FALSE
 #                 )
+#           })
+            observe({
                 dSelect$text <- .selText(
                     dSelect$text, input$saveText, input$resetMult, 
                     .prot$text
@@ -358,6 +360,171 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
                 }
             )
             ## END: TAB PCA ## 
+
+
+
+            ## START: TAB PLOTDIST ##
+            
+            output$helpPlDist <- renderText(c(.nCol(), 
+                                        .listParams$levPlotDist1, 
+                                        .listParams$levPlotDistOrg1, 
+                                        .listParams$levPlotDist2, 
+                                        .listParams$levPlotDistOrg2))
+            
+            ## Index of element in list where parameters are stored
+            .nCol <- reactive(.nC(input$numberPlotDist, input$quantityPlotDist))
+
+            ## list where parameters for plot are stored
+            ## create a list with reactive values
+            .listParams <- reactiveValues(
+                                levPlotDist1 = "all", levPlotDist2 = "all",
+                                levPlotDistOrg1 = "all", levPlotDistOrg2 = "all"
+            )
+
+            ## write paramters to list for plotDist at index of .nCol()
+            observe({
+                if (!is.null(input$selObj) && !is.null(input$organelleAll) &&
+                        !is.null(input$fNamesplDist)) {
+                    if (input$selObj == "object1") {
+                        .listParams$levPlotDist1[.nCol()] <- 
+                                input$fNamesplDist
+                        .listParams$levPlotDistOrg1[.nCol()] <- 
+                                input$organelleAll
+                    } else {
+                        .listParams$levPlotDist2[.nCol()] <- 
+                                input$fNamesplDist
+                        .listParams$levPlotDistOrg2[.nCol()] <- 
+                                input$organelleAll
+                    }
+                }
+            })
+
+            ## calculate protein nearest to user input (click)
+            .minPlotDist1 <- reactive(
+                if (length(obj) != 0 && !is.null(input$plotDist1click)) { 
+                    if (input$plotDist1click$x < (nrow(pData(obj[[1]])) + .3) &&
+                        input$plotDist1click$x > 0.5 &&
+                            !is.null(input$quantityPlotDist) && 
+                                input$quantityPlotDist == "1")
+                    .minDistPlotDist(obj = obj, 
+                            marker = .listParams$levPlotDist1[1],
+                            org = .listParams$levPlotDistOrg1[1],
+                            inputx = input$plotDist1click$x,
+                            inputy = input$plotDist1click$y,
+                            ind = input$selObj,
+                            name = FALSE
+                    )
+                }
+            )
+
+            .minPlotDist2 <- reactive(
+                if (length(obj) != 0 && !is.null(input$plotDist2click)) { 
+                    if (input$plotDist2click$x < (nrow(pData(obj[[1]])) + .3) &&
+                        input$plotDist2click$x > 0.5 &&
+                            !is.null(input$quantityPlotDist) && 
+                                input$quantityPlotDist == "1")
+                        .minDistPlotDist(obj = obj, 
+                            marker = .listParams$levPlotDist2[1],
+                            org = .listParams$levPlotDistOrg2[1],
+                            inputx = input$plotDist2click$x,
+                            inputy = input$plotDist2click$y,
+                            ind = input$selObj,
+                            name = FALSE
+                        )
+                }
+            )
+            
+            ## calculate protein nearest to user input (hover) and display name 
+            ## in tabPanel
+            minPlotDist1Hover <- reactive({
+                if (length(obj) != 0 && !is.null(input$plotDist1hover$x)) {
+                    if (input$plotDist1hover$x < (nrow(pData(obj[[1]])) + .3) &&
+                        input$plotDist1hover$x > 0.5 && 
+                            !is.null(input$quantityPlotDist) && 
+                                input$quantityPlotDist == "1") 
+                        .minDistPlotDist(obj = obj,
+                            marker = .listParams$levPlotDist1[1],
+                            org = .listParams$levPlotDistOrg1[1],
+                            inputx = input$plotDist1hover$x,
+                            inputy = input$plotDist1hover$y,
+                            ind = "object1",
+                            name = TRUE)[1]
+                }
+            })
+
+            output$hoverPlotDist1 <- renderText(minPlotDist1Hover())
+
+            minPlotDist2Hover <- reactive({
+                if (length(obj) != 0 && !is.null(input$plotDist2hover$x)) {
+                    if (input$plotDist2hover$x < (nrow(pData(obj[[2]])) + .3) &&
+                        input$plotDist2hover$x > 0.5 && 
+                            !is.null(input$quantityPlotDist) && 
+                            input$quantityPlotDist == "1") 
+                    .minDistPlotDist(obj = obj,
+                            marker = .listParams$levPlotDist2[1],
+                            org = .listParams$levPlotDistOrg2[1],
+                            inputx = input$plotDist2hover$x,
+                            inputy = input$plotDist2hover$y,
+                            ind = "object1",
+                            name = TRUE)[1]
+                }
+            })
+
+            output$hoverPlotDist2 <- renderText(minPlotDist2Hover())
+
+# ## for Plot/Download button (needs a reactive expression)
+# .plotDistReac <- reactive(
+#     .plotPlotDist(obj = .dI(), 
+#                   levPlotDist = .listParams$levPlotDist,
+#                   levPlotDistOrg = .listParams$levPlotDistOrg,
+#                   quantity = input$quantityPlotDist,
+#                   sI = .searchInd()
+#     )
+# )
+
+            ## levels for plotDist to choose to plot
+            .organelleAllName <- reactive(
+                .orgName(obj, input$fNamesplDist, input$selObj))             
+
+            ## select fvarLabels or "all" for all features UI    
+            output$allOrganellesUI <- renderUI(
+                .featuresPlotDist(obj, input$selObj))
+
+            ## UI for feature levels in fvarLabels or "all"
+            output$organelleAllUI <- renderUI(
+                .flevelPlotDist(.organelleAllName(), input$fNamesplDist))
+
+            ## UI for quantity of plots to plot
+            output$quantityPlotDistUI <- renderUI(.quantPlotDist(c(1:2), 1))
+
+            ## UI for number of plots to plot            
+            output$numberPlotDistUI <- renderUI(
+                if (!is.null(input$quantityPlotDist))
+                    .numPlotDist(input$quantityPlotDist)
+            )
+
+            ## plots
+            output$plotDist1UI <- renderPlot(
+                .plotPlotDist(obj = obj, 
+                    levPlotDist = .listParams$levPlotDist1,
+                    levPlotDistOrg = .listParams$levPlotDistOrg1,
+                    quantity = input$quantityPlotDist,
+                    sI = .searchInd1(),
+                    ind = "object1"
+                )
+            )
+
+            output$plotDist2UI <- renderPlot(
+                .plotPlotDist(obj = obj, 
+                    levPlotDist = .listParams$levPlotDist2,
+                    levPlotDistOrg = .listParams$levPlotDistOrg2,
+                    quantity = input$quantityPlotDist,
+                    sI = .searchInd2(),
+                    ind = "object2"
+                )
+            )
+            
+            ## END: TAB PLOTDIST ## 
             
         }
     )
