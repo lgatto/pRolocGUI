@@ -622,14 +622,16 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
 
             ## create reactiveValues for new features of Interest
             .newfoi <- reactiveValues(ind = NULL)
-
+            
+            .unionFeat <- reactive(.sI(cIS = input$chooseIdenSearch, input$tagSelectList, 
+                                       .prot$text, .prot$PCA, .prot$plotDist,  
+                                       .fnamesFOI(.pR_SR$foi)[[.whichN()]]))
             observe({
-                .newfoi$ind <- .obsNewFoI(
-                    obj, .searchInd1(), 
-                    input$savedSearchText, input$saveLists2SR
-                )
+                .newfoi$ind <- .obsNewFoI(obj, .unionFeat(),            
+                                    input$savedSearchText, 
+                                    input$saveLists2SR, "object1", FALSE)
                 .pR_SR$foi <- .obsSavedSearch(
-                    .pR_SR$foi, .newfoi$ind, .searchInd1(), 
+                    .pR_SR$foi, .newfoi$ind, .unionFeat(), 
                     input$saveLists2SR, input$savedSearchText
                 )
             }) 
@@ -656,7 +658,7 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
 
             ## action button to save new FoIs
             output$saveLists2SRUI <- renderUI(
-                .buttonSearch(.pR_SR$foi, .searchInd1(), input$savedSearchText)
+                .buttonSearch(.pR_SR$foi, .unionFeat(), input$savedSearchText)
             )
             ### END: SEARCH ###
 

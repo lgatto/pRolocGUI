@@ -138,8 +138,8 @@
 }
 
 
-.obsProtText <- function(obj, protText, button, 
-                         sRText, search, ind = c("object1", "object2"), names = FALSE) {
+.obsProtText <- function(obj, protText, button, sRText, search, 
+                         ind = c("object1", "object2"), names = FALSE) {
     if (length(obj) != 0 && !is.null(button)) {        
                     
         ind <- match.arg(ind)
@@ -158,7 +158,7 @@
                     newFeat <- rownames(obj)[which(fData(obj)[search] == sRText)]
             }
             if (!is.null(newFeat)) {
-                if (button == 1 && length(newFeat > 0))## && add == 1) 
+                if (button == 1 && length(newFeat > 0)) 
                     isolate({
                         protText <- isolate(c(protText, isolate(newFeat)))
                     })
@@ -493,7 +493,7 @@
         ind <- match.arg(ind)
         obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
     
-        if (!is.null(levPlotDist) &&
+        if (!is.null(levPlotDist) && !is.null(quantity) && 
                 !(is.null(levPlotDistOrg))) {
         
             if (as.numeric(quantity) %% 2 == 0)
@@ -610,7 +610,7 @@
     if (length(obj) != 0) {
         ind <- match.arg(ind)
         obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
-        if (names)
+        if (name)
             ans <- .fnamesFOI(coll)[[index]]
         else
             ans <- which((match(rownames(obj), .fnamesFOI(coll)[[index]])) != NA)
@@ -644,22 +644,24 @@
 }
 
 ## helper function to create new features 
-.obsNewFoI <- function(obj, indices, descr, 
-                       button, ind = c("object1", "object2")) {
+.obsNewFoI <- function(obj, feat, descr, button, 
+                       ind = c("object1", "object2"), indtrace = TRUE) {
     if (length(obj) != 0) {
         ind <- match.arg(ind)
         obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
         button
-        sI <- isolate(indices)
+        sI <- isolate(feat)
         searchText <- isolate(descr)
         dataInput <- isolate(obj)
         if (!is.null(searchText)
             && !is.null(dataInput)
                 && !is.null(sI)) {
-            ans <- FeaturesOfInterest(
-                description = searchText,
-                fnames = featureNames(dataInput)[sI],
-                object = dataInput)
+            if (indtrace)
+                ans <- FeaturesOfInterest(description = searchText,
+                            fnames = featureNames(dataInput)[sI],
+                            object = dataInput)
+            else
+                ans <- FeaturesOfInterest(description = searchText, fnames = sI)
             return(ans)
         }
     }
