@@ -18,6 +18,7 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
                     ## Sidebar Panel
                     sidebarPanel(
                         .pR_condDisplaySelection(),
+                        .pRn2_selObj(),
                         .pRn2_condTabPCA(),
                         width = 3
                         ),
@@ -96,8 +97,10 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
             
             
             output$saveTextUI <- renderUI(
-                if (!.checkFeatText(obj, .prot$text, input$sRTextInput, input$search, input$selObj, name = TRUE))
-                    actionButton("saveText", "Submit selection")
+                if (!is.null(input$search))
+                    if (!.checkFeatText(obj, .prot$text, input$sRTextInput, 
+                                input$search, input$selObj, name = TRUE))
+                        actionButton("saveText", "Submit selection")
             )
             
             ## text-based search: protein und fvarLabels
@@ -136,32 +139,15 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
                     .prot$plotDist, .minDistProtPlotDist(), input$plotDistclick)
             })
             
-            
-            
-            
             observe({
                 if (!is.null(input$saveText)) {
                     .prot$text <- .obsProtText(
                         obj, .prot$text, input$saveText, 
                         isolate(input$sRTextInput), isolate(input$search), 
                         isolate(input$selObj), names = TRUE)
-                
-                   
-                
-            #    })
-#                 else 
-#                     .prot$text2 <- .obsProtText(
-#                         obj, .prot$text2, input$saveText, 
-#                         input$sRTextInput, input$search, "object2", names = TRUE)
-            }})
-            
-#             observe({
-#                 .prot$text2 <- .obsProtText(
-#                     obj, .prot$text2, input$saveText, 
-#                     input$sRTextInput, input$search, "object2", names = TRUE)
-#             })
-         #   observe({.prot$text <- c(unique(.prot$text1, .prot$text2))})
-            
+                }
+            })
+        
             ## END OF SEARCHING IMPLEMENTATION ##  
             
             output$helpPCA <- renderText(c(.prot$text, input$saveText))

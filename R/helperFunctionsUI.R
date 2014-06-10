@@ -52,7 +52,7 @@
             htmlOutput("searchResultsUI"),
             ## action Button to add selected levels 
             ## to internal assignment concerning query search
-            actionButton("saveText", "Submit selection"),
+            htmlOutput("saveTextUI"),
             tags$hr(),
             ## action Button to delete internal assignments
             actionButton("resetMult", "Clear features"),
@@ -97,7 +97,15 @@
             htmlOutput("yrangeUI"),
             ## link to help page
             htmlOutput("linkPCAUI")
+            
         )
+    )
+}
+
+.pRn2_selObj <- function() {
+    wellPanel(
+        radioButtons("selObj", "select plot", 
+            choices = c("object1", "object2"), selected = "object1")
     )
 }
 
@@ -106,8 +114,6 @@
         condition = "input.tab1 == 'PCA'",
         wellPanel(
             h4("Plot"),
-            radioButtons("selObj", "select plot", 
-                        choices = c("object1", "object2"), selected = "object1"),
             ## drop down menu for colours of PCA plot
             htmlOutput("fcoloursOutput"),
             ## drop down menu for symbol type of PCA plot
@@ -122,8 +128,10 @@
             htmlOutput("PCALegendUI"),
             htmlOutput("PCALegendposUI"),
             ## zoom slider for x and y axis
-            htmlOutput("xrangeUI"),
-            htmlOutput("yrangeUI"),
+            htmlOutput("xrange1UI"),
+            htmlOutput("xrange2UI"),
+            htmlOutput("yrange1UI"),
+            htmlOutput("yrange2UI"),
             ## link to help page
             htmlOutput("linkPCA")
         )
@@ -208,6 +216,7 @@
 .pR_tabPanelPCA <- function() {
     tabPanel(
         "PCA",
+        verbatimTextOutput("help"),
         plotOutput(
             "PCAUI", 
             width = "100%",height="800px",
