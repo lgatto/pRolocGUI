@@ -605,11 +605,15 @@
     which(tag == description(coll))[1]
 
 ## returns indices of collection of features which are selected in tab search
-.whichFOI <- function(obj, coll, index, ind = c("object1", "object2"))  {
+.whichFOI <- function(obj, coll, index, 
+                        ind = c("object1", "object2"), name = FALSE)  {
     if (length(obj) != 0) {
         ind <- match.arg(ind)
         obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
-        ans <- which((match(rownames(obj), .fnamesFOI(coll)[[index]])) != NA)
+        if (names)
+            ans <- .fnamesFOI(coll)[[index]]
+        else
+            ans <- which((match(rownames(obj), .fnamesFOI(coll)[[index]])) != NA)
         return(ans)
     }
 }
@@ -676,16 +680,17 @@
 
 ## Returns information about FoICollection or FeaturesOfInterest
 ## and the number of features present in the MSnSet
-.showFOI <- function(x, fMSnSet, index=1) {
-    fMSnSet <- fMSnSet[[1]]
+.showFOI <- function(x, obj, index=1, ind = c("object1", "object2")) {
+    ind <- match.arg(ind)
+    obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
     if (inherits(x, "FoICollection")) {
         
-        n <- fnamesIn(foi(x)[[index]], fMSnSet, TRUE)
+        n <- fnamesIn(foi(x)[[index]], obj, TRUE)
         showFOI <- c(capture.output(show(foi(x)[[index]])),
                     paste("Therefrom in selected MSnSet:", n))
     } 
     else { "FeaturesOfInterest"
-        n <- fnamesIn(x, fMSnSet, TRUE)
+        n <- fnamesIn(x, obj, TRUE)
         showFOI <- c(capture.output(show(x)),
                     paste("Therefrom in selected MSnSet:", n))
     }

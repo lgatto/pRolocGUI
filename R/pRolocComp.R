@@ -25,6 +25,7 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
                         .pR_condTabQuantitation(),
                         .pR_condTabfData(),
                         .pR_condTabpData(),
+                        .pR_condTabSearch(),
                         width = 2
                         ),
                     ## Main Panel
@@ -35,6 +36,7 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
                             .pR_tabPanelQuantitation(),
                             .pR_tabPanelfData(),
                             .pR_tabPanelpData(),
+                            .pR_tabPanelSearch(),
                             id = "tab1" 
                         )#,
                        # width = 9
@@ -78,11 +80,14 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
             .searchInd1 <- reactive(
                 .sI(cIS = input$chooseIdenSearch, 
                     tagSelectList = input$tagSelectList, 
-                    protText = .computeInd(obj, .prot$text, ind = "object1"), 
-                    protPCA = .computeInd(obj, .prot$PCA, ind = "object1"),
-                    protPlotDist = .computeInd(obj, .prot$plotDist, 
-                                                            ind = "object1"), 
-                    protSearch = NULL) 
+                    protText = .computeInd(obj, .prot$text, "object1"), 
+                    protPCA = .computeInd(obj, .prot$PCA, "object1"),
+                    protPlotDist = .computeInd(obj, .prot$plotDist, "object1"), 
+                    protSearch = .computeInd(obj, 
+                                        .whichFOI(obj, .pR_SR$foi, .whichN(), 
+                                              "object1", name = TRUE),
+                                        "object1")
+                )
             )
             
             .searchInd2 <- reactive(
@@ -92,7 +97,11 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
                     protPCA = .computeInd(obj, .prot$PCA, ind = "object2"),
                     protPlotDist = .computeInd(obj, .prot$plotDist, 
                                                             ind = "object2"), 
-                    protSearch = NULL) 
+                    protSearch = .computeInd(obj, 
+                                        .whichFOI(obj, .pR_SR$foi, .whichN(),
+                                                "object2", name = TRUE),
+                                        "object2")
+                ) 
             )
             
             ## Clear multiple points on click
@@ -592,6 +601,64 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
             output$MSnpDataUI <- renderDataTable(
                 .dTable(obj, "pD", ind = input$selObj))
             ## END: SAMPLE META-DATA ##
+
+
+            
+            ## TAB: SEARCH ##
+            ## create object pRolocGUI_SearchResults in .GlobalEnv on exit
+            observe({
+                if (length(.pR_SR$foi) > 0)
+                    on.exit(assign("pRolocGUI_SearchResults",
+                               .pR_SR$foi, .GlobalEnv)
+                    )
+            })
+
+            ## create reactiveValues for FoIColection
+            .pR_SR <- reactiveValues(foi = sr)
+
+            if ((is.null(sr))) {
+                .pR_SR$foi <- FoICollection()
+            }
+
+            ## create reactiveValues for new features of Interest
+            .newfoi <- reactiveValues(ind = NULL)
+
+            observe({
+                .newfoi$ind <- .obsNewFoI(
+                    obj, .searchInd1(), 
+                    input$savedSearchText, input$saveLists2SR
+                )
+                .pR_SR$foi <- .obsSavedSearch(
+                    .pR_SR$foi, .newfoi$ind, .searchInd1(), 
+                    input$saveLists2SR, input$savedSearchText
+                )
+            }) 
+
+            ## text field to assign name to search results
+            ## display information about selected FoI
+            .whichN <- reactive(.whichTag(input$tagSelectList, .pR_SR$foi))
+
+            output$infoSavedSearchUI <- renderText({
+                if (length(obj) != 0 
+                    && !is.null(.pR_SR$foi) 
+                        && length(.pR_SR$foi) != 0) {
+                    showFOI <- .showFOI(.pR_SR$foi, obj, .whichN(), input$selObj)
+                    paste0(showFOI, sep = "\n", collapse = "")
+                } else
+                    return("pRolocGUI_SearchResults not found in workspace")
+            })
+
+            ## select Input for the tag names of the list
+            output$tagsListSearchUI <- renderUI(.tagListSearch(.pR_SR$foi))
+
+            ## text input to enter description 
+            output$savedSearchTextUI <- renderUI(.textDescription())
+
+            ## action button to save new FoIs
+            output$saveLists2SRUI <- renderUI(
+                .buttonSearch(.pR_SR$foi, .searchInd1(), input$savedSearchText)
+            )
+            ### END: SEARCH ###
 
     
         }
