@@ -1,8 +1,8 @@
 
 
-pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
+pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
     
-    obj <- list(obj1, obj2)
+    obj <- list(object1, object2)
     
     ## increase upload limit to 20 MB
     options(shiny.maxRequestSize = 20*1024^2)
@@ -12,7 +12,7 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
     
     app <- list(
         ui = bootstrapPage(
-                fluidPage(
+                fluidRow( # was fluidPage
                     ## Application title
                     .pRn2_setTitlePanel(),
                     ## Sidebar Panel
@@ -22,7 +22,7 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
                         .pRn2_selObj(),
                         .pRn2_condTabPCA(),
                         .pR_condTabProteinProfiles(),
-                        width = 3
+                        width = 2
                         ),
                     ## Main Panel
                     mainPanel(
@@ -30,8 +30,8 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
                             .pRn2_tabPanelPCA(),
                             .pRn2_tabPanelProteinProfiles(),
                             id = "tab1" 
-                        ),
-                        width = 9
+                        )#,
+                       # width = 9
                     )
                 )        
             ),
