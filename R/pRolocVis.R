@@ -288,8 +288,9 @@ pRolocVis <- function(object = NULL) {
             
             output$saveTextUI <- renderUI(
                 if (!is.null(.dI()) && !is.null(input$search))
-                if (!.checkFeatText(.dI(), .prot$text, input$sRTextInput, input$search))
-                    actionButton("saveText", "Submit selection")
+                    if (!.checkFeatText(.dI(), 
+                            .prot$text, input$sRTextInput, input$search))
+                        actionButton("saveText", "Submit selection")
             )
             
             
@@ -301,8 +302,8 @@ pRolocVis <- function(object = NULL) {
             observe({
                     .prot$PCA <- .obsProtClick(
                         .prot$PCA, minDist2dProtPCA(), input$PCAclick)
-                    .prot$plotDist <- .obsProtClick(
-                        .prot$plotDist, .minDistProtPlotDist(), input$plotDistclick)
+                    .prot$plotDist <- .obsProtClick(.prot$plotDist, 
+                        .minDistProtPlotDist(), input$plotDistclick)
                     .prot$text <- .obsProtText(
                         .dI(), .prot$text, input$saveText, 
                         isolate(input$sRTextInput), input$search)
