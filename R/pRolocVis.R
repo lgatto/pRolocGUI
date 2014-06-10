@@ -310,24 +310,14 @@ pRolocVis <- function(object = NULL) {
             
             observe({
                 .prot$plotDist <- .obsProtClick(.prot$plotDist, 
-                                                .minDistProtPlotDist(), input$plotDistclick)
+                        minDistProtPlotDist(), input$plotDistclick)
             })
             
             observe({ 
-                .prot$text <- .obsProtText(
-                        .dI(), .prot$text, input$saveText, 
+                .prot$text <- .obsProtText(.dI(), .prot$text, input$saveText, 
                         isolate(input$sRTextInput), input$search)
-                    
             })
-            
-#             observe({
-#                 
-#             })
-#             
-#             observe({
-#                     input$saveText
-#                     
-#             })
+
             ## END OF SEARCHING IMPLEMENTATION ##  
                         
 
