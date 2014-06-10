@@ -26,17 +26,18 @@
             display: block;
             width: 100%;}")),
         tags$style(HTML(".well{
-            padding: 15px 18px 12px 18px;}")),
+            padding: 15px 18px 12px 18px;
+            margin: 10px;}")),
         tags$style(HTML("h4{
             margin: 0px 0px 5px 0px;}"))
         )
 }
 
 .pRn2_selObj <- function() {
-   # wellPanel(
+    wellPanel(
         radioButtons("selObj", "select object", 
                      choices = c("object1", "object2"), selected = "object1")
-   # )
+    )
 }
 
 .pR_condDisplaySelection <- function() {
@@ -294,7 +295,7 @@
 }
 
 .pR_tabPanelQuantitation <- function() {
-    tabPanel("quantitation", 
+    tabPanel("quantitation",
              dataTableOutput("MSnExprsUI")
     )
 }    

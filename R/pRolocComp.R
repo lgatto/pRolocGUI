@@ -22,6 +22,9 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
                         .pRn2_selObj(),
                         .pRn2_condTabPCA(),
                         .pR_condTabProteinProfiles(),
+                        .pR_condTabQuantitation(),
+                        .pR_condTabfData(),
+                        .pR_condTabpData(),
                         width = 2
                         ),
                     ## Main Panel
@@ -29,6 +32,9 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
                         tabsetPanel(
                             .pRn2_tabPanelPCA(),
                             .pRn2_tabPanelProteinProfiles(),
+                            .pR_tabPanelQuantitation(),
+                            .pR_tabPanelfData(),
+                            .pR_tabPanelpData(),
                             id = "tab1" 
                         )#,
                        # width = 9
@@ -369,10 +375,14 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
 
             ## START: TAB PLOTDIST ##
             
-            output$helpPlDist <- renderText(c("1", .prot$plotDist1,
-                                              "2", .prot$plotDist2,
-                                              "total", .prot$plotDist,
-                                              input$fnamesplDist))
+            output$helpPlotDist <- renderText(c(input$plotDist1hover$x,
+                                                input$plotDist1hover$y,
+                                                "hover2",
+                                                input$plotDist2hover$x,
+                                                input$plotDist2hover$y))
+#                                               "2", .prot$plotDist2,
+#                                               "total", .prot$plotDist,
+#                                               input$fnamesplDist))
             
             ## Index of element in list where parameters are stored
             .nCol <- reactive(.nC(input$numberPlotDist, input$quantityPlotDist))
@@ -408,29 +418,33 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
                     if (input$plotDist1click$x < (nrow(pData(obj[[1]])) + .3) &&
                         input$plotDist1click$x > 0.5 &&
                             !is.null(input$quantityPlotDist) && 
-                                input$quantityPlotDist == "1")
+                                input$quantityPlotDist == "1" &&
+                                    !is.null(input$plotDist1hover$x) &&
+                                        is.null(input$plotDist2hover$x))
                     .minDistPlotDist(obj = obj, 
                             marker = .listParams$levPlotDist1[1],
                             org = .listParams$levPlotDistOrg1[1],
                             inputx = input$plotDist1click$x,
                             inputy = input$plotDist1click$y,
-                            ind = input$selObj,
+                            ind = "object1",
                             name = TRUE)[1]
                 }
             )
 
             .minPlotDist2 <- reactive(
                 if (length(obj) != 0 && !is.null(input$plotDist2click)) { 
-                    if (input$plotDist2click$x < (nrow(pData(obj[[1]])) + .3) &&
+                    if (input$plotDist2click$x < (nrow(pData(obj[[2]])) + .3) &&
                         input$plotDist2click$x > 0.5 &&
                             !is.null(input$quantityPlotDist) && 
-                                input$quantityPlotDist == "1")
+                                input$quantityPlotDist == "1" &&
+                                    !is.null(input$plotDist2hover$x) && 
+                                        is.null(input$plotDist1hover$x))
                         .minDistPlotDist(obj = obj, 
                             marker = .listParams$levPlotDist2[1],
                             org = .listParams$levPlotDistOrg2[1],
                             inputx = input$plotDist2click$x,
                             inputy = input$plotDist2click$y,
-                            ind = input$selObj,
+                            ind = "object2",
                             name = TRUE)[1]
                         
                 }
@@ -531,7 +545,55 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
             )
             
             ## END: TAB PLOTDIST ## 
+
             
+            ## START: TAB QUANTITATION ##
+            output$exprsRadioUI <- renderUI(
+                if (input$selObj == "object1")
+                    .radioButton(.searchInd1(), TRUE)
+                else
+                    .radioButton(.searchInd2(), TRUE)
+            )
+            
+            output$MSnExprsUI <- renderDataTable(
+                if (input$selObj == "object1")
+                    .dTable(obj, "quant", input$exprsRadio, 
+                                .searchInd1(), "object1")
+                else 
+                    .dTable(obj, "quant", input$exprsRadio, 
+                            .searchInd2(), "object2")                    
+            )
+            ## END: TAB QUANTITATION ##
+            
+
+            ## TAB: FEATURE META-DATA ##
+            ## Generate the feature meta-data
+            output$fDataRadioUI <- renderUI(
+                if (input$selObj == "object1")
+                    .radioButton(.searchInd1(), FALSE)
+                else
+                    .radioButton(.searchInd2(), FALSE)
+            )
+
+            output$MSnfDataUI <- renderDataTable(
+                if (input$selObj == "object1")
+                    .dTable(obj, "fD", input$fDataRadio, 
+                                .searchInd1(), "object1")
+                else 
+                    .dTable(obj, "fD", input$fDataRadio, 
+                                .searchInd2(), "object2")
+            )
+            ## END: FEATURE META-DATA ##
+
+            
+
+            ## TAB: SAMPLE META-DATA ##
+            ## Generate the sample meta-data
+            output$MSnpDataUI <- renderDataTable(
+                .dTable(obj, "pD", ind = input$selObj))
+            ## END: SAMPLE META-DATA ##
+
+    
         }
     )
     runApp(app)
