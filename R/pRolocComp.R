@@ -17,15 +17,18 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
                     .pRn2_setTitlePanel(),
                     ## Sidebar Panel
                     sidebarPanel(
+                        .pR_tags(),
                         .pR_condDisplaySelection(),
                         .pRn2_selObj(),
                         .pRn2_condTabPCA(),
+                        .pR_condTabProteinProfiles(),
                         width = 3
                         ),
                     ## Main Panel
                     mainPanel(
                         tabsetPanel(
                             .pRn2_tabPanelPCA(),
+                            .pR_tabPanelProteinProfiles(),
                             id = "tab1" 
                         ),
                         width = 9
@@ -93,9 +96,7 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
                 }
             })
             
-            
-            
-            
+            ## action button to submit
             output$saveTextUI <- renderUI(
                 if (!is.null(input$search))
                     if (!.checkFeatText(obj, .prot$text, input$sRTextInput, 
