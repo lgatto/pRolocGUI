@@ -146,8 +146,7 @@
             ## drop down menu for quantity of plots
             htmlOutput("quantityPlotDistUI"),
             tags$br(),
-            ## drop down menu for 'select source for 
-            ## all assigned proteins to the organelle'
+            ## drop down menu for 'feature(s) in'
             htmlOutput("allOrganellesUI"),
             ## drop down menu for 'select organelle 
             ## in all assigned proteins'

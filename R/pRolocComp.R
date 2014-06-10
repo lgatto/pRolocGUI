@@ -48,12 +48,12 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
             })
 
             
-#             observe({
-#                 dSelect$plotDist <- .selClick(
-#                     dSelect$plotDist, input$plotDistclick, 
-#                     .prot$plotDist, FALSE
-#                 )
-#           })
+            observe({
+                dSelect$plotDist <- .selClick(
+                    dSelect$plotDist, input$plotDist1click, 
+                    .prot$plotDist, FALSE, input$plotDist2click)
+            })
+            
             observe({
                 dSelect$text <- .selText(
                     dSelect$text, input$saveText, input$resetMult, 
@@ -74,7 +74,8 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
                     tagSelectList = input$tagSelectList, 
                     protText = .computeInd(obj, .prot$text, ind = "object1"), 
                     protPCA = .computeInd(obj, .prot$PCA, ind = "object1"),
-                    protPlotDist = NULL, 
+                    protPlotDist = .computeInd(obj, .prot$plotDist, 
+                                                            ind = "object1"), 
                     protSearch = NULL) 
             )
             
@@ -83,7 +84,8 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
                     tagSelectList = input$tagSelectList, 
                     protText = .computeInd(obj, .prot$text, ind = "object2"), 
                     protPCA = .computeInd(obj, .prot$PCA, ind = "object2"),
-                    protPlotDist = NULL, 
+                    protPlotDist = .computeInd(obj, .prot$plotDist, 
+                                                            ind = "object2"), 
                     protSearch = NULL) 
             )
             
@@ -94,6 +96,8 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
                         .prot$PCA1 <- NULL
                         .prot$PCA2 <- NULL
                         .prot$PCA <- NULL
+                        .prot$plotDist1 <- NULL
+                        .prot$plotDist2 <- NULL
                         .prot$plotDist <- NULL
                         .prot$text <- NULL
                         dSelect$PCA <- NULL
@@ -128,26 +132,26 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
             
             ## vector with reactive values
             .prot <- reactiveValues(PCA1 = NULL, PCA2 = NULL, PCA = NULL, 
-                                    plotDist = NULL, 
-                                    text1 = NULL, text2 = NULL, text = NULL)
+                        plotDist1 = NULL, plotDist2 = NULL, plotDist = NULL, 
+                        text = NULL)
             
             ## observe indices and concatenate to .prot$PCA, .prot$plotDist
             ## and .prot$text
-            observe({
-                .prot$PCA1 <- .obsProtClick(
-                    .prot$PCA1, minDist2dProt1PCA(), input$PCA1click)
-            })
-            observe({
-                .prot$PCA2 <- .obsProtClick(
-                    .prot$PCA2, minDist2dProt2PCA(), input$PCA2click)
-            })
-            observe({
-                .prot$PCA <- c(.prot$PCA1, .prot$PCA2)
-            })
-            observe({
-                .prot$plotDist <- .obsProtClick(
-                    .prot$plotDist, .minDistProtPlotDist(), input$plotDistclick)
-            })
+            observe(.prot$PCA1 <- .obsProtClick(
+                        .prot$PCA1, minDist2dProt1PCA(), input$PCA1click))
+            
+            observe(.prot$PCA2 <- .obsProtClick(
+                        .prot$PCA2, minDist2dProt2PCA(), input$PCA2click))
+            
+            observe(.prot$PCA <- c(.prot$PCA1, .prot$PCA2))
+            
+            observe(.prot$plotDist1 <- .obsProtClick(
+                        .prot$plotDist1, .minPlotDist1(), input$plotDist1click))
+            
+            observe(.prot$plotDist2 <- .obsProtClick(
+                        .prot$plotDist2, .minPlotDist2(), input$plotDist2click))
+            
+            observe(.prot$plotDist <- c(.prot$plotDist1, .prot$plotDist2))
             
             observe({
                 if (!is.null(input$saveText)) {
@@ -159,8 +163,8 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
             })
         
             ## END OF SEARCHING IMPLEMENTATION ##  
+    
             
-            output$helpPCA <- renderText(c(.prot$PCA))
             
             ## START: TAB PCA ##
             ## colours  
@@ -365,11 +369,10 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
 
             ## START: TAB PLOTDIST ##
             
-            output$helpPlDist <- renderText(c(.nCol(), 
-                                        .listParams$levPlotDist1, 
-                                        .listParams$levPlotDistOrg1, 
-                                        .listParams$levPlotDist2, 
-                                        .listParams$levPlotDistOrg2))
+            output$helpPlDist <- renderText(c("1", .prot$plotDist1,
+                                              "2", .prot$plotDist2,
+                                              "total", .prot$plotDist,
+                                              input$fnamesplDist))
             
             ## Index of element in list where parameters are stored
             .nCol <- reactive(.nC(input$numberPlotDist, input$quantityPlotDist))
@@ -412,8 +415,7 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
                             inputx = input$plotDist1click$x,
                             inputy = input$plotDist1click$y,
                             ind = input$selObj,
-                            name = FALSE
-                    )
+                            name = TRUE)[1]
                 }
             )
 
@@ -429,14 +431,14 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
                             inputx = input$plotDist2click$x,
                             inputy = input$plotDist2click$y,
                             ind = input$selObj,
-                            name = FALSE
-                        )
+                            name = TRUE)[1]
+                        
                 }
             )
             
             ## calculate protein nearest to user input (hover) and display name 
             ## in tabPanel
-            minPlotDist1Hover <- reactive({
+            .minPlotDist1Hover <- reactive({
                 if (length(obj) != 0 && !is.null(input$plotDist1hover$x)) {
                     if (input$plotDist1hover$x < (nrow(pData(obj[[1]])) + .3) &&
                         input$plotDist1hover$x > 0.5 && 
@@ -452,9 +454,9 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
                 }
             })
 
-            output$hoverPlotDist1 <- renderText(minPlotDist1Hover())
+            output$hoverPlotDist1 <- renderText(.minPlotDist1Hover())
 
-            minPlotDist2Hover <- reactive({
+            .minPlotDist2Hover <- reactive({
                 if (length(obj) != 0 && !is.null(input$plotDist2hover$x)) {
                     if (input$plotDist2hover$x < (nrow(pData(obj[[2]])) + .3) &&
                         input$plotDist2hover$x > 0.5 && 
@@ -470,7 +472,7 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
                 }
             })
 
-            output$hoverPlotDist2 <- renderText(minPlotDist2Hover())
+            output$hoverPlotDist2 <- renderText(.minPlotDist2Hover())
 
 # ## for Plot/Download button (needs a reactive expression)
 # .plotDistReac <- reactive(
@@ -482,9 +484,9 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
 #     )
 # )
 
-            ## levels for plotDist to choose to plot
-            .organelleAllName <- reactive(
-                .orgName(obj, input$fNamesplDist, input$selObj))             
+#             ## levels for plotDist to choose to plot
+#             .organelleAllName <- reactive(
+#                 .orgName(obj, input$fNamesplDist, input$selObj))             
 
             ## select fvarLabels or "all" for all features UI    
             output$allOrganellesUI <- renderUI(
@@ -492,7 +494,11 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
 
             ## UI for feature levels in fvarLabels or "all"
             output$organelleAllUI <- renderUI(
-                .flevelPlotDist(.organelleAllName(), input$fNamesplDist))
+                .flevelPlotDist(
+                    .orgName(obj, input$fNamesplDist, input$selObj),
+                    #.organelleAllName(), 
+                    input$fNamesplDist)
+            )
 
             ## UI for quantity of plots to plot
             output$quantityPlotDistUI <- renderUI(.quantPlotDist(c(1:2), 1))
@@ -505,23 +511,23 @@ pRolocComp <- function(obj1 = tan2009r1, obj2 = tan2009r2) {
 
             ## plots
             output$plotDist1UI <- renderPlot(
-                .plotPlotDist(obj = obj, 
-                    levPlotDist = .listParams$levPlotDist1,
-                    levPlotDistOrg = .listParams$levPlotDistOrg1,
-                    quantity = input$quantityPlotDist,
-                    sI = .searchInd1(),
-                    ind = "object1"
-                )
+                    .plotPlotDist(obj = obj, 
+                        levPlotDist = .listParams$levPlotDist1,
+                        levPlotDistOrg = .listParams$levPlotDistOrg1,
+                        quantity = input$quantityPlotDist,
+                        sI = .searchInd1(),
+                        ind = "object1"
+                    )
             )
 
             output$plotDist2UI <- renderPlot(
-                .plotPlotDist(obj = obj, 
-                    levPlotDist = .listParams$levPlotDist2,
-                    levPlotDistOrg = .listParams$levPlotDistOrg2,
-                    quantity = input$quantityPlotDist,
-                    sI = .searchInd2(),
-                    ind = "object2"
-                )
+                    .plotPlotDist(obj = obj, 
+                        levPlotDist = .listParams$levPlotDist2,
+                        levPlotDistOrg = .listParams$levPlotDistOrg2,
+                        quantity = input$quantityPlotDist,
+                        sI = .searchInd2(),
+                        ind = "object2"
+                    )
             )
             
             ## END: TAB PLOTDIST ## 

@@ -458,13 +458,13 @@
 }
 
 ## selectInput for fvarLabels/"all" to select for plotDist
-.featuresPlotDist <- function(obj, ind = c("object1", "object2"), sel = "all") {
+.featuresPlotDist <- function(obj, ind = c("object1", "object2")) {
     if (length(obj) != 0) {
         ind <- match.arg(ind)
         obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
         ans <- selectInput("fNamesplDist",
                     "feature(s) in",
-                    choices = c("all", fvarLabels(obj)), selected = sel) 
+                    choices = c("all", fvarLabels(obj))) 
         return(ans)
     }
 }
