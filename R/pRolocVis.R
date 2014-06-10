@@ -310,7 +310,7 @@ pRolocVis <- function(object = NULL) {
             
             observe({
                 .prot$plotDist <- .obsProtClick(.prot$plotDist, 
-                        minDistProtPlotDist(), input$plotDistclick)
+                        .minDistProtPlotDist(), input$plotDistclick)
             })
             
             observe({ 
