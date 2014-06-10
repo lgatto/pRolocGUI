@@ -32,6 +32,13 @@
         )
 }
 
+.pRn2_selObj <- function() {
+    wellPanel(
+        radioButtons("selObj", "select plot", 
+                     choices = c("object1", "object2"), selected = "object1")
+    )
+}
+
 .pR_condDisplaySelection <- function() {
     conditionalPanel(            
         condition = "input.tab1 == 'PCA' ||
@@ -55,7 +62,7 @@
             htmlOutput("saveTextUI"),
             tags$hr(),
             ## action Button to delete internal assignments
-            actionButton("resetMult", "Clear features"),
+            htmlOutput("resetMultUI"),
             ## link to help page
             htmlOutput("linkDisplayUI")
         )
@@ -74,7 +81,7 @@
     )
 }
 
-.pR_condTabPCA <- function() {
+.pRn1_condTabPCA <- function() {
     conditionalPanel(
         condition = "input.tab1 == 'PCA'",
         wellPanel(
@@ -99,13 +106,6 @@
             htmlOutput("linkPCAUI")
             
         )
-    )
-}
-
-.pRn2_selObj <- function() {
-    wellPanel(
-        radioButtons("selObj", "select plot", 
-            choices = c("object1", "object2"), selected = "object1")
     )
 }
 
@@ -144,9 +144,7 @@
         wellPanel(
             h4("Plot"),
             ## drop down menu for quantity of plots
-            selectInput("quantityPlotDist",
-                    "number of plots to display",
-                    choices=c(1:8), selected=1),
+            htmlOutput("quantityPlotDistUI"),
             tags$br(),
             ## drop down menu for 'select source for 
             ## all assigned proteins to the organelle'
@@ -213,10 +211,9 @@
     )
 }
 
-.pR_tabPanelPCA <- function() {
+.pRn1_tabPanelPCA <- function() {
     tabPanel(
         "PCA",
-        verbatimTextOutput("help"),
         plotOutput(
             "PCAUI", 
             width = "100%",height="800px",
