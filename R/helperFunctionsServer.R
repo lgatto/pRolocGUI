@@ -45,25 +45,39 @@
 ## A helper function to select the checkbox of "query" in the 
 ## Display selection widget, used in observer for assigning to dSelect$text
 .selText <- function(dtext, saveText, resetMult, protText) {
-    if (is.null(saveText) || saveText == 0)
-        dtext <- NULL
-    else  {
-        dtext <- NULL
-        isolate({
-            isolate(saveText)
-            if (saveText > 0)
+    if (!is.null(saveText)) {
+        if (saveText > 0)
             dtext <- "text"
-        })
-        
+        else
+            dtext <- dtext
         isolate({
             resetMult
             if (resetMult > 0 && length(protText) < 1)
                 dtext <- NULL
-        })      
-    }
-    ans <- unique(dtext)
-    return(ans)
-}
+        })
+        ans <- unique(dtext)
+        return(ans)
+    
+    }}
+#     if (is.null(saveText) || saveText == 0)
+#         dtext <- NULL
+#     else  {
+#         dtext <- NULL
+#         isolate({
+#             isolate(saveText)
+#             if (saveText > 0)
+#                 dtext <- "text"
+#         })
+#         
+#         isolate({
+#             resetMult
+#             if (resetMult > 0 && length(protText) < 1)
+#                 dtext <- NULL
+#         })      
+#     }
+#     ans <- unique(dtext)
+#     return(ans)
+#}
 
 ## A function to compute indices from feature names
 .computeInd <- function(obj, fnames, ind = c("object1", "object2")) {
@@ -114,41 +128,6 @@
     }
 }
 
-# .obsProtText <- function(obj, protText, button, 
-#             sRTextInput, search, ind = c("object1", "object2"), names = FALSE) {
-#     if (length(obj) != 0) {
-#         ind <- match.arg(ind)
-#         obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
-#         if (button == 0)
-#             sRText <- sRTextInput
-#         else
-#             sRText <- isolate(sRTextInput)
-#         
-#         if (!is.null(search) && button != 0) {
-#             if (!names) {
-#                 if (search == "protein") 
-#                     newFeat <- which(rownames(obj) == sRText)
-#                 else 
-#                     newFeat <- which(fData(obj)[search] == sRText)
-#             } else {
-#                 if (search == "protein") 
-#                     newFeat <- sRText
-#                 else 
-#                     newFeat <- rownames(obj)[which(fData(obj)[search] == sRText)]
-#             }
-#                
-#             if (!is.null(newFeat)) {
-#                 if (button > 0 && length(newFeat > 0)) 
-#                     isolate({
-#                         button
-#                         protText <- isolate(c(protText, newFeat))
-#                     })
-#             }
-#         }
-#         return(unique(protText))
-#     }
-# }
-
 ## a check function to test if features are already internally stored
 ## returning TRUE or FALSE
 .checkFeatText <- function(obj, protText, sRText, 
@@ -175,10 +154,10 @@
                          sRText, search, ind = c("object1", "object2"), names = FALSE) {
     if (length(obj) != 0 && !is.null(button)) {        
         
-        if (!.checkFeatText(obj, protText, sRText, search, ind, names))
-            add <- 1
-        else 
-            add <- 0
+#         if (!.checkFeatText(obj, protText, sRText, search, ind, names))
+#             add <- 1
+#         else 
+#             add <- 0
             
         ind <- match.arg(ind)
     
@@ -199,9 +178,8 @@
             }
             
             if (!is.null(newFeat)) {
-                if (button == 1 && length(newFeat > 0) && add == 1) 
+                if (button == 1 && length(newFeat > 0))## && add == 1) 
                     isolate({
-                       # button
                         protText <- isolate(c(protText, isolate(newFeat)))
                 
                     })
