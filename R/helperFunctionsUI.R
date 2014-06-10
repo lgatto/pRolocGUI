@@ -228,7 +228,6 @@
 
 .pRn2_tabPanelPCA <- function() {
     tabPanel("PCA",
-             verbatimTextOutput("helpPCA"),
              plotOutput("PCA1", width = "100%",height="600px",
                         clickId = "PCA1click",
                         hoverId = "PCA1hover",
@@ -247,7 +246,7 @@
     )
 }
 
-.pR_tabPanelProteinProfiles <- function() {
+.pRn1_tabPanelProteinProfiles <- function() {
     tabPanel(
         "protein profiles",
         plotOutput(
@@ -258,6 +257,30 @@
             hoverDelayType = "throttle"
         ),
         textOutput("hoverProtPlotDistUI"),
+        downloadButton("plotDistDownload","Download Plot")
+    )
+}
+
+.pRn2_tabPanelProteinProfiles <- function() {
+    tabPanel(
+        "protein profiles",
+        verbatimTextOutput("helpPlDist"),
+        plotOutput(
+            "plotDist1UI", 
+            width="100%", height="800px",
+            clickId = "plotDist1click",
+            hoverId = "plotDist1hover", hoverDelay = 100,
+            hoverDelayType = "throttle"
+        ),
+        textOutput("hoverPlotDist1"),
+        plotOutput(
+            "plotDist2UI",
+            width="100%", height="800px",
+            clickId = "plotDist2click",
+            hoverId = "plotDist2hover", hoverDelay = 100,
+            hoverDelayType = "throttle"
+        ),
+        textOutput("hoverPlotDist2"),
         downloadButton("plotDistDownload","Download Plot")
     )
 }
