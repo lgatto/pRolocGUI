@@ -304,12 +304,16 @@ pRolocVis <- function(object = NULL) {
             ## observe indices and concatenate to .prot$PCA, .prot$plotDist
             ## and .prot$text
             observe({
-                isolate({
                     .prot$PCA <- .obsProtClick(
                         .prot$PCA, minDist2dProtPCA(), input$PCAclick)
-                })
+            })
+            
+            observe({
                 .prot$plotDist <- .obsProtClick(.prot$plotDist, 
-                            .minDistProtPlotDist(), input$plotDistclick)
+                                                .minDistProtPlotDist(), input$plotDistclick)
+            })
+            
+            observe({ 
                 .prot$text <- .obsProtText(
                         .dI(), .prot$text, input$saveText, 
                         isolate(input$sRTextInput), input$search)
