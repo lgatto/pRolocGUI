@@ -1,13 +1,13 @@
 ## Function to compute min2d distance from user input for PCA
 .minDistPCA <- function(inputx, inputy, 
-                            valuesx, valuesy, name = c(FALSE, TRUE)) {
+                            valuesx, valuesy, name = c(TRUE, FALSE)) {
     dist <- sqrt(
         (inputx - valuesx)^2 + ## x-component
             (inputy - valuesy)^2 ## y-component
     )
     ## compute the element (row index, i.e. the protein) which has the 
     ## shortest distance to the input (index will be returned)
-    if (name == TRUE)
+    if (name)
         return(names(which(dist == min(dist))))
     else
         return(as.vector(which(dist == min(dist))))
