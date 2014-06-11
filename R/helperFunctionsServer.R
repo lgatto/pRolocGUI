@@ -4,8 +4,7 @@
 
 ## is there a pRolocGUI_SearchResults in .GlobalEnv? is so load it.
 ## if FeaturesOfInterest -> create FoICollection
-## if FoICollection -> FoICollection
-## else NULL
+## if FoICollection -> FoICollection else NULL
 .createSR <- function () {
     if (exists("pRolocGUI_SearchResults", .GlobalEnv)) {
         sr <- get("pRolocGUI_SearchResults", .GlobalEnv)
