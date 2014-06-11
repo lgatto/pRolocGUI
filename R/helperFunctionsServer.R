@@ -227,7 +227,6 @@
 
 
 ## START: TAB PCA ##
-
 ## values PCA
 .vPCA <- function(obj, PCAn1, PCAn2, ind = c("object1", "object2")) {
     if (length(obj) != 0) {
@@ -413,16 +412,17 @@
                                          fnames = featureNames(obj)[sI],
                                          object = obj)
             highlightOnPlot(obj, foiPCA, 
-                            args = list(
-                                fcol = fvarLabels(obj)[1],
-                                xlim = c(xrange[1], 
-                                         xrange[2]),
-                                ylim = c(yrange[1], 
-                                         yrange[2]),
-                                dims = c(as.numeric(PCAn1),
-                                         as.numeric(PCAn2))),
-                                col=ifelse(fcolours == "none", "red", "black"), 
-                                cex=1.5)
+                    args = list(
+                        fcol = fvarLabels(obj)[1],
+                        xlim = c(xrange[1], 
+                                 xrange[2]),
+                        ylim = c(yrange[1], 
+                                 yrange[2]),
+                        dims = c(as.numeric(PCAn1),
+                                 as.numeric(PCAn2))),
+                        col = ifelse(fcolours == "none", "steelblue", "black"),
+                        cex = 1.5,
+                        lwd = ifelse(fcolours == "none", 2, 1.5))
         }
     }
 }
@@ -606,14 +606,11 @@
 
 ## returns indices of collection of features which are selected in tab search
 .whichFOI <- function(obj, coll, index, 
-                        ind = c("object1", "object2"), name = FALSE)  {
+                        ind = c("object1", "object2"))  {
     if (length(obj) != 0) {
         ind <- match.arg(ind)
         obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
-        if (name)
-            ans <- .fnamesFOI(coll)[[index]]
-        else
-            ans <- which((match(rownames(obj), .fnamesFOI(coll)[[index]])) != NA)
+        ans <- which((match(rownames(obj), .fnamesFOI(coll)[[index]])) != NA)
         return(ans)
     }
 }
@@ -682,19 +679,31 @@
 
 ## Returns information about FoICollection or FeaturesOfInterest
 ## and the number of features present in the MSnSet
-.showFOI <- function(x, obj, index=1, ind = c("object1", "object2")) {
-    ind <- match.arg(ind)
-    obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
+.showFOI <- function(x, obj, index = 1, comp = c(FALSE, TRUE)) {
     if (inherits(x, "FoICollection")) {
-        
-        n <- fnamesIn(foi(x)[[index]], obj, TRUE)
-        showFOI <- c(capture.output(show(foi(x)[[index]])),
-                    paste("Therefrom in selected MSnSet:", n))
+        if (comp == FALSE) {
+            n <- fnamesIn(foi(x)[[index]], obj[[1]], TRUE)
+            showFOI <- c(capture.output(show(foi(x)[[index]])),
+                        paste("Therefrom in selected MSnSet:", n))
+        } else {
+            n1 <- fnamesIn(foi(x)[[index]], obj[[1]], TRUE)
+            n2 <- fnamesIn(foi(x)[[index]], obj[[2]], TRUE)
+            showFOI <- c(capture.output(show(foi(x)[[index]])),
+                         paste("Therefrom in object1:", n1),
+                         paste("Therefrom in object2:", n2))}   
     } 
-    else { "FeaturesOfInterest"
-        n <- fnamesIn(x, obj, TRUE)
-        showFOI <- c(capture.output(show(x)),
-                    paste("Therefrom in selected MSnSet:", n))
+    else { 
+        if (comp == FALSE) {
+            n <- fnamesIn(x, obj[[1]], TRUE)
+            showFOI <- c(capture.output(show(x)),
+                        paste("Therefrom in selected MSnSet:", n))
+        } else {
+            n1 <- fnamesIn(x, obj[[1]], TRUE)
+            n2 <- fnamesIn(x, obj[[2]], TRUE)
+            showFOI <- c(capture.output(show(x)),
+                        paste("Therefrom in object1:", n1),
+                        paste("Therefrom in object2:", n2))
+        }
     }
     return(showFOI)
 }
