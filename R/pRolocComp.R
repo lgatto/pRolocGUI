@@ -73,37 +73,24 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
                 .checkBoxdSelect(dSelect$PCA, dSelect$plotDist, dSelect$text)
             )
             
-            ## reactive expressions for general search
-            ## reactive expression to forward indices to 
-            ## plot2D, plotDist and tabs quantitation
-            ## and feature meta-data
-            .searchInd1 <- reactive(
+            ## reactive expression which contains all feature names for the 
+            ## checkbox is selected
+            .unionFeat <- reactive(
                 .sI(cIS = input$chooseIdenSearch, 
                     tagSelectList = input$tagSelectList, 
-                    protText = .computeInd(obj, .prot$text, "object1"), 
-                    protPCA = .computeInd(obj, .prot$PCA, "object1"),
-                    protPlotDist = .computeInd(obj, .prot$plotDist, "object1"), 
-                    protSearch = .computeInd(obj, 
-                                        .whichFOI(obj, .pR_SR$foi, .whichN(), 
-                                              "object1", name = TRUE),
-                                        "object1")
+                    protText = .prot$text, protPCA = .prot$PCA, 
+                    protPlotDist = .prot$plotDist,  
+                    protSearch = .fnamesFOI(.pR_SR$foi)[[.whichN()]]
                 )
             )
             
-            .searchInd2 <- reactive(
-                .sI(cIS = input$chooseIdenSearch, 
-                    tagSelectList = input$tagSelectList, 
-                    protText = .computeInd(obj, .prot$text, ind = "object2"), 
-                    protPCA = .computeInd(obj, .prot$PCA, ind = "object2"),
-                    protPlotDist = .computeInd(obj, .prot$plotDist, 
-                                                            ind = "object2"), 
-                    protSearch = .computeInd(obj, 
-                                        .whichFOI(obj, .pR_SR$foi, .whichN(),
-                                                "object2", name = TRUE),
-                                        "object2")
-                ) 
-            )
-            
+            ## reactive expressions for general search
+            ## indices are computed to forward to
+            ## plot2D, plotDist and tabs quantitation
+            ## and feature meta-data
+            .searchInd1 <- reactive(.computeInd(obj, .unionFeat(), "object1"))
+            .searchInd2 <- reactive(.computeInd(obj, .unionFeat(), "object2"))
+
             ## Clear multiple points on click
             observe({
                 if (!is.null(input$resetMult))
@@ -286,7 +273,23 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
                 .legendPosPCA(obj, .params$colours[.ind$params], input$selObj)
             )
             
-            ## Plots
+            ## Plots and reactive expressions for download
+            .PCA1reac <- reactive(
+                .plotPCA(obj = obj, 
+                    fcolours = .params$colours[1], 
+                    fcex = .params$fcex[1],
+                    xrange = .params$xrange1,
+                    yrange = .params$yrange1,
+                    sb = .params$symbol[1],
+                    PCAn1 = .params$PCAn1[1],
+                    PCAn2 = .params$PCAn2[1],
+                    legend = input$legendyes, 
+                    legendpos = input$legendpos,
+                    sI = .searchInd1(),
+                    cIS = input$chooseIdenSearch,
+                    ind = "object1")
+            )
+            
             output$PCA1 <- renderPlot(
                 .plotPCA(obj = obj, 
                     fcolours = .params$colours[1], 
@@ -300,32 +303,69 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
                     legendpos = input$legendpos,
                     sI = .searchInd1(),
                     cIS = input$chooseIdenSearch,
-                    ind = "object1" 
-                )
-            )
+                    ind = "object1")
+            )           
             
             ## display 2D-nearest protein for obj1 in PCA plot
             output$hoverProt1PCA <- renderText(minDist2dProt1PCAHover())
             
-            output$PCA2 <- renderPlot(
+            .PCA2reac <- reactive(
                 .plotPCA(obj = obj, 
-                     fcolours = .params$colours[2], 
-                     fcex = .params$fcex[2],
-                     xrange = .params$xrange2,
-                     yrange = .params$yrange2,
-                     sb = .params$symbol[2],
-                     PCAn1 = .params$PCAn1[2],
-                     PCAn2 = .params$PCAn2[2],
-                     legend = input$legendyes, 
-                     legendpos = input$legendpos,
-                     sI = .searchInd2(),
-                     cIS = input$chooseIdenSearch,
-                     ind = "object2"
-                )
+                    fcolours = .params$colours[2], 
+                    fcex = .params$fcex[2],
+                    xrange = .params$xrange2,
+                    yrange = .params$yrange2,
+                    sb = .params$symbol[2],
+                    PCAn1 = .params$PCAn1[2],
+                    PCAn2 = .params$PCAn2[2],
+                    legend = input$legendyes, 
+                    legendpos = input$legendpos,
+                    sI = .searchInd2(),
+                    cIS = input$chooseIdenSearch,
+                    ind = "object2")
             )
             
             ## display 2D-nearest protein for obj2 in PCA plot
             output$hoverProt2PCA <- renderText(minDist2dProt2PCAHover())
+            
+            output$PCA2 <- renderPlot(
+                .plotPCA(obj = obj, 
+                    fcolours = .params$colours[2], 
+                    fcex = .params$fcex[2],
+                    xrange = .params$xrange2,
+                    yrange = .params$yrange2,
+                    sb = .params$symbol[2],
+                    PCAn1 = .params$PCAn1[2],
+                    PCAn2 = .params$PCAn2[2],
+                    legend = input$legendyes, 
+                    legendpos = input$legendpos,
+                    sI = .searchInd2(),
+                    cIS = input$chooseIdenSearch,
+                    ind = "object2")
+            )
+            
+            ## Download Handler for PCA plot
+            output$plotPCA1Download <- downloadHandler(
+                filename = function() {
+                    paste('object1-PCA-', Sys.Date(), '.jpg', sep='')
+                }, 
+                content = function(file) {
+                    jpeg(file, quality = 100, width = 800, height = 800)
+                    .PCA1reac()
+                    dev.off()
+                }
+            )
+            
+            output$plotPCA2Download <- downloadHandler(
+                filename = function() {
+                    paste('object2-PCA-', Sys.Date(), '.jpg', sep='')
+                }, 
+                content = function(file) {
+                    jpeg(file, quality = 100, width = 800, height = 800)
+                    .PCA2reac()
+                    dev.off()
+                }
+            )
             
             ## compute name of 2D-nearest protein for obj1 in PCA plot (click)
             minDist2dProt1PCA <- reactive(
@@ -384,15 +424,6 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
 
             ## START: TAB PLOTDIST ##
             
-            output$helpPlotDist <- renderText(c(input$plotDist1hover$x,
-                                                input$plotDist1hover$y,
-                                                "hover2",
-                                                input$plotDist2hover$x,
-                                                input$plotDist2hover$y))
-#                                               "2", .prot$plotDist2,
-#                                               "total", .prot$plotDist,
-#                                               input$fnamesplDist))
-            
             ## Index of element in list where parameters are stored
             .nCol <- reactive(.nC(input$numberPlotDist, input$quantityPlotDist))
 
@@ -427,9 +458,7 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
                     if (input$plotDist1click$x < (nrow(pData(obj[[1]])) + .3) &&
                         input$plotDist1click$x > 0.5 &&
                             !is.null(input$quantityPlotDist) && 
-                                input$quantityPlotDist == "1" &&
-                                    !is.null(input$plotDist1hover$x) &&
-                                        is.null(input$plotDist2hover$x))
+                                input$quantityPlotDist == "1")
                     .minDistPlotDist(obj = obj, 
                             marker = .listParams$levPlotDist1[1],
                             org = .listParams$levPlotDistOrg1[1],
@@ -445,9 +474,7 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
                     if (input$plotDist2click$x < (nrow(pData(obj[[2]])) + .3) &&
                         input$plotDist2click$x > 0.5 &&
                             !is.null(input$quantityPlotDist) && 
-                                input$quantityPlotDist == "1" &&
-                                    !is.null(input$plotDist2hover$x) && 
-                                        is.null(input$plotDist1hover$x))
+                                input$quantityPlotDist == "1")
                         .minDistPlotDist(obj = obj, 
                             marker = .listParams$levPlotDist2[1],
                             org = .listParams$levPlotDistOrg2[1],
@@ -455,7 +482,6 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
                             inputy = input$plotDist2click$y,
                             ind = "object2",
                             name = TRUE)[1]
-                        
                 }
             )
             
@@ -497,20 +523,6 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
 
             output$hoverPlotDist2 <- renderText(.minPlotDist2Hover())
 
-# ## for Plot/Download button (needs a reactive expression)
-# .plotDistReac <- reactive(
-#     .plotPlotDist(obj = .dI(), 
-#                   levPlotDist = .listParams$levPlotDist,
-#                   levPlotDistOrg = .listParams$levPlotDistOrg,
-#                   quantity = input$quantityPlotDist,
-#                   sI = .searchInd()
-#     )
-# )
-
-#             ## levels for plotDist to choose to plot
-#             .organelleAllName <- reactive(
-#                 .orgName(obj, input$fNamesplDist, input$selObj))             
-
             ## select fvarLabels or "all" for all features UI    
             output$allOrganellesUI <- renderUI(
                 .featuresPlotDist(obj, input$selObj))
@@ -519,7 +531,6 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
             output$organelleAllUI <- renderUI(
                 .flevelPlotDist(
                     .orgName(obj, input$fNamesplDist, input$selObj),
-                    #.organelleAllName(), 
                     input$fNamesplDist)
             )
 
@@ -532,25 +543,61 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
                     .numPlotDist(input$quantityPlotDist)
             )
 
-            ## plots
+            ## plots and reactive expressions for download button
+            .plotDist1reac <- reactive(
+                .plotPlotDist(obj = obj, 
+                    levPlotDist = .listParams$levPlotDist1,
+                    levPlotDistOrg = .listParams$levPlotDistOrg1,
+                    quantity = input$quantityPlotDist,
+                    sI = .searchInd1(), ind = "object1")
+            )
+            
             output$plotDist1UI <- renderPlot(
-                    .plotPlotDist(obj = obj, 
-                        levPlotDist = .listParams$levPlotDist1,
-                        levPlotDistOrg = .listParams$levPlotDistOrg1,
-                        quantity = input$quantityPlotDist,
-                        sI = .searchInd1(),
-                        ind = "object1"
-                    )
+                .plotPlotDist(obj = obj, 
+                    levPlotDist = .listParams$levPlotDist1,
+                    levPlotDistOrg = .listParams$levPlotDistOrg1,
+                    quantity = input$quantityPlotDist,
+                    sI = .searchInd1(), ind = "object1")
             )
 
+            
+            .plotDist2reac <- reactive(
+                .plotPlotDist(obj = obj, 
+                    levPlotDist = .listParams$levPlotDist2,
+                    levPlotDistOrg = .listParams$levPlotDistOrg2,
+                    quantity = input$quantityPlotDist,
+                    sI = .searchInd2(), ind = "object2")    
+            )
+            
+            
+            
             output$plotDist2UI <- renderPlot(
-                    .plotPlotDist(obj = obj, 
-                        levPlotDist = .listParams$levPlotDist2,
-                        levPlotDistOrg = .listParams$levPlotDistOrg2,
-                        quantity = input$quantityPlotDist,
-                        sI = .searchInd2(),
-                        ind = "object2"
-                    )
+                .plotPlotDist(obj = obj, 
+                    levPlotDist = .listParams$levPlotDist2,
+                    levPlotDistOrg = .listParams$levPlotDistOrg2,
+                    quantity = input$quantityPlotDist,
+                    sI = .searchInd2(), ind = "object2") 
+            )
+
+            ## Download Handler for PCA plot
+            output$plotDist1Download <- downloadHandler(
+                filename = function() {
+                    paste("object1-plotDist-", Sys.Date(), ".jpg", sep="")
+                },
+                content = function(file) {
+                    jpeg(file, quality = 100, width = 800, height = 800)
+                    .plotDist1reac()
+                    dev.off()}
+            )
+            
+            output$plotDist2Download <- downloadHandler(
+                filename = function() {
+                    paste('object2-plotDist-', Sys.Date(), '.jpg', sep='')
+                },
+                content = function(file) {
+                    jpeg(file, quality = 100, width = 800, height = 800)
+                    .plotDist2reac()
+                    dev.off()}
             )
             
             ## END: TAB PLOTDIST ## 
@@ -622,18 +669,14 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
 
             ## create reactiveValues for new features of Interest
             .newfoi <- reactiveValues(ind = NULL)
-            
-            .unionFeat <- reactive(.sI(cIS = input$chooseIdenSearch, input$tagSelectList, 
-                                       .prot$text, .prot$PCA, .prot$plotDist,  
-                                       .fnamesFOI(.pR_SR$foi)[[.whichN()]]))
+        
             observe({
                 .newfoi$ind <- .obsNewFoI(obj, .unionFeat(),            
                                     input$savedSearchText, 
                                     input$saveLists2SR, "object1", FALSE)
                 .pR_SR$foi <- .obsSavedSearch(
-                    .pR_SR$foi, .newfoi$ind, .unionFeat(), 
-                    input$saveLists2SR, input$savedSearchText
-                )
+                            .pR_SR$foi, .newfoi$ind, .unionFeat(), 
+                            input$saveLists2SR, input$savedSearchText)
             }) 
 
             ## text field to assign name to search results
@@ -644,7 +687,7 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
                 if (length(obj) != 0 
                     && !is.null(.pR_SR$foi) 
                         && length(.pR_SR$foi) != 0) {
-                    showFOI <- .showFOI(.pR_SR$foi, obj, .whichN(), input$selObj)
+                    showFOI <- .showFOI(.pR_SR$foi, obj, .whichN(), TRUE)
                     paste0(showFOI, sep = "\n", collapse = "")
                 } else
                     return("pRolocGUI_SearchResults not found in workspace")

@@ -34,10 +34,13 @@
 }
 
 .pRn2_selObj <- function() {
-    wellPanel(
-        radioButtons("selObj", "select object", 
-                     choices = c("object1", "object2"), selected = "object1")
-    )
+    conditionalPanel(
+        condition = "input.tab1 != 'search'",
+            wellPanel(
+                radioButtons("selObj", "select object", 
+                    choices = c("object1", "object2"), selected = "object1")
+            )
+        ) 
 }
 
 .pR_condDisplaySelection <- function() {

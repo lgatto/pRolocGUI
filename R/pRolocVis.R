@@ -396,15 +396,14 @@ pRolocVis <- function(object = NULL) {
             ## Download Handler for PCA plot
             output$plotPCADownload <- downloadHandler(
                 filename = function() {
-                    paste(input$data, "-" , Sys.Date(), '.jpg', sep='')
+                    paste(input$data, "-PCA-", Sys.Date(), ".jpg", sep="")
                 },
                 content = function(file) {
                     jpeg(file, quality = 100, width = 800, height = 800)
                     .PCAPlotReac()
-                    dev.off()
-                }
+                    dev.off()}
             )
-            
+                
             ## reactive expressions for search based on cursor input for PCA
             minDist2dProtPCA <- reactive(
                 ## will be empty initially
@@ -416,7 +415,7 @@ pRolocVis <- function(object = NULL) {
                                 inputy = input$PCAclick$y,
                                 valuesx = .valuesPCA()[,1],
                                 valuesy = .valuesPCA()[,2],
-                                name = FALSE)
+                                name = FALSE)[1]
                 }
             )
             
@@ -426,7 +425,7 @@ pRolocVis <- function(object = NULL) {
                                 inputy = input$PCAhover$y,
                                 valuesx = .valuesPCA()[,1], 
                                 valuesy = .valuesPCA()[,2],
-                                name = TRUE)
+                                name = TRUE)[1]
                 }
             )
             
@@ -468,8 +467,7 @@ pRolocVis <- function(object = NULL) {
                                 org = .listParams$levPlotDistOrg[1],
                                 inputx = input$plotDistclick$x,
                                 inputy = input$plotDistclick$y,
-                                name = FALSE
-                    )
+                                name = FALSE)[1]
                 }
             )
                         
@@ -484,8 +482,7 @@ pRolocVis <- function(object = NULL) {
                                 org = .listParams$levPlotDistOrg[1],
                                 inputx = input$plotDisthover$x,
                                 inputy = input$plotDisthover$y,
-                                name = TRUE
-                        )
+                                name = TRUE)[1]
                 }
             })
             
@@ -526,26 +523,25 @@ pRolocVis <- function(object = NULL) {
             )
             
             ## renderPlot plotDist and assign parameters
-            output$plotDistUI <- renderPlot(
-                    .plotPlotDist(obj = .dI(), 
-                        levPlotDist = .listParams$levPlotDist,
-                        levPlotDistOrg = .listParams$levPlotDistOrg,
-                        quantity = input$quantityPlotDist,
-                        sI = .searchInd()
-                )
+            output$plotDistUI <- renderPlot(.plotDistReac()
+#                     .plotPlotDist(obj = .dI(), 
+#                         levPlotDist = .listParams$levPlotDist,
+#                         levPlotDistOrg = .listParams$levPlotDistOrg,
+#                         quantity = input$quantityPlotDist,
+#                         sI = .searchInd()
+               # )
             )
             
             
             output$plotDistDownload <- downloadHandler(
                 filename = function() {
-                    paste(input$data, "-", "plotDist", "-", 
-                          Sys.Date(), '.jpg', sep='')
+                    paste(input$data, "-plotDist-", Sys.Date(), ".jpg", sep="")
                 },
                 content = function(file) {
                     jpeg(file, quality = 100, width = 800, height = 800)
-                    print(.plotDistReac())
-                    dev.off()
-                }
+                    .plotDistReac()
+                    dev.off()}
+                    
             )
             ## END: PLOTDIST ##
             
