@@ -367,7 +367,7 @@
                 colour <- NULL
         }
     
-        if (length(fcex)) {
+        if (length(fcex) && !is.null(legend)) {
             if (fcex %in% fvarLabels(obj) && legend)
                 fcex <- fData(obj)[, fcex]
             else
