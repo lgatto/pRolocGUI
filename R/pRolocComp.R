@@ -290,12 +290,26 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
                     ind = "object1")
             )
             
-            output$PCA1 <- renderPlot(.PCA1())            
+            output$PCA1 <- renderPlot(
+                .plotPCA(obj = obj, 
+                    fcolours = .params$colours[1], 
+                    fcex = .params$fcex[1],
+                    xrange = .params$xrange1,
+                    yrange = .params$yrange1,
+                    sb = .params$symbol[1],
+                    PCAn1 = .params$PCAn1[1],
+                    PCAn2 = .params$PCAn2[1],
+                    legend = input$legendyes, 
+                    legendpos = input$legendpos,
+                    sI = .searchInd1(),
+                    cIS = input$chooseIdenSearch,
+                    ind = "object1")
+            )            
             
             ## display 2D-nearest protein for obj1 in PCA plot
             output$hoverProt1PCA <- renderText(minDist2dProt1PCAHover())
             
-            .PCA2 <- reactive(
+            .PCA2reac <- reactive(
                 .plotPCA(obj = obj, 
                     fcolours = .params$colours[2], 
                     fcex = .params$fcex[2],
@@ -314,7 +328,21 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
             ## display 2D-nearest protein for obj2 in PCA plot
             output$hoverProt2PCA <- renderText(minDist2dProt2PCAHover())
             
-            output$PCA2 <- renderPlot(.PCA2())
+            output$PCA2 <- renderPlot(                
+                .plotPCA(obj = obj, 
+                    fcolours = .params$colours[1], 
+                    fcex = .params$fcex[1],
+                    xrange = .params$xrange1,
+                    yrange = .params$yrange1,
+                    sb = .params$symbol[1],
+                    PCAn1 = .params$PCAn1[1],
+                    PCAn2 = .params$PCAn2[1],
+                    legend = input$legendyes, 
+                    legendpos = input$legendpos,
+                    sI = .searchInd1(),
+                    cIS = input$chooseIdenSearch,
+                    ind = "object1")
+            )
             
             ## Download Handler for PCA plot
             output$plotPCA1Download <- downloadHandler(
@@ -323,7 +351,7 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
                 }, 
                 content = function(file) {
                     jpeg(file, quality = 100, width = 800, height = 800)
-                    renderPlot(reactive(.PCA1()))
+                    .PCA1reac()
                     dev.off()
                 }
             )
@@ -334,7 +362,7 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
                 }, 
                 content = function(file) {
                     jpeg(file, quality = 100, width = 800, height = 800)
-                    renderPlot(.PCA2())
+                    .PCA2reac()
                     dev.off()
                 }
             )
@@ -540,9 +568,7 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
                     quantity = input$quantityPlotDist,
                     sI = .searchInd2(), ind = "object2")    
             )
-            
-            
-            
+
             output$plotDist2UI <- renderPlot(
                 .plotPlotDist(obj = obj, 
                     levPlotDist = .listParams$levPlotDist2,

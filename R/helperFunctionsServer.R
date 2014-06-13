@@ -354,7 +354,7 @@
 ## a helper function for plotting the PCA plot and highlighting
 ## FeaturesOfInterest using highlightOnPlot
 .plotPCA <- function(obj, fcolours, fcex, xrange, yrange,
-                     sb, PCAn1, PCAn2, legend, legendpos,
+                     sb, PCAn1, PCAn2, legend = c(FALSE, TRUE), legendpos,
                      sI, cIS, ind = c("object1", "object2")) {
     if (length(obj) != 0) {
         ind <- match.arg(ind)
@@ -368,44 +368,43 @@
         }
     
         if (length(fcex)) {
-            if (fcex %in% fvarLabels(obj))
+            if (fcex %in% fvarLabels(obj) && legend)
                 fcex <- fData(obj)[, fcex]
             else
                 fcex <- 1  ## as.numeric(fcex)
         } 
         else
             fcex <- 1
-    
+        
         if (!is.null(xrange)) { 
             if (is.null(sb) || sb == "none") 
                 ## create plot2D and assign reactive variables to 
                 ## arguments, do not assign fpch (no symboltypes 
                 ## are plotted)
                 plot2D(obj, fcol = colour,
-                       xlim = c(xrange[1], xrange[2]),
-                       ylim = c(yrange[1], yrange[2]),
-                       dims = c(as.numeric(PCAn1),
+                        xlim = c(xrange[1], xrange[2]),
+                        ylim = c(yrange[1], yrange[2]),
+                        dims = c(as.numeric(PCAn1),
                                 as.numeric(PCAn2)),
-                       cex = fcex)
+                        cex = fcex)
             else
                 ## create plot2D and assign reactive variables to 
                 ## arguments take input$fsymboltype for symboltype
                 plot2D(obj, fcol = colour, fpch = sb,
-                       xlim = c(xrange[1], xrange[2]),
-                       ylim = c(yrange[1], yrange[2]),
-                       dims = c(as.numeric(PCAn1),
+                        xlim = c(xrange[1], xrange[2]),
+                        ylim = c(yrange[1], yrange[2]),
+                        dims = c(as.numeric(PCAn1),
                                 as.numeric(PCAn2)),
-                       cex = fcex)
+                        cex = fcex)
         }
     
-        if (length(legend)) 
-            if (fcolours %in% fvarLabels(obj) && legend)
-                ## add a legend to the plot with reactive 
-                ## variable as arguments
-                addLegend(obj, fcol = colour, 
-                          where = legendpos,
-                          bty = "n", cex = 1)
-    
+        if (fcolours %in% fvarLabels(obj) && legend)
+            ## add a legend to the plot with reactive 
+            ## variable as arguments
+            addLegend(obj, fcol = colour, 
+                where = legendpos,
+                bty = "n", cex = 1)
+
         if (length(sI) && length(cIS)) {
             foiPCA <- FeaturesOfInterest(description = "hoP",
                                          fnames = featureNames(obj)[sI],
@@ -504,8 +503,8 @@
                 par(mfrow=c(1, 1))
             else
                 par(mfrow=c(2, col))
-        
-        
+    
+            
             ## Actual plotting
             for (i in 1:min(quantity, length(levPlotDist))) { 
         
@@ -526,12 +525,13 @@
                     else 
                         ylim <- ylim1
                 }
-            
+                
                 plotDist(objPlotDist, ylim = ylim)
-            
+                
                 if (!is.null(sI) && length(sI) > 0)
                     apply(X = exprs(obj[sI, ]), MARGIN = 1, FUN = lines)
-                title(levPlotDistOrg[i])            
+                
+                title(levPlotDistOrg[i])
             } ## end for loop
         }
     }
