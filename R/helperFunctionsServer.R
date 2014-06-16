@@ -33,7 +33,7 @@
         isolate({
             click1
             click2
-            dBox <- ifelse(PCA, "mousePCA", "mousePlotDist")
+            dBox <- ifelse(PCA, "cursorPCA", "cursorPlotDist")
         })
     } else
         dBox <- NULL
@@ -83,9 +83,9 @@
     ans <- NULL
     if ("text" %in% cIS)
         ans <- c(ans, protText)
-    if ("mousePCA" %in% cIS)
+    if ("cursorPCA" %in% cIS)
         ans <- c(ans, protPCA)
-    if ("mousePlotDist" %in% cIS)
+    if ("cursorPlotDist" %in% cIS)
         ans <- c(ans, protPlotDist)
     if ("savedSearches" %in% cIS && !is.null(tagSelectList))
         ans <- c(ans, protSearch)
@@ -187,8 +187,8 @@
 .checkBoxdSelect <- function(dPCA, dPlotDist, dText) {
     checkboxGroupInput("chooseIdenSearch", 
         label = "",
-        choices = c("PCA" = "mousePCA",
-                "protein profiles" = "mousePlotDist",
+        choices = c("PCA" = "cursorPCA",
+                "protein profiles" = "cursorPlotDist",
                 "saved searches" = "savedSearches",
                 "query" = "text"),
         selected = c(dPCA, dPlotDist, dText)
@@ -712,37 +712,54 @@
 
 ## START: TAB Data (pRolocComp) ##
 
+## returns marker levels of selected fvarLabels
 .mC <- function(obj, fcol1, fcol2) {
     obj1 <- obj[[1]]
     obj2 <- obj[[2]]
-    union(unique(fData(obj1)[, fcol1]), unique(fData(obj2)[, fcol2]))
+    ans <- union(unique(fData(obj1)[, fcol1]), unique(fData(obj2)[, fcol2]))
+    return(ans)
 }
 
-.fDataCompFeat <- function(obj1, obj2, mL1, mL2, sel, compRadio) {
+## helper function to access fData of features in slots 
+## of FeatComp infrastructure
+.namesCompFeat <- function(obj1, obj2, mL1, mL2, sel, compRadio) {
     
-    indData <- 1
+    .indData <- 1
     if (mL1 == "none" || mL2 == "none") {
         mL1 <- mL2 <- NULL
     } else 
-        indData <- which(sel == c("all", .mC(list(obj1, obj2), mL1, mL2)))
+        .indData <- which(sel == c("all", .mC(list(obj1, obj2), mL1, mL2)))
         
-        
-    comp <- compfnames(obj1, obj2, mL1, mL2, FALSE)
-    
-    
-    
+    .comp <- compfnames(obj1, obj2, mL1, mL2, FALSE)
     
     if (compRadio %in% c("unique1", "common")) {
         obj <- obj1
     } else
         obj <- obj2
     
-    indFeat <- which(
-        rownames(obj) %in% slot(comp[[indData]], compRadio))
-    ans <- as.data.frame(
-        cbind(" " = rownames(fData(obj[indFeat])), fData(obj[indFeat])))
+    .Feat <- slot(.comp[[.indData]], compRadio)
+    if (length(.Feat) != 0) {
+        i1 <- ceiling(length(.Feat)/4)
+        i2 <- i1 + i1
+        i3 <- i1 + i2
+        i4 <- i3 + i1
+        .names <- sort(.Feat)
+        ans <- matrix("-", i1, 4)
+        ans[,1] <- .names[1:i1]
+        if (length(.Feat) > i1)
+            ans[,2] <- .names[(i1+1):i2]
+        if (length(.Feat) > i2)
+            ans[,3] <- .names[(i2+1):i3]
+        if (length(.Feat) > 3*i1)
+            ans[1:(length(.Feat) - i3),4] <- .names[(i3+1):length(.Feat)]
+        ans <- as.data.frame(ans)
+        colnames(ans) <- c(" ", " ", " ", " ")
+    } else {
+        ans <- as.data.frame("no features comprised")
+        colnames(ans) <- " "
+    }
     return(ans)    
 }
-    
+   
 ## END: TAB Data (pRolocComp) ## 
 
