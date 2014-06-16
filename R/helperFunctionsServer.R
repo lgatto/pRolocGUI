@@ -241,11 +241,12 @@
 }
 
 ## UI for colours
-.colourPCA <- function(obj, sel = "none", ind = c("object1", "object2")) {
+.colourPCA <- function(obj, sel = "none", ind = c("object1", "object2"),
+                       inputname = "fcolours", label = "colour") {
     if (length(obj) != 0) {
         ind <- match.arg(ind)
         obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
-        ans <- selectInput("fcolours", "colour", c("none", fvarLabels(obj)),
+        ans <- selectInput(inputname, label, c("none", fvarLabels(obj)),
                     selected = sel)
         return(ans)
     }
@@ -708,4 +709,40 @@
 }
 
 ## END: TAB Search ##
+
+## START: TAB Data (pRolocComp) ##
+
+.mC <- function(obj, fcol1, fcol2) {
+    obj1 <- obj[[1]]
+    obj2 <- obj[[2]]
+    union(unique(fData(obj1)[, fcol1]), unique(fData(obj2)[, fcol2]))
+}
+
+.fDataCompFeat <- function(obj1, obj2, mL1, mL2, sel, compRadio) {
+    
+    indData <- 1
+    if (mL1 == "none" || mL2 == "none") {
+        mL1 <- mL2 <- NULL
+    } else 
+        indData <- which(sel == c("all", .mC(list(obj1, obj2), mL1, mL2)))
+        
+        
+    comp <- compfnames(obj1, obj2, mL1, mL2, FALSE)
+    
+    
+    
+    
+    if (compRadio %in% c("unique1", "common")) {
+        obj <- obj1
+    } else
+        obj <- obj2
+    
+    indFeat <- which(
+        rownames(obj) %in% slot(comp[[indData]], compRadio))
+    ans <- as.data.frame(
+        cbind(" " = rownames(fData(obj[indFeat])), fData(obj[indFeat])))
+    return(ans)    
+}
+    
+## END: TAB Data (pRolocComp) ## 
 
