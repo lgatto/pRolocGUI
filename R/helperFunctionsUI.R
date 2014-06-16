@@ -40,7 +40,19 @@
                 radioButtons("selObj", "select object", 
                     choices = c("object1", "object2"), selected = "object1")
             )
-        ) 
+    ) 
+}
+
+.pRn2_commonFeat <- function() {
+    conditionalPanel(
+        condition = "input.tab1 != 'sample meta-data' && 
+            input.tab1 != 'search'",
+            wellPanel(
+                radioButtons("commonFeat", "display",
+                             choices = c("all", "common features"), 
+                             selected = "all")
+            )
+    )
 }
 
 .pR_condDisplaySelection <- function() {
