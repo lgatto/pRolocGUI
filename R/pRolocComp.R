@@ -26,6 +26,7 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
                         .pR_condTabfData(),
                         .pR_condTabpData(),
                         .pR_condTabSearch(),
+                        .pR_condTabComp(),
                         width = 2
                         ),
                     ## Main Panel
@@ -37,6 +38,7 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
                             .pR_tabPanelfData(),
                             .pR_tabPanelpData(),
                             .pR_tabPanelSearch(),
+                            .pR_tabPanelComp(),
                             id = "tab1" 
                         )#,
                        # width = 9
@@ -330,18 +332,18 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
             
             output$PCA2 <- renderPlot(                
                 .plotPCA(obj = obj, 
-                    fcolours = .params$colours[1], 
-                    fcex = .params$fcex[1],
-                    xrange = .params$xrange1,
-                    yrange = .params$yrange1,
-                    sb = .params$symbol[1],
-                    PCAn1 = .params$PCAn1[1],
-                    PCAn2 = .params$PCAn2[1],
+                    fcolours = .params$colours[2], 
+                    fcex = .params$fcex[2],
+                    xrange = .params$xrange2,
+                    yrange = .params$yrange2,
+                    sb = .params$symbol[2],
+                    PCAn1 = .params$PCAn1[2],
+                    PCAn2 = .params$PCAn2[2],
                     legend = input$legendyes, 
                     legendpos = input$legendpos,
-                    sI = .searchInd1(),
+                    sI = .searchInd2(),
                     cIS = input$chooseIdenSearch,
-                    ind = "object1")
+                    ind = "object2")
             )
             
             ## Download Handler for PCA plot
@@ -702,6 +704,63 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
                 .buttonSearch(.pR_SR$foi, .unionFeat(), input$savedSearchText)
             )
             ### END: SEARCH ###
+            
+        
+            
+            ### TAB: DATA ###
+            output$markerLevel1Output <- renderUI( 
+                .colourPCA(obj, "none", "object1", "markerL1", "marker level 1")
+            )
+            
+            output$markerLevel2Output <- renderUI(
+                .colourPCA(obj, "none", "object2", "markerL2", "marker level 1")
+            )
+            
+            output$selectMarker <- renderUI(
+                if (!is.null(input$markerL1) && 
+                            !is.null(input$markerL2) &&
+                                input$compRadio != "Overview" && 
+                                    input$markerL1 != "none" && 
+                                        input$markerL2 != "none") {
+                    selectInput("selectMarker", "select marker", 
+                        choices = c("all",
+                                    .mC(obj, input$markerL1, input$markerL2)),
+                        selected = "all")
+                }
+            )
+            
+            output$dataComp <- renderText(
+                if (!is.null(input$markerL1) && !is.null(input$markerL2))
+                    if (input$compRadio == "Overview") {
+                        if (input$markerL1 == "none" || input$markerL2 == "none") {
+                            paste0(capture.output(
+                                compfnames(object1, object2, NULL, NULL)),
+                                sep = "\n", collapse = ""
+                            )
+                        } else {
+                            paste0(capture.output(
+                                compfnames(object1, object2, 
+                                        input$markerL1, input$markerL2)),
+                                sep = "\n", collapse = ""
+                            )
+                        }
+                    }
+            )
+            
+            output$dataCompTextUI <- renderUI(
+                if (input$compRadio == "Overview")
+                    verbatimTextOutput("dataComp")
+            )
+            
+            
+            output$fDataCompFeatUI <- renderDataTable(
+                if (input$compRadio != "Overview" 
+                        && !is.null(input$markerL1) && !is.null(input$markerL2))
+                    .fDataCompFeat(object1, object2, 
+                            input$markerL1, input$markerL2, 
+                            input$selectMarker, input$compRadio)
+            )            
+            ### END: DATA ###
 
     
         }

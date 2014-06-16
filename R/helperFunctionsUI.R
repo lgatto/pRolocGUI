@@ -35,7 +35,7 @@
 
 .pRn2_selObj <- function() {
     conditionalPanel(
-        condition = "input.tab1 != 'search'",
+        condition = "input.tab1 != 'search' && input.tab1 != 'Data'",
             wellPanel(
                 radioButtons("selObj", "select object", 
                     choices = c("object1", "object2"), selected = "object1")
@@ -200,6 +200,20 @@
     )
 }
 
+.pR_condTabComp <- function() {
+    conditionalPanel(
+        condition="input.tab1 == 'Data'",
+        wellPanel(
+            radioButtons("compRadio", label = "", 
+                choices = c("Overview", "common", "unique1", "unique2"),
+                selected = "Overview"),
+            htmlOutput("selectMarker"),
+            htmlOutput("markerLevel1Output"),
+            htmlOutput("markerLevel2Output")
+        )
+    )
+}
+
 
 ## END: Sidebar panel ##
 
@@ -319,5 +333,12 @@
     tabPanel("search",
              verbatimTextOutput("infoSavedSearchUI")
     )
+}
+
+.pR_tabPanelComp <- function() {
+    tabPanel("Data",
+             dataTableOutput("fDataCompFeatUI"),
+             htmlOutput("dataCompTextUI")
+             )
 }
 
