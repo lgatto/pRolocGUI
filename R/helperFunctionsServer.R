@@ -383,7 +383,7 @@
 .plotPCA <- function(obj, fcolours, fcex, xrange, yrange,
                      sb, PCAn1, PCAn2, legend = c(FALSE, TRUE), legendpos,
                      sI, cIS, ind = c("object1", "object2")) {
-    if (length(obj) != 0 && !is.null(legend)) {
+    if (length(obj) != 0) {
         ind <- match.arg(ind)
         obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
         
@@ -424,13 +424,14 @@
                                 as.numeric(PCAn2)),
                         cex = fcex)
         }
-    
-        if (fcolours %in% fvarLabels(obj) && legend)
-            ## add a legend to the plot with reactive 
-            ## variable as arguments
-            addLegend(obj, fcol = colour, 
-                where = legendpos,
-                bty = "n", cex = 1)
+        
+        if (!is.null(legend))
+            if (fcolours %in% fvarLabels(obj) && legend)
+                ## add a legend to the plot with reactive 
+                ## variable as arguments
+                addLegend(obj, fcol = colour, 
+                    where = legendpos,
+                    bty = "n", cex = 1)
 
         if (length(sI) && length(cIS)) {
             foiPCA <- FeaturesOfInterest(description = "hoP",
