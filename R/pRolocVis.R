@@ -13,17 +13,17 @@
 #'\code{MSnbase} package. 
 #'@examples \dontrun{
 #'
-#'## load \code{MSnSet} data sets from the \code{pRolocdata} package
-#'data(andy2011)
-#'data(tan2009r1)
-#'data(dunkley2006)
+#'## load MSnSet data sets from the pRolocdata package
+#'data(andy2011, package = "pRolocdata")
+#'data(tan2009r1, package = "pRolocdata")
+#'data(dunkley2006, package = "pRolocdata")
 #'
 #'## create lists with unnamed and named objects
 #'unnamed <- list(andy2011, tan2009r1, dunkley2006)
 #'named <- list(andy2011 = andy2011, tan2009r1 = tan2009r1, dunkley2006 = dunkley2006)
 #'
-#'## launch application by either assigning a \code{MSnSet}, an unnamed or a 
-#'## named list to the argument \code{object}
+#'## launch application by either assigning a MSnSet, an unnamed or a 
+#'## named list to the argument object
 #'pRolocVis(object = andy2011)
 #'pRolocVis(object = unnamed)
 #'pRolocVis(object = named)
