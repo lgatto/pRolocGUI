@@ -2,28 +2,29 @@
 #'@title pRolocVis
 #'@export
 #'@author Thomas Naake <tn299@@cam.ac.uk>
-#'@usage pRolocVis(object = NULL)
-#'@param object Pass a MSnSet to pRolocVis directly. Default \code{NULL} will
-#'enable possibility to upload MSnSet in pRolocVis. 
-#'@description A function to start a shiny session with one MSnSet data set. 
-#'Run \code{pRolocVis()} to start the shiny application and choose between
-#'three example MSnSet originating from \code{pRolocdata} or upload your
-#'own MSnSet. Choosing between the tabs allows to display PCA plots,
+#'@usage pRolocVis(object)
+#'@param object an object of class \code{MSnSet} or a list of \code{MSnSet}s.
+#'@description A function to start a shiny session with one MSnSet data set or
+#'a list of \code{MSnSet}s to explore and analyse interactively spatial 
+#'proteomics data. Choosing between the tabs allows to display 
+#'Principle Component Analysis plots,
 #'protein profiles, the underlying data and upload abilities for past
 #'search results.
 #'@examples \dontrun{pRolocVis(object = NULL)}
-#'
+#'@return An object \code{pRolocGUI_SearchResults} of class \code{FoICollection}
+#'when the object existed already or when new \code{FeaturesOfInterest} where
+#'created during a session.  
 #'@export
 pRolocVis <- function(object = list(andy2011)) {    
 
-    ## globalp
+    ## global
     if (is.list(object)) {
         if (!listOf(object, "MSnSet"))
             stop("object not list of MSnSets")
     } else
         if (!inherits(object, "MSnSet"))
             stop("object not of class MSnSet")
-
+    
     ## increase upload limit to 20 MB
     options(shiny.maxRequestSize = 20*1024^2)
     
@@ -172,8 +173,12 @@ pRolocVis <- function(object = list(andy2011)) {
                             else
                                 .dI <- list(object)
                         }
-                    } else ## object                  
-                        .dI <- list(object[[.indObject]])
+                    } else {## object          
+                        if (is.list(object))
+                            .dI <- list(object[[.indObject]])
+                        else
+                            .dI <- list(object)
+                    }
                     .dI
                 }
             })
