@@ -32,7 +32,7 @@
 #'when the object existed already or when a new \code{FoICollection} was
 #'created during a session. 
 #'@export
-pRolocVis <- function(object = list(andy2011)) {    
+pRolocVis <- function(object) {    
 
     ## global
     if (is.list(object)) {
@@ -449,8 +449,8 @@ pRolocVis <- function(object = list(andy2011)) {
             ## calculate protein nearest to user input
             .minDistProtPlotDist <- reactive(
                 if (length(.dI()) != 0 && !is.null(input$plotDistclick)) { 
-                    if (input$plotDistclick$x < (nrow(pData(.dI()[[1]])) + .3) &&
-                        input$plotDistclick$x > 0.5 &&
+                    if (input$plotDistclick$x < (nrow(pData(.dI()[[1]])) + .3) 
+                        && input$plotDistclick$x > 0.5 &&
                             !is.null(input$quantityPlotDist) && 
                                 input$quantityPlotDist == "1")
                         .minDistPlotDist(obj = .dI(), 
@@ -464,8 +464,8 @@ pRolocVis <- function(object = list(andy2011)) {
                         
             .minDistProtPlotDistHover <- reactive({
                 if (length(.dI()) != 0 && !is.null(input$plotDisthover$x)) {
-                    if (input$plotDisthover$x < (nrow(pData(.dI()[[1]])) + .3) &&
-                        input$plotDisthover$x > 0.5 && 
+                    if (input$plotDisthover$x < (nrow(pData(.dI()[[1]])) + .3) 
+                        && input$plotDisthover$x > 0.5 && 
                             !is.null(input$quantityPlotDist) && 
                                 input$quantityPlotDist == "1") 
                         .minDistPlotDist(obj = .dI(),
@@ -603,7 +603,8 @@ pRolocVis <- function(object = list(andy2011)) {
             .whichN <- reactive(.whichTag(input$tagSelectList, .pR_SR$foi))
             
             output$infoSavedSearchUI <- renderText({
-                if (length(.dI()) != 0 && !is.null(.pR_SR$foi) && length(.pR_SR$foi) != 0) {
+                if (length(.dI()) != 0 && !is.null(.pR_SR$foi) && 
+                        length(.pR_SR$foi) != 0) {
                     showFOI <- .showFOI(.pR_SR$foi, .dI(), .whichN(), FALSE)
                     paste0(showFOI, sep = "\n", collapse = "")
                 } else
