@@ -1,19 +1,36 @@
 #'@name pRolocVis
 #'@title pRolocVis
-#'@export
 #'@author Thomas Naake <tn299@@cam.ac.uk>
 #'@usage pRolocVis(object)
 #'@param object an object of class \code{MSnSet} or a list of \code{MSnSet}s.
 #'@description A function to start a shiny session with one MSnSet data set or
 #'a list of \code{MSnSet}s to explore and analyse interactively spatial 
-#'proteomics data. Choosing between the tabs allows to display 
-#'Principle Component Analysis plots,
-#'protein profiles, the underlying data and upload abilities for past
-#'search results.
-#'@examples \dontrun{pRolocVis(object = NULL)}
+#'proteomics data. \code{pRolocVis} offers high interactivity for exploring
+#'Principle Component Analysis plots, protein profile plots and quantatative
+#'and qualitative meta-data. Additionally, \code{pRolocVis} supports 
+#'import/export abilities for past and new search results using the 
+#'\code{FeaturesOfInterest}/\code{FoICollection} infrastructure defined in the
+#'\code{MSnbase} package. 
+#'@examples \dontrun{
+#'
+#'## load \code{MSnSet} data sets from the \code{pRolocdata} package
+#'data(andy2011)
+#'data(tan2009r1)
+#'data(dunkley2006)
+#'
+#'## create lists with unnamed and named objects
+#'unnamed <- list(andy2011, tan2009r1, dunkley2006)
+#'named <- list(andy2011 = andy2011, tan2009r1 = tan2009r1, dunkley2006 = dunkley2006)
+#'
+#'## launch application by either assigning a \code{MSnSet}, an unnamed or a 
+#'## named list to the argument \code{object}
+#'pRolocVis(object = andy2011)
+#'pRolocVis(object = unnamed)
+#'pRolocVis(object = named)
+#'}
 #'@return An object \code{pRolocGUI_SearchResults} of class \code{FoICollection}
-#'when the object existed already or when new \code{FeaturesOfInterest} where
-#'created during a session.  
+#'when the object existed already or when a new \code{FoICollection} was
+#'created during a session. 
 #'@export
 pRolocVis <- function(object = list(andy2011)) {    
 
