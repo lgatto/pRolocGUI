@@ -14,12 +14,16 @@
 #'@examples \dontrun{pRolocVis(object = NULL)}
 #'
 #'@export
-pRolocVis <- function(object = NULL) {    
-    ## global
-    ## load MSnSets
-    data(andy2011, package = "pRolocdata")
-    data(tan2009r1, package = "pRolocdata")
-    data(dunkley2006, package = "pRolocdata")
+pRolocVis <- function(object = list(andy2011)) {    
+
+    ## globalp
+    if (is.list(object)) {
+        if (!listOf(object, "MSnSet"))
+            stop("object not list of MSnSets")
+    } else
+        if (!inherits(object, "MSnSet"))
+            stop("object not of class MSnSet")
+
     ## increase upload limit to 20 MB
     options(shiny.maxRequestSize = 20*1024^2)
     
@@ -49,7 +53,7 @@ pRolocVis <- function(object = NULL) {
                     ## Main Panel
                     mainPanel(
                         tabsetPanel(
-                            .pR_tabPanelData(),
+                            .pRn1_tabPanelData(),
                             .pRn1_tabPanelPCA(),
                             .pRn1_tabPanelProteinProfiles(),
                             .pR_tabPanelQuantitation(),
@@ -135,97 +139,62 @@ pRolocVis <- function(object = NULL) {
             
             ## TAB: DATA/UPLOAD ##
             
-            ## upload function for own data, access to data path implemented 
-            ## by index "datapath", 
-            ## see ?shiny::fileInput for further details
-            output$Data1UI <- renderUI({
-                ## choose Data source, a drop down list of
-                ## andy2011, dunkley2006, tan2009r1 (all example
-                ## data) or use your own data by selecting load
-                ## data
-                selectInput("data",
-                            "Choose MSnSet data source:",
-                            choices = c("andy2011", 
-                                "dunkley2006",
-                                "tan2009r1", 
-                                "own data"),
-                            selected=ifelse(is.null(object), 
-                                "andy2011", 
-                                "own data"))                                
-            })
-            
-            output$Data2UI <- renderUI({
-                if (is.null(object))
-                    fileInput("owndata", 
-                            "Select your own MSnSet file",
-                            ## accept=c('.rda', 'data/rda', 
-                            ## '.RData', 'data/RData'),
-                            multiple = FALSE)
-                else {
-                    if (inherits(object, "MSnSet"))
-                        helpText("object is an MSnSet")
-                    else 
-                        helpText("object corrupt, 
-                            MSnSet 'andy2011' will be used")
-                }  
-            })
-            
-            output$Data3UI <- renderUI({
-                if (is.null(object))
-                    textOutput("warningowndataUI")
-            })
+            ## choose Data source
+            output$Data1UI <- renderUI(
+                selectInput("data", "Choose MSnSet data source:",
+                                                choices = .namesObj(object))     
+            )
 
             .dIownData <- reactive({
-                if (!length(as.character(input$owndata["datapath"])))
-                    od <- andy2011
-                else {
+                if (length(as.character(input$upload["datapath"]))) {
                     ## check if MSnSet has ending .rda or .RData and if 
                     ## it is MSnSet
-                    if (file_ext(input$owndata["name"]) %in% c("rda","RData")) {
-                        if (inherits(
-                            get(load(as.character(input$owndata["datapath"]))), 
-                            "MSnSet"))
-                            od <- get(load(
-                                as.character(input$owndata["datapath"])
-                            ))
-                        else
-                            od <- andy2011
-                    } else
-                        od <- andy2011
-                }
+                    if (file_ext(input$upload["name"]) %in% c("rda","RData") 
+                        && inherits(
+                            get(load(as.character(input$upload["datapath"]))), 
+                                "MSnSet"))
+                        od <- get(load(as.character(input$upload["datapath"])))
+                 }
             })
             
-            ## .dI
+            ## .dI (data Input)
             .dI <- reactive({
-                if (!is.null(input$data))
-                        switch(input$data,
-                            "andy2011" = list(andy2011),
-                            "dunkley2006" = list(dunkley2006),
-                            "tan2009r1" = list(tan2009r1),
-                            "own data" = list(
-                                    if (is.null(object)) {
-                                        .dIownData()
-                                    } else {
-                                        if (inherits(object, "MSnSet"))
-                                            object
-                                        else
-                                            andy2011
-                                    }
-                                )
-                        )    
+                if (!is.null(input$data)) {
+                    .lenObject <- length(.namesObj(object))
+                    .indObject <- which(input$data == .namesObj(object))
+                    ## upload
+                    if (.lenObject == .indObject) {
+                        if (inherits(.dIownData(), "MSnSet"))
+                            .dI <- list(.dIownData())
+                        else {
+                            if (is.list(object))
+                                .dI <- list(object[[1]])
+                            else
+                                .dI <- list(object)
+                        }
+                    } else ## object                  
+                        .dI <- list(object[[.indObject]])
+                    .dI
+                }
             })
 
-            output$warningowndataUI <- renderText({
-                    if (input$data == "own data") {
-                        if (identical(.dI()[[1]], andy2011))
-                            return("noMSnSet selected, 
-                                    MSnSet 'andy2011' will be used")
-                        else
-                            return()
-                    } else
-                        return()
+            output$warningUploadUI <- renderUI({
+                if (!is.null(input$data)) {
+                    if (input$data == "upload" 
+                        && !length(as.character(input$upload["datapath"])))
+                        strong(span("no file selected", style = "color:red"),
+                            ", first element of object will be used")
+                    else
+                        if (input$data == "upload" && 
+                            !inherits(.dIownData(), "MSnSet"))
+                            strong(span("no valid MSnSet selected", 
+                                                        style = "color:red"), 
+                                ", first element of object will be used")
+                }
             })  
+
             ## END: UPLOAD ##
+            
             
             
             ## START OF SEARCH IMPLEMENTATION ##
