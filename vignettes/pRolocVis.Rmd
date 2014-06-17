@@ -70,7 +70,7 @@ Currently, `pRolocGUI` distributes the `pRolocVis` application.
 
 The function `pRolocVis` needs an object of class `MSnSet` or 
 a list of `MSnSet` objects as an argument. 
-To prepare the environment to run a `pRolocVis()` session, the `pRolocGUI` 
+To prepare the environment to run a `pRolocVis` session, the `pRolocGUI` 
 package and for demonstration purposes three example `MSnSet`s are loaded to the 
 environment. The example data sets are available from the 
 `pRolocdata` [`r citep(extbib["GattoPRolocdata"])`](#references) experiment
