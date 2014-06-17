@@ -28,10 +28,11 @@
 ## a helper function to create names from an object x
 ## which can be selected in the 'Data' tab
 .namesObj <- function(x) {
-    if (is.null(names(x)))
+    if (is.null(names(x))) {
         ans <- c(paste("object", 1:length(x), sep = ""), "upload")
         if (!is.list(x))
             ans <- c("object", "upload")
+    }
     if (!is.null(names(x))) {
         ans <- vector("character", length(x) + 1)
         
@@ -144,7 +145,7 @@
 ## a check function to test if features are already internally stored
 ## returning TRUE or FALSE
 .checkFeatText <- function(obj, protText, sRText, 
-                           search, ind = c("object1", "object2"), name = FALSE) {
+                        search, ind = c("object1", "object2"), name = FALSE) {
     if (length(obj) != 0) {
         
         ind <- match.arg(ind)
@@ -159,6 +160,7 @@
             Feat <- which(rownames(obj)[indices] %in% protText)
             ans <- length(Feat) == length(indices)
         }
+        return(ans)
     }
 }
 
@@ -568,9 +570,7 @@
 
 
 
-## START: TAB Quantitation Data ##
-
-## END: TAB Quantitation Data and feature meta-data ##
+## START: TAB Quantitation Data  and feature meta-data##
 
 .radioButton <- function(indices, quant) {
     radioButtons(
@@ -637,7 +637,7 @@
     if (length(obj) != 0) {
         ind <- match.arg(ind)
         obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
-        ans <- which((match(rownames(obj), .fnamesFOI(coll)[[index]])) != NA)
+        ans <- which(match(rownames(obj), .fnamesFOI(coll)[[index]]) != "NA")
         return(ans)
     }
 }

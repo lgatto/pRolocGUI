@@ -406,7 +406,7 @@ pRolocVis <- function(object = list(andy2011)) {
                                 inputy = input$PCAclick$y,
                                 valuesx = .valuesPCA()[,1],
                                 valuesy = .valuesPCA()[,2],
-                                name = FALSE)[1]
+                                name = FALSE)
                 }
             )
             
@@ -416,7 +416,7 @@ pRolocVis <- function(object = list(andy2011)) {
                                 inputy = input$PCAhover$y,
                                 valuesx = .valuesPCA()[,1], 
                                 valuesy = .valuesPCA()[,2],
-                                name = TRUE)[1]
+                                name = TRUE)
                 }
             )
             
@@ -458,7 +458,7 @@ pRolocVis <- function(object = list(andy2011)) {
                                 org = .listParams$levPlotDistOrg[1],
                                 inputx = input$plotDistclick$x,
                                 inputy = input$plotDistclick$y,
-                                name = FALSE)[1]
+                                name = FALSE)
                 }
             )
                         
@@ -473,22 +473,12 @@ pRolocVis <- function(object = list(andy2011)) {
                                 org = .listParams$levPlotDistOrg[1],
                                 inputx = input$plotDisthover$x,
                                 inputy = input$plotDisthover$y,
-                                name = TRUE)[1]
+                                name = TRUE)
                 }
             })
             
             output$hoverProtPlotDistUI <- renderText(
                     .minDistProtPlotDistHover()
-            )
-            
-            ## for Plot/Download button (needs a reactive expression)
-            .plotDistReac <- reactive(
-                    .plotPlotDist(obj = .dI(), 
-                        levPlotDist = .listParams$levPlotDist,
-                        levPlotDistOrg = .listParams$levPlotDistOrg,
-                        quantity = input$quantityPlotDist,
-                        sI = .searchInd()
-                )
             )
             
             ## levels for plotDist to choose to plot
@@ -513,14 +503,24 @@ pRolocVis <- function(object = list(andy2011)) {
                     .numPlotDist(input$quantityPlotDist)
             )
             
+            ## for Plot/Download button (needs a reactive expression)
+            .plotDistReac <- reactive(
+                .plotPlotDist(obj = .dI(), 
+                    levPlotDist = .listParams$levPlotDist,
+                    levPlotDistOrg = .listParams$levPlotDistOrg,
+                    quantity = input$quantityPlotDist,
+                    sI = .searchInd()
+                )
+            )
+            
             ## renderPlot plotDist and assign parameters
-            output$plotDistUI <- renderPlot(.plotDistReac()
-#                     .plotPlotDist(obj = .dI(), 
-#                         levPlotDist = .listParams$levPlotDist,
-#                         levPlotDistOrg = .listParams$levPlotDistOrg,
-#                         quantity = input$quantityPlotDist,
-#                         sI = .searchInd()
-               # )
+            output$plotDistUI <- renderPlot(
+                .plotPlotDist(obj = .dI(), 
+                    levPlotDist = .listParams$levPlotDist,
+                    levPlotDistOrg = .listParams$levPlotDistOrg,
+                    quantity = input$quantityPlotDist,
+                    sI = .searchInd()
+               )
             )
             
             
