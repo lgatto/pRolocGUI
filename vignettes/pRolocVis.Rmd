@@ -45,7 +45,7 @@ Key features of `pRolocVis` are the identification of features in
 plots, a 'reverse search' based on querying meta-data which allows for 
 highlighting the features on plots and an import/export functionality by 
 using the `FeaturesOfInterest`/`FoICollection` infrastructure distributed 
-by the `pRoloc` package. 
+by the `MSnbase` package. 
 
 We recommend some familiarity with the `MSnSet` class (see `?MSnSet`
 for details) and the `pRoloc` vignette (available with 
