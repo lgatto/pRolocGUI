@@ -604,7 +604,7 @@ pRolocVis <- function(object = list(andy2011)) {
             
             output$infoSavedSearchUI <- renderText({
                 if (length(.dI()) != 0 && !is.null(.pR_SR$foi) && length(.pR_SR$foi) != 0) {
-                    showFOI <- .showFOI(.pR_SR$foi, .dI(), .whichN())
+                    showFOI <- .showFOI(.pR_SR$foi, .dI(), .whichN(), FALSE)
                     paste0(showFOI, sep = "\n", collapse = "")
                 } else
                     return("pRolocGUI_SearchResults not found in workspace")
