@@ -1,4 +1,4 @@
-CHANGES IN VERSION 
+CHANGES IN VERSION 0.99.3
 ------------------------
  o multiple objects can be passed to pRolocVis by using a list [2014-17-02 Tue]
  o improve query search (submit and select check box) [2014-06-02 Mon]
