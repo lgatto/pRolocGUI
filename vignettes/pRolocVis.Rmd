@@ -94,7 +94,7 @@ pRolocVis(object = andy2011)
 
 Alternatively, to upload multiple objects of class `MSnSet`, `pRolocVis` 
 accepts both lists with named and unnamed objects. This allows for analysis
-of the multiple data sets without stopping the application from running. 
+of multiple data sets without stopping the application from running. 
 The names of objects of lists will appear in the drop-down menu in the 
 **_Data_** tab, while lists with unnamed objects will have a drop-down menu 
 with automatically named entries as a consequence, i.e. object1 ... objectn, 
@@ -452,7 +452,7 @@ the points in the plot will select, clicking another time will
 deselect features.  The features will only be shown when the check box
 left of **_protein profiles_** is activated. Note, that you can only 
 select or deselt features whose protein profiles are displayed in a 
-transparent manner. 
+transparent manner on the plot. 
 
 <img src="figures/Screenshot_PP1.png" width="100%" alt="" /> <p
 align="center"> Fig. 13: Display of selected features in protein
