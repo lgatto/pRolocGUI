@@ -149,7 +149,7 @@
             htmlOutput("yrange1UI"),
             htmlOutput("yrange2UI"),
             ## link to help page
-            htmlOutput("linkPCA")
+            htmlOutput("linkPCAUI")
         )
     )
 }

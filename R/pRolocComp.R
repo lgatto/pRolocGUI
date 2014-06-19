@@ -47,7 +47,76 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
             ),
         
         server = function(input, output) {
-        
+            
+            ## START: links to vignette ## 
+            vignette <- system.file("doc/pRolocVis.html", package="pRolocGUI")  
+            
+            if (nchar(vignette))
+                addResourcePath(prefix = "doc", 
+                                directoryPath = system.file("doc",
+                                                            package = "pRolocGUI"))
+            
+            ## Links to vignette ##
+            output$linkDisplayUI <- renderUI({
+                if (nchar(vignette))
+                    a(href="/doc/pRolocVis.html#display",
+                      "?", target="_blank")
+                ##class = c("btn", "action-button"))
+            })
+            
+            output$linkDataUI <- renderUI({
+                if (nchar(vignette))
+                    a(href="/doc/pRolocVis.html#tabspRolocVisData",
+                      "?", target="_blank")
+                ##class = c("btn", "action-button"))
+            })
+            
+            output$linkPCAUI <- renderUI({
+                if (nchar(vignette))
+                    a(href="/doc/pRolocVis.html#tabspRolocVisPCA",
+                      "?", target="_blank")
+                ##class = c("btn", "action-button"))
+            })
+            
+            output$linkPPUI <- renderUI({
+                if (nchar(vignette))
+                    a(href="/doc/pRolocVis.html#tabspRolocVisPP",
+                      "?", target="_blank")
+                ##class = c("btn", "action-button"))
+            })
+            
+            output$linkExprsUI <- renderUI({
+                if (nchar(vignette))
+                    a(href="/doc/pRolocVis.html#tabspRolocVisExprs",
+                      "?", target="_blank")
+                ##class = c("btn", "action-button"))
+            })
+            
+            output$linkfDataUI <- renderUI({
+                if (nchar(vignette))
+                    a(href="/doc/pRolocVis.html#tabspRolocVisfData",
+                      "?", target="_blank")
+                ##class = c("btn", "action-button"))
+            })
+            
+            output$linkpDataUI <- renderUI({
+                if (nchar(vignette))
+                    a(href="/doc/pRolocVis.html#tabspRolocVispData",
+                      "?", target="_blank")
+                ##class = c("btn", "action-button"))
+            })
+            
+            output$linkSearchUI <- renderUI({
+                if (nchar(vignette))
+                    a(href="/doc/pRolocVis.html#tabspRolocVisSearch",
+                      "?", target="_blank")
+                ##class = c("btn", "action-button"))
+            })
+            
+            ## END: Links to vignette ## 
+            
+            
+            
             ## create reactive Values to store object1 and object2 or a subset
             ## of these two objects with common features    
             data <- reactiveValues(obj = list(object1, object2))
