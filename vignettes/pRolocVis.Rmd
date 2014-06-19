@@ -81,9 +81,9 @@ the first replicate from [`r citet(extbib["Tan2009"])`](#references).
 
 ```{r, eval = FALSE, echo = TRUE}
 library("pRolocGUI")
-data(andy2011)
-data(tan2009r1)
-data(dunkley2006)
+data(andy2011, package = "pRolocdata")
+data(tan2009r1, package = "pRolocdata")
+data(dunkley2006, package = "pRolocdata")
 ```
 
 `pRolocVis` needs an object of class `MSnSet` as an argument. We can launch the
@@ -94,7 +94,7 @@ pRolocVis(object = andy2011)
 
 Alternatively, to upload multiple objects of class `MSnSet`, `pRolocVis` 
 accepts both lists with named and unnamed objects. This allows for analysis
-of the data without stopping the application from running. 
+of the multiple data sets without stopping the application from running. 
 The names of objects of lists will appear in the drop-down menu in the 
 **_Data_** tab, while lists with unnamed objects will have a drop-down menu 
 with automatically named entries as a consequence, i.e. object1 ... objectn, 
@@ -106,7 +106,7 @@ pRolocVis(object = named)
 pRolocVis(object = unnamed)
 ```
 
-N.B. it is also possible to use a partly named list in `pRolocVis`.
+N.B.! It is also possible to use a partly named list in `pRolocVis`.
 
 Launching the function `pRolocVis` will open a new tab in your default 
 Internet browser.  
@@ -188,7 +188,7 @@ The *Display selection* widget is described [below](#display). The
 in the main panel. We are able to colour features (proteins) in
 matters of common properties by changing the drop-down list
 **_colour_**. These properties are the `MSnSet`'s feature
-variables. For example if we select the `andy2011`, the
+variables. For example if we upload the `andy2011` data set, the
 colour `markers`, the features in the PCA plot will be coloured
 according to their organelle affiliation. As soon as we select another
 colour than `none`, two (or three) new items will be added to the
@@ -399,7 +399,7 @@ zoom function may be of great expedient). When hovering over the PCA plot
 the name of the nearest feature will be displayed below the plot. 
 The check box will be checked when you start clicking in the PCA plot. 
 As soon as you have clicked on a feature it will be marked with a 
-black circle around it.
+black circle around it (or a blueish if `colour` is set to `none`).
 If you have selected a feature by accident or want to deselect it,
 just click again on the feature and it will be deselected.
 
@@ -411,8 +411,8 @@ PCA plot </p>
 
 
 There are two possibilities to deselect all selected features: If you
-decide to remove all your features click on **_Clear
-features_** (the button will only show up if features were already selected).
+decide to remove all your features click on **_Clear features_** 
+(the button will only show up if features were already selected).
 Please keep in mind that this step once carried out is
 irreversible. Besides that you are also able to simply blind out the
 selected features by deselecting the check box left of PCA in the
@@ -450,7 +450,9 @@ drop-down list **_number of plots to display_**. Hovering over the
 plot will display the nearest protein below the plot. Clicking on (or near)
 the points in the plot will select, clicking another time will
 deselect features.  The features will only be shown when the check box
-left of **_protein profiles_** is activated.
+left of **_protein profiles_** is activated. Note, that you can only 
+select or deselt features whose protein profiles are displayed in a 
+transparent manner. 
 
 <img src="figures/Screenshot_PP1.png" width="100%" alt="" /> <p
 align="center"> Fig. 13: Display of selected features in protein

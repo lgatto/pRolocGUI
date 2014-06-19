@@ -458,7 +458,7 @@ pRolocVis <- function(object) {
                                 org = .listParams$levPlotDistOrg[1],
                                 inputx = input$plotDistclick$x,
                                 inputy = input$plotDistclick$y,
-                                name = FALSE)
+                                name = FALSE)[1]
                 }
             )
                         
@@ -473,7 +473,7 @@ pRolocVis <- function(object) {
                                 org = .listParams$levPlotDistOrg[1],
                                 inputx = input$plotDisthover$x,
                                 inputy = input$plotDisthover$y,
-                                name = TRUE)
+                                name = TRUE)[1]
                 }
             })
             
