@@ -2,7 +2,7 @@ CHANGES IN VERSION 0.99.3
 ------------------------
  o multiple objects can be passed to pRolocVis by using a list [2014-17-02 Tue]
  o improve query search (submit and select check box) [2014-06-02 Mon]
- o add unit tests [2014-06-03 Tue]
+ o add unit tests for helper functions and add manuel unit test [2014-06-03 Tue]
 
 CHANGES IN VERSION 0.99.2
 ------------------------
