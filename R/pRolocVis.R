@@ -1,25 +1,47 @@
 #'@name pRolocVis
 #'@title pRolocVis
-#'@export
 #'@author Thomas Naake <tn299@@cam.ac.uk>
-#'@usage pRolocVis(object = NULL)
-#'@param object Pass a MSnSet to pRolocVis directly. Default \code{NULL} will
-#'enable possibility to upload MSnSet in pRolocVis. 
-#'@description A function to start a shiny session with one MSnSet data set. 
-#'Run \code{pRolocVis()} to start the shiny application and choose between
-#'three example MSnSet originating from \code{pRolocdata} or upload your
-#'own MSnSet. Choosing between the tabs allows to display PCA plots,
-#'protein profiles, the underlying data and upload abilities for past
-#'search results.
-#'@examples \dontrun{pRolocVis(object = NULL)}
+#'@usage pRolocVis(object)
+#'@param object an object of class \code{MSnSet} or a list of \code{MSnSet}s.
+#'@description A function to start a shiny session with one MSnSet data set or
+#'a list of \code{MSnSet}s to explore and analyse interactively spatial 
+#'proteomics data. \code{pRolocVis} offers high interactivity for exploring
+#'Principle Component Analysis plots, protein profile plots and quantatative
+#'and qualitative meta-data. Additionally, \code{pRolocVis} supports 
+#'import/export abilities for past and new search results using the 
+#'\code{FeaturesOfInterest}/\code{FoICollection} infrastructure defined in the
+#'\code{MSnbase} package. 
+#'@examples \dontrun{
 #'
+#'## load MSnSet data sets from the pRolocdata package
+#'data(andy2011, package = "pRolocdata")
+#'data(tan2009r1, package = "pRolocdata")
+#'data(dunkley2006, package = "pRolocdata")
+#'
+#'## create lists with unnamed and named objects
+#'unnamed <- list(andy2011, tan2009r1, dunkley2006)
+#'named <- list(andy2011 = andy2011, tan2009r1 = tan2009r1, dunkley2006 = dunkley2006)
+#'
+#'## launch application by either assigning a MSnSet, an unnamed or a 
+#'## named list to the argument object
+#'pRolocVis(object = andy2011)
+#'pRolocVis(object = unnamed)
+#'pRolocVis(object = named)
+#'}
+#'@return An object \code{pRolocGUI_SearchResults} of class \code{FoICollection}
+#'when the object existed already or when a new \code{FoICollection} was
+#'created during a session. 
 #'@export
-pRolocVis <- function(object = NULL) {    
+pRolocVis <- function(object) {    
+
     ## global
-    ## load MSnSets
-    data(andy2011, package = "pRolocdata")
-    data(tan2009r1, package = "pRolocdata")
-    data(dunkley2006, package = "pRolocdata")
+    if (is.list(object)) {
+        if (!listOf(object, "MSnSet"))
+            stop("object not list of MSnSets")
+    } else
+        if (!inherits(object, "MSnSet"))
+            stop("object not of class MSnSet")
+    
     ## increase upload limit to 20 MB
     options(shiny.maxRequestSize = 20*1024^2)
     
@@ -49,7 +71,7 @@ pRolocVis <- function(object = NULL) {
                     ## Main Panel
                     mainPanel(
                         tabsetPanel(
-                            .pR_tabPanelData(),
+                            .pRn1_tabPanelData(),
                             .pRn1_tabPanelPCA(),
                             .pRn1_tabPanelProteinProfiles(),
                             .pR_tabPanelQuantitation(),
@@ -135,97 +157,73 @@ pRolocVis <- function(object = NULL) {
             
             ## TAB: DATA/UPLOAD ##
             
-            ## upload function for own data, access to data path implemented 
-            ## by index "datapath", 
-            ## see ?shiny::fileInput for further details
-            output$Data1UI <- renderUI({
-                ## choose Data source, a drop down list of
-                ## andy2011, dunkley2006, tan2009r1 (all example
-                ## data) or use your own data by selecting load
-                ## data
-                selectInput("data",
-                            "Choose MSnSet data source:",
-                            choices = c("andy2011", 
-                                "dunkley2006",
-                                "tan2009r1", 
-                                "own data"),
-                            selected=ifelse(is.null(object), 
-                                "andy2011", 
-                                "own data"))                                
-            })
-            
-            output$Data2UI <- renderUI({
-                if (is.null(object))
-                    fileInput("owndata", 
-                            "Select your own MSnSet file",
-                            ## accept=c('.rda', 'data/rda', 
-                            ## '.RData', 'data/RData'),
-                            multiple = FALSE)
-                else {
-                    if (inherits(object, "MSnSet"))
-                        helpText("object is an MSnSet")
-                    else 
-                        helpText("object corrupt, 
-                            MSnSet 'andy2011' will be used")
-                }  
-            })
-            
-            output$Data3UI <- renderUI({
-                if (is.null(object))
-                    textOutput("warningowndataUI")
-            })
+            ## choose Data source
+            output$Data1UI <- renderUI(
+                selectInput("data", "Choose MSnSet data source:",
+                                                choices = .namesObj(object))     
+            )
 
             .dIownData <- reactive({
-                if (!length(as.character(input$owndata["datapath"])))
-                    od <- andy2011
-                else {
+                if (length(as.character(input$upload["datapath"]))) {
                     ## check if MSnSet has ending .rda or .RData and if 
                     ## it is MSnSet
-                    if (file_ext(input$owndata["name"]) %in% c("rda","RData")) {
-                        if (inherits(
-                            get(load(as.character(input$owndata["datapath"]))), 
-                            "MSnSet"))
-                            od <- get(load(
-                                as.character(input$owndata["datapath"])
-                            ))
-                        else
-                            od <- andy2011
-                    } else
-                        od <- andy2011
-                }
+                    if (file_ext(input$upload["name"]) %in% c("rda","RData") 
+                        && inherits(
+                            get(load(as.character(input$upload["datapath"]))), 
+                                "MSnSet"))
+                        od <- get(load(as.character(input$upload["datapath"])))
+                 }
             })
             
-            ## .dI
+            ## .dI (data Input)
             .dI <- reactive({
-                if (!is.null(input$data))
-                        switch(input$data,
-                            "andy2011" = list(andy2011),
-                            "dunkley2006" = list(dunkley2006),
-                            "tan2009r1" = list(tan2009r1),
-                            "own data" = list(
-                                    if (is.null(object)) {
-                                        .dIownData()
-                                    } else {
-                                        if (inherits(object, "MSnSet"))
-                                            object
-                                        else
-                                            andy2011
-                                    }
-                                )
-                        )    
+                if (!is.null(input$data)) {
+                    .lenObject <- length(.namesObj(object))
+                    .indObject <- which(input$data == .namesObj(object))
+                    ## upload
+                    if (.lenObject == .indObject) {
+                        if (inherits(.dIownData(), "MSnSet"))
+                            .dI <- list(.dIownData())
+                        else {
+                            if (is.list(object))
+                                .dI <- list(object[[1]])
+                            else
+                                .dI <- list(object)
+                        }
+                    } else {## object          
+                        if (is.list(object))
+                            .dI <- list(object[[.indObject]])
+                        else
+                            .dI <- list(object)
+                    }
+                    .dI
+                }
             })
 
-            output$warningowndataUI <- renderText({
-                    if (input$data == "own data") {
-                        if (identical(.dI()[[1]], andy2011))
-                            return("noMSnSet selected, 
-                                    MSnSet 'andy2011' will be used")
-                        else
-                            return()
-                    } else
-                        return()
+            output$warningUploadUI <- renderUI({
+                if (!is.null(input$data)) {
+                    if (input$data == "upload" 
+                        && !length(as.character(input$upload["datapath"])))
+                        strong(span("no file selected", style = "color:red"),
+                            ", first element of object will be used")
+                    else
+                        if (input$data == "upload" && 
+                            !inherits(.dIownData(), "MSnSet"))
+                            strong(span("no valid MSnSet selected", 
+                                                        style = "color:red"), 
+                                ", first element of object will be used")
+                }
             })  
+            
+            ## reset reactiveValues when the .dI() changes
+            observe({
+                .dI()
+                .prot$text <- NULL
+                .prot$PCA <- NULL
+                .prot$plotDist <- NULL
+            })
             ## END: UPLOAD ##
+            
             
             
             ## START OF SEARCH IMPLEMENTATION ##
@@ -415,7 +413,7 @@ pRolocVis <- function(object = NULL) {
                                 inputy = input$PCAclick$y,
                                 valuesx = .valuesPCA()[,1],
                                 valuesy = .valuesPCA()[,2],
-                                name = FALSE)[1]
+                                name = FALSE)
                 }
             )
             
@@ -425,7 +423,7 @@ pRolocVis <- function(object = NULL) {
                                 inputy = input$PCAhover$y,
                                 valuesx = .valuesPCA()[,1], 
                                 valuesy = .valuesPCA()[,2],
-                                name = TRUE)[1]
+                                name = TRUE)
                 }
             )
             
@@ -458,8 +456,8 @@ pRolocVis <- function(object = NULL) {
             ## calculate protein nearest to user input
             .minDistProtPlotDist <- reactive(
                 if (length(.dI()) != 0 && !is.null(input$plotDistclick)) { 
-                    if (input$plotDistclick$x < (nrow(pData(.dI()[[1]])) + .3) &&
-                        input$plotDistclick$x > 0.5 &&
+                    if (input$plotDistclick$x < (nrow(pData(.dI()[[1]])) + .3) 
+                        && input$plotDistclick$x > 0.5 &&
                             !is.null(input$quantityPlotDist) && 
                                 input$quantityPlotDist == "1")
                         .minDistPlotDist(obj = .dI(), 
@@ -473,8 +471,8 @@ pRolocVis <- function(object = NULL) {
                         
             .minDistProtPlotDistHover <- reactive({
                 if (length(.dI()) != 0 && !is.null(input$plotDisthover$x)) {
-                    if (input$plotDisthover$x < (nrow(pData(.dI()[[1]])) + .3) &&
-                        input$plotDisthover$x > 0.5 && 
+                    if (input$plotDisthover$x < (nrow(pData(.dI()[[1]])) + .3) 
+                        && input$plotDisthover$x > 0.5 && 
                             !is.null(input$quantityPlotDist) && 
                                 input$quantityPlotDist == "1") 
                         .minDistPlotDist(obj = .dI(),
@@ -488,16 +486,6 @@ pRolocVis <- function(object = NULL) {
             
             output$hoverProtPlotDistUI <- renderText(
                     .minDistProtPlotDistHover()
-            )
-            
-            ## for Plot/Download button (needs a reactive expression)
-            .plotDistReac <- reactive(
-                    .plotPlotDist(obj = .dI(), 
-                        levPlotDist = .listParams$levPlotDist,
-                        levPlotDistOrg = .listParams$levPlotDistOrg,
-                        quantity = input$quantityPlotDist,
-                        sI = .searchInd()
-                )
             )
             
             ## levels for plotDist to choose to plot
@@ -522,14 +510,24 @@ pRolocVis <- function(object = NULL) {
                     .numPlotDist(input$quantityPlotDist)
             )
             
+            ## for Plot/Download button (needs a reactive expression)
+            .plotDistReac <- reactive(
+                .plotPlotDist(obj = .dI(), 
+                    levPlotDist = .listParams$levPlotDist,
+                    levPlotDistOrg = .listParams$levPlotDistOrg,
+                    quantity = input$quantityPlotDist,
+                    sI = .searchInd()
+                )
+            )
+            
             ## renderPlot plotDist and assign parameters
-            output$plotDistUI <- renderPlot(.plotDistReac()
-#                     .plotPlotDist(obj = .dI(), 
-#                         levPlotDist = .listParams$levPlotDist,
-#                         levPlotDistOrg = .listParams$levPlotDistOrg,
-#                         quantity = input$quantityPlotDist,
-#                         sI = .searchInd()
-               # )
+            output$plotDistUI <- renderPlot(
+                .plotPlotDist(obj = .dI(), 
+                    levPlotDist = .listParams$levPlotDist,
+                    levPlotDistOrg = .listParams$levPlotDistOrg,
+                    quantity = input$quantityPlotDist,
+                    sI = .searchInd()
+               )
             )
             
             
@@ -612,8 +610,9 @@ pRolocVis <- function(object = NULL) {
             .whichN <- reactive(.whichTag(input$tagSelectList, .pR_SR$foi))
             
             output$infoSavedSearchUI <- renderText({
-                if (length(.dI()) != 0 && !is.null(.pR_SR$foi) && length(.pR_SR$foi) != 0) {
-                    showFOI <- .showFOI(.pR_SR$foi, .dI(), .whichN())
+                if (length(.dI()) != 0 && !is.null(.pR_SR$foi) && 
+                        length(.pR_SR$foi) != 0) {
+                    showFOI <- .showFOI(.pR_SR$foi, .dI(), .whichN(), FALSE)
                     paste0(showFOI, sep = "\n", collapse = "")
                 } else
                     return("pRolocGUI_SearchResults not found in workspace")
