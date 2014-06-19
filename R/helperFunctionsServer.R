@@ -27,7 +27,7 @@
 
 ## a helper function to create names from an object x
 ## which can be selected in the 'Data' tab
-.namesObj <- function(x) {
+.namesObj <- function(x, upload = FALSE) {
     if (is.null(names(x))) {
         ans <- c(paste("object", 1:length(x), sep = ""), "upload")
         if (!is.list(x))
@@ -42,6 +42,9 @@
         }
         ans[which(nchar(names(x)) > 0)] <- names(x)[which(nchar(names(x)) > 0)]
         ans[length(ans)] <- "upload"
+    }
+    if (!upload) {
+        ans <- ans[-length(ans)]
     }
     return(ans)
 }
