@@ -231,12 +231,16 @@
 
 ## START: Main Panel ## 
     
-.pR_tabPanelData <- function() {
+.pRn1_tabPanelData <- function() {
     tabPanel(
         "Data",
         htmlOutput("Data1UI"),
-        htmlOutput("Data2UI"),
-        htmlOutput("Data3UI")
+        ## upload function for own data, access to data path implemented 
+        ## by index "datapath", 
+        ## see ?shiny::fileInput for further details
+        fileInput("upload", "Upload MSnSet file",
+                  multiple = FALSE),
+        htmlOutput("warningUploadUI")
     )
 }
 

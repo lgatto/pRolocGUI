@@ -23,6 +23,33 @@
     return(ans)
 }
 
+## START: DATA (pRolocVis) ##
+
+## a helper function to create names from an object x
+## which can be selected in the 'Data' tab
+.namesObj <- function(x) {
+    if (is.null(names(x))) {
+        ans <- c(paste("object", 1:length(x), sep = ""), "upload")
+        if (!is.list(x))
+            ans <- c("object", "upload")
+    }
+    if (!is.null(names(x))) {
+        ans <- vector("character", length(x) + 1)
+        
+        if (FALSE %in% !nchar(names(x))) {
+            unnamed <- paste("object", which(!nchar(names(x))), sep = "")
+            ans[which(!nchar(names(x)))] <- unnamed
+        }
+        ans[which(nchar(names(x)) > 0)] <- names(x)[which(nchar(names(x)) > 0)]
+        ans[length(ans)] <- "upload"
+    }
+    return(ans)
+}
+
+## END: DATA (pRolocVis) ##
+
+
+
 ## START: Display selection ##
 
 ## A helper function to select the checkbox of "PCA" or "protein profiles" 
@@ -118,7 +145,7 @@
 ## a check function to test if features are already internally stored
 ## returning TRUE or FALSE
 .checkFeatText <- function(obj, protText, sRText, 
-                           search, ind = c("object1", "object2"), name = FALSE) {
+                        search, ind = c("object1", "object2"), name = FALSE) {
     if (length(obj) != 0) {
         
         ind <- match.arg(ind)
@@ -133,6 +160,7 @@
             Feat <- which(rownames(obj)[indices] %in% protText)
             ans <- length(Feat) == length(indices)
         }
+        return(ans)
     }
 }
 
@@ -369,7 +397,7 @@
         }
     
         if (length(fcex) && !is.null(legend)) {
-            if (fcex %in% fvarLabels(obj) && legend)
+            if (fcex %in% fvarLabels(obj))## && legend)
                 fcex <- fData(obj)[, fcex]
             else
                 fcex <- 1  ## as.numeric(fcex)
@@ -398,27 +426,28 @@
                                 as.numeric(PCAn2)),
                         cex = fcex)
         }
-    
-        if (fcolours %in% fvarLabels(obj) && legend)
-            ## add a legend to the plot with reactive 
-            ## variable as arguments
-            addLegend(obj, fcol = colour, 
-                where = legendpos,
-                bty = "n", cex = 1)
+        
+        if (!is.null(legend))
+            if (fcolours %in% fvarLabels(obj) && legend)
+                ## add a legend to the plot with reactive 
+                ## variable as arguments
+                addLegend(obj, fcol = colour, 
+                    where = legendpos,
+                    bty = "n", cex = 1)
 
         if (length(sI) && length(cIS)) {
             foiPCA <- FeaturesOfInterest(description = "hoP",
-                                         fnames = featureNames(obj)[sI],
-                                         object = obj)
+                                        fnames = featureNames(obj)[sI],
+                                        object = obj)
             highlightOnPlot(obj, foiPCA, 
                     args = list(
                         fcol = fvarLabels(obj)[1],
                         xlim = c(xrange[1], 
-                                 xrange[2]),
+                                xrange[2]),
                         ylim = c(yrange[1], 
-                                 yrange[2]),
+                                yrange[2]),
                         dims = c(as.numeric(PCAn1),
-                                 as.numeric(PCAn2))),
+                                as.numeric(PCAn2))),
                         col = ifelse(fcolours == "none", "steelblue", "black"),
                         cex = 1.5,
                         lwd = ifelse(fcolours == "none", 2, 1.5))
@@ -541,9 +570,7 @@
 
 
 
-## START: TAB Quantitation Data ##
-
-## END: TAB Quantitation Data and feature meta-data ##
+## START: TAB Quantitation Data  and feature meta-data##
 
 .radioButton <- function(indices, quant) {
     radioButtons(
@@ -610,7 +637,7 @@
     if (length(obj) != 0) {
         ind <- match.arg(ind)
         obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
-        ans <- which((match(rownames(obj), .fnamesFOI(coll)[[index]])) != NA)
+        ans <- which(match(rownames(obj), .fnamesFOI(coll)[[index]]) != "NA")
         return(ans)
     }
 }
