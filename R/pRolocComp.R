@@ -1,7 +1,7 @@
 
 
 pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
-    obj <- list(object1, object2)
+    ##obj <- list(object1, object2)
     
     ## increase upload limit to 20 MB
     options(shiny.maxRequestSize = 20*1024^2)
@@ -18,7 +18,7 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
                     sidebarPanel(
                         .pR_tags(),
                         .pR_condDisplaySelection(),
-                        .pRn2_commonFeat(),
+                        ##.pRn2_commonFeat(),
                         .pRn2_selObj(),
                         .pRn2_condTabPCA(),
                         .pR_condTabProteinProfiles(),
@@ -188,6 +188,7 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
             
             
             ## START: TAB PCA ##
+            
             ## colours  
             .params <- reactiveValues(
                 colours = c("none", "none"), fcex = c(1, 1), 
@@ -724,7 +725,9 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
             
         
             
-            ### TAB: DATA ###
+            ### TAB: DATA ###     
+            
+            
             output$markerLevel1Output <- renderUI( 
                 .colourPCA(data$obj, "none", "object1", "markerL1", "marker level 1")
             )
@@ -733,22 +736,22 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
                 .colourPCA(data$obj, "none", "object2", "markerL2", "marker level 2")
             )
             
-            output$selectMarker <- renderUI(
-                if (!is.null(input$markerL1) && 
-                            !is.null(input$markerL2) &&
-                                input$compRadio != "Overview" && 
-                                    input$markerL1 != "none" && 
-                                        input$markerL2 != "none") {
-                    selectInput("selectMarker", "select marker", 
-                        choices = c("all",
-                                    .mC(data$obj, input$markerL1, input$markerL2)),
-                        selected = "all")
-                }
-            )
+#             output$selectMarker <- renderUI(
+#                 if (!is.null(input$markerL1) && 
+#                             !is.null(input$markerL2) &&
+#                              #   input$compRadio != "Overview" && 
+#                                     input$markerL1 != "none" && 
+#                                         input$markerL2 != "none") {
+#                     selectInput("selectMarker", "select marker", 
+#                         choices = c("all",
+#                                     .mC(data$obj, input$markerL1, input$markerL2)),
+#                         selected = "all")
+#                 }
+#             )
             
             output$dataComp <- renderText(
                 if (!is.null(input$markerL1) && !is.null(input$markerL2))
-                    if (input$compRadio == "Overview") {
+               #     if (input$compRadio == "Overview") {
                         if (input$markerL1 == "none" || 
                                     input$markerL2 == "none") {
                             paste0(capture.output(
@@ -763,22 +766,22 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
                                 sep = "\n", collapse = ""
                             )
                         }
-                    }
+                #    }
             )
             
             output$dataCompTextUI <- renderUI(
-                if (input$compRadio == "Overview")
+          #      if (input$compRadio == "Overview")
                     verbatimTextOutput("dataComp")
             )
             
             
-            output$fDataCompFeatUI <- renderDataTable(
-                if (input$compRadio != "Overview" &&
-                        !is.null(input$markerL1) && !is.null(input$markerL2))
-                    .namesCompFeat(data$obj[[1]], data$obj[[2]], 
-                            input$markerL1, input$markerL2, 
-                            input$selectMarker, input$compRadio)
-            )            
+#             output$fDataCompFeatUI <- renderDataTable(
+#                 if (input$compRadio != "Overview" &&
+#                         !is.null(input$markerL1) && !is.null(input$markerL2))
+#                     .namesCompFeat(data$obj[[1]], data$obj[[2]], 
+#                             input$markerL1, input$markerL2, 
+#                             input$selectMarker, input$compRadio)
+#             )            
             ### END: DATA ###
 
     
