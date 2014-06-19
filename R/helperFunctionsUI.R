@@ -37,8 +37,7 @@
     conditionalPanel(
         condition = "input.tab1 != 'search' && input.tab1 != 'Data'",
             wellPanel(
-                radioButtons("selObj", "select object", 
-                    choices = c("object1", "object2"), selected = "object1")
+                htmlOutput("selObjUI")
             )
     ) 
 }

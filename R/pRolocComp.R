@@ -1,7 +1,14 @@
+#' @name pRolocComp
+#' @title pRolocComp
+#' @author Thomas Naake <tn299@cam.ac.uk>
+#' 
 
-
-pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
-    ##obj <- list(object1, object2)
+pRolocComp <- function(object = list(tan2009r1, tan2009r2)) {
+    
+    if (!listOf(object, "MSnSet"))
+        stop("object not list of MSnSets")
+    if (length(object) != 2)
+        stop("attempt to upload list of length unequal to 2")
     
     ## increase upload limit to 20 MB
     options(shiny.maxRequestSize = 20*1024^2)
@@ -31,6 +38,7 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
                         ),
                     ## Main Panel
                     mainPanel(
+                        verbatimTextOutput("help"),
                         tabsetPanel(
                             .pRn2_tabPanelPCA(),
                             .pRn2_tabPanelProteinProfiles(),
@@ -119,16 +127,16 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
             
             ## create reactive Values to store object1 and object2 or a subset
             ## of these two objects with common features    
-            data <- reactiveValues(obj = list(object1, object2))
+            data <- reactiveValues(obj = object)
             observe({
                 if (!is.null(input$commonFeat)) {
                     if (input$commonFeat == "all")
-                        data$obj <- list(object1, object2)
+                        data$obj <- object
                     else {
-                        inter <- intersect(rownames(object1), rownames(object2))
+                        inter <- intersect(rownames(object[[1]]), rownames(object[[2]]))
                         data$obj <- list(
-                            object1[rownames(object1) %in% inter],
-                            object2[rownames(object2) %in% inter])
+                            object[[1]][rownames(object[[1]]) %in% inter],
+                            object[[2]][rownames(object[[2]]) %in% inter])
                     }
                 }
             })  
@@ -200,7 +208,7 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
             output$saveTextUI <- renderUI(
                 if (!is.null(input$search))
                     if (!.checkFeatText(data$obj, .prot$text, input$sRTextInput, 
-                                input$search, input$selObj, name = TRUE))
+                                input$search, sel$Obj, name = TRUE))
                         actionButton("saveText", "Submit selection")
             )
             
@@ -208,7 +216,7 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
             output$resetMultUI <- renderUI(.reset(.searchInd1(), .searchInd2()))
             
             ## text-based search: protein und fvarLabels
-            output$searchUI <- renderUI(.selVarText(data$obj, input$selObj))
+            output$searchUI <- renderUI(.selVarText(data$obj, sel$Obj))
             
             output$searchResultsUI <- renderUI(
                     .selResText(input$search, .searchResultsText())
@@ -217,7 +225,7 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
             ## reactive expressions for text based search
             ## levels to search
             .searchResultsText <- reactive(
-                .sRsubset(data$obj, input$search, input$levelSearch, input$selObj)
+                .sRsubset(data$obj, input$search, input$levelSearch, sel$Obj)
             )
             
             ## vector with reactive values
@@ -248,7 +256,7 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
                     .prot$text <- .obsProtText(
                         data$obj, .prot$text, input$saveText, 
                         isolate(input$sRTextInput), isolate(input$search), 
-                        isolate(input$selObj), names = TRUE)
+                        isolate(sel$Obj), names = TRUE)
                 }
             })
         
@@ -300,7 +308,7 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
             ## reactive Values for object selected
             .ind <- reactiveValues(params = 1)
             observe({
-                if (input$selObj == "object1")
+                if (sel$Obj == "object1")
                     isolate(.ind$params <- 1)
                 else
                     isolate(.ind$params <- 2)
@@ -317,49 +325,49 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
             ## selectInput for colours
             output$fcoloursOutput <- renderUI({ 
                 .colourPCA(data$obj,
-                    isolate(.params$colours[.ind$params]), input$selObj)
+                    isolate(.params$colours[.ind$params]), sel$Obj)
             })
         
             ## compute number of principal components to look for 
             ## and change UI accordingly
             output$PCAn1UI <- renderUI(
-                .PC(data$obj, "x", isolate(.params$PCAn1)[.ind$params], input$selObj)
+                .PC(data$obj, "x", isolate(.params$PCAn1)[.ind$params], sel$Obj)
             )
         
             output$PCAn2UI <- renderUI(
-                .PC(data$obj, "y", isolate(.params$PCAn2)[.ind$params], input$selObj)
+                .PC(data$obj, "y", isolate(.params$PCAn2)[.ind$params], sel$Obj)
             )
         
             ## selectInput for point size
             output$fcexOutput <- renderUI(
                 .fcexPCA(data$obj, input$fcolours,
-                    isolate(.params$fcex)[.ind$params], input$selObj)
+                    isolate(.params$fcex)[.ind$params], sel$Obj)
             )
             
             ## selectInput for symboltype
             output$fsymboltypeOutput <- renderUI(
                 .symbolPCA(data$obj, input$fcolours, 
-                           isolate(.params$symbol)[.ind$params], input$selObj)
+                           isolate(.params$symbol)[.ind$params], sel$Obj)
             )
             
             ## zoom function: parameters for x- and y-range for PCA plot
-            output$xrange1UI <- renderUI(if (input$selObj == "object1")
+            output$xrange1UI <- renderUI(if (sel$Obj == "object1")
                 .rangePCA(.valuesPCA1(), 1, "xrange1"))  
-            output$xrange2UI <- renderUI(if (input$selObj == "object2")
+            output$xrange2UI <- renderUI(if (sel$Obj == "object2")
                 .rangePCA(.valuesPCA2(), 1, "xrange2"))
-            output$yrange1UI <- renderUI(if (input$selObj == "object1")
+            output$yrange1UI <- renderUI(if (sel$Obj == "object1")
                 .rangePCA(.valuesPCA1(), 2, "yrange1"))
-            output$yrange2UI <- renderUI(if (input$selObj == "object2")
+            output$yrange2UI <- renderUI(if (sel$Obj == "object2")
                 .rangePCA(.valuesPCA2(), 2, "yrange2"))
             
             ## legend
             output$PCALegendUI <- renderUI(
                 .legendPCA(data$obj, .params$colours[.ind$params], .params$legend, 
-                    input$selObj)
+                    sel$Obj)
             )
             
             output$PCALegendposUI <- renderUI(
-                .legendPosPCA(data$obj, .params$colours[.ind$params], input$selObj)
+                .legendPosPCA(data$obj, .params$colours[.ind$params], sel$Obj)
             )
             
             ## Plots and reactive expressions for download
@@ -525,9 +533,9 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
 
             ## write paramters to list for plotDist at index of .nCol()
             observe({
-                if (!is.null(input$selObj) && !is.null(input$organelleAll) &&
+                if (!is.null(sel$Obj) && !is.null(input$organelleAll) &&
                         !is.null(input$fNamesplDist)) {
-                    if (input$selObj == "object1") {
+                    if (sel$Obj == "object1") {
                         .listParams$levPlotDist1[.nCol()] <- 
                                 input$fNamesplDist
                         .listParams$levPlotDistOrg1[.nCol()] <- 
@@ -614,12 +622,12 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
 
             ## select fvarLabels or "all" for all features UI    
             output$allOrganellesUI <- renderUI(
-                .featuresPlotDist(data$obj, input$selObj))
+                .featuresPlotDist(data$obj, sel$Obj))
 
             ## UI for feature levels in fvarLabels or "all"
             output$organelleAllUI <- renderUI(
                 .flevelPlotDist(
-                    .orgName(data$obj, input$fNamesplDist, input$selObj),
+                    .orgName(data$obj, input$fNamesplDist, sel$Obj),
                     input$fNamesplDist)
             )
 
@@ -692,14 +700,14 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
             
             ## START: TAB QUANTITATION ##
             output$exprsRadioUI <- renderUI(
-                if (input$selObj == "object1")
+                if (sel$Obj == "object1")
                     .radioButton(.searchInd1(), TRUE)
                 else
                     .radioButton(.searchInd2(), TRUE)
             )
             
             output$MSnExprsUI <- renderDataTable(
-                if (input$selObj == "object1")
+                if (sel$Obj == "object1")
                     .dTable(data$obj, "quant", input$exprsRadio, 
                                 .searchInd1(), "object1")
                 else 
@@ -712,14 +720,14 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
             ## TAB: FEATURE META-DATA ##
             ## Generate the feature meta-data
             output$fDataRadioUI <- renderUI(
-                if (input$selObj == "object1")
+                if (sel$Obj == "object1")
                     .radioButton(.searchInd1(), FALSE)
                 else
                     .radioButton(.searchInd2(), FALSE)
             )
 
             output$MSnfDataUI <- renderDataTable(
-                if (input$selObj == "object1")
+                if (sel$Obj == "object1")
                     .dTable(data$obj, "fD", input$fDataRadio, 
                                 .searchInd1(), "object1")
                 else 
@@ -733,7 +741,7 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
             ## TAB: SAMPLE META-DATA ##
             ## Generate the sample meta-data
             output$MSnpDataUI <- renderDataTable(
-                .dTable(data$obj, "pD", ind = input$selObj))
+                .dTable(data$obj, "pD", ind = sel$Obj))
             ## END: SAMPLE META-DATA ##
 
 
@@ -795,7 +803,21 @@ pRolocComp <- function(object1 = tan2009r1, object2 = tan2009r2) {
         
             
             ### TAB: DATA ###     
+            output$help <- renderText(sel$Obj)
+            output$selObjUI <- renderUI(
+                radioButtons("selObj", "select object", 
+                    choices = .namesObj(object))
+            )
             
+            sel <- reactiveValues(Obj = "object1")
+            observe({
+                if (!is.null(input$selObj)) {
+                if (input$selObj == .namesObj(object)[1])
+                    sel$Obj <- "object1"
+                else 
+                    sel$Obj <- "object2"
+                }
+            })
             
             output$markerLevel1Output <- renderUI( 
                 .colourPCA(data$obj, "none", "object1", "markerL1", "marker level 1")
