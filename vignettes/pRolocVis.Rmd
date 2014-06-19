@@ -169,6 +169,11 @@ align="center"> Fig. 3: File upload in pRolocVis </p>
 file. If so, either the assigned object itself or the first element in the list
 will be used instead of the uploaded `.Rda` or `.Rdata` file. 
 
+When analyzing multiple data sets in one `pRolocVis`session errors can occure
+when changing from one `MSnSet` to the other. It is therefore highly recommended
+to delete all selected features before changing to another `MSnSet` by 
+clicking on **_Clear features_** in the *Display selection* widget. 
+
 <a id="tabspRolocVisPCA"></a>
 
 ### 2.2. PCA
