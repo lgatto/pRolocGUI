@@ -61,7 +61,7 @@ pRolocVis <- function(object) {
                         .pR_condDisplaySelection(),
                         .pR_condTabData(),
                         .pRn1_condTabPCA(),
-                        .pR_condTabProteinProfiles(),
+                        .pRn1_condTabProteinProfiles(),
                         .pR_condTabQuantitation(),
                         .pR_condTabfData(),
                         .pR_condTabpData(),

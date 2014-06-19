@@ -176,16 +176,18 @@
 .pR_condTabQuantitation <- function() {
     conditionalPanel(
         condition = "input.tab1 == 'quantitation'",
-        htmlOutput("exprsRadioUI"),
-        htmlOutput("linkExprsUI")
+        wellPanel(
+            htmlOutput("exprsRadioUI"),
+            htmlOutput("linkExprsUI"))
     )
 }
 
 .pR_condTabfData <- function() {
     conditionalPanel(
         condition = "input.tab1 == 'feature meta-data'",
-        htmlOutput("fDataRadioUI"),
-        htmlOutput("linkfDataUI")
+        wellPanel(
+            htmlOutput("fDataRadioUI"),
+            htmlOutput("linkfDataUI"))
     )
 }
 
@@ -216,9 +218,12 @@
     conditionalPanel(
         condition="input.tab1 == 'Data'",
         wellPanel(
-            radioButtons("compRadio", label = "", 
-                choices = c("Overview", "common", "unique1", "unique2"),
-                selected = "Overview"),
+    #        radioButtons("compRadio", label = "", 
+    #            choices = c("Overview", "common", "unique1", "unique2"),
+    #            selected = "Overview"),
+            radioButtons("commonFeat", "display",
+                choices = c("all", "common features"), 
+                selected = "all"),
             htmlOutput("selectMarker"),
             htmlOutput("markerLevel1Output"),
             htmlOutput("markerLevel2Output")
