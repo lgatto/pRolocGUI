@@ -218,12 +218,13 @@
     conditionalPanel(
         condition="input.tab1 == 'Data'",
         wellPanel(
-    #        radioButtons("compRadio", label = "", 
-    #            choices = c("Overview", "common", "unique1", "unique2"),
-    #            selected = "Overview"),
             radioButtons("commonFeat", "display",
-                choices = c("all", "common features"), 
-                selected = "all"),
+                         choices = c("all", "common features"), 
+                         selected = "all"),
+            hr(),
+            radioButtons("compRadio", label = "", 
+                choices = c("Overview", "common", "unique1", "unique2"),
+                selected = "Overview"),
             htmlOutput("selectMarker"),
             htmlOutput("markerLevel1Output"),
             htmlOutput("markerLevel2Output")

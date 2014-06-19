@@ -749,8 +749,8 @@
     return(ans)
 }
 
-## helper function to access fData of features in slots 
-## of FeatComp infrastructure
+## helper function to create data frame with featureNames 
+## with FeatComp infrastructure
 .namesCompFeat <- function(obj1, obj2, mL1, mL2, sel, compRadio) {
     
     .indData <- 1
@@ -759,15 +759,21 @@
     } else 
         .indData <- which(sel == c("all", .mC(list(obj1, obj2), mL1, mL2)))
         
-    .comp <- compfnames(obj1, obj2, mL1, mL2, verbose = TRUE)
+    .comp <- compfnames(obj1, obj2, mL1, mL2, verbose = FALSE)
     
     if (compRadio %in% c("unique1", "common")) {
         obj <- obj1
     } else
         obj <- obj2
     
-    .Feat <- slot(.comp[[.indData]], compRadio)
+    ## get feature names in .comp
+    if (is.null(mL1) && is.null(mL2))
+        .Feat <- slot(.comp, compRadio)
+    else
+        .Feat <- slot(.comp[[.indData]], compRadio)
+    
     .lenFeat <- length(.Feat)
+    
     if (.lenFeat != 0) {
         .names <- sort(.Feat)        
         .ceil <- ceiling(.lenFeat/4)
