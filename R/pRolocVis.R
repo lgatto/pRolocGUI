@@ -214,7 +214,14 @@ pRolocVis <- function(object) {
                                 ", first element of object will be used")
                 }
             })  
-
+            
+            ## reset reactiveValues when the .dI() changes
+            observe({
+                .dI()
+                .prot$text <- NULL
+                .prot$PCA <- NULL
+                .prot$plotDist <- NULL
+            })
             ## END: UPLOAD ##
             
             
