@@ -29,14 +29,23 @@ This vignette describes the implemented functionality in the
 definitions of `MSnbase` [`r citep(extbib["GattoLilley2012"])`](#references)
 and on the functions defined in the package `pRoloc` 
 [`r citep(list(extbib["Breckels2013"], extbib["Gatto2014"]))`](#references). 
-It is especially meant for the analyses of
+`pRolocGUI` is intended for the visualization and analysis of proteomics data,
+especially for the analyses of 
 LOPIT [`r citep(extbib["Dunkley2006"])`](#references)
 or PCP [`r citep(extbib["Foster2006"])`](#references) experiments.  
-To achieve reactivity
-and interactivity, `pRolocGUI` relies on the
-[`shiny`](http://www.rstudio.com/shiny/) framework.  The implemented
-application facilitates a higher degree of interactivity with the
-underlying spatial proteomics data.
+To achieve reactivity and interactivity, `pRolocGUI` relies on the
+[`shiny`](http://www.rstudio.com/shiny/) framework.  
+
+The implemented application facilitates a higher degree of interactivity 
+with the underlying spatial proteomics data: The distributed function 
+`pRolocVis` offers interactive Principal Component Analysis (PCA) plots and 
+protein profile plots, as well as exploration of quantitative and 
+qualitative meta-data. 
+Key features of `pRolocVis` are the identification of features in 
+plots, a 'reverse search' based on querying meta-data which allows for 
+highlighting the features on plots and an import/export functionality by 
+using the `FeaturesOfInterest`/`FoICollection` infrastructure distributed 
+by the `MSnbase` package. 
 
 We recommend some familiarity with the `MSnSet` class (see `?MSnSet`
 for details) and the `pRoloc` vignette (available with 
@@ -57,23 +66,50 @@ list.
 <h2>1. Introduction</h2>
 
 
-Currently, `pRolocGUI` distributes the `pRolocVis` application. Launch
-it by loading the `pRolocGUI` package and running `pRolocVis()` function:  
+Currently, `pRolocGUI` distributes the `pRolocVis` application.  
+
+The function `pRolocVis` needs an object of class `MSnSet` or 
+a list of `MSnSet` objects as an argument. 
+To prepare the environment to run a `pRolocVis` session, the `pRolocGUI` 
+package and for demonstration purposes three example `MSnSet`s are loaded to the 
+environment. The example data sets are available from the 
+`pRolocdata` [`r citep(extbib["GattoPRolocdata"])`](#references) experiment
+package and are derived from experiments `andy2011` from 
+[`r citet(extbib["Breckels2013"])`](#references), `dunkley2006` from 
+[`r citet(extbib["Dunkley2006"])`](#references), and `tan2009r1`, 
+the first replicate from [`r citet(extbib["Tan2009"])`](#references). 
+
 ```{r, eval = FALSE, echo = TRUE}
 library("pRolocGUI")
-pRolocVis()
+data(andy2011, package = "pRolocdata")
+data(tan2009r1, package = "pRolocdata")
+data(dunkley2006, package = "pRolocdata")
 ```
 
-
-This will open a new tab in your default Internet browser. You can
-also pass directly an `MSnSet` (e.g. `dunkley2006` available from the
-`pRolocdata` 
-[`r citep(extbib["GattoPRolocdata"])`](#references) experiment
-package) to `pRolocVis` by entering  
+`pRolocVis` needs an object of class `MSnSet` as an argument. We can launch the
+application with an `MSnSet` by assigning it to the argument `object`:
 ```{r, eval = FALSE, echo = TRUE}
-pRolocVis(object = dunkley2006)
+pRolocVis(object = andy2011)
 ```
 
+Alternatively, to upload multiple objects of class `MSnSet`, `pRolocVis` 
+accepts both lists with named and unnamed objects. This allows for analysis
+of multiple data sets without stopping the application from running. 
+The names of objects of lists will appear in the drop-down menu in the 
+**_Data_** tab, while lists with unnamed objects will have a drop-down menu 
+with automatically named entries as a consequence, i.e. object1 ... objectn, 
+where n is the length of the list. 
+```{r, eval = FALSE, echo = TRUE}
+named <- list(andy2011 = andy2011, tan2009r1 = tan2009r1, dunkley2006 = dunkley2006)
+unnamed <- list(andy2011, tan2009r1, dunkley2006)
+pRolocVis(object = named)
+pRolocVis(object = unnamed)
+```
+
+N.B.! It is also possible to use a partly named list in `pRolocVis`.
+
+Launching the function `pRolocVis` will open a new tab in your default 
+Internet browser.  
 
 
 To stop the application from running press `Esc` or `Ctrl-C` in the
@@ -114,44 +150,38 @@ align="center"> Fig. 1: Vignette of pRolocVis </p>
 
 ### 2.1. Data
 The tab **_Data_** is the first tab you will see when you start `pRolocVis`. 
-The appearance will differ depending on if you pass directly a `MSnSet` to 
-`pRolocVis` or not. 
 
 <img src="figures/Screenshot_Data1.png" width="100%" alt="" /> <p 
 align="center"> Fig. 2: Appearance of Data tab in pRolocVis </p>
 
-
-If you decide to start `pRolocVis` without assigning a `MSnSet` as
-argument, the tab **_Data_** offers possibilities to switch to an
-other `MSnSet`. 
-
-
-
-Currently you may choose between three example `MSnSets` (derived from
-experiments `andy2011` from [`r citet(extbib["Breckels2013"])`](#references), 
-`dunkley2006` from [`r citet(extbib["Dunkley2006"])`](#references), 
-and `tan2009r1`, the first replicate 
-from [`r citet(extbib["Tan2009"])`](#references), 
-all provided by the package 
-[`pRolocdata` `r citep(extbib["GattoPRolocdata"])`](#references) or
-to use an `MSnSet` of your choice (own data).  
-
-Clicking on **_Browse..._** will open a dialog window with which you 
-can select a file containing a saved `MSnSet` and load 
+The drop-down menu lists all the names of assigned `MSnSet` objects to the 
+function. In addition the entry `upload` is listed at the bottom of the 
+drop-down menu. Selecting `upload` allows to use a 
+`MSnSet` available in a `.Rda` or `.Rdata` file after uploading it to the 
+application. Clicking on **_Browse..._** will open a dialog window with 
+which you can select a file containing a saved `MSnSet` and load 
 it to `pRolocVis`.
 
 <img src="figures/Screenshot_Data2.png" width="100%" alt="" /> <p 
 align="center"> Fig. 3: File upload in pRolocVis </p>
 
-If you pass an object to `pRolocVis` the tab data will show if the
-`MSnSet` was accepted by `pRolocVis`.
+`pRolocVis` will print a message if there are any conflicts with the uploaded 
+file. If so, either the assigned object itself or the first element in the list
+will be used instead of the uploaded `.Rda` or `.Rdata` file. 
+
+When analyzing multiple data sets in one `pRolocVis` session the selected 
+features will be (irreversibly) deleted when changing from one 
+`MSnSet` to the other. It is therefore highly recommended if this
+behaviour is not intended to save selected features by using the 
+functionality to save features in a `FoICollection` 
+(see [2.7. search](#tabspRolocVisSearch) for further details).
 
 <a id="tabspRolocVisPCA"></a>
 
 ### 2.2. PCA
 
 The tab **_PCA_** is characterised by its main panel which shows a
-Principal Component Analysis (PCA) plot for the selected `MSnSet` and
+PCA plot for the selected `MSnSet` and
 its sidebar panel which is divided into *Display selection* and
 *Plot*.
 
@@ -165,7 +195,7 @@ The *Display selection* widget is described [below](#display). The
 in the main panel. We are able to colour features (proteins) in
 matters of common properties by changing the drop-down list
 **_colour_**. These properties are the `MSnSet`'s feature
-variables. For example if we select the `andy2011`, the
+variables. For example if we upload the `andy2011` data set, the
 colour `markers`, the features in the PCA plot will be coloured
 according to their organelle affiliation. As soon as we select another
 colour than `none`, two (or three) new items will be added to the
@@ -336,7 +366,8 @@ the `FoICollection`). Add the selected features to the object
 **_Create new features of interest_**. You only have the possibility to
 add selected features to the `FoICollection` when you have entered an 
 appropriate description, i.e. one that doesn't exist yet in the 
-`FoICollection` and if you have selected `FeaturesOfInterest`. 
+`FoICollection` and if you have selected `FeaturesOfInterest`, otherwise
+the button does not show up in the application.
 
 When exiting `pRolocVis` the `FoICollection` will be assigned to the 
 object `pRolocGUI_SearchResults` in the global environment. 
@@ -358,7 +389,7 @@ You can do this by selecting points in the PCA plot, clicking on features
 in the tab **_protein profiles_**, using past searches and/or querying for 
 features in the `MSnSet` data.
 
-As you may have already seen there are four check boxes in the
+There are four check boxes in the
 *Display selection* widget which represent the before mentioned ways
 of searching features in the `MSnSet`.  To activate the search for one
 specific method click on the check box left of its description. It is
@@ -375,7 +406,7 @@ zoom function may be of great expedient). When hovering over the PCA plot
 the name of the nearest feature will be displayed below the plot. 
 The check box will be checked when you start clicking in the PCA plot. 
 As soon as you have clicked on a feature it will be marked with a 
-black circle around it.
+black circle around it (or a blueish if `colour` is set to `none`).
 If you have selected a feature by accident or want to deselect it,
 just click again on the feature and it will be deselected.
 
@@ -387,9 +418,10 @@ PCA plot </p>
 
 
 There are two possibilities to deselect all selected features: If you
-decide to remove all your features click on **_Clear
-features_**. Please keep in mind that this step once carried out is
-irreversible.  Besides that you are also able to simply blind out the
+decide to remove all your features click on **_Clear features_** 
+(the button will only show up if features were already selected).
+Please keep in mind that this step once carried out is
+irreversible. Besides that you are also able to simply blind out the
 selected features by deselecting the check box left of PCA in the
 *Display selection* widget. Internally, the features are still
 stored, i.e. by clicking again on the check box you will see the
@@ -425,7 +457,9 @@ drop-down list **_number of plots to display_**. Hovering over the
 plot will display the nearest protein below the plot. Clicking on (or near)
 the points in the plot will select, clicking another time will
 deselect features.  The features will only be shown when the check box
-left of **_protein profiles_** is activated.
+left of **_protein profiles_** is activated. Note, that you can only 
+select or deselt features whose protein profiles are displayed in a 
+transparent manner on the plot. 
 
 <img src="figures/Screenshot_PP1.png" width="100%" alt="" /> <p
 align="center"> Fig. 13: Display of selected features in protein
@@ -465,15 +499,16 @@ the data accession number, protein ID, protein description, assigned markers
 
 Let's assume we want to look at `andy2011` which was derived from
 experiments of Breckels et al. (2013) for all proteins which are
-assigned by experimental evidence to the organelle `plasma
-membrane`. We ensure ourselves that `andy2011` is selected in the tab
+assigned by experimental evidence to the organelle `plasma membrane`. 
+We ensure ourselves that `andy2011` is selected in the tab
 **_Data_** and change to a tab where the *Display selection* widget is
-loaded. We activate the check box to the left of **_query_** and
-select `marker` in the upper drop-down list (for we are looking for
-organelles). In the next drop-down list below we select `PM` which
-codes for `plasma membrane`. Next, we click on **_Submit selection_**,
-which will highlight all features which are assigned to `PM` for the
-variable name `marker`. To remove the selected features from the
+loaded. We select `marker` in the upper drop-down list (for we are looking for
+organelles assigned to marker proteins). In the next drop-down list below we 
+select `PM` which codes for `plasma membrane`. Next, we click on 
+**_Submit selection_**, which will highlight all features which are assigned 
+to `PM` for the variable name `marker` 
+(the button only appears in the application when the corresponding proteins do 
+not exist in the selection). To remove the selected features from the
 internal assignment we have to reset the search by clicking on
 **_Clear features_**. Of course, we can also add other features: If we
 want to add all features which are assigned to the Golgi apparatus we
