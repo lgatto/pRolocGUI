@@ -46,7 +46,9 @@ Key features of `pRolocVis` and `pRolocComp` are the identification of
 features in plots, a 'reverse search' based on querying meta-data which 
 allows for highlighting the features on plots and an import/export 
 functionality by using the `FeaturesOfInterest`/`FoICollection` infrastructure 
-distributed by the `MSnbase` package. 
+distributed by the `MSnbase` package. Additionally, `pRolocComp` allows for 
+comparison of two comparable `MSnSet` instances, e.g. this might be of great 
+help for analyses of changes in protein localisation in different `MSnSet`s.
 
 We recommend some familiarity with the `MSnSet` class (see `?MSnSet`
 for details) and the `pRoloc` vignette (available with 
@@ -67,23 +69,25 @@ list.
 <h2>1. Introduction</h2>
 
 
-Currently, `pRolocGUI` distributes the `pRolocVis` application.  
+Currently, `pRolocGUI` distributes the `pRolocVis` and `pRolocComp`application.  
 
 The function `pRolocVis` needs an object of class `MSnSet` or 
-a list of `MSnSet` objects as an argument. 
-To prepare the environment to run a `pRolocVis` session, the `pRolocGUI` 
-package and for demonstration purposes three example `MSnSet`s are loaded to the 
-environment. The example data sets are available from the 
+a list of `MSnSet` objects as an argument, while `pRolocComp` needs a list 
+containing two instances of class `MSnSet`. 
+To prepare the environment to run a `pRolocVis`/`pRolocComp` session, 
+the `pRolocGUI` package and for demonstration purposes four example `MSnSet`s 
+are loaded to the environment. The example data sets are available from the 
 `pRolocdata` [`r citep(extbib["GattoPRolocdata"])`](#references) experiment
 package and are derived from experiments `andy2011` from 
-[`r citet(extbib["Breckels2013"])`](#references), `dunkley2006` from 
-[`r citet(extbib["Dunkley2006"])`](#references), and `tan2009r1`, 
-the first replicate from [`r citet(extbib["Tan2009"])`](#references). 
+[`r citet(extbib["Breckels2013"])`](#references), `tan2009r1` and `tan2009r2`, 
+the first and second replicate from [`r citet(extbib["Tan2009"])`](#references)
+and `dunkley2006` from [`r citet(extbib["Dunkley2006"])`](#references).  
 
 ```{r, eval = FALSE, echo = TRUE}
 library("pRolocGUI")
 data(andy2011, package = "pRolocdata")
 data(tan2009r1, package = "pRolocdata")
+data(tan2009r2, package = "pRolocdata")
 data(dunkley2006, package = "pRolocdata")
 ```
 
@@ -107,25 +111,34 @@ pRolocVis(object = named)
 pRolocVis(object = unnamed)
 ```
 
-N.B.! It is also possible to use a partly named list in `pRolocVis`.
+`pRolocComp` requires a list of two `MSnSet`s which can be named or unnamed. 
+```{r, eval = FALSE, echo = TRUE}
+named <- list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r2)
+unnamed <- list(tan2009r1, tan2009r2)
+pRolocComp(object = named)
+pRolocComp(object = unnamed)
+```
 
-Launching the function `pRolocVis` will open a new tab in your default 
+N.B.! It is also possible to use a partly named list in `pRolocVis` and 
+`pRolocComp`.
+
+Launching `pRolocVis` or `pRolocComp` will open a new tab in your default 
 Internet browser.  
 
 
-To stop the application from running press `Esc` or `Ctrl-C` in the
+To stop the applications from running press `Esc` or `Ctrl-C` in the
 console (or use the "STOP" button when using RStudio) and close the
-browser tab, where `pRolocVis` is running.
+browser tab, where `pRolocVis`/`pRolocComp` is running.
 
 -------------------
 <a id="tabspRolocVis"></a> 
 
-<h2>2. Tabs of <code>pRolocVis</code></h2>
+<h2>2. Tabs of <code>pRolocVis</code> and <code>pRolocComp</code></h2>
 
-To optimise ease of use the interface of `pRolocVis` is subdivided in 
-seven tabs:  
+To optimise ease of use the interfaces of `pRolocVis` and `pRolocComp` are
+subdivided in seven tabs:  
 
-* Data,  
+* Data (at the last position for `pRolocComp`),  
 * PCA,    
 * protein profiles,  
 * quantitation,  
@@ -143,6 +156,9 @@ In case you have a question and want to consult the vignette for a certain
 issue (e.g. regarding PCA tab or on how to use the *Display selection* widget)
 click on `?` which will open the vignette in a new browser tab in the
 corresponding section.  
+
+In general, the tabs for `pRolocVis` and `pRolocComp` will look alike. The tab 
+`Data`
 
 <img src="figures/Screenshot_Help1.png" width="100%" alt="" /> <p 
 align="center"> Fig. 1: Vignette of pRolocVis </p>
