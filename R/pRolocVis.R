@@ -1,32 +1,49 @@
-#'@name pRolocVis
-#'@title pRolocVis
+#'@name pRolocVis pRolocComp
+#'@title pRolocVis/pRolocComp
 #'@author Thomas Naake <tn299@@cam.ac.uk>
 #'@usage pRolocVis(object)
-#'@param object an object of class \code{MSnSet} or a list of \code{MSnSet}s.
-#'@description A function to start a shiny session with one MSnSet data set or
-#'a list of \code{MSnSet}s to explore and analyse interactively spatial 
-#'proteomics data. \code{pRolocVis} offers high interactivity for exploring
-#'Principle Component Analysis plots, protein profile plots and quantatative
-#'and qualitative meta-data. Additionally, \code{pRolocVis} supports 
-#'import/export abilities for past and new search results using the 
-#'\code{FeaturesOfInterest}/\code{FoICollection} infrastructure defined in the
-#'\code{MSnbase} package. 
+#'pRolocComp(object)
+#'@param object an object of class \code{MSnSet} or a list of \code{MSnSet}s (pRolocVis).
+#'object a list of length 2 of \code{MSnSet}s (pRolocComp)
+#'
+#'@description \code{pRolocVis} is a function to start a shiny session with 
+#'one MSnSet data set or a list of \code{MSnSet}s. \code{pRolocComp} launches
+#'with a list of two \code{MSnSet}s. 
+#'
+#'The functions allow to explore and analyse interactively spatial proteomics 
+#'data, especially LOPIT and PCP experiments. They offer high interactivity 
+#'for exploring Principle Component Analysis (PCA) plots, protein profile plots 
+#'and quantatative and qualitative meta-data. Additionally, \code{pRolocVis} 
+#'and \code{pRolocComp} support import/export abilities for past and new 
+#'search results using the \code{FeaturesOfInterest}/\code{FoICollection} 
+#'infrastructure defined in the \code{MSnbase} package. 
+#'
+#'\code{pRolocVis} enables to analyse one \code{MSnSet} at a time, while
+#'\code{pRolocComp} analyses and compares two \code{MSnSet}s. 
+#'\code{pRolocComp} is especially meant for analyses of data which looks 
+#'at the change of proteins in protein localisation.
 #'@examples \dontrun{
 #'
 #'## load MSnSet data sets from the pRolocdata package
 #'data(andy2011, package = "pRolocdata")
 #'data(tan2009r1, package = "pRolocdata")
+#'data(tan2009r2, package = "pRolocdata")
 #'data(dunkley2006, package = "pRolocdata")
 #'
 #'## create lists with unnamed and named objects
-#'unnamed <- list(andy2011, tan2009r1, dunkley2006)
-#'named <- list(andy2011 = andy2011, tan2009r1 = tan2009r1, dunkley2006 = dunkley2006)
+#'unnamedVis <- list(andy2011, tan2009r1, dunkley2006)
+#'namedVis <- list(andy2011 = andy2011, tan2009r1 = tan2009r1, dunkley2006 = dunkley2006)
+#'unnamedComp <- list(tan2009r1, tan2009r2)
+#'namedComp <- list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r2)
 #'
 #'## launch application by either assigning a MSnSet, an unnamed or a 
 #'## named list to the argument object
 #'pRolocVis(object = andy2011)
-#'pRolocVis(object = unnamed)
-#'pRolocVis(object = named)
+#'pRolocVis(object = unnamedVis)
+#'pRolocVis(object = namedVis)
+#'
+#'pRolocComp(object = unnamedComp)
+#'pRolocComp(object = namedComp)
 #'}
 #'@return An object \code{pRolocGUI_SearchResults} of class \code{FoICollection}
 #'when the object existed already or when a new \code{FoICollection} was
