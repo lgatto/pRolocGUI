@@ -27,10 +27,18 @@
             width: 100%;}")),
         tags$style(HTML(".well{
             padding: 15px 18px 12px 18px;
-            margin: 10px;}")),
+            margin: 10px 5px;}")),
         tags$style(HTML("h4{
             margin: 0px 0px 5px 0px;}"))
         )
+}
+
+.pRn2_tags <- function() {
+    tags$head(
+        tags$style(HTML("#selObj{
+            margin: -5px;}")
+        )
+    )
 }
 
 .pRn2_selObj <- function() {
@@ -200,16 +208,18 @@
 .pR_condTabSearch <- function() {
     conditionalPanel(
         condition="input.tab1 == 'search'",
-        h4("Searches"),
-        htmlOutput("savedSearchTextUI"),
-        ## selectInput for choosing between the different 
-        ## search Results
-        htmlOutput("tagsListSearchUI"),
-        ## initilialize search
-        htmlOutput("initSaveUI"),
-        ## action Button
-        htmlOutput("saveLists2SRUI"),
-        htmlOutput("linkSearchUI")
+        wellPanel(
+            h4("Searches"),
+            htmlOutput("savedSearchTextUI"),
+            ## selectInput for choosing between the different 
+            ## search Results
+            htmlOutput("tagsListSearchUI"),
+            ## initilialize search
+            htmlOutput("initSaveUI"),
+            ## action Button
+            htmlOutput("saveLists2SRUI"),
+            htmlOutput("linkSearchUI")
+        )
     )
 }
 
@@ -217,16 +227,19 @@
     conditionalPanel(
         condition="input.tab1 == 'Data'",
         wellPanel(
-            radioButtons("commonFeat", "display",
-                         choices = c("all", "common features"), 
-                         selected = "all"),
-            hr(),
             radioButtons("compRadio", label = "", 
                 choices = c("Overview", "common", "unique1", "unique2"),
                 selected = "Overview"),
+            hr(),
+            helpText(""),
             htmlOutput("selectMarker"),
             htmlOutput("markerLevel1Output"),
             htmlOutput("markerLevel2Output")
+        ),
+        wellPanel(
+            radioButtons("commonFeat", "Features used",
+                choices = c("common", "common & unique"), 
+                selected = "common & unique")
         )
     )
 }
