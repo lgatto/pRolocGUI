@@ -139,7 +139,7 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
             ## START OF SEARCH IMPLEMENTATION ##
             
             ## check boxes by clicking on plots PCA and plotDist
-            dSelect <- reactiveValues(PCA = NULL, plotDist = NULL, text = NULL)
+            dSelect <- reactiveValues(PCA = NULL, plotDist = NULL, text = NULL, data = NULL)
             
             observe({
                 dSelect$PCA <- .selClick(dSelect$PCA, input$PCA1click, 
@@ -160,8 +160,12 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
                 )  
             })
             
+            observe({
+                dSelect$data <- NULL
+            })
+            
             output$checkBoxUI <- renderUI(
-                .checkBoxdSelect(dSelect$PCA, dSelect$plotDist, dSelect$text)
+                .checkBoxdSelect(dSelect$PCA, dSelect$plotDist, dSelect$text, dSelect$data, TRUE)
             )
             
             ## reactive expression which contains all feature names for the 
@@ -193,6 +197,7 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
                         .prot$plotDist2 <- NULL
                         .prot$plotDist <- NULL
                         .prot$text <- NULL
+                        .prot$data <- NULL
                         dSelect$PCA <- NULL
                         dSelect$plotDist <- NULL
                         dSelect$text <- NULL
@@ -226,7 +231,7 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
             ## vector with reactive values
             .prot <- reactiveValues(PCA1 = NULL, PCA2 = NULL, PCA = NULL, 
                         plotDist1 = NULL, plotDist2 = NULL, plotDist = NULL, 
-                        text = NULL)
+                        text = NULL, data = NULL)
             
             ## observe indices and concatenate to .prot$PCA, .prot$plotDist
             ## and .prot$text
@@ -253,6 +258,10 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
                         isolate(input$sRTextInput), isolate(input$search), 
                         isolate(sel$Obj), names = TRUE)
                 }
+            })
+            
+            observe({
+                .prot$Data <- NULL
             })
         
             ## END OF SEARCHING IMPLEMENTATION ##  
@@ -798,7 +807,6 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
         
             
             ### TAB: DATA ###     
-            output$help <- renderText(sel$Obj)
             output$selObjUI <- renderUI(
                 radioButtons("selObj", "", 
                     choices = .namesObj(object))
@@ -824,50 +832,75 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
             
             output$selectMarker <- renderUI(
                 if (!is.null(input$markerL1) && 
-                            !is.null(input$markerL2) &&
-                                input$compRadio != "Overview" && 
-                                    input$markerL1 != "none" && 
-                                        input$markerL2 != "none") {
-                    selectInput("selectMarker", "select marker", 
-                        choices = c("all",
-                                    .mC(data$obj, input$markerL1, input$markerL2)),
-                        selected = "all")
+                            !is.null(input$markerL2)) {
+                    if (input$markerL1 != "none"&& input$markerL2 != "none") {
+                        selectInput("selectMarker", "select marker", 
+                            choices = c("all",
+                                .mC(data$obj, input$markerL1, input$markerL2)),
+                            selected = "all")
+                    } else
+                        selectInput("selectMarker", "select marker",
+                            choices = c("all"))
                 }
             )
             
-            output$dataComp <- renderText(
-                if (!is.null(input$markerL1) && !is.null(input$markerL2))
-                    if (input$compRadio == "Overview") {
-                        if (input$markerL1 == "none" || 
-                                    input$markerL2 == "none") {
-                            paste0(capture.output(
-                                compfnames(
-                                    data$obj[[1]], data$obj[[2]], NULL, NULL)),
-                                sep = "\n", collapse = ""
-                            )
-                        } else {
-                            paste0(capture.output(
-                                compfnames(data$obj[[1]], data$obj[[2]], 
-                                        input$markerL1, input$markerL2)),
-                                sep = "\n", collapse = ""
-                            )
-                        }
-                    }
+            output$dataComp <- renderText(.overview())
+            
+            .overview <- reactive({
+                if(!is.null(input$markerL1) && !is.null(input$markerL2)) {
+                if (input$markerL1 != "none" && input$markerL2 != "none")
+                    cfn <- compfnames(object[[1]], object[[2]], input$markerL1, 
+                                                input$markerL2, verbose=FALSE)
+                else 
+                    cfn <- list(compfnames(object[[1]], object[[2]],
+                                                    NULL, NULL, verbose=FALSE))
+                    
+                    .ov <- .calcCompNumbers(cfn)
+                .tableHTML(.ov, input$compRadio, input$selectMarker)
+                
+                }
+            })
+            
+            output$saveDataUI <- renderUI(
+                if (!is.null(input$selectMarker))
+                   # if (!.checkFeatText(data$obj, .prot$text, input$sRTextInput, 
+                   #                     input$search, sel$Obj, name = TRUE))
+                        actionButton("saveData", "Submit selection")
             )
             
-            output$dataCompTextUI <- renderUI(
-                if (input$compRadio == "Overview")
-                    verbatimTextOutput("dataComp")
-            )
+                
+#                 if (!is.null(input$markerL1) && !is.null(input$markerL2))
+#                     if (input$compRadio == "Overview") {
+#                         if (input$markerL1 == "none" || 
+#                                     input$markerL2 == "none") {
+#                             paste0(capture.output(
+#                                 compfnames(
+#                                     data$obj[[1]], data$obj[[2]], NULL, NULL)),
+#                                 sep = "\n", collapse = ""
+#                            ) 
+#                         } else {
+#                             paste0(capture.output(
+#                                 compfnames(data$obj[[1]], data$obj[[2]], 
+#                                         input$markerL1, input$markerL2)),
+#                                 sep = "\n", collapse = ""
+#                             )
+#                         }
+#                     }
+#            )
+#             
+#             output$dataCompTextUI <- renderUI(
+#                 if (input$compRadio == "Overview")
+#                     textOutput("dataComp")
+#             )
+#             
             
-            
-            output$fDataCompFeatUI <- renderDataTable(
-                if (input$compRadio != "Overview" &&
-                        !is.null(input$markerL1) && !is.null(input$markerL2))
-                    .namesCompFeat(data$obj[[1]], data$obj[[2]], 
-                            input$markerL1, input$markerL2, 
-                            input$selectMarker, input$compRadio)
-            )            
+#             output$fDataCompFeatUI <- renderDataTable(
+#                 if (input$compRadio != "Overview" &&
+#                         !is.null(input$markerL1) && !is.null(input$markerL2))
+#                     .namesCompFeat(data$obj[[1]], data$obj[[2]], 
+#                             input$markerL1, input$markerL2, 
+#                             input$selectMarker, input$compRadio)
+#             )            
             ### END: DATA ###
 
     
