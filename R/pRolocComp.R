@@ -1,9 +1,5 @@
-#' @name pRolocComp
-#' @title pRolocComp
-#' @author Thomas Naake <tn299@cam.ac.uk>
-#' 
-
-pRolocComp <- function(object = list(tan2009r1, tan2009r2)) {
+#' @export 
+pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r2)) {
     
     if (!listOf(object, "MSnSet"))
         stop("object not list of MSnSets")
@@ -24,8 +20,8 @@ pRolocComp <- function(object = list(tan2009r1, tan2009r2)) {
                     ## Sidebar Panel
                     sidebarPanel(
                         .pR_tags(),
+                        .pRn2_tags(),
                         .pR_condDisplaySelection(),
-                        ##.pRn2_commonFeat(),
                         .pRn2_selObj(),
                         .pRn2_condTabPCA(),
                         .pR_condTabProteinProfiles(),
@@ -38,7 +34,6 @@ pRolocComp <- function(object = list(tan2009r1, tan2009r2)) {
                         ),
                     ## Main Panel
                     mainPanel(
-                        verbatimTextOutput("help"),
                         tabsetPanel(
                             .pRn2_tabPanelPCA(),
                             .pRn2_tabPanelProteinProfiles(),
@@ -130,7 +125,7 @@ pRolocComp <- function(object = list(tan2009r1, tan2009r2)) {
             data <- reactiveValues(obj = object)
             observe({
                 if (!is.null(input$commonFeat)) {
-                    if (input$commonFeat == "all")
+                    if (input$commonFeat == "common & unique")
                         data$obj <- object
                     else {
                         inter <- intersect(rownames(object[[1]]), rownames(object[[2]]))
@@ -406,7 +401,7 @@ pRolocComp <- function(object = list(tan2009r1, tan2009r2)) {
             ## display 2D-nearest protein for obj1 in PCA plot
             output$hoverProt1PCA <- renderText(minDist2dProt1PCAHover())
             
-            .PCA2reac <- reactive(
+            .PCA2 <- reactive(
                 .plotPCA(obj = data$obj, 
                     fcolours = .params$colours[2], 
                     fcex = .params$fcex[2],
@@ -448,7 +443,7 @@ pRolocComp <- function(object = list(tan2009r1, tan2009r2)) {
                 }, 
                 content = function(file) {
                     jpeg(file, quality = 100, width = 800, height = 800)
-                    .PCA1reac()
+                    .PCA1()
                     dev.off()
                 }
             )
@@ -459,7 +454,7 @@ pRolocComp <- function(object = list(tan2009r1, tan2009r2)) {
                 }, 
                 content = function(file) {
                     jpeg(file, quality = 100, width = 800, height = 800)
-                    .PCA2reac()
+                    .PCA2()
                     dev.off()
                 }
             )
@@ -641,7 +636,7 @@ pRolocComp <- function(object = list(tan2009r1, tan2009r2)) {
             )
 
             ## plots and reactive expressions for download button
-            .plotDist1reac <- reactive(
+            .plotDist1 <- reactive(
                 .plotPlotDist(obj = data$obj, 
                     levPlotDist = .listParams$levPlotDist1,
                     levPlotDistOrg = .listParams$levPlotDistOrg1,
@@ -658,7 +653,7 @@ pRolocComp <- function(object = list(tan2009r1, tan2009r2)) {
             )
 
             
-            .plotDist2reac <- reactive(
+            .plotDist2 <- reactive(
                 .plotPlotDist(obj = data$obj, 
                     levPlotDist = .listParams$levPlotDist2,
                     levPlotDistOrg = .listParams$levPlotDistOrg2,
@@ -681,7 +676,7 @@ pRolocComp <- function(object = list(tan2009r1, tan2009r2)) {
                 },
                 content = function(file) {
                     jpeg(file, quality = 100, width = 800, height = 800)
-                    .plotDist1reac()
+                    .plotDist1()
                     dev.off()}
             )
             
@@ -691,7 +686,7 @@ pRolocComp <- function(object = list(tan2009r1, tan2009r2)) {
                 },
                 content = function(file) {
                     jpeg(file, quality = 100, width = 800, height = 800)
-                    .plotDist2reac()
+                    .plotDist2()
                     dev.off()}
             )
             
@@ -805,7 +800,7 @@ pRolocComp <- function(object = list(tan2009r1, tan2009r2)) {
             ### TAB: DATA ###     
             output$help <- renderText(sel$Obj)
             output$selObjUI <- renderUI(
-                radioButtons("selObj", "select object", 
+                radioButtons("selObj", "", 
                     choices = .namesObj(object))
             )
             
@@ -830,7 +825,7 @@ pRolocComp <- function(object = list(tan2009r1, tan2009r2)) {
             output$selectMarker <- renderUI(
                 if (!is.null(input$markerL1) && 
                             !is.null(input$markerL2) &&
-                             #   input$compRadio != "Overview" && 
+                                input$compRadio != "Overview" && 
                                     input$markerL1 != "none" && 
                                         input$markerL2 != "none") {
                     selectInput("selectMarker", "select marker", 

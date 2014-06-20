@@ -37,15 +37,16 @@ To achieve reactivity and interactivity, `pRolocGUI` relies on the
 [`shiny`](http://www.rstudio.com/shiny/) framework.  
 
 The implemented application facilitates a higher degree of interactivity 
-with the underlying spatial proteomics data: The distributed function 
-`pRolocVis` offers interactive Principal Component Analysis (PCA) plots and 
+with the underlying spatial proteomics data: The distributed functions 
+`pRolocVis` and `pRolocComp` offer interactive 
+Principal Component Analysis (PCA) plots and 
 protein profile plots, as well as exploration of quantitative and 
 qualitative meta-data. 
-Key features of `pRolocVis` are the identification of features in 
-plots, a 'reverse search' based on querying meta-data which allows for 
-highlighting the features on plots and an import/export functionality by 
-using the `FeaturesOfInterest`/`FoICollection` infrastructure distributed 
-by the `MSnbase` package. 
+Key features of `pRolocVis` and `pRolocComp` are the identification of 
+features in plots, a 'reverse search' based on querying meta-data which 
+allows for highlighting the features on plots and an import/export 
+functionality by using the `FeaturesOfInterest`/`FoICollection` infrastructure 
+distributed by the `MSnbase` package. 
 
 We recommend some familiarity with the `MSnSet` class (see `?MSnSet`
 for details) and the `pRoloc` vignette (available with 
@@ -169,7 +170,7 @@ align="center"> Fig. 3: File upload in pRolocVis </p>
 file. If so, either the assigned object itself or the first element in the list
 will be used instead of the uploaded `.Rda` or `.Rdata` file. 
 
-When analyzing multiple data sets in one `pRolocVis` session the selected 
+When analysing multiple data sets in one `pRolocVis` session the selected 
 features will be (irreversibly) deleted when changing from one 
 `MSnSet` to the other. It is therefore highly recommended if this
 behaviour is not intended to save selected features by using the 
