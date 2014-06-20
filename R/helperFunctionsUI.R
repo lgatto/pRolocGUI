@@ -228,13 +228,15 @@
         condition="input.tab1 == 'Data'",
         wellPanel(
             radioButtons("compRadio", label = "", 
-                choices = c("Overview", "common", "unique1", "unique2"),
-                selected = "Overview"),
+                choices = c("common", "unique1", "unique2"),
+                selected = "common"),
             hr(),
             helpText(""),
             htmlOutput("selectMarker"),
             htmlOutput("markerLevel1Output"),
-            htmlOutput("markerLevel2Output")
+            htmlOutput("markerLevel2Output"),
+            htmlOutput("saveDataUI")
+            
         ),
         wellPanel(
             radioButtons("commonFeat", "Features used",
@@ -372,7 +374,8 @@
 .pR_tabPanelComp <- function() {
     tabPanel("Data",
              dataTableOutput("fDataCompFeatUI"),
-             htmlOutput("dataCompTextUI")
+             uiOutput("dataComp")
+            # htmlOutput("dataCompTextUI")
              )
 }
 

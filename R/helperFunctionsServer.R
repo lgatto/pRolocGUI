@@ -215,14 +215,18 @@
 }
 
 ## checkBox helper function for Display selection
-.checkBoxdSelect <- function(dPCA, dPlotDist, dText) {
+.checkBoxdSelect <- function(dPCA, dPlotDist, dText, dData = NULL, comp = FALSE) {
+    choices <- c("PCA" = "cursorPCA",
+                   "protein profiles" = "cursorPlotDist",
+                   "saved searches" = "savedSearches",
+                   "query" = "text")
+    if (comp)
+        choices <- c(choices[1:3], "Data" = "data", choices[4])
+    
     checkboxGroupInput("chooseIdenSearch", 
         label = "",
-        choices = c("PCA" = "cursorPCA",
-                "protein profiles" = "cursorPlotDist",
-                "saved searches" = "savedSearches",
-                "query" = "text"),
-        selected = c(dPCA, dPlotDist, dText)
+        choices = choices,
+        selected = c(dPCA, dPlotDist, dText, dData)
     )
 }
 
@@ -752,80 +756,151 @@
     return(ans)
 }
 
+## helper function for compfnames to create matrix 
+.calcCompNumbers <- function(flist) {
+    .len <- length(flist)
+    ans <- matrix(NA, nrow = .len, ncol = 3)
+    colnames(ans) <- c("common", "unique1", "unique2")
+    .name <- vector("character", .len)
+    for (i in 1:.len) {
+        .name[i] <- flist[[i]]@name
+        ans[i, 1] <- length(flist[[i]]@common)
+        ans[i, 2] <- length(flist[[i]]@unique1)
+        ans[i, 3] <- length(flist[[i]]@unique2) 
+    }
+    rownames(ans) <- .name
+    return(ans)
+}
+
+## create HTML cell
+.cellHTML <- function(cell) paste0('<td>', cell, '</td>')
+## create bold HTML cell
+.boldHTML <- function(cell) 
+    paste0("<td>", "<strong>", cell, "</strong></td>")
+
+
+## create HTML rows
+.rowHTML <- function(row, rb = "common", marker = "all", rowname) {
+    
+    if (marker == rowname) {
+        cells <- sapply(row, .cellHTML)
+        cells[rb] <- .boldHTML(row[rb])
+    } else
+        cells <- sapply(row, .cellHTML)
+    
+    ans <- paste(cells, collapse = "")
+    ans <- paste0(ans, '</tr>')
+    return(ans)
+    }
+}
+
+## create HTML table
+.tableHTML <- function(mat, rb, marker) {
+    
+    if (!is.null(marker)) {
+        vec <- vector("character", dim(mat)[1])
+    
+        for (i in 1:dim(mat)[1]) {
+            if (marker == rownames(mat)[i]) {
+                rn <- paste0("<tr>", "<th align='left'>", marker, "</th>")
+            } else
+                rn <- paste0("<tr>", "<td align='left'>", rownames(mat)[i], "</td>")
+        
+            vec[i] <- paste0(rn, 
+                .rowHTML(mat[i,], rb, marker, rownames(mat)[i]), collapse = "")
+        }
+    
+        common <- ifelse(rb == "common", "<th>common</th>", "<td>common</td>")
+        unique1 <- ifelse(rb == "unique1", "<th>unique1</th>", "<td>unique1</td>")
+        unique2 <- ifelse(rb == "unique2", "<th>unique2</th>", "<td>unique2</td>")
+    
+        head <- paste("<tr>","<th></th>", common, unique1, unique2, "</tr>", sep="")
+        ans <- paste0(vec, collapse="")
+        ans <- paste0(head, ans, collapse="")
+        ans <- paste0("<table border='0' cellspacing='10' cellpadding='10'>", 
+                        ans, "</table>")
+        return(ans)
+    }
+}
+
+
+
 ## helper function to create data frame with featureNames 
 ## with FeatComp infrastructure
-.namesCompFeat <- function(obj1, obj2, mL1, mL2, sel, compRadio) {
-    
-    .indData <- 1
-    if (mL1 == "none" || mL2 == "none") {
-        mL1 <- mL2 <- NULL
-    } else 
-        .indData <- which(sel == c("all", .mC(list(obj1, obj2), mL1, mL2)))
-        
-    .comp <- compfnames(obj1, obj2, mL1, mL2, verbose = FALSE)
-    
-    if (compRadio %in% c("unique1", "common")) {
-        obj <- obj1
-    } else
-        obj <- obj2
-    
-    ## get feature names in .comp
-    if (is.null(mL1) && is.null(mL2))
-        .Feat <- slot(.comp, compRadio)
-    else
-        .Feat <- slot(.comp[[.indData]], compRadio)
-    
-    .lenFeat <- length(.Feat)
-    
-    if (.lenFeat != 0) {
-        .names <- sort(.Feat)        
-        .ceil <- ceiling(.lenFeat/4)
-        ans <- matrix("-", .ceil, 4)
-        
-        if (.lenFeat <= 4)
-            ans[1, 1:.lenFeat] <- .names 
-        else {
-        
-            if ((.lenFeat / 4) %% 1 == 0.25) {
-                ans[,1] <- .names[1:.ceil]
-                ind2 <- .ceil + floor(.lenFeat / 4)
-                ans[1:(.ceil-1),2] <- .names[(.ceil + 1):ind2]
-                ind3 <- ind2 + floor(.lenFeat / 4)
-                ans[1:(.ceil - 1),3] <- .names[(ind2 + 1):ind3]
-                ind4 <- ind3 + floor(.lenFeat / 4)
-                ans[1:(.ceil - 1),4] <- .names[(ind3 + 1):ind4]}
-        
-            if ((.lenFeat / 4) %% 1 == 0.5) {
-                ans[,1] <- .names[1:.ceil]
-                ans[,2] <- .names[(.ceil + 1):(2 * .ceil)]
-                ind3 <- .ceil*2 + floor(.lenFeat / 4)
-                ans[1:(.ceil - 1),3] <- .names[(2 * .ceil + 1):ind3]
-                ind4 <- ind3 + floor(.lenFeat / 4)
-                ans[1:(.ceil - 1),4] <- .names[(ind3 + 1):ind4]}
-        
-            if ((.lenFeat / 4) %% 1 == 0.75) {
-                ans[,1] <- .names[1:.ceil]
-                ans[,2] <- .names[(.ceil + 1):(2 * .ceil)]
-                ans[,3] <- .names[(2 * .ceil + 1):(3 * .ceil)]
-                ind4 <- .ceil*3 + floor(.lenFeat / 4)
-               ans[1:(.ceil-1),4] <- .names[(3 * .ceil + 1):ind4]}
-        
-            if ((.lenFeat / 4) %% 1 == 0) {
-                ans[,1] <- .names[1:.ceil]
-                ans[,2] <- .names[(.ceil + 1):(2 * .ceil)]
-                ans[,3] <- .names[(2 * .ceil + 1):(3 * .ceil)]
-                ans[,4] <- .names[(3 * .ceil + 1):(4 * .ceil)]}
-        }
-        
-        ans <- as.data.frame(ans)
-        
-        colnames(ans) <- c(" ", " ", " ", " ")
-    } else {
-        ans <- as.data.frame("no features comprised")
-        colnames(ans) <- " "
-    }
-    return(ans)    
-}
-   
+
+## not used
+## .namesCompFeat <- function(obj1, obj2, mL1, mL2, sel, compRadio) {
+##     
+##     .indData <- 1
+##     if (mL1 == "none" || mL2 == "none") {
+##         mL1 <- mL2 <- NULL
+##     } else 
+##         .indData <- which(sel == c("all", .mC(list(obj1, obj2), mL1, mL2)))
+##         
+##     .comp <- compfnames(obj1, obj2, mL1, mL2, verbose = FALSE)
+##     
+##     if (compRadio %in% c("unique1", "common")) {
+##         obj <- obj1
+##     } else
+##         obj <- obj2
+##     
+##     ## get feature names in .comp
+##     if (is.null(mL1) && is.null(mL2))
+##         .Feat <- slot(.comp, compRadio)
+##     else
+##         .Feat <- slot(.comp[[.indData]], compRadio)
+##     
+##     .lenFeat <- length(.Feat)
+##     
+##     if (.lenFeat != 0) {
+##         .names <- sort(.Feat)        
+##         .ceil <- ceiling(.lenFeat/4)
+##         ans <- matrix("-", .ceil, 4)
+##         
+##         if (.lenFeat <= 4)
+##             ans[1, 1:.lenFeat] <- .names 
+##         else {
+##         
+##             if ((.lenFeat / 4) %% 1 == 0.25) {
+##                 ans[,1] <- .names[1:.ceil]
+##                 ind2 <- .ceil + floor(.lenFeat / 4)
+##                 ans[1:(.ceil-1),2] <- .names[(.ceil + 1):ind2]
+##                 ind3 <- ind2 + floor(.lenFeat / 4)
+##                 ans[1:(.ceil - 1),3] <- .names[(ind2 + 1):ind3]
+##                 ind4 <- ind3 + floor(.lenFeat / 4)
+##                 ans[1:(.ceil - 1),4] <- .names[(ind3 + 1):ind4]}
+##         
+##             if ((.lenFeat / 4) %% 1 == 0.5) {
+##                 ans[,1] <- .names[1:.ceil]
+##                 ans[,2] <- .names[(.ceil + 1):(2 * .ceil)]
+##                 ind3 <- .ceil*2 + floor(.lenFeat / 4)
+##                 ans[1:(.ceil - 1),3] <- .names[(2 * .ceil + 1):ind3]
+##                 ind4 <- ind3 + floor(.lenFeat / 4)
+##                 ans[1:(.ceil - 1),4] <- .names[(ind3 + 1):ind4]}
+##         
+##             if ((.lenFeat / 4) %% 1 == 0.75) {
+##                 ans[,1] <- .names[1:.ceil]
+##                 ans[,2] <- .names[(.ceil + 1):(2 * .ceil)]
+##                 ans[,3] <- .names[(2 * .ceil + 1):(3 * .ceil)]
+##                 ind4 <- .ceil*3 + floor(.lenFeat / 4)
+##                ans[1:(.ceil-1),4] <- .names[(3 * .ceil + 1):ind4]}
+##         
+##             if ((.lenFeat / 4) %% 1 == 0) {
+##                 ans[,1] <- .names[1:.ceil]
+##                 ans[,2] <- .names[(.ceil + 1):(2 * .ceil)]
+##                 ans[,3] <- .names[(2 * .ceil + 1):(3 * .ceil)]
+##                 ans[,4] <- .names[(3 * .ceil + 1):(4 * .ceil)]}
+##         }
+##         
+##         ans <- as.data.frame(ans)
+##         
+##         colnames(ans) <- c(" ", " ", " ", " ")
+##     } else {
+##         ans <- as.data.frame("no features comprised")
+##         colnames(ans) <- " "
+##     }
+##     return(ans)    
+## }
+##    
 ## END: TAB Data (pRolocComp) ## 
 
