@@ -78,7 +78,7 @@ pRolocVis <- function(object) {
                         .pR_condDisplaySelection(),
                         .pR_condTabData(),
                         .pRn1_condTabPCA(),
-                        .pRn1_condTabProteinProfiles(),
+                        .pR_condTabProteinProfiles(),
                         .pR_condTabQuantitation(),
                         .pR_condTabfData(),
                         .pR_condTabpData(),
@@ -177,7 +177,7 @@ pRolocVis <- function(object) {
             ## choose Data source
             output$Data1UI <- renderUI(
                 selectInput("data", "Choose MSnSet data source:",
-                                                choices = .namesObj(object))     
+                                    choices = .namesObj(object, upload = TRUE))     
             )
 
             .dIownData <- reactive({
