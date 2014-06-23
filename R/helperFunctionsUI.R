@@ -236,13 +236,13 @@
             htmlOutput("markerLevel1Output"),
             htmlOutput("markerLevel2Output"),
             htmlOutput("saveDataUI")
-            
         ),
         wellPanel(
             radioButtons("commonFeat", "Features used",
                 choices = c("common", "unique", "common & unique"), 
                 selected = "common & unique")
-        )
+        ),
+        htmlOutput("linkDataUI")
     )
 }
 
@@ -373,7 +373,6 @@
 
 .pR_tabPanelComp <- function() {
     tabPanel("Data",
-    
              uiOutput("dataComp")
             # htmlOutput("dataCompTextUI")
              )

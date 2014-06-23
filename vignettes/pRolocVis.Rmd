@@ -389,6 +389,21 @@ the button does not show up in the application.
 When exiting `pRolocVis` the `FoICollection` will be assigned to the 
 object `pRolocGUI_SearchResults` in the global environment. 
 
+To create an example object `pRolocGUI_SearchResults` containing the 
+first ten features of `tan2009r1` run the following commands in the console. 
+Both traceable and non-traceable `FeaturesOfInterest`/`FoICollection` are 
+usable by `pRolocVis`/`pRolocComp`.
+
+```{r, eval = TRUE, echo = TRUE}
+library("pRolocdata")
+data(tan2009r1)
+pRolocGUI_SearchResults <- FoICollection()
+newFeat <- FeaturesOfInterest(description = "test_01",
+                              fnames = featureNames(tan2009r1)[1:10],
+                              object = tan2009r1)
+pRolocGUI_SearchResults <- addFeaturesOfInterest(newFeat, pRolocGUI_SearchResults)
+```
+
 <img src="figures/Screenshot_SaSe1.png" width="100%" alt="" /> <p
 align="center"> Fig. 10: Appearance of search tab (`andy2011`). Search
 result pRolocVis_Test1 contains one feature of interest (PGAP1_Human)
