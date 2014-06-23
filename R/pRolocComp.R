@@ -133,7 +133,7 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
                         data$obj <- list(
                             object[[1]][setdiff(rownames(object[[1]]), inter)],
                             object[[2]][setdiff(rownames(object[[2]]), inter)])
-                    if (input$commonFeat == "common")                        
+                    else ##if (input$commonFeat == "common")                        
                         data$obj <- list(
                             object[[1]][rownames(object[[1]]) %in% inter],
                             object[[2]][rownames(object[[2]]) %in% inter])
@@ -166,11 +166,13 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
             })
             
             observe({
-                dSelect$data <- NULL
+                dSelect$data <- "data"
             })
             
+            ## input$chooseIdenSelect
             output$checkBoxUI <- renderUI(
-                .checkBoxdSelect(dSelect$PCA, dSelect$plotDist, dSelect$text, dSelect$data, TRUE)
+                .checkBoxdSelect(dSelect$PCA, dSelect$plotDist, dSelect$text, 
+                                                            dSelect$data, TRUE)
             )
             
             ## reactive expression which contains all feature names for the 
@@ -180,16 +182,22 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
                     tagSelectList = input$tagSelectList, 
                     protText = .prot$text, protPCA = .prot$PCA, 
                     protPlotDist = .prot$plotDist,  
-                    protSearch = .fnamesFOI(.pR_SR$foi)[[.whichN()]]
+                    protSearch = .fnamesFOI(.pR_SR$foi)[[.whichN()]],
+                    protData = .prot$data
                 )
             )
+            
+            .unique1 <- reactive(NULL)
+            .unique2 <- reactive(NULL)
             
             ## reactive expressions for general search
             ## indices are computed to forward to
             ## plot2D, plotDist and tabs quantitation
             ## and feature meta-data
-            .searchInd1 <- reactive(.computeInd(data$obj, .unionFeat(), "object1"))
-            .searchInd2 <- reactive(.computeInd(data$obj, .unionFeat(), "object2"))
+            .searchInd1 <- reactive(
+                .computeInd(data$obj, c(.unionFeat(), .unique1()), "object1"))
+            .searchInd2 <- reactive(
+                .computeInd(data$obj, c(.unionFeat(), .unique2()), "object2"))
 
             ## Clear multiple points on click
             observe({
@@ -206,6 +214,7 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
                         dSelect$PCA <- NULL
                         dSelect$plotDist <- NULL
                         dSelect$text <- NULL
+                        dSelect$data <- NULL
                     }
             })
             
@@ -266,21 +275,32 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
             })
             
             observe({
-                .prot$Data <- NULL
+                if (input$compRadio == "common")  {
+                    .prot$data <- .obsProtData(
+                        .prot$data, isolate(.cfnnewfeat()), input$saveData)      
+                }
             })
         
+#             com <- reactiveValues(newfeat = NULL)
+#             observe({
+#                 if (!is.null(input$saveData)) {
+#                   if (input$saveData == 0)
+#                         com$newfeat <- .cfnnewfeat()
+#               #    else
+#              #         com$newfeat <- NULL
+#                 } else 
+#                     com$newfeat <- NULL
+#             })
             ## END OF SEARCHING IMPLEMENTATION ##  
     
             
             
-            ## START: TAB PCA ##
-            
-            ## colours  
+            ## START: TAB PCA ##            
             .params <- reactiveValues(
                 colours = c("none", "none"), fcex = c(1, 1), 
                 symbol = c("none", "none"), 
                 PCAn1 = c(1, 1), PCAn2 = c(2, 2),
-                xrange1 = c(min(.vPCA(isolate(data$obj), 1, 2, "object1")[, 1]), 
+                xrange1 = c(min(.vPCA(isolate(data$obj), 1, 2, "object1")[, 1]),
                             max(.vPCA(isolate(data$obj), 1, 2, "object1")[, 1])),
                 xrange2 = c(min(.vPCA(isolate(data$obj), 1, 2, "object2")[, 1]), 
                             max(.vPCA(isolate(data$obj), 1, 2, "object2")[, 1])),
@@ -828,11 +848,11 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
             })
             
             output$markerLevel1Output <- renderUI( 
-                .colourPCA(data$obj, "none", "object1", "markerL1", "marker level 1")
+                .colourPCA(data$obj, "markers", "object1", "markerL1", "marker level 1")
             )
             
             output$markerLevel2Output <- renderUI(
-                .colourPCA(data$obj, "none", "object2", "markerL2", "marker level 2")
+                .colourPCA(data$obj, "markers", "object2", "markerL2", "marker level 2")
             )
             
             output$selectMarker <- renderUI(
@@ -842,34 +862,50 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
                         selectInput("selectMarker", "select marker", 
                             choices = c("all",
                                 .mC(data$obj, input$markerL1, input$markerL2)),
-                            selected = "all")
+                            selected = "ER")
                     } else
                         selectInput("selectMarker", "select marker",
                             choices = c("all"))
                 }
             )
             
-            output$dataComp <- renderText(.overview())
-            
-            .overview <- reactive({
+            ## object of class FeatComp
+            .cfn <- reactive({
                 if(!is.null(input$markerL1) && !is.null(input$markerL2)) {
-                if (input$markerL1 != "none" && input$markerL2 != "none")
-                    cfn <- compfnames(data$obj[[1]], data$obj[[2]], input$markerL1, 
-                                                input$markerL2, verbose=FALSE)
-                else 
-                    cfn <- list(compfnames(data$obj[[1]], data$obj[[2]],
-                                                    NULL, NULL, verbose=FALSE))
                     
-                    .ov <- .calcCompNumbers(cfn)
-                .tableHTML(.ov, input$compRadio, input$selectMarker)
-                
+                    if (input$markerL1 != "none" && input$markerL2 != "none")
+                        cfn <- compfnames(data$obj[[1]], data$obj[[2]], 
+                            input$markerL1, input$markerL2, verbose=FALSE)
+                    else 
+                        cfn <- list(compfnames(data$obj[[1]], data$obj[[2]],
+                                        NULL, NULL, verbose=FALSE)) 
                 }
             })
             
+            ## new features which are selected by input$selectMarker and 
+            ## input$compRadio
+            .cfnnewfeat <- reactive({
+                if (!is.null(input$selectMarker) && !is.null(.cfn()[[1]])) {
+                    ind <- which(input$selectMarker == 
+                                                lapply(.cfn(), slot, "name")) 
+                    slot(.cfn()[[ind]], input$compRadio)}
+            })
+            
+            
+            ## HTML table (overview matrix)
+            .overview <- reactive({
+                if (!is.null(.cfn())) {
+                    .ov <- .calcCompNumbers(.cfn())
+                    .tableHTML(.ov, input$compRadio, input$selectMarker)}
+            })
+    
+            output$dataComp <- renderText(.overview())
+            
+            output$help <- renderText(c(.prot$data))
+            
             output$saveDataUI <- renderUI(
-                if (!is.null(input$selectMarker))
-                   # if (!.checkFeatText(data$obj, .prot$text, input$sRTextInput, 
-                   #                     input$search, sel$Obj, name = TRUE))
+               #if (!is.null(.cfnnewfeat()) && !is.null(.unionFeat()))
+                   if (!.checkFeatData(.unionFeat(), .cfnnewfeat()))
                         actionButton("saveData", "Submit selection")
             )
             

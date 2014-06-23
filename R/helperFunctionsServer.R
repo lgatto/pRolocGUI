@@ -109,7 +109,7 @@
 ## A function to forward indices of selected features to several 
 ## reactive expressions
 .sI <- function(cIS, tagSelectList, protText, 
-                    protPCA, protPlotDist, protSearch) {
+                    protPCA, protPlotDist, protSearch, protData) {
     ans <- NULL
     if ("text" %in% cIS)
         ans <- c(ans, protText)
@@ -119,6 +119,8 @@
         ans <- c(ans, protPlotDist)
     if ("savedSearches" %in% cIS && !is.null(tagSelectList))
         ans <- c(ans, protSearch)
+    if ("data" %in% cIS)
+        ans <- c(ans, protData)
     unique(ans)
 }
 
@@ -196,6 +198,34 @@
         }
         return(unique(protText))
     }
+}
+
+## a check function to test if features are already internally stored
+## returning TRUE or FALSE
+.checkFeatData <- function(featind, newfeat) {
+  
+        len <- length(newfeat)
+        ans <- length(intersect(featind, newfeat)) == len
+        if (is.null(newfeat))
+            ans <- FALSE
+        return(ans)
+}
+
+.obsProtData <- function(protData, newFeat, button) {
+    if (!is.null(button) && !is.null(newFeat)) { 
+        
+            
+        .newFeat <- isolate(newFeat)
+        
+        if (button == 1 && length(newFeat > 0)) {
+    
+              #if (radio == "common")
+                protData <- isolate(c(protData, isolate(.newFeat)))
+          
+            
+        }
+    }
+    return(unique(protData))
 }
 
 ## concatenate new Indices to old ones when clicking, for PCA and plotDist
@@ -791,7 +821,6 @@
     ans <- paste(cells, collapse = "")
     ans <- paste0(ans, '</tr>')
     return(ans)
-    }
 }
 
 ## create HTML table
