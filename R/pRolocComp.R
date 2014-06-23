@@ -124,23 +124,8 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
             ## of these two objects with common features    
             data <- reactiveValues(obj = object)
             observe({
-                if (!is.null(input$commonFeat)) {
-                    if (input$commonFeat == "common & unique")
-                        data$obj <- object
-                    else {
-                        inter <- intersect(rownames(object[[1]]), rownames(object[[2]]))
-                    if (input$commonFeat == "unique")
-                        data$obj <- list(
-                            object[[1]][setdiff(rownames(object[[1]]), inter)],
-                            object[[2]][setdiff(rownames(object[[2]]), inter)])
-                    else ##if (input$commonFeat == "common")                        
-                        data$obj <- list(
-                            object[[1]][rownames(object[[1]]) %in% inter],
-                            object[[2]][rownames(object[[2]]) %in% inter])
-                    }
-                }
-            })  
-            
+                data$obj <- .dataSub(object, input$commonFeat)
+            })
             ## START OF SEARCH IMPLEMENTATION ##
             
             ## check boxes by clicking on plots PCA and plotDist

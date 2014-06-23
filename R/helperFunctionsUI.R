@@ -373,7 +373,7 @@
 
 .pR_tabPanelComp <- function() {
     tabPanel("Data",
-             dataTableOutput("fDataCompFeatUI"),
+    
              uiOutput("dataComp")
             # htmlOutput("dataCompTextUI")
              )

@@ -793,6 +793,28 @@
 
 ## START: TAB Data (pRolocComp) ##
 
+## subset object
+.dataSub <- function(object, subsetData) {
+    if (!is.null(subsetData)) {
+        if (subsetData == "common & unique")
+            ans <- object
+        else {
+            obj1 <- object[[1]]
+            obj2 <- object[[2]]
+            inter <- intersect(rownames(obj1), rownames(obj2))
+            if (subsetData == "unique")
+                ans <- list(
+                    obj1[setdiff(rownames(obj1), inter)],
+                    obj2[setdiff(rownames(obj2), inter)])
+            else
+                ans <- list(
+                    obj1[rownames(obj1) %in% inter],
+                    obj2[rownames(obj2) %in% inter])
+        }
+        return(ans)
+    }
+}
+
 ## returns marker levels of selected fvarLabels
 .mC <- function(obj, fcol1, fcol2) {
     obj1 <- obj[[1]]
