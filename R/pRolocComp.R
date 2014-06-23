@@ -129,6 +129,11 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
                         data$obj <- object
                     else {
                         inter <- intersect(rownames(object[[1]]), rownames(object[[2]]))
+                    if (input$commonFeat == "unique")
+                        data$obj <- list(
+                            object[[1]][setdiff(rownames(object[[1]]), inter)],
+                            object[[2]][setdiff(rownames(object[[2]]), inter)])
+                    if (input$commonFeat == "common")                        
                         data$obj <- list(
                             object[[1]][rownames(object[[1]]) %in% inter],
                             object[[2]][rownames(object[[2]]) %in% inter])
@@ -849,10 +854,10 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
             .overview <- reactive({
                 if(!is.null(input$markerL1) && !is.null(input$markerL2)) {
                 if (input$markerL1 != "none" && input$markerL2 != "none")
-                    cfn <- compfnames(object[[1]], object[[2]], input$markerL1, 
+                    cfn <- compfnames(data$obj[[1]], data$obj[[2]], input$markerL1, 
                                                 input$markerL2, verbose=FALSE)
                 else 
-                    cfn <- list(compfnames(object[[1]], object[[2]],
+                    cfn <- list(compfnames(data$obj[[1]], data$obj[[2]],
                                                     NULL, NULL, verbose=FALSE))
                     
                     .ov <- .calcCompNumbers(cfn)

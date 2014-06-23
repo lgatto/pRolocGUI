@@ -240,7 +240,7 @@
         ),
         wellPanel(
             radioButtons("commonFeat", "Features used",
-                choices = c("common", "common & unique"), 
+                choices = c("common", "unique", "common & unique"), 
                 selected = "common & unique")
         )
     )

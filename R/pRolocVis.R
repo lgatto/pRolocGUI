@@ -181,7 +181,7 @@ pRolocVis <- function(object) {
             )
 
             .dIownData <- reactive({
-                if (length(as.character(input$upload["datapath"]))) {
+                if (length(as.chparacter(input$upload["datapath"]))) {
                     ## check if MSnSet has ending .rda or .RData and if 
                     ## it is MSnSet
                     if (file_ext(input$upload["name"]) %in% c("rda","RData") 
