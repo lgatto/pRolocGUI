@@ -75,12 +75,13 @@
 
 
 
-## A helper function to select the checkbox of "query" in the 
-## Display selection widget, used in observer for assigning to dSelect$text
-.selText <- function(dtext, saveText, resetMult, protText) {
-    if (!is.null(saveText)) {
-        if (saveText > 0)
-            dtext <- "text"
+## A helper function to select the checkbox of "query"/"data" in the 
+## Display selection widget, used in observer for assigning to dSelect$text/
+## dSelect$data
+.selButton <- function(dtext, button, resetMult, protText, sel = "text") {
+    if (!is.null(button)) {
+        if (button > 0)
+            dtext <- sel
         else
             dtext <- dtext
         
@@ -122,6 +123,13 @@
     if ("data" %in% cIS)
         ans <- c(ans, protData)
     unique(ans)
+}
+
+## for unique features
+.sIUni <- function(protDataU, cIS) {
+    ans <- NULL
+    if ("data" %in% cIS) ans <- protDataU
+    return(ans)
 }
 
 ## A helper function to subset the selection in the query when entering 
@@ -169,7 +177,7 @@
     }
 }
 
-
+## function to concatenate new features to old ones
 .obsProtText <- function(obj, protText, button, sRText, search, 
                          ind = c("object1", "object2"), names = FALSE) {
     if (length(obj) != 0 && !is.null(button)) {        
@@ -202,13 +210,20 @@
 
 ## a check function to test if features are already internally stored
 ## returning TRUE or FALSE
-.checkFeatData <- function(featind, newfeat) {
-  
-        len <- length(newfeat)
-        ans <- length(intersect(featind, newfeat)) == len
-        if (is.null(newfeat))
-            ans <- FALSE
-        return(ans)
+.checkFeatData <- function(common, unique1L, unique2, newfeat, sel) {
+        
+    len <- length(newfeat)
+        
+    if (sel == "common")
+        ans <- length(intersect(common, newfeat)) == len
+    if (sel == "unique1")
+        ans <- length(intersect(unique1, newfeat)) == len
+    if (sel == "unique2")
+        ans <- length(intersect(unique2, newfeat)) == len
+        
+    if (is.null(newfeat))
+        ans <- FALSE
+    return(ans)
 }
 
 .obsProtData <- function(protData, newFeat, button) {

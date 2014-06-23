@@ -153,26 +153,25 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
 
             
             observe({
-                dSelect$plotDist <- .selClick(
-                    dSelect$plotDist, input$plotDist1click, 
-                    .prot$plotDist, FALSE, input$plotDist2click)
+                dSelect$plotDist <- .selClick(dSelect$plotDist, 
+                    input$plotDist1click, .prot$plotDist, FALSE, 
+                    input$plotDist2click)
             })
             
             observe({
-                dSelect$text <- .selText(
-                    dSelect$text, input$saveText, input$resetMult, 
-                    .prot$text
-                )  
+                dSelect$text <- .selButton(dSelect$text, input$saveText, 
+                    input$resetMult, .prot$text, "text")  
             })
             
             observe({
-                dSelect$data <- "data"
+                dSelect$data <- .selButton(dSelect$data, input$saveData, 
+                    input$resetMult, .prot$data, "data")
             })
             
             ## input$chooseIdenSelect
             output$checkBoxUI <- renderUI(
                 .checkBoxdSelect(dSelect$PCA, dSelect$plotDist, dSelect$text, 
-                                                            dSelect$data, TRUE)
+                    dSelect$data, TRUE)
             )
             
             ## reactive expression which contains all feature names for the 
@@ -187,13 +186,13 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
                 )
             )
             
-            .unique1 <- reactive(NULL)
-            .unique2 <- reactive(NULL)
+            .unique1 <- reactive(.sIUni(.prot$datau1, input$chooseIdenSearch))
+ 
+            .unique2 <- reactive(.sIUni(.prot$datau2, input$chooseIdenSearch))
             
-            ## reactive expressions for general search
-            ## indices are computed to forward to
-            ## plot2D, plotDist and tabs quantitation
-            ## and feature meta-data
+            ## reactive expressions for general search indices are computed to 
+            ## forward to plot2D, plotDist and tabs quantitation and feature 
+            ## meta-data
             .searchInd1 <- reactive(
                 .computeInd(data$obj, c(.unionFeat(), .unique1()), "object1"))
             .searchInd2 <- reactive(
@@ -203,18 +202,13 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
             observe({
                 if (!is.null(input$resetMult))
                     if (input$resetMult > 0) {
-                        .prot$PCA1 <- NULL
-                        .prot$PCA2 <- NULL
-                        .prot$PCA <- NULL
-                        .prot$plotDist1 <- NULL
-                        .prot$plotDist2 <- NULL
+                        .prot$PCA1 <- .prot$PCA2 <- .prot$PCA <- NULL
+                        .prot$plotDist1 <- .prot$plotDist2 <- NULL
                         .prot$plotDist <- NULL
                         .prot$text <- NULL
-                        .prot$data <- NULL
-                        dSelect$PCA <- NULL
-                        dSelect$plotDist <- NULL
-                        dSelect$text <- NULL
-                        dSelect$data <- NULL
+                        .prot$data <- .prot$datau1 <- .prot$datau2 <- NULL
+                        dSelect$PCA <- dSelect$plotDist <- NULL
+                        dSelect$text <- dSelect$data <- NULL
                     }
             })
             
@@ -245,7 +239,7 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
             ## vector with reactive values
             .prot <- reactiveValues(PCA1 = NULL, PCA2 = NULL, PCA = NULL, 
                         plotDist1 = NULL, plotDist2 = NULL, plotDist = NULL, 
-                        text = NULL, data = NULL)
+                        text = NULL, data = NULL, datau1 = NULL, datau2 = NULL)
             
             ## observe indices and concatenate to .prot$PCA, .prot$plotDist
             ## and .prot$text
@@ -275,22 +269,19 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
             })
             
             observe({
-                if (input$compRadio == "common")  {
-                    .prot$data <- .obsProtData(
+                if (input$compRadio == "common") .prot$data <- .obsProtData(
                         .prot$data, isolate(.cfnnewfeat()), input$saveData)      
-                }
             })
-        
-#             com <- reactiveValues(newfeat = NULL)
-#             observe({
-#                 if (!is.null(input$saveData)) {
-#                   if (input$saveData == 0)
-#                         com$newfeat <- .cfnnewfeat()
-#               #    else
-#              #         com$newfeat <- NULL
-#                 } else 
-#                     com$newfeat <- NULL
-#             })
+            
+            observe({
+                if (input$compRadio == "unique1") .prot$datau1 <- .obsProtData(
+                        .prot$datau1, isolate(.cfnnewfeat()), input$saveData)
+            })
+            
+            observe({
+                if (input$compRadio == "unique2") .prot$datau2 <- .obsProtData(
+                        .prot$data, isolate(.cfnnewfeat()), input$saveData)
+            })
             ## END OF SEARCHING IMPLEMENTATION ##  
     
             
@@ -901,47 +892,11 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
     
             output$dataComp <- renderText(.overview())
             
-            output$help <- renderText(c(.prot$data))
-            
             output$saveDataUI <- renderUI(
-               #if (!is.null(.cfnnewfeat()) && !is.null(.unionFeat()))
-                   if (!.checkFeatData(.unionFeat(), .cfnnewfeat()))
-                        actionButton("saveData", "Submit selection")
+                if (!.checkFeatData(.unionFeat(), .unique1(), .unique2(), 
+                            .cfnnewfeat(), input$compRadio))
+                    actionButton("saveData", "Submit selection")
             )
-            
-                
-#                 if (!is.null(input$markerL1) && !is.null(input$markerL2))
-#                     if (input$compRadio == "Overview") {
-#                         if (input$markerL1 == "none" || 
-#                                     input$markerL2 == "none") {
-#                             paste0(capture.output(
-#                                 compfnames(
-#                                     data$obj[[1]], data$obj[[2]], NULL, NULL)),
-#                                 sep = "\n", collapse = ""
-#                            ) 
-#                         } else {
-#                             paste0(capture.output(
-#                                 compfnames(data$obj[[1]], data$obj[[2]], 
-#                                         input$markerL1, input$markerL2)),
-#                                 sep = "\n", collapse = ""
-#                             )
-#                         }
-#                     }
-#            )
-#             
-#             output$dataCompTextUI <- renderUI(
-#                 if (input$compRadio == "Overview")
-#                     textOutput("dataComp")
-#             )
-#             
-            
-#             output$fDataCompFeatUI <- renderDataTable(
-#                 if (input$compRadio != "Overview" &&
-#                         !is.null(input$markerL1) && !is.null(input$markerL2))
-#                     .namesCompFeat(data$obj[[1]], data$obj[[2]], 
-#                             input$markerL1, input$markerL2, 
-#                             input$selectMarker, input$compRadio)
-#             )            
             ### END: DATA ###
 
     

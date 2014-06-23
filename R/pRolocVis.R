@@ -181,7 +181,7 @@ pRolocVis <- function(object) {
             )
 
             .dIownData <- reactive({
-                if (length(as.chparacter(input$upload["datapath"]))) {
+                if (length(as.character(input$upload["datapath"]))) {
                     ## check if MSnSet has ending .rda or .RData and if 
                     ## it is MSnSet
                     if (file_ext(input$upload["name"]) %in% c("rda","RData") 
@@ -256,7 +256,7 @@ pRolocVis <- function(object) {
                     dSelect$plotDist, input$plotDistclick, 
                     .prot$plotDist, FALSE
                 )
-                dSelect$text <- .selText(
+                dSelect$text <- .selButton(
                     dSelect$text, input$saveText, input$resetMult, 
                     .prot$text
                 )  
@@ -266,10 +266,8 @@ pRolocVis <- function(object) {
                 .checkBoxdSelect(dSelect$PCA, dSelect$plotDist, dSelect$text)
             )
                     
-            ## reactive expressions for general search
-            ## reactive expression to forward indices to 
-            ## plot2D, plotDist and tabs quantitation
-            ## and feature meta-data
+            ## reactive expression to forward indices to plot2D, plotDist and 
+            ## tabs quantitation and feature meta-data
             .searchInd <- reactive(
                     .sI(input$chooseIdenSearch, input$tagSelectList, .prot$text, 
                         .prot$PCA, .prot$plotDist, 
@@ -283,12 +281,8 @@ pRolocVis <- function(object) {
             observe({
                 if (!is.null(input$resetMult))
                     if (input$resetMult > 0) {
-                        .prot$PCA <- NULL
-                        .prot$plotDist <- NULL
-                        .prot$text <- NULL
-                        dSelect$PCA <- NULL
-                        dSelect$plotDist <- NULL
-                        dSelect$text <- NULL
+                        .prot$PCA <- .prot$plotDist <- .prot$text <- NULL
+                        dSelect$PCA <- dSelect$plotDist <- dSelect$text <- NULL
                     }
             })
             
