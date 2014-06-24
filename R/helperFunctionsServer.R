@@ -227,33 +227,6 @@
     return(ans)
 }
 
-.obsProtData <- function(protData, newFeat, button, featcomp, ind, comuni) {
-    if (!is.null(button) && !is.null(newFeat)) { 
-        
-        .ind <- which(ind == lapply(featcomp, slot, "name"))
-        
-#         if (button == 1)
-#             isolate({
-#             input$compRadio
-#             .button <- 0})
-#         else
-#             .button <- 0
-        
-        .newFeat <- isolate(newFeat)
-        .len <- length(.newFeat)
-        
-       if (length(intersect(.newFeat, slot(featcomp[[.ind]], comuni))) == .len)
-            if (button == 1 && length(.newFeat > 0)) {
-                isolate({    
-                protData <- isolate(c(protData, isolate(.newFeat)))
-             })
-            
-            }
-        
-    }
-    return(unique(protData))
-}
-
 ## concatenate new Indices to old ones when clicking, for PCA and plotDist
 .obsProtClick <- function(protMult, minDist, click) {
     ## will be empty initially
