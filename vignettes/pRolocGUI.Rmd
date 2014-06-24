@@ -84,7 +84,7 @@ package and are derived from experiments `andy2011` from
 the first and second replicate from [`r citet(extbib["Tan2009"])`](#references)
 and `dunkley2006` from [`r citet(extbib["Dunkley2006"])`](#references).  
 
-```{r, echo = TRUE}
+```{r, echo = TRUE, message = FALSE, warning = FALSE}
 library("pRolocGUI")
 data(andy2011, package = "pRolocdata")
 data(tan2009r1, package = "pRolocdata")
