@@ -227,14 +227,14 @@
     conditionalPanel(
         condition="input.tab1 == 'Data'",
         wellPanel(
-            radioButtons("compRadio", label = "", 
-                choices = c("common", "unique1", "unique2"),
-                selected = "common"),
+            htmlOutput("markerLevel1Output"),
+            htmlOutput("markerLevel2Output"),
             hr(),
             helpText(""),
             htmlOutput("selectMarker"),
-            htmlOutput("markerLevel1Output"),
-            htmlOutput("markerLevel2Output"),
+            radioButtons("compRadio", label = "", 
+                choices = c("common", "unique1", "unique2"),
+                selected = "common"),
             htmlOutput("saveDataUI")
         ),
         wellPanel(
@@ -373,7 +373,9 @@
 
 .pR_tabPanelComp <- function() {
     tabPanel("Data",
-             uiOutput("dataComp")
+             uiOutput("dataComp"),
+             textOutput("help")
+             
             # htmlOutput("dataCompTextUI")
              )
 }

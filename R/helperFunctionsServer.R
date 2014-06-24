@@ -210,35 +210,46 @@
 
 ## a check function to test if features are already internally stored
 ## returning TRUE or FALSE
-.checkFeatData <- function(common, unique1L, unique2, newfeat, sel) {
-        
+.checkFeatData <- function(common, unique1, unique2, newfeat, sel) {##}, newfeatuni1, newfeatuni2, sel) {
+
     len <- length(newfeat)
-        
-    if (sel == "common")
+
+    if (sel == "common") 
         ans <- length(intersect(common, newfeat)) == len
     if (sel == "unique1")
         ans <- length(intersect(unique1, newfeat)) == len
     if (sel == "unique2")
         ans <- length(intersect(unique2, newfeat)) == len
-        
+    
     if (is.null(newfeat))
         ans <- FALSE
+    
     return(ans)
 }
 
-.obsProtData <- function(protData, newFeat, button) {
+.obsProtData <- function(protData, newFeat, button, featcomp, ind, comuni) {
     if (!is.null(button) && !is.null(newFeat)) { 
         
-            
-        .newFeat <- isolate(newFeat)
+        .ind <- which(ind == lapply(featcomp, slot, "name"))
         
-        if (button == 1 && length(newFeat > 0)) {
-    
-              #if (radio == "common")
+#         if (button == 1)
+#             isolate({
+#             input$compRadio
+#             .button <- 0})
+#         else
+#             .button <- 0
+        
+        .newFeat <- isolate(newFeat)
+        .len <- length(.newFeat)
+        
+       if (length(intersect(.newFeat, slot(featcomp[[.ind]], comuni))) == .len)
+            if (button == 1 && length(.newFeat > 0)) {
+                isolate({    
                 protData <- isolate(c(protData, isolate(.newFeat)))
-          
+             })
             
-        }
+            }
+        
     }
     return(unique(protData))
 }

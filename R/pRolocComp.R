@@ -254,20 +254,33 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
             
             observe({
                 if (input$compRadio == "common") .prot$data <- .obsProtData(
-                        .prot$data, isolate(.cfnnewfeat()), input$saveData)      
+                    .prot$data, isolate(.cfnnewfeat()), input$saveData, 
+                    .cfn(), input$selectMarker, "common")
+                         
+                             
+                                # if (input$saveData == 1 && compRadio$sel == "common")
+#                                      
+#                                  if (input$saveData == 1 && compRadio$sel == "unique1")
+#                                      compRadio$sel <- "unique2"
+#                                  if (input$saveData == 1 && compRadio$sel == "unique2")
+#                                      compRadio$sel <- "common"
+                    
+                
             })
             
             observe({
                 if (input$compRadio == "unique1") .prot$datau1 <- .obsProtData(
-                        .prot$datau1, isolate(.cfnnewfeat()), input$saveData)
+                    .prot$datau1, isolate(.cfnnewfeat()), input$saveData, 
+                    .cfn(), input$selectMarker, "unique1")
             })
             
             observe({
                 if (input$compRadio == "unique2") .prot$datau2 <- .obsProtData(
-                        .prot$data, isolate(.cfnnewfeat()), input$saveData)
+                    .prot$dataau2, isolate(.cfnnewfeat()), input$saveData, 
+                    .cfn(), input$selectMarker, "unique2")
             })
             ## END OF SEARCHING IMPLEMENTATION ##  
-    
+            
             
             
             ## START: TAB PCA ##            
@@ -859,14 +872,31 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
             
             ## new features which are selected by input$selectMarker and 
             ## input$compRadio
+#             .cfnnew <- reactiveValues(feat = NULL)##, uni1 = NULL, uni2 = NULL)
+#             observe({
+#                 if (!is.null(input$selectMarker)) {
+#                     ind <- which(input$selectMarker == 
+#                                                 lapply(.cfn(), slot, "name"))
+#                     
+#                     
+#                     isolate({
+#                         .cfnnew$feat <- isolate(slot(.cfn()[[ind]], input$compRadio))   
+#                     })    
+# 
+#                 }
+#               
+#             })
             .cfnnewfeat <- reactive({
                 if (!is.null(input$selectMarker) && !is.null(.cfn()[[1]])) {
                     ind <- which(input$selectMarker == 
                                                 lapply(.cfn(), slot, "name")) 
-                    slot(.cfn()[[ind]], input$compRadio)}
+                    isolate(slot(.cfn()[[ind]], input$compRadio))}
             })
             
-            
+          
+
+            compRadio <- reactiveValues(sel = "common")
+
             ## HTML table (overview matrix)
             .overview <- reactive({
                 if (!is.null(.cfn())) {
@@ -876,9 +906,12 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
     
             output$dataComp <- renderText(.overview())
             
+            output$help <- renderText(c("common", .cfnnewfeat(), "protData", .prot$data, "dataau1", 
+                                        .prot$datau1, "dataau2", .prot$datau2, input$saveData))
+            
             output$saveDataUI <- renderUI(
-                if (!.checkFeatData(.unionFeat(), .unique1(), .unique2(), 
-                            .cfnnewfeat(), input$compRadio))
+                if (!.checkFeatData(.prot$data, .prot$datau1, .prot$datau2, 
+                        .cfnnewfeat(), input$compRadio))
                     actionButton("saveData", "Submit selection")
             )
             ### END: DATA ###

@@ -84,7 +84,7 @@ package and are derived from experiments `andy2011` from
 the first and second replicate from [`r citet(extbib["Tan2009"])`](#references)
 and `dunkley2006` from [`r citet(extbib["Dunkley2006"])`](#references).  
 
-```{r, eval = FALSE, echo = TRUE}
+```{r, echo = TRUE}
 library("pRolocGUI")
 data(andy2011, package = "pRolocdata")
 data(tan2009r1, package = "pRolocdata")
@@ -154,12 +154,17 @@ feature in the sidebar, the *Display selection* widget (see section
 [3. Display selection widget](#display) for further details).  
 
 In case you have a question and want to consult the vignette for a certain
-issue (e.g. regarding PCA tab or on how to use the *Display selection* widget)
-click on `?` which will open the vignette in a new browser tab in the
+issue (e.g. regarding **_PCA_** tab or on how to use the *Display selection* 
+widget) click on `?` which will open the vignette in a new browser tab in the
 corresponding section.  
 
 In general, the tabs for `pRolocVis` and `pRolocComp` will look alike. The tab 
-`Data`
+`Data` however differs for the two applications. While in `pRolocVis` this tab
+allows for the selection of the used `MSnSet` and the upload of `.Rda` or 
+`.Rdata` files, in `pRolocComp` there's the possibility to subset the used 
+`MSnSet`s (in terms of using common, unique and common & unique features in the
+two `MSnSet`s used) as well as submit features for selection. See
+[2.1. Data](#tabspRolocGUIDataComp) for further details. 
 
 <img src="figures/Screenshot_Help1.png" width="100%" alt="" /> <p 
 align="center"> Fig. 1: Vignette of pRolocVis </p>
@@ -167,18 +172,24 @@ align="center"> Fig. 1: Vignette of pRolocVis </p>
 <a id="tabspRolocGUIDataVis"></a>
 
 ### 2.1. Data
-The tab **_Data_** is the first tab you will see when you start `pRolocVis`. 
+
+The tab **_Data_** is the first tab you will see when you start `pRolocVis` and 
+the last for `pRolocComp`.
 
 <img src="figures/Screenshot_Data1.png" width="100%" alt="" /> <p 
 align="center"> Fig. 2: Appearance of Data tab in pRolocVis </p>
 
-The drop-down menu lists all the names of assigned `MSnSet` objects to the 
-function. In addition the entry `upload` is listed at the bottom of the 
-drop-down menu. Selecting `upload` allows to use a 
+For `pRolocVis` the drop-down menu lists all the names of assigned `MSnSet` 
+objects to the function. Depending if a named list containing `MSnSet` 
+instances is uploaded or not these names will be used or automatic names will
+be created (object1 ... objectn, where n is the length of the list).
+In addition the entry `upload` is listed at the bottom 
+of the drop-down menu. Selecting `upload` allows to use a 
 `MSnSet` available in a `.Rda` or `.Rdata` file after uploading it to the 
 application. Clicking on **_Browse..._** will open a dialog window with 
 which you can select a file containing a saved `MSnSet` and load 
-it to `pRolocVis`.
+it to `pRolocVis`. Make sure if you want to use a `MSnSet` from a `.Rda` or 
+`.Rdata` file to select `upload` in the drop-down menu. 
 
 <img src="figures/Screenshot_Data2.png" width="100%" alt="" /> <p 
 align="center"> Fig. 3: File upload in pRolocVis </p>
@@ -189,12 +200,21 @@ will be used instead of the uploaded `.Rda` or `.Rdata` file.
 
 When analysing multiple data sets in one `pRolocVis` session the selected 
 features will be (irreversibly) deleted when changing from one 
-`MSnSet` to the other. It is therefore highly recommended if this
+`MSnSet` to the other! It is therefore highly recommended if this
 behaviour is not intended to save selected features by using the 
-functionality to save features in a `FoICollection` 
-(see [2.7. search](#tabspRolocVisSearch) for further details).
+functionality to save features in a `FoICollection` first before changing the
+`MSnSet` (see [2.7. search](#tabspRolocVisSearch) for further details).
 
 <a id="tabspRolocGUIDataComp"></a>
+
+For `pRolocComp` the main panel shows a summary matrix of common and unique
+feature names consisting of common and unique features
+for all feature names of the two `MSnSet` instances (row `all`) and for 
+distinct subsets which are defined by the feature variable names.
+
+
+measured variable names
+
 
 <a id="tabspRolocGUIPCA"></a>
 
