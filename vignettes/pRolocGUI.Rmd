@@ -57,8 +57,8 @@ for details) and the `pRoloc` vignette (available with
 
 `pRolocGUI` is under active development; current functionality is
 evolving and new features will be added. This software is free and
-open-source. You are invited to contact Thomas Naake (thomasnaake@gmx.de) or 
-Laurent Gatto (lg390@cam.ac.uk) in case you have any questions, suggestions or 
+open-source. You are invited to contact Laurent Gatto (lg390@cam.ac.uk) or 
+Thomas Naake (thomasnaake@gmx.de) in case you have any questions, suggestions or 
 have found any bugs or typos. To reach a broader audience for more general 
 questions about proteomics analyses using R consider of writing to the 
 Bioconductor list.
@@ -167,7 +167,7 @@ two `MSnSet`s used) as well as submit features for selection. See
 [2.1. Data](#tabspRolocGUIDataComp) for further details. 
 
 <img src="figures/Screenshot_Help1.png" width="100%" alt="" /> <p 
-align="center"> Fig. 1: Vignette of pRolocVis </p>
+align="center"> Fig. 1: Vignette of `pRolocVis` and `pRolocComp` </p>
 
 <a id="tabspRolocGUIDataVis"></a>
 
@@ -252,8 +252,9 @@ by selecting the appropriate [radio button](#RadioButtons) left of the name of
 the `MSnSet` instance in the sidebar panel. 
 
 <a id="RadioButtons"></a>
-<center><img src="figures/Screenshot_RadioButtons.png" width="30%" alt="" /></center> 
-<p align="center">Fig. 6: Radio buttons to select `MSnSet` in `pRolocComp` </p>
+<center><img src="figures/Screenshot_RadioButtons.png" width="30%" alt="" /> 
+</center> <p align="center">Fig. 6: Radio buttons to select `MSnSet` in 
+`pRolocComp` </p>
 
 The manipulation of the plots works the same way for `pRolocVis` and for 
 `pRolocComp`:
@@ -286,7 +287,7 @@ their numerical value in the variable label (for example
 classification scores).
 
 <img src="figures/Screenshot_PCA3.png" width="100%" alt="" /> <p
-align="center"> Fig. 7: Appearance of PCA tab (`andy2011`). markers
+align="center"> Fig. 7: Appearance of PCA tab (`andy2011`). `markers`
 used for colours, legend added. </p>
 
 
@@ -681,7 +682,7 @@ save internally the selected feature(s).
 
 <img src="figures/Screenshot_PCA2.png" width="100%" alt="" /> <p
 align="center"> Fig. 16: Query for proteins in `pRolocVis` which contain the 
-string "AC" which narrows the features in the drop-down list accordingly
+string "AC". This narrows the features in the drop-down list accordingly
 (`andy2011`) </p>
 
 -------------------
