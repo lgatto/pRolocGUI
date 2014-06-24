@@ -104,7 +104,7 @@ pRolocVis <- function(object) {
         
         server = function(input, output) {   
             ## START: links to vignette ## 
-            vignette <- system.file("doc/pRolocVis.html", package="pRolocGUI")  
+            vignette <- system.file("doc/pRolocGUI.html", package="pRolocGUI")  
                 
             if (nchar(vignette))
                 addResourcePath(prefix = "doc", 
@@ -114,56 +114,56 @@ pRolocVis <- function(object) {
             ## Links to vignette ##
             output$linkDisplayUI <- renderUI({
                 if (nchar(vignette))
-                    a(href="/doc/pRolocVis.html#display",
+                    a(href="/doc/pRolocGUI.html#display",
                       "?", target="_blank")
                     ##class = c("btn", "action-button"))
             })
                 
             output$linkDataUI <- renderUI({
                 if (nchar(vignette))
-                    a(href="/doc/pRolocVis.html#tabspRolocGUIDataVis",
+                    a(href="/doc/pRolocGUI.html#tabspRolocGUIDataVis",
                         "?", target="_blank")
                 ##class = c("btn", "action-button"))
             })
             
             output$linkPCAUI <- renderUI({
                 if (nchar(vignette))
-                    a(href="/doc/pRolocVis.html#tabspRolocGUIPCA",
+                    a(href="/doc/pRolocGUI.html#tabspRolocGUIPCA",
                         "?", target="_blank")
                 ##class = c("btn", "action-button"))
             })
             
             output$linkPPUI <- renderUI({
                 if (nchar(vignette))
-                    a(href="/doc/pRolocVis.html#tabspRolocGUIPP",
+                    a(href="/doc/pRolocGUI.html#tabspRolocGUIPP",
                         "?", target="_blank")
                 ##class = c("btn", "action-button"))
             })
                 
             output$linkExprsUI <- renderUI({
                 if (nchar(vignette))
-                    a(href="/doc/pRolocVis.html#tabspRolocGUIExprs",
+                    a(href="/doc/pRolocGUI.html#tabspRolocGUIExprs",
                         "?", target="_blank")
                     ##class = c("btn", "action-button"))
             })
             
             output$linkfDataUI <- renderUI({
                 if (nchar(vignette))
-                    a(href="/doc/pRolocVis.html#tabspRolocGUIfData",
+                    a(href="/doc/pRolocGUI.html#tabspRolocGUIfData",
                         "?", target="_blank")
                 ##class = c("btn", "action-button"))
             })
                 
             output$linkpDataUI <- renderUI({
                 if (nchar(vignette))
-                    a(href="/doc/pRolocVis.html#tabspRolocGUIpData",
+                    a(href="/doc/pRolocGUI.html#tabspRolocGUIpData",
                         "?", target="_blank")
                 ##class = c("btn", "action-button"))
             })
                 
             output$linkSearchUI <- renderUI({
                 if (nchar(vignette))
-                    a(href="/doc/pRolocVis.html#tabspRolocGUISearch",
+                    a(href="/doc/pRolocGUI.html#tabspRolocGUISearch",
                         "?", target="_blank")
                     ##class = c("btn", "action-button"))
             })
