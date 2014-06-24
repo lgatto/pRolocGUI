@@ -1,6 +1,6 @@
 #'@name pRolocVis pRolocComp
 #'@title pRolocVis/pRolocComp
-#'@author Thomas Naake <tn299@@cam.ac.uk>
+#'@author Thomas Naake <thomasnaake@@gmx.dek>
 #'@usage pRolocVis(object)
 #'pRolocComp(object)
 #'@param object an object of class \code{MSnSet} or a list of \code{MSnSet}s (pRolocVis).
@@ -11,12 +11,13 @@
 #'with a list of two \code{MSnSet}s. 
 #'
 #'The functions allow to explore and analyse interactively spatial proteomics 
-#'data, especially LOPIT and PCP experiments. They offer high interactivity 
-#'for exploring Principle Component Analysis (PCA) plots, protein profile plots 
-#'and quantatative and qualitative meta-data. Additionally, \code{pRolocVis} 
-#'and \code{pRolocComp} support import/export abilities for past and new 
-#'search results using the \code{FeaturesOfInterest}/\code{FoICollection} 
-#'infrastructure defined in the \code{MSnbase} package. 
+#'data, especially LOPIT and PCP experiments. Both functions offer high 
+#'interactivity for exploring Principle Component Analysis (PCA) plots, 
+#'protein profile plots and quantatative and qualitative meta-data. 
+#'Additionally, \code{pRolocVis} and \code{pRolocComp} support import/export 
+#'abilities for past and new search results using the 
+#'\code{FeaturesOfInterest}/\code{FoICollection} infrastructure defined in the 
+#'\code{MSnbase} package. 
 #'
 #'\code{pRolocVis} enables to analyse one \code{MSnSet} at a time, while
 #'\code{pRolocComp} analyses and compares two \code{MSnSet}s. 

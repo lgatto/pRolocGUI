@@ -591,10 +591,42 @@ features from the object `pRolocGUI_SearchResults` in the global environment.
 The authors decided that it is not the task of a GUI to fulfil the requirements 
 of this kind of data manipulation in a GUI, hence, the execution of removing
 features of interests belongs to the field of the users responsibility.
- 
+
+<a id="displayData"></a>
+### 3.4. summary matrix (pRolocComp only)
+
+In `pRolocComp` another way of selecting and displaying features is possible
+via the tab **_Data_**. Features can be selected and internally stored
+by selecting a marker via the drop-down menu 
+**_select marker_** and one of the radio buttons underneath and pressing the 
+**_Submit selection_** button. The button will be only shown when the features 
+are not already stored internally. The selected row, 
+column and the number of features which is comprised in these categories
+will be displayed in bold in the summary matrix. 
+
+As an example, for the two `MSnSet`instances `tan2009r1` and `tan2009r2` a 
+selection of `markers` and `markers` as **_marker level 1_** and 
+**_marker level 2_**, when selecting `mitochondrion` in **_select marker_**
+and the radio button next to `common` will be equivalent to and will contain the 
+following features
+```{r, eval = TRUE, echo = TRUE}
+data(tan2009r1, package = "pRolocdata")
+data(tan2009r2, package = "pRolocdata")
+featcomp <- compfnames(x = tan2009r1, y = tan2009r2, fcol1 = "markers", fcol2 = "markers", verbose = FALSE)
+## the fourth element in the list bears information about features which are assigned 
+## to "mitochondrion" in "markers", we can access all common features by
+feat <- slot(featcomp[[4]], "common") 
+feat
+```
+The selection means that for the marker level "markers" there are nine common 
+features comprised in the two data sets which are assigned to `Mitochondrion`
+
+The stored features will only displayed when the check box next to `Data`
+in the *Display selection* widget is selected. 
+
 <a id="displayQuery"></a>
 
-### 3.4. query feature-meta data
+### 3.5. query feature-meta data
 
 The *Display selection* widget offers the opportunity to query 
 the feature meta-data
@@ -602,6 +634,12 @@ of the `MSnSet` for levels. The drop-down list consists of the item `protein`,
 which is by definition the row name of the feature-meta data and depending on 
 the data accession number, protein ID, protein description, assigned markers
 (varying on the underlying `MSnSet`). 
+
+For demonstration purposes we will use `pRolocVis` to select and display 
+features by using the `query` functionality. Keep in mind, to adjust the 
+selection of the radio buttons next to the appropriate `MSnSet` when using 
+`pRolocComp`: Accordingly to the selected `MSnSet` the list of feature variables
+is rendered.
 
 Let's assume we want to look at `andy2011` which was derived from
 experiments of Breckels et al. (2013) for all proteins which are
