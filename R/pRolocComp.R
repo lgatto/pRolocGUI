@@ -906,8 +906,8 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
     
             output$dataComp <- renderText(.overview())
             
-            output$help <- renderText(c("common", .cfnnewfeat(), "protData", .prot$data, "dataau1", 
-                                        .prot$datau1, "dataau2", .prot$datau2, input$saveData))
+#             output$help <- renderText(c("common", .cfnnewfeat(), "protData", .prot$data, "dataau1", 
+#                                         .prot$datau1, "dataau2", .prot$datau2, input$saveData))
             
             output$saveDataUI <- renderUI(
                 if (!.checkFeatData(.prot$data, .prot$datau1, .prot$datau2, 

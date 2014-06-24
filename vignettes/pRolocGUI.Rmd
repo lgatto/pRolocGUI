@@ -177,7 +177,7 @@ The tab **_Data_** is the first tab you will see when you start `pRolocVis` and
 the last for `pRolocComp`.
 
 <img src="figures/Screenshot_Data1.png" width="100%" alt="" /> <p 
-align="center"> Fig. 2: Appearance of Data tab in pRolocVis </p>
+align="center"> Fig. 2: Appearance of `Data` tab in `pRolocVis` </p>
 
 For `pRolocVis` the drop-down menu lists all the names of assigned `MSnSet` 
 objects to the function. Depending if a named list containing `MSnSet` 
@@ -192,7 +192,7 @@ it to `pRolocVis`. Make sure if you want to use a `MSnSet` from a `.Rda` or
 `.Rdata` file to select `upload` in the drop-down menu. 
 
 <img src="figures/Screenshot_Data2.png" width="100%" alt="" /> <p 
-align="center"> Fig. 3: File upload in pRolocVis </p>
+align="center"> Fig. 3: File upload in `pRolocVis` </p>
 
 `pRolocVis` will print a message if there are any conflicts with the uploaded 
 file. If so, either the assigned object itself or the first element in the list
@@ -225,6 +225,9 @@ will be displayed in bold in the summary matrix. By pressing
 (the button will be only shown when the features are not already stored 
 internally). 
 
+<img src="figures/Screenshot_Data3.png" width="100%" alt=""></img> <p 
+align="center"><Fig. 4: Appearance of `Data` tab in `pRolocComp`></p>
+
 The tab **_Data_** in `pRolocComp`also allows for subsetting the data sets by 
 choosing accordingly `common`, `unique` and `common & unique` (default). The 
 subset is made on the basis of the feature names of the two `MSnSet` instances. 
@@ -242,11 +245,15 @@ and two PCA plots for `pRolocVis`. The sidebar panel is divided into
 *Display selection* and *Plot*.
 
 <img src="figures/Screenshot_PCA1.png" width="100%" alt="" /> <p 
-align="center"> Fig. 4: Appearance of PCA tab for `pRolocVis` (`andy2011`) </p>
+align="center"> Fig. 5: Appearance of `PCA` tab for `pRolocVis` (`andy2011`)</p>
 
 For `pRolocComp` the plot whose appearance is going to altered has to be selected
-by selecting the appropriate radio button left of the name of the `MSnSet` 
-instance in the sidebar panel. 
+by selecting the appropriate [radio button](#RadioButtons) left of the name of 
+the `MSnSet` instance in the sidebar panel. 
+
+<a id="RadioButtons"></a>
+<center><img src="figures/Screenshot_RadioButtons.png" width="30%" alt="" /></center> 
+<p align="center">Fig. 6: Radio buttons to select `MSnSet` in `pRolocComp` </p>
 
 The manipulation of the plots works the same way for `pRolocVis` and for 
 `pRolocComp`:
@@ -279,7 +286,7 @@ their numerical value in the variable label (for example
 classification scores).
 
 <img src="figures/Screenshot_PCA3.png" width="100%" alt="" /> <p
-align="center"> Fig. 5: Appearance of PCA tab (`andy2011`). markers
+align="center"> Fig. 7: Appearance of PCA tab (`andy2011`). markers
 used for colours, legend added. </p>
 
 
@@ -305,20 +312,20 @@ the PCA plot as it is displayed in the main panel.
 
 For `pRolocVis` the tab **_protein profiles_** shows the protein profiles in 
 the main panel (with an option of exporting the plot as it is shown in the main
-panel by clicking on the button **_Download Plot_**) - for `pRolocComp` shows
+panel by clicking on the button **_Download Plot_**) - for `pRolocComp` it shows
 the plots for the two `MSnSet` instances (the corresponding plot(s) for the 
-first element will be displayed on the left, for the second element on the 
-right). In the sidebar panel there is the *Display selection* widget and the 
-*Plot* widget. 
+first element in the list will be displayed on the left, 
+for the second element on the right). In the sidebar panel there is the 
+*Display selection* widget and the *Plot* widget. 
 
 Have a look on section [3. *Display selection* widget](#display) if 
 you want to retrieve information about how to use the *Display selection* 
 widget.
 
 The *Plot* widget helps to manipulate the plots shown in the main
-panel (in `pRolocComp` one has first to select the appropriate radio button 
-next to the `MSnSet` instance in the sidebar panel).
-Let's assume we want to have a look upon the protein profiles
+panel (in `pRolocComp` one has first to select the appropriate 
+[radio button](#RadioButtons) next to the `MSnSet` instance in the sidebar 
+panel). Let's assume we want to have a look upon the protein profiles
 for the proteins from which we know that they belong to the organelles
 Endoplasmic reticulum, the Golgi apparatus, Mitochondrion and the
 plasma membrane for the `andy2011` MSnSet. This is done in `pRolocVis`, but 
@@ -340,10 +347,10 @@ change its parameter.
 
 
 <img src="figures/Screenshot_PP3.png" width="100%" alt="" /> <p 
-align="center"> Fig. 6: Appearance of protein profiles tab 
-showing protein profiles  of
-organelles/compartments Endoplasmic reticulum, Golgi apparatus, 
-Mitochondrion and plasma membrane of markers (`andy2011`) </p>
+align="center"> Fig. 8: Appearance of `protein profiles` tab in `pRolocVis`
+showing protein profiles  of organelles/compartments 
+Endoplasmic reticulum, Golgi apparatus, Mitochondrion and plasma 
+membrane of markers (`andy2011`) </p>
 
 
 <a id="tabspRolocGUIExprs"></a>
@@ -361,13 +368,14 @@ on the arrows on the top of the data table.
 In the sidebar panel the *Display selection* widget is located as well as 
 radio buttons to display all data or just selected features 
 (see [3. *Display selection*](#display) for further details). In `pRolocComp` 
-there is also another well panel to select the appropriate radio button next 
-to the name of the `MSnSet` to show the respective quantitation data. 
+there is also another well panel to select the appropriate 
+[radio button](#RadioButtons) next to the name of the `MSnSet` to show the 
+respective quantitation data. 
 
 <img src="figures/Screenshot_Quant1.png" width="100%" alt="" /> <p
-align="center"> Fig. 7: Appearance of quantitation tab
-(`andy2011`). Features shown originate from selection made in the PCA
-and protein profiles plots </p>
+align="center"> Fig. 9: Appearance of `quantitation` tab
+(`andy2011`) in `pRolocVis`. Features shown originate from selection made in 
+the PCA and protein profiles plots </p>
 
 
 <a id="tabspRolocGUIfData"></a>
@@ -384,14 +392,14 @@ selected `MSnSet`.
 The sidebar comprises the *Display selection* widget and radio buttons to 
 show all or only selected features (see [3. *Display selection*](#display) 
 for further details). In `pRolocComp` there is in addition a set of two 
-radio buttons which allow to switch the `MSnSet` shown, thus, the feature
-meta-data will be rendered to the selected `MSnSet`.
+[radio buttons](#RadioButtons) which allow to switch the `MSnSet` shown, 
+thus, the feature meta-data will be rendered to the selected `MSnSet`.
 
 
 <img src="figures/Screenshot_fData1.png" width="100%" alt="" /> <p
-align="center"> Fig. 8: Appearance of feature meta-data tab
-(`andy2011`). Features shown originate from selection made in protein
-profiles plot </p>
+align="center"> Fig. 10: Appearance of `feature meta-data` tab
+(`andy2011`) in `pRolocVis`. Features shown originate from selection made in 
+protein profiles plot </p>
 
 
 <a id="tabspRolocGUIpData"></a>
@@ -402,12 +410,12 @@ The tab **_sample meta-data_** displays the sample meta-data for the
 experiment, the name of the isotopes used for tagging and the associated
 fractions. 
 
-In `pRolocComp` select the appropriate radio button to display the corresponding
-samlpe meta-data. 
+In `pRolocComp` select the appropriate [radio button](#RadioButtons) next to 
+the object name in sidebar panel to display the corresponding sample meta-data. 
 
 <img src="figures/Screenshot_pData1.png" width="100%" alt="" /> <p
-align="center"> Fig. 9: Appearance of sample meta-data tab
-(`andy2011`) </p>
+align="center"> Fig. 11: Appearance of `sample meta-data` tab
+(`andy2011`) in `pRolocVis`</p>
 
 <a id="tabspRolocGUISearch"></a>
 
@@ -465,8 +473,8 @@ pRolocGUI_SearchResults <- addFeaturesOfInterest(newFeat, pRolocGUI_SearchResult
 ```
 
 <img src="figures/Screenshot_SaSe1.png" width="100%" alt="" /> <p
-align="center"> Fig. 10: Appearance of search tab (`andy2011`). 
-Search result pRolocVis_Test1 contains one feature of interest 
+align="center"> Fig. 12: Appearance of `search` tab (`andy2011`) in `pRolocVis`. 
+Search result `pRolocVis_Test1` contains one feature of interest 
 (PGAP1_Human)
 </p>
 
@@ -480,11 +488,12 @@ The *Display selection* widget is probably the most important implementation
 in `pRolocVis`/`pRolocComp` and allows for identifying features. 
 You can do this by selecting points in the PCA plot, clicking on features 
 in the tab **_protein profiles_**, using past searches and/or querying for 
-features in the `MSnSet` data.
+features in the `MSnSet` data. In `pRolocComp`there is in addition the 
+possibility to retrieve features from the summary matrix in the tab `Data`.
 
-There are four check boxes in the
+There are four (`pRolocVis`) or five (`pRolocComp`) check boxes in the
 *Display selection* widget which represent the before mentioned ways
-of searching features in the `MSnSet`.  To activate the search for one
+of searching features in the `MSnSet`. To activate the search for one
 specific method click on the check box left of its description. It is
 also possible to select more than one at a time which allows for
 greater flexibility with regard to information retrieval.
@@ -510,10 +519,9 @@ present. If you want to analyse features which are only common in the two
 radio button list **_Features used_**. 
 
 <img src="figures/Screenshot_PCA4.png" width="100%" alt="" /> <p
-align="center"> Fig. 11: Display of selected features in PCA plot
-(`andy2011`). The features selected originate from selection in the
-PCA plot </p>
-
+align="center"> Fig. 13: Display of selected features in PCA plot
+(`andy2011`) for `pRolocVis`. The features selected originate from selection 
+in the PCA plot </p>
 
 There are two possibilities to deselect all selected features: If you
 decide to remove all your features click on **_Clear features_** 
@@ -539,9 +547,9 @@ selected features will be displayed by black lines on all plots
 drawn.
 
 <img src="figures/Screenshot_PP2.png" width="100%" alt="" /> <p
-align="center"> Fig. 12: Display of selected features in protein
-profiles plot.  The features selected originate from selection in PCA
-plot (`andy2011`) </p>
+align="center"> Fig. 14: Display of selected features in protein
+profiles plot for `pRolocVis`.  The features selected originate from 
+selection in PCA plot (`andy2011`) </p>
 
 
 <a id="displayPP"></a>
@@ -568,9 +576,9 @@ If you want to analyse features which are only common in the two
 radio button list **_Features used_**. 
 
 <img src="figures/Screenshot_PP1.png" width="100%" alt="" /> <p
-align="center"> Fig. 13: Display of selected features in protein
-profiles plot.  The features selected originate from selection in
-protein profiles plot (`andy2011`) </p>
+align="center"> Fig. 15: Display of selected features in protein
+profiles plot for `pRolocVis`.  The features selected originate from selection 
+in protein profiles plot (`andy2011`) </p>
 
 <a id="displaySaSe"></a>
 
@@ -613,8 +621,8 @@ following features
 data(tan2009r1, package = "pRolocdata")
 data(tan2009r2, package = "pRolocdata")
 featcomp <- compfnames(x = tan2009r1, y = tan2009r2, fcol1 = "markers", fcol2 = "markers", verbose = FALSE)
-## the fourth element in the list bears information about features which are assigned 
-## to "mitochondrion" in "markers", we can access all common features by
+## the fourth element in the list bears information about features which are assigned to 
+## "mitochondrion" in "markers", we can access all common features for tan2009r1 and tan2009r2 by
 feat <- slot(featcomp[[4]], "common") 
 feat
 ```
@@ -637,9 +645,9 @@ the data accession number, protein ID, protein description, assigned markers
 
 For demonstration purposes we will use `pRolocVis` to select and display 
 features by using the `query` functionality. Keep in mind, to adjust the 
-selection of the radio buttons next to the appropriate `MSnSet` when using 
-`pRolocComp`: Accordingly to the selected `MSnSet` the list of feature variables
-is rendered.
+selection of the [radio buttons](#RadioButtons) next to the appropriate 
+`MSnSet` when using `pRolocComp`: Accordingly to the selected `MSnSet` the list 
+of feature variables is rendered.
 
 Let's assume we want to look at `andy2011` which was derived from
 experiments of Breckels et al. (2013) for all proteins which are
@@ -672,8 +680,8 @@ have this specific string). By clicking on **_Submit selection_** we
 save internally the selected feature(s).
 
 <img src="figures/Screenshot_PCA2.png" width="100%" alt="" /> <p
-align="center"> Fig. 14: Query for proteins which contain the string
-"AC" which narrows the features in the drop-down list accordingly
+align="center"> Fig. 16: Query for proteins in `pRolocVis` which contain the 
+string "AC" which narrows the features in the drop-down list accordingly
 (`andy2011`) </p>
 
 -------------------
