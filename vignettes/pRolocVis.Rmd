@@ -131,7 +131,7 @@ console (or use the "STOP" button when using RStudio) and close the
 browser tab, where `pRolocVis`/`pRolocComp` is running.
 
 -------------------
-<a id="tabspRolocVis"></a> 
+<a id="tabspRolocGUI"></a> 
 
 <h2>2. Tabs of <code>pRolocVis</code> and <code>pRolocComp</code></h2>
 
@@ -163,7 +163,7 @@ In general, the tabs for `pRolocVis` and `pRolocComp` will look alike. The tab
 <img src="figures/Screenshot_Help1.png" width="100%" alt="" /> <p 
 align="center"> Fig. 1: Vignette of pRolocVis </p>
 
-<a id="tabspRolocVisData"></a>
+<a id="tabspRolocGUIDataVis"></a>
 
 ### 2.1. Data
 The tab **_Data_** is the first tab you will see when you start `pRolocVis`. 
@@ -193,7 +193,9 @@ behaviour is not intended to save selected features by using the
 functionality to save features in a `FoICollection` 
 (see [2.7. search](#tabspRolocVisSearch) for further details).
 
-<a id="tabspRolocVisPCA"></a>
+<a id="tabspRolocGUIDataComp"></a>
+
+<a id="tabspRolocGUIPCA"></a>
 
 ### 2.2. PCA
 
@@ -253,7 +255,7 @@ By clicking on **_Download Plot_** in the main panel below the PCA
 plot will open a dialog window with an interface on showing or saving
 the PCA plot as it is displayed in the main panel.
 
-<a id="tabspRolocVisPP"></a>
+<a id="tabspRolocGUIPP"></a>
 
 ### 2.3. protein profiles
 
@@ -293,7 +295,7 @@ organelles/compartments Endoplasmic reticulum, Golgi apparatus,
 Mitochondrion and plasma membrane of markers (`andy2011`) </p>
 
 
-<a id="tabspRolocVisExprs"></a>
+<a id="tabspRolocGUIExprs"></a>
 
 ### 2.4. quantitation   
 
@@ -316,7 +318,7 @@ align="center"> Fig. 7: Appearance of quantitation tab
 and protein profiles plots </p>
 
 
-<a id="tabspRolocVisfData"></a>
+<a id="tabspRolocGUIfData"></a>
 
 ### 2.5. feature meta-data  
 
@@ -338,7 +340,7 @@ align="center"> Fig. 8: Appearance of feature meta-data tab
 profiles plot </p>
 
 
-<a id="tabspRolocVispData"></a>
+<a id="tabspRolocGUIpData"></a>
 
 ### 2.6. sample meta-data   
 
@@ -350,7 +352,7 @@ fractions.
 align="center"> Fig. 9: Appearance of sample meta-data tab
 (`andy2011`) </p>
 
-<a id="tabspRolocVisSearch"></a>
+<a id="tabspRolocGUISearch"></a>
 
 ### 2.7. search  
 
