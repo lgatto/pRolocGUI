@@ -1,6 +1,6 @@
 
 all:
-	"$(R_HOME)/bin/Rscript" -e "library(knitrBootstrap); knit_bootstrap('pRolocVis.Rmd', show_code=TRUE, boot_style='Flatly')"
+	"$(R_HOME)/bin/Rscript" -e "library(knitrBootstrap); knit_bootstrap('pRolocGUI.Rmd', show_code=TRUE, boot_style='Flatly')"
 
 setvars:
 ifeq (${R_HOME},)

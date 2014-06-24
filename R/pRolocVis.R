@@ -108,8 +108,7 @@ pRolocVis <- function(object) {
                 
             if (nchar(vignette))
                 addResourcePath(prefix = "doc", 
-                    directoryPath = system.file("doc",
-                    package = "pRolocGUI"))
+                    directoryPath = system.file("doc", package = "pRolocGUI"))
                 
             ## Links to vignette ##
             output$linkDisplayUI <- renderUI({
