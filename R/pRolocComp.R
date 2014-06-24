@@ -149,7 +149,8 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
             
             observe({
                 dSelect$data <- .selButton(dSelect$data, input$saveData, 
-                    input$resetMult, .prot$data, "data")
+                    input$resetMult, c(.prot$data, .prot$datau1, .prot$datau2), 
+                    "data")
             })
             
             ## input$chooseIdenSelect
@@ -252,32 +253,44 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
                 }
             })
             
+            cfn <- reactiveValues()
             observe({
-                if (input$compRadio == "common") .prot$data <- .obsProtData(
-                    .prot$data, isolate(.cfnnewfeat()), input$saveData, 
-                    .cfn(), input$selectMarker, "common")
-                         
-                             
-                                # if (input$saveData == 1 && compRadio$sel == "common")
-#                                      
-#                                  if (input$saveData == 1 && compRadio$sel == "unique1")
-#                                      compRadio$sel <- "unique2"
-#                                  if (input$saveData == 1 && compRadio$sel == "unique2")
-#                                      compRadio$sel <- "common"
-                    
-                
+                if (!is.null(input$saveData))
+                    isolate({
+                        input$saveData
+                        cfn$newfeat <- .cfnnewfeat()
+                    })
+            })
+            
+            
+            observe({
+                if (!is.null(input$saveData) && !is.null(cfn$newfeat)) { 
+                    if (input$compRadio == "common")
+                        if (input$saveData > 0) {
+                            .prot$data <- c(.prot$data, cfn$newfeat)
+                            cfn$newfeat <- NULL
+                    }    
+                }
             })
             
             observe({
-                if (input$compRadio == "unique1") .prot$datau1 <- .obsProtData(
-                    .prot$datau1, isolate(.cfnnewfeat()), input$saveData, 
-                    .cfn(), input$selectMarker, "unique1")
+                if (!is.null(input$saveData) && !is.null(cfn$newfeat)) { 
+                    if (input$compRadio == "unique1")
+                        if (input$saveData > 0) {
+                            .prot$datau1 <- c(.prot$datau1, cfn$newfeat)
+                            cfn$newfeat <- NULL
+                        }    
+                }
             })
             
             observe({
-                if (input$compRadio == "unique2") .prot$datau2 <- .obsProtData(
-                    .prot$dataau2, isolate(.cfnnewfeat()), input$saveData, 
-                    .cfn(), input$selectMarker, "unique2")
+                if (!is.null(input$saveData) && !is.null(cfn$newfeat)) { 
+                    if (input$compRadio == "unique2")
+                        if (input$saveData > 0) {
+                            .prot$datau2 <- c(.prot$datau2, cfn$newfeat)
+                            cfn$newfeat <- NULL
+                        }    
+                }
             })
             ## END OF SEARCHING IMPLEMENTATION ##  
             
@@ -857,7 +870,7 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
                 }
             )
             
-            ## object of class FeatComp
+            ## reactive object of class FeatComp
             .cfn <- reactive({
                 if(!is.null(input$markerL1) && !is.null(input$markerL2)) {
                     
@@ -869,33 +882,14 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
                                         NULL, NULL, verbose=FALSE)) 
                 }
             })
-            
-            ## new features which are selected by input$selectMarker and 
-            ## input$compRadio
-#             .cfnnew <- reactiveValues(feat = NULL)##, uni1 = NULL, uni2 = NULL)
-#             observe({
-#                 if (!is.null(input$selectMarker)) {
-#                     ind <- which(input$selectMarker == 
-#                                                 lapply(.cfn(), slot, "name"))
-#                     
-#                     
-#                     isolate({
-#                         .cfnnew$feat <- isolate(slot(.cfn()[[ind]], input$compRadio))   
-#                     })    
-# 
-#                 }
-#               
-#             })
+            ## reactive object with names of new features
             .cfnnewfeat <- reactive({
                 if (!is.null(input$selectMarker) && !is.null(.cfn()[[1]])) {
                     ind <- which(input$selectMarker == 
                                                 lapply(.cfn(), slot, "name")) 
-                    isolate(slot(.cfn()[[ind]], input$compRadio))}
+                    slot(.cfn()[[ind]], input$compRadio)
+                }
             })
-            
-          
-
-            compRadio <- reactiveValues(sel = "common")
 
             ## HTML table (overview matrix)
             .overview <- reactive({
@@ -905,9 +899,6 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
             })
     
             output$dataComp <- renderText(.overview())
-            
-#             output$help <- renderText(c("common", .cfnnewfeat(), "protData", .prot$data, "dataau1", 
-#                                         .prot$datau1, "dataau2", .prot$datau2, input$saveData))
             
             output$saveDataUI <- renderUI(
                 if (!.checkFeatData(.prot$data, .prot$datau1, .prot$datau2, 
