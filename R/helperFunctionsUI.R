@@ -25,6 +25,12 @@
             position: relative;
             display: block;
             width: 100%;}")),
+        tags$style(HTML("#saveData{
+            margin:0;
+            padding: 7 10 7 1;
+            position: relative;
+            display: block;
+            width: 100%;}")),
         tags$style(HTML(".well{
             padding: 15px 18px 12px 18px;
             margin: 10px 5px;}")),
