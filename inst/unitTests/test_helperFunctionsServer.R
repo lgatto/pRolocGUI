@@ -301,16 +301,14 @@ test_.orgName <- function() {
 ## END unit test .orgName ##
 
 ## START unit test .obsSavedSearch ##
-
-## taken from Examples of help page of Features of Interest
-x <- FeaturesOfInterest(
-    description = "A traceable test set of features of interest",
-    fnames = featureNames(tan2009r1)[1:10],
-    object = tan2009r1)
-## create FoICollection
-xx <- FoICollection()
-
 test_.obsSavedSearch <- function() {
+    ## taken from Examples of help page of Features of Interest
+    x <- FeaturesOfInterest(
+        description = "A traceable test set of features of interest",
+        fnames = featureNames(tan2009r1)[1:10],
+        object = tan2009r1)
+    ## create FoICollection
+    xx <- FoICollection()
     checkEquals(pRolocGUI:::.obsSavedSearch(NULL, NULL, NULL, NULL, NULL), NULL)
     checkEquals(pRolocGUI:::.obsSavedSearch(NULL, NULL, NULL, 1, NULL), NULL)
     checkEquals(pRolocGUI:::.obsSavedSearch(xx, x, 1:10, 1, 
@@ -324,8 +322,15 @@ test_.obsSavedSearch <- function() {
 ## END unit test .obsSavedSearch ## 
 
 ## START unit test .whichTag ##
-xx <- addFeaturesOfInterest(x, xx)
 test_.whichTag <- function() {
+    ## taken from Examples of help page of Features of Interest
+    x <- FeaturesOfInterest(
+        description = "A traceable test set of features of interest",
+        fnames = featureNames(tan2009r1)[1:10],
+        object = tan2009r1)
+    ## create FoICollection
+    xx <- FoICollection()    
+    xx <- addFeaturesOfInterest(x, xx)
     checkEquals(pRolocGUI:::.whichTag(
         "A traceable test set of features of interest", xx), 1)
     checkTrue(is.na(pRolocGUI:::.whichTag("not existing", xx)))
@@ -335,6 +340,14 @@ test_.whichTag <- function() {
 ## START unit test .whichFOI ##
 test_.whichFOI <- function() {
     utList <- list(andy2011, tan2009r1)
+    ## taken from Examples of help page of Features of Interest
+    x <- FeaturesOfInterest(
+        description = "A traceable test set of features of interest",
+        fnames = featureNames(tan2009r1)[1:10],
+        object = tan2009r1)
+    ## create FoICollection
+    xx <- FoICollection()    
+    xx <- addFeaturesOfInterest(x, xx)
     checkEquals(pRolocGUI:::.whichFOI(utList, xx, 1, "object1"), integer())
     checkEquals(pRolocGUI:::.whichFOI(utList, xx, 1, "object2"), 1:10)
 }
@@ -344,16 +357,16 @@ test_.whichFOI <- function() {
 test_.obsNewFoI <- function() {
     utList <- list(andy2011, tan2009r1)
     checkEquals(pRolocGUI:::.obsNewFoI(NULL, NULL, NULL, NULL), NULL)
-    checkEquals(pRolocGUI:::.obsNewFoI(utList, NULL, NULL, NULL, "object1"), 
-                                                                        NULL)
+    checkEquals(
+        pRolocGUI:::.obsNewFoI(utList, NULL, NULL, NULL, "object1"), NULL)
     checkEquals(pRolocGUI:::.obsNewFoI(NULL, 1:10, NULL, NULL), NULL)
     checkEquals(pRolocGUI:::.obsNewFoI(NULL, NULL, "test", NULL), NULL)
     checkEquals(pRolocGUI:::.obsNewFoI(utList, NULL, NULL, 1, "object1"), NULL)
     checkEquals(pRolocGUI:::.obsNewFoI(NULL, 1:10, NULL, 1), NULL)
     checkEquals(pRolocGUI:::.obsNewFoI(NULL, NULL, "test", 1), NULL)
     checkEquals(pRolocGUI:::.obsNewFoI(utList, 1:10, NULL, 1, "object1"), NULL)
-    checkEquals(pRolocGUI:::.obsNewFoI(utList, NULL, "test", 1, "object1"),
-                                                                        NULL)
+    checkEquals(
+        pRolocGUI:::.obsNewFoI(utList, NULL, "test", 1, "object1"), NULL)
     checkEquals(foi(pRolocGUI:::.obsNewFoI(utList, 1:10, "test", 1, "object1")), 
         foi(FeaturesOfInterest(description = "test", 
         fnames = featureNames(andy2011)[1:10], object = andy2011)))
@@ -361,31 +374,28 @@ test_.obsNewFoI <- function() {
         foi(FeaturesOfInterest(description = "test", 
         fnames = featureNames(tan2009r1)[21:30], object = tan2009r1)))
 }
-
 ## END unit test .obsNewFoI ##
 
 
 
 ## START unit test for .fnamesFOI ## 
-
-## taken from Examples of help page of Features of Interest
-x <- FeaturesOfInterest(
-    description = "A traceable test set of features of interest",
-    fnames = featureNames(tan2009r1)[1:10],
-    object = tan2009r1)
-
-## create FoICollection
-xx <- FoICollection()
-xx <- addFeaturesOfInterest(x, xx)
-
-## features to compare with
-features <- c("FBgn0001104", "FBgn0000044", "FBgn0035720", "FBgn0003731", 
-                "FBgn0029506", "FBgn0010638", "FBgn0028689", "FBgn0031871",
-                "FBgn0040227", "FBgn0032799")
-## create list
-featuresList <- list(features)
-
 test_.fnamesFOI <- function() {
+    ## taken from Examples of help page of Features of Interest
+    x <- FeaturesOfInterest(
+        description = "A traceable test set of features of interest",
+        fnames = featureNames(tan2009r1)[1:10],
+        object = tan2009r1)
+    
+    ## create FoICollection
+    xx <- FoICollection()
+    xx <- addFeaturesOfInterest(x, xx)
+    
+    ## features to compare with
+    features <- c("FBgn0001104", "FBgn0000044", "FBgn0035720", "FBgn0003731", 
+                  "FBgn0029506", "FBgn0010638", "FBgn0028689", "FBgn0031871",
+                  "FBgn0040227", "FBgn0032799")
+    ## create list
+    featuresList <- list(features)
     checkEquals(pRolocGUI:::.fnamesFOI(x), features)
     checkEquals(pRolocGUI:::.fnamesFOI(xx), featuresList)
 }
@@ -427,10 +437,10 @@ test_.mC <- function() {
 
 ## start unit test for .cellHTML ##
 x <- 1:2
-test.cellHTML <- function() {
-    checkEquals(.cellHTML(NULL), "<td></td>")
-    checkEquals(.cellHTML("100"), "<td>100</td>")
-    checkEquals(.cellHTML(x), c("<td>1</td>", "<td>2</td>"))
+test_.cellHTML <- function() {
+    checkEquals(pRolocGUI:::.cellHTML(NULL), "<td></td>")
+    checkEquals(pRolocGUI:::.cellHTML("100"), "<td>100</td>")
+    checkEquals(pRolocGUI:::.cellHTML(x), c("<td>1</td>", "<td>2</td>"))
 }
 ## end unit test for .cellHTML ##
 
