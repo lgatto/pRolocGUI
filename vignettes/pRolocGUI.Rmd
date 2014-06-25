@@ -163,7 +163,7 @@ In general, the tabs for `pRolocVis` and `pRolocComp` will look alike. The tab
 allows for the selection of the used `MSnSet` and the upload of `.Rda` or 
 `.Rdata` files, in `pRolocComp` there's the possibility to subset the used 
 `MSnSet`s (in terms of using common, unique and common & unique features in the
-two `MSnSet`s used) as well as submit features for selection. See
+two `MSnSet`s used) as well as to submit features for selection. See
 [2.1. Data](#tabspRolocGUIDataComp) for further details. 
 
 <img src="figures/Screenshot_Help1.png" width="100%" alt="" /> <p 
@@ -174,16 +174,16 @@ align="center"> Fig. 1: Vignette of `pRolocVis` and `pRolocComp` </p>
 ### 2.1. Data
 
 The tab **_Data_** is the first tab you will see when you start `pRolocVis` and 
-the last for `pRolocComp`.
+it will be the last for `pRolocComp`.
 
 <img src="figures/Screenshot_Data1.png" width="100%" alt="" /> <p 
 align="center"> Fig. 2: Appearance of `Data` tab in `pRolocVis` </p>
 
 For `pRolocVis` the drop-down menu lists all the names of assigned `MSnSet` 
-objects to the function. Depending if a named list containing `MSnSet` 
-instances is uploaded or not these names will be used or automatic names will
+objects to the function. Depending if a named list - containing `MSnSet` 
+instances - is uploaded or not these names will be used or automatic names will
 be created (object1 ... objectn, where n is the length of the list).
-In addition the entry `upload` is listed at the bottom 
+In addition, the entry `upload` is listed at the bottom 
 of the drop-down menu. Selecting `upload` allows to use a 
 `MSnSet` available in a `.Rda` or `.Rdata` file after uploading it to the 
 application. Clicking on **_Browse..._** will open a dialog window with 
@@ -212,13 +212,13 @@ feature names consisting of common and unique features
 for all feature names of the two `MSnSet` instances (row `all`) and for 
 distinct subsets which are defined by the feature variable names. The feature
 variable names can be defined by choosing appropriately the drow-down menus
-**_marker level 1_** and **_marker level 2_** which are located in the section
+**_marker object 1_** and **_marker object 2_** which are located in the section
 **_Summary matrix_** in the sidebar panel (enter `?FeatComp` to retrieve more 
 information about the summary matrix). The matrix in the main panel will show 
 only features for distinct subsets when both drop-down menus do not have `none`
 as their value, otherwise only the row `all` will be printed. Given 
 `tan2009r1` and `tan2009r2` as input for `pRolocComp`, when selecting `markers`
-both for **_marker level 1_** and **_marker level 2_** the matrix will consist 
+both for **_marker object 1_** and **_marker object 2_** the matrix will consist 
 of six rows (`all`, `unknown`, `ER`, `mitochondrion`, `Golgi`, `PM`). The table
 can be interpreted as follows: For the row `all` we have `545` common features,
 i.e. there are `545` features in the two `MSnSet`s which have identical feature
@@ -639,8 +639,8 @@ there accordingly. This is done because it is possible that the same feature
 name exists in the other `MSnSet` but is not assigned to the `organelle`.
 
 As an example, for the two `MSnSet`instances `tan2009r1` and `tan2009r2` a 
-selection of `markers` and `markers` as **_marker level 1_** and 
-**_marker level 2_**, when selecting `mitochondrion` in **_select marker_**
+selection of `markers` and `markers` as **_marker object 1_** and 
+**_marker object 2_**, when selecting `mitochondrion` in **_select marker_**
 and the radio button next to `common` will be equivalent to and will contain the 
 following features
 ```{r, eval = TRUE, echo = TRUE}
@@ -652,7 +652,7 @@ featcomp <- compfnames(x = tan2009r1, y = tan2009r2, fcol1 = "markers", fcol2 = 
 feat <- slot(featcomp[[4]], "common") 
 feat
 ```
-The selection means that for the marker level `markers` there are nine common 
+The selection means that for the marker object `markers` there are nine common 
 features comprised in the two data sets which are assigned to `Mitochondrion` in
 the column `markers` of the feature meta-data. Going to the tab 
 **_feature meta-data_** will list these features as well as meta-data. 

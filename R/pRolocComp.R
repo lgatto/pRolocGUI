@@ -839,11 +839,11 @@ pRolocComp <- function(object) {
             })
             
             output$markerLevel1Output <- renderUI( 
-                .colourPCA(data$obj, "none", "object1", "markerL1", "marker level 1")
+                .colourPCA(data$obj, "none", "object1", "markerL1", "marker object 1")
             )
             
             output$markerLevel2Output <- renderUI(
-                .colourPCA(data$obj, "none", "object2", "markerL2", "marker level 2")
+                .colourPCA(data$obj, "none", "object2", "markerL2", "marker object 2")
             )
             
             output$selectMarker <- renderUI(
