@@ -1,21 +1,27 @@
 ## START unit test for helperFunctionsServer.R ## 
 
+##
+## no unit test for .createSR()
+##
+
 ## START unit test .namesObj ##
 test_.namesObj <- function() {
-    checkEquals(pRolocGUI:::.namesObj(NULL), c("object", "upload"))
-    checkEquals(pRolocGUI:::.namesObj(1:10), c("object", "upload"))
-    checkEquals(pRolocGUI:::.namesObj(andy2011), c("object", "upload"))
-    checkEquals(pRolocGUI:::.namesObj(list(NULL)), c("object1", "upload"))
-    checkEquals(pRolocGUI:::.namesObj(list(andy2011)), c("object1", "upload"))
-    checkEquals(pRolocGUI:::.namesObj(list(NULL, NULL)), 
+    checkEquals(pRolocGUI:::.namesObj(NULL), c("object"))
+    checkEquals(pRolocGUI:::.namesObj(NULL, TRUE), c("object", "upload"))
+    checkEquals(pRolocGUI:::.namesObj(1:10), c("object"))
+    checkEquals(pRolocGUI:::.namesObj(1:10, TRUE), c("object", "upload"))
+    checkEquals(pRolocGUI:::.namesObj(andy2011), c("object"))
+    checkEquals(pRolocGUI:::.namesObj(list(NULL)), c("object1"))
+    checkEquals(pRolocGUI:::.namesObj(list(andy2011)), c("object1"))
+    checkEquals(pRolocGUI:::.namesObj(list(NULL, NULL), TRUE), 
                                         c("object1", "object2", "upload"))
-    checkEquals(pRolocGUI:::.namesObj(list(1:10, 2:11)), 
+    checkEquals(pRolocGUI:::.namesObj(list(1:10, 2:11), TRUE), 
                                         c("object1", "object2", "upload"))
     checkEquals(pRolocGUI:::.namesObj(list(andy2011, tan2009r1)), 
-                                        c("object1", "object2", "upload"))
+                                        c("object1", "object2"))
     checkEquals(pRolocGUI:::.namesObj(list(ut1 = andy2011, ut2 = tan2009r1)), 
-                                        c("ut1", "ut2", "upload"))
-    checkEquals(pRolocGUI:::.namesObj(list(andy2011, ut2 = tan2009r1)), 
+                                        c("ut1", "ut2"))
+    checkEquals(pRolocGUI:::.namesObj(list(andy2011, ut2 = tan2009r1), TRUE), 
                                         c("object1", "ut2", "upload"))
 }
 ## END unit test .namesObj ##
@@ -55,15 +61,15 @@ test_.selClick <- function() {
 
 ## START unit test .selPlotDist ##
 test_.selText <- function() {
-    checkEquals(pRolocGUI:::.selText(NULL, NULL, NULL, NULL), NULL)
-    checkEquals(pRolocGUI:::.selText(NULL, 0, NULL, NULL), NULL)
-    checkEquals(pRolocGUI:::.selText(NULL, 0, 1, 0), NULL)
-    checkEquals(pRolocGUI:::.selText("text", 0, 1, 0), "text")
-    checkEquals(pRolocGUI:::.selText(NULL, 1, 0, 0), "text")
-    checkEquals(pRolocGUI:::.selText(NULL, 1, NULL, 1), "text")
-    checkEquals(pRolocGUI:::.selText(NULL, 1, 0, c(1:10)), "text")
-    checkEquals(pRolocGUI:::.selText(NULL, 2, 0, 0), "text")
-    checkEquals(pRolocGUI:::.selText("text", 1, 0, c(1:10)), "text")
+    checkEquals(pRolocGUI:::.selButton(NULL, NULL, NULL, NULL), NULL)
+    checkEquals(pRolocGUI:::.selButton(NULL, 0, NULL, NULL), NULL)
+    checkEquals(pRolocGUI:::.selButton(NULL, 0, 1, 0), NULL)
+    checkEquals(pRolocGUI:::.selButton("text", 0, 1, 0), "text")
+    checkEquals(pRolocGUI:::.selButton(NULL, 1, 0, 0), "text")
+    checkEquals(pRolocGUI:::.selButton(NULL, 1, NULL, 1), "text")
+    checkEquals(pRolocGUI:::.selButton(NULL, 1, 0, c(1:10)), "text")
+    checkEquals(pRolocGUI:::.selButton(NULL, 2, 0, 0), "text")
+    checkEquals(pRolocGUI:::.selButton("text", 1, 0, c(1:10)), "text")
 }
 ## END unit test .selPlotDist ##
 
@@ -109,12 +115,24 @@ test_.sI <- function() {
                                                                 NULL), 1:20)
     checkEquals(pRolocGUI:::.sI(c("text", "cursorPCA", "savedSearches"), "x", 
                                             1:10, 9:20, NULL, NULL), 1:20)
+    
     checkEquals(pRolocGUI:::.sI(c("text", "savedSearches"), "x", 1:10, 9:20, 
                                             NULL, 100:105), c(1:10, 100:105))
     checkEquals(pRolocGUI:::.sI(c("text", "cursorPCA", "cursorPlotDist", 
         "savedSearches"), "x", 1:10, 9:20, 50:60, 45:55), c(1:20, 50:60, 45:49))
+    checkEquals(pRolocGUI:::.sI(c("data"), NULL, NULL, NULL, NULL, NULL, 1:10), 
+                                                                        1:10)
 }
 ## END unit test .sI ##
+
+## START unit test .sIUni ##
+test_.sIUni <- function() {
+    checkEquals(pRolocGUI:::.sIUni(NULL, NULL), NULL)
+    checkEquals(pRolocGUI:::.sIUni(NULL, "data"), NULL)
+    checkEquals(pRolocGUI:::.sIUni(1:10, NULL), NULL)
+    checkEquals(pRolocGUI:::.sIUni(1:10, "data"), 1:10)
+}
+## END unit test .sIUni ##
 
 ## START unit test .sRsubset ##
 test_.sRsubset <- function() {
@@ -190,7 +208,28 @@ test_.obsProtText <- function() {
 }
 ## END unit test .obsProtText ##
 
-
+## START unit test .checkFeatData ##
+test_.checkFeatData <- function() {
+    checkEquals(pRolocGUI:::.checkFeatData(NULL, NULL, NULL, NULL, NULL), FALSE)
+    checkEquals(
+        pRolocGUI:::.checkFeatData(1:10, NULL, NULL, NULL, "common"), FALSE)
+    checkEquals(
+        pRolocGUI:::.checkFeatData(1:10, NULL, NULL, 5, "common"), TRUE)
+    checkEquals(
+        pRolocGUI:::.checkFeatData(1:10, NULL, NULL, 1:10, "common"), TRUE)
+    checkEquals(
+        pRolocGUI:::.checkFeatData(1:10, NULL, NULL, 1:11, "common"), FALSE)
+    checkEquals(
+        pRolocGUI:::.checkFeatData(NULL, 1:10, NULL, 12, "unique1"), FALSE)
+    checkEquals(
+        pRolocGUI:::.checkFeatData(NULL, 1:10, NULL, 1:10, "unique1"), TRUE)
+    checkEquals(
+        pRolocGUI:::.checkFeatData(NULL, 40:20, NULL, 12, "unique1"), FALSE)
+    checkEquals(
+        pRolocGUI:::.checkFeatData(NULL, 40:20, NULL, 22:23, "unique1"), TRUE)
+    
+}
+## END unit test .checkFeatData ##
 
 ## START unit test .obsProtClick ##
 test_.obsProtClick <- function() {
@@ -354,6 +393,74 @@ test_.fnamesFOI <- function() {
 
 ## 
 ## no unit test for .showFOI
+##
+
+## START unit test for .dataSub ##
+## compute featureNames
+inter <- intersect(featureNames(tan2009r1), featureNames(tan2009r2))
+setdiffR1 <- setdiff(featureNames(tan2009r1), inter)
+setdiffR2 <- setdiff(featureNames(tan2009r2), inter)
+
+test_.dataSub <- function() {
+    utList <- list(tan2009r1, tan2009r2)
+    checkEquals(pRolocGUI:::.dataSub(utList)[[1]], tan2009r1)
+    checkEquals(pRolocGUI:::.dataSub(utList)[[2]], tan2009r2)
+    checkEquals(pRolocGUI:::.dataSub(utList, "common")[[1]], tan2009r1[inter])
+    checkEquals(pRolocGUI:::.dataSub(utList, "common")[[2]], tan2009r2[inter])
+    checkEquals(
+        pRolocGUI:::.dataSub(utList, "unique")[[1]], tan2009r1[setdiffR1])
+    checkEquals(
+        pRolocGUI:::.dataSub(utList, "unique")[[2]], tan2009r2[setdiffR2])
+}
+## END unit test for .dataSub ##
+
+## start unit test for .mC ##
+utList <- list(tan2009r1, tan2009r2)
+markers <- c("unknown", "ER", "mitochondrion", "Golgi", "PM")
+
+test_.mC <- function() {
+    checkEquals(pRolocGUI:::.mC(utList, NULL, NULL), list())
+    checkEquals(pRolocGUI:::.mC(utList, "markers", "markers"), markers)
+    checkEquals(pRolocGUI:::.mC(utList, "markers", "PLSDA"), c(markers, "ER/Golgi"))
+}
+## end unit test for .mC ##
+
+## start unit test for .cellHTML ##
+x <- 1:2
+test.cellHTML <- function() {
+    checkEquals(.cellHTML(NULL), "<td></td>")
+    checkEquals(.cellHTML("100"), "<td>100</td>")
+    checkEquals(.cellHTML(x), c("<td>1</td>", "<td>2</td>"))
+}
+## end unit test for .cellHTML ##
+
+## start unit test for .boldHTML ##
+x <- 1:2
+test_.boldHTML <- function() {
+    checkEquals(pRolocGUI:::.boldHTML(NULL), "<td><strong></strong></td>")
+    checkEquals(pRolocGUI:::.boldHTML("100"), "<td><strong>100</strong></td>")
+    checkEquals(pRolocGUI:::.boldHTML(x), 
+        c("<td><strong>1</strong></td>", "<td><strong>2</strong></td>"))
+}
+## end unit test for .boldHTML
+
+## start unit test for .rowHTML ##
+mat <- matrix(1:9, 3, 3)
+colnames(mat) <- c("common", "unique1", "unique2")
+test_.rowHTML <- function() {
+    checkEquals(pRolocGUI:::.rowHTML(mat[1,], "common", "1", "1"), 
+        "<td><strong>1</strong></td><td>4</td><td>7</td></tr>")
+    checkEquals(pRolocGUI:::.rowHTML(mat[1,], "common", "2", "1"), 
+        "<td>1</td><td>4</td><td>7</td></tr>")
+    checkEquals(pRolocGUI:::.rowHTML(mat[2,], "unique1", "2", "2"), 
+        "<td>2</td><td><strong>5</strong></td><td>8</td></tr>")
+    checkEquals(pRolocGUI:::.rowHTML(mat[3,], "unique2", "3", "3"), 
+        "<td>3</td><td>6</td><td><strong>9</strong></td></tr>")
+}
+## end unit test for .rowHTML ##
+
+##
+## no unit test for .tableHTML
 ##
 
 ## START manual unit test for .plotPCA ## 
