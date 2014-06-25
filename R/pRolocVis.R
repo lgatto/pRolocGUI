@@ -1,14 +1,16 @@
-#'@name pRolocVis pRolocComp
+#'@name pRolocVis/pRolocComp
 #'@aliases pRolocVis
 #'@aliases pRolocComp
 #'@title pRolocVis/pRolocComp
 #'@author Thomas Naake <thomas.naake@@merkur.uni-freiburg.de>
 #'@usage pRolocVis(object)
-#'pRolocComp(object)
-#'@param object an object of class \code{MSnSet} or a list of \code{MSnSet}s (pRolocVis).
-#'@param object a list of length 2 of \code{MSnSet}s (pRolocComp).
+#'@usage pRolocComp(object)
+#'@param object an object of class \code{MSnSet} or a list of \code{MSnSet}s 
+#'(pRolocVis), a list of length 2 of \code{MSnSet}s (pRolocComp).
+#'@description \code{pRolocVis} and \code{pRolocComp} launch shiny sessions 
+#'to interactively analyse and visualise proteomics data. 
 #'
-#'@description \code{pRolocVis} is a function to start a shiny session with 
+#'@details \code{pRolocVis} is a function to start a shiny session with 
 #'one MSnSet data set or a list of \code{MSnSet}s. \code{pRolocComp} launches
 #'with a list of two \code{MSnSet}s. 
 #'
@@ -473,11 +475,9 @@ pRolocVis <- function(object) {
             
             ## calculate protein nearest to user input
             .minDistProtPlotDist <- reactive(
-                if (length(.dI()) != 0 && !is.null(input$plotDistclick)) { 
-                    if (input$plotDistclick$x < (nrow(pData(.dI()[[1]])) + .3) 
-                        && input$plotDistclick$x > 0.5 &&
-                            !is.null(input$quantityPlotDist) && 
-                                input$quantityPlotDist == "1")
+                if (length(.dI()) != 0 && !is.null(input$plotDistclick)) {
+                    if (!is.null(input$quantityPlotDist) && 
+                            input$quantityPlotDist == "1")
                         .minDistPlotDist(obj = .dI(), 
                                 marker = .listParams$levPlotDist[1],
                                 org = .listParams$levPlotDistOrg[1],
@@ -489,10 +489,8 @@ pRolocVis <- function(object) {
                         
             .minDistProtPlotDistHover <- reactive({
                 if (length(.dI()) != 0 && !is.null(input$plotDisthover$x)) {
-                    if (input$plotDisthover$x < (nrow(pData(.dI()[[1]])) + .3) 
-                        && input$plotDisthover$x > 0.5 && 
-                            !is.null(input$quantityPlotDist) && 
-                                input$quantityPlotDist == "1") 
+                    if (!is.null(input$quantityPlotDist) && 
+                            input$quantityPlotDist == "1") 
                         .minDistPlotDist(obj = .dI(),
                                 marker = .listParams$levPlotDist[1],
                                 org = .listParams$levPlotDistOrg[1],

@@ -1,10 +1,8 @@
 #' @export 
-pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r2)) {
+pRolocComp <- function(object) {
     
-    if (!listOf(object, "MSnSet"))
-        stop("object not list of MSnSets")
-    if (length(object) != 2)
-        stop("attempt to upload list of length unequal to 2")
+    if (!listOf(object, "MSnSet")) stop("object not list of MSnSets")
+    if (length(object) != 2) stop("length of listunequal to 2")
     
     ## increase upload limit to 20 MB
     options(shiny.maxRequestSize = 20*1024^2)
@@ -43,8 +41,7 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
                             .pR_tabPanelSearch(),
                             .pR_tabPanelComp(),
                             id = "tab1" 
-                        )#,
-                       # width = 9
+                        )
                     )
                 )        
             ),
@@ -128,7 +125,8 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
             ## START OF SEARCH IMPLEMENTATION ##
             
             ## check boxes by clicking on plots PCA and plotDist
-            dSelect <- reactiveValues(PCA = NULL, plotDist = NULL, text = NULL, data = NULL)
+            dSelect <- reactiveValues(PCA = NULL, plotDist = NULL, text = NULL, 
+                                      data = NULL)
             
             observe({
                 dSelect$PCA <- .selClick(dSelect$PCA, input$PCA1click, 
@@ -302,13 +300,13 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
                 symbol = c("none", "none"), 
                 PCAn1 = c(1, 1), PCAn2 = c(2, 2),
                 xrange1 = c(min(.vPCA(isolate(data$obj), 1, 2, "object1")[, 1]),
-                            max(.vPCA(isolate(data$obj), 1, 2, "object1")[, 1])),
+                        max(.vPCA(isolate(data$obj), 1, 2, "object1")[, 1])),
                 xrange2 = c(min(.vPCA(isolate(data$obj), 1, 2, "object2")[, 1]), 
-                            max(.vPCA(isolate(data$obj), 1, 2, "object2")[, 1])),
+                        max(.vPCA(isolate(data$obj), 1, 2, "object2")[, 1])),
                 yrange1 = c(min(.vPCA(isolate(data$obj), 1, 2, "object1")[, 2]), 
-                            max(.vPCA(isolate(data$obj), 1, 2, "object1")[, 2])),
+                        max(.vPCA(isolate(data$obj), 1, 2, "object1")[, 2])),
                 yrange2 = c(min(.vPCA(isolate(data$obj), 1, 2, "object2")[, 2]), 
-                            max(.vPCA(isolate(data$obj), 1, 2, "object2")[, 2])),
+                        max(.vPCA(isolate(data$obj), 1, 2, "object2")[, 2])),
                 legend = FALSE
             )
         
@@ -392,8 +390,8 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
             
             ## legend
             output$PCALegendUI <- renderUI(
-                .legendPCA(data$obj, .params$colours[.ind$params], .params$legend, 
-                    sel$Obj)
+                .legendPCA(data$obj, .params$colours[.ind$params], 
+                    .params$legend, sel$Obj)
             )
             
             output$PCALegendposUI <- renderUI(
@@ -582,11 +580,9 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
             ## calculate protein nearest to user input (click)
             .minPlotDist1 <- reactive(
                 if (length(data$obj) != 0 && !is.null(input$plotDist1click)) { 
-                    if (input$plotDist1click$x < (nrow(pData(data$obj[[1]])) + .3) &&
-                        input$plotDist1click$x > 0.5 &&
-                            !is.null(input$quantityPlotDist) && 
-                                input$quantityPlotDist == "1")
-                    .minDistPlotDist(obj = data$obj, 
+                    if (!is.null(input$quantityPlotDist) && 
+                            input$quantityPlotDist == "1")
+                        .minDistPlotDist(obj = data$obj, 
                             marker = .listParams$levPlotDist1[1],
                             org = .listParams$levPlotDistOrg1[1],
                             inputx = input$plotDist1click$x,
@@ -598,10 +594,8 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
 
             .minPlotDist2 <- reactive(
                 if (length(data$obj) != 0 && !is.null(input$plotDist2click)) { 
-                    if (input$plotDist2click$x < (nrow(pData(data$obj[[2]])) + .3) &&
-                        input$plotDist2click$x > 0.5 &&
-                            !is.null(input$quantityPlotDist) && 
-                                input$quantityPlotDist == "1")
+                    if (!is.null(input$quantityPlotDist) && 
+                            input$quantityPlotDist == "1")
                         .minDistPlotDist(obj = data$obj, 
                             marker = .listParams$levPlotDist2[1],
                             org = .listParams$levPlotDistOrg2[1],
@@ -616,10 +610,8 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
             ## in tabPanel
             .minPlotDist1Hover <- reactive({
                 if (length(data$obj) != 0 && !is.null(input$plotDist1hover$x)) {
-                    if (input$plotDist1hover$x < (nrow(pData(data$obj[[1]])) + .3) &&
-                        input$plotDist1hover$x > 0.5 && 
-                            !is.null(input$quantityPlotDist) && 
-                                input$quantityPlotDist == "1") 
+                    if (!is.null(input$quantityPlotDist) && 
+                            input$quantityPlotDist == "1") 
                         .minDistPlotDist(obj = data$obj,
                             marker = .listParams$levPlotDist1[1],
                             org = .listParams$levPlotDistOrg1[1],
@@ -634,11 +626,9 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
 
             .minPlotDist2Hover <- reactive({
                 if (length(data$obj) != 0 && !is.null(input$plotDist2hover$x)) {
-                    if (input$plotDist2hover$x < (nrow(pData(data$obj[[2]])) + .3) &&
-                        input$plotDist2hover$x > 0.5 && 
-                            !is.null(input$quantityPlotDist) && 
+                    if(!is.null(input$quantityPlotDist) && 
                             input$quantityPlotDist == "1") 
-                    .minDistPlotDist(obj = data$obj,
+                        .minDistPlotDist(obj = data$obj,
                             marker = .listParams$levPlotDist2[1],
                             org = .listParams$levPlotDistOrg2[1],
                             inputx = input$plotDist2hover$x,
