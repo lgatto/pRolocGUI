@@ -632,6 +632,11 @@ are not already stored internally and can be displayed/used in the other tabs.
 The selected row, column and the number of features which is comprised in 
 these categories will be displayed in bold in the summary matrix. 
 
+When submitting features from the columns `unique1` and `unique2`, the feature 
+names will only be saved internally to the correspendent `MSnSet` and displayed 
+there accordingly. This is done because it is possible that the same feature 
+name exists in the other `MSnSet` but is not assigned to the `organelle`.
+
 As an example, for the two `MSnSet`instances `tan2009r1` and `tan2009r2` a 
 selection of `markers` and `markers` as **_marker level 1_** and 
 **_marker level 2_**, when selecting `mitochondrion` in **_select marker_**
