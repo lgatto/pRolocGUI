@@ -210,10 +210,13 @@
 
 ## a check function to test if features are already internally stored
 ## returning TRUE or FALSE
-.checkFeatData <- function(common, unique1, unique2, newfeat, sel) {##}, newfeatuni1, newfeatuni2, sel) {
+.checkFeatData <- function(common, unique1, unique2, newfeat, sel) {
 
     len <- length(newfeat)
-
+    
+    if (is.null(sel))
+        sel <- "common"
+    
     if (sel == "common") 
         ans <- length(intersect(common, newfeat)) == len
     if (sel == "unique1")
@@ -778,8 +781,10 @@
 ## START: TAB Data (pRolocComp) ##
 
 ## subset object
-.dataSub <- function(object, subsetData) {
+.dataSub <- function(object, 
+                    subsetData = c("common & unique", "unique", "common")) {
     if (!is.null(subsetData)) {
+        subsetData <- match.arg(subsetData)
         if (subsetData == "common & unique")
             ans <- object
         else {

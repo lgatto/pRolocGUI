@@ -22,21 +22,25 @@
     if (!is.null(inputx) && !is.null(inputy)) {
         ind <- match.arg(ind)
         obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
-        if (marker == "all")
-            j <- 1:nrow(obj)
-        else {
-            j <- match(
-                subset(featureNames(obj), fData(obj)[, marker] == org),
-                    featureNames(obj)
-            )
+        
+        if (inputx < (nrow(obj) + .3) && inputx > .5) {
+        
+            if (marker == "all")
+                j <- 1:nrow(obj)
+            else {
+                j <- match(
+                    subset(featureNames(obj), fData(obj)[, marker] == org),
+                        featureNames(obj)
+                )
+            }
+            dist <- abs(inputy - exprs(obj)[j, round(inputx, 0)])
+            minDist <- min(dist)
+            whichMinDist <- which(minDist == dist)
+            ## return index
+            if (name == TRUE)
+                return(names(whichMinDist))
+            else
+                return(j[whichMinDist[[1]]])
         }
-        dist <- abs(inputy - exprs(obj)[j, round(inputx, 0)])
-        minDist <- min(dist)
-        whichMinDist <- which(minDist == dist)
-        ## return index
-        if (name == TRUE)
-            return(names(whichMinDist))
-        else
-            return(j[whichMinDist[[1]]])
     }
 }
