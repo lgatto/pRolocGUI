@@ -1,10 +1,12 @@
 #'@name pRolocVis pRolocComp
+#'@aliases pRolocVis
+#'@aliases pRolocComp
 #'@title pRolocVis/pRolocComp
 #'@author Thomas Naake <thomas.naake@@merkur.uni-freiburg.de>
 #'@usage pRolocVis(object)
 #'pRolocComp(object)
 #'@param object an object of class \code{MSnSet} or a list of \code{MSnSet}s (pRolocVis).
-#'object a list of length 2 of \code{MSnSet}s (pRolocComp)
+#'@param object a list of length 2 of \code{MSnSet}s (pRolocComp).
 #'
 #'@description \code{pRolocVis} is a function to start a shiny session with 
 #'one MSnSet data set or a list of \code{MSnSet}s. \code{pRolocComp} launches

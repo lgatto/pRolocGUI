@@ -1,5 +1,6 @@
 ## Depends
 import(pRoloc)
+import(MSnbase)
 
 ## Imports
 import(pRolocdata)
