@@ -106,18 +106,18 @@ The names of objects of lists will appear in the drop-down menu in the
 with automatically named entries as a consequence, i.e. object1 ... objectn, 
 where n is the length of the list. 
 ```{r, eval = FALSE, echo = TRUE}
-named <- list(andy2011 = andy2011, tan2009r1 = tan2009r1, dunkley2006 = dunkley2006)
-unnamed <- list(andy2011, tan2009r1, dunkley2006)
-pRolocVis(object = named)
-pRolocVis(object = unnamed)
+namedVis <- list(andy2011 = andy2011, tan2009r1 = tan2009r1, dunkley2006 = dunkley2006)
+unnamedVis <- list(andy2011, tan2009r1, dunkley2006)
+pRolocVis(object = namedVis)
+pRolocVis(object = unnamedVis)
 ```
 
 `pRolocComp` requires a list of two `MSnSet`s which can be named or unnamed. 
 ```{r, eval = FALSE, echo = TRUE}
-named <- list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r2)
-unnamed <- list(tan2009r1, tan2009r2)
-pRolocComp(object = named)
-pRolocComp(object = unnamed)
+namedComp <- list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r2)
+unnamedComp <- list(tan2009r1, tan2009r2)
+pRolocComp(object = namedComp)
+pRolocComp(object = unnamedComp)
 ```
 
 N.B.! It is also possible to use a partly named list in `pRolocVis` and 
@@ -212,28 +212,45 @@ feature names consisting of common and unique features
 for all feature names of the two `MSnSet` instances (row `all`) and for 
 distinct subsets which are defined by the feature variable names. The feature
 variable names can be defined by choosing appropriately the drow-down menus
-**_marker level 1_** and **_marker level 2_** which are located in the 
-sidebar panel (enter `?FeatComp` to retrieve more information about the summary
-matrix). 
+**_marker level 1_** and **_marker level 2_** which are located in the section
+**_Summary matrix_** in the sidebar panel (enter `?FeatComp` to retrieve more 
+information about the summary matrix). The matrix in the main panel will show 
+only features for distinct subsets when both drop-down menus do not have `none`
+as their value, otherwise only the row `all` will be printed. Given 
+`tan2009r1` and `tan2009r2` as input for `pRolocComp`, when selecting `markers`
+both for **_marker level 1_** and **_marker level 2_** the matrix will consist 
+of six rows (`all`, `unknown`, `ER`, `mitochondrion`, `Golgi`, `PM`). The table
+can be interpreted as follows: For the row `all` we have `545` common features,
+i.e. there are `545` features in the two `MSnSet`s which have identical feature
+names. In `tan2009r1` however, there are `343` feature names which do not exist
+in `tan2009r1` and `326` feature names are unique for `tan2009r2`. For `markers`
+the matrix tells us that features were assigned to 4 organelles on an 
+experimental evidence (`ER`, `mitochondrion`, `Golgi`, `PM`) for `833` features
+in both `MSnSet`s the affiliation to a certain organelle is `unknown`. In total
+`20` features are assigned to `ER` for `tan2009r1`, therefrom `16` features 
+are also present in `tan2009r2`, however, `4` are unique to `tan2009r1`. The 
+interpretation of the other rows can be deduced in the same way. 
 
-Features can be selected and [displayed](#display) in the other tabs. The 
-selection is made by selecting a marker via the drop-down menu 
+Features can be selected and [displayed](#display) in the other tabs, e.g. 
+highlighted on the PCA plot. The selection is conducted in the section 
+**_Selection_**. It is made by selecting a marker via the drop-down menu 
 **_select marker_** and the radio buttons underneath. The selected row, 
 column and the number of features which is comprised in these categories
 will be displayed in bold in the summary matrix. By pressing 
-**_Submit selection_** the features will be saved internally
-(the button will be only shown when the features are not already stored 
-internally). 
+**_Submit selection_** the features will be saved internally, thus, available 
+for displaying/use in other tabs. The button **_Submit selection_** will be 
+only shown when the features are not already stored internally). 
 
 <img src="figures/Screenshot_Data3.png" width="100%" alt=""></img> <p 
-align="center"><Fig. 4: Appearance of `Data` tab in `pRolocComp`></p>
+align="center"><Fig. 4: Appearance of `Data` tab in `pRolocComp`. The row 
+`ER` and column `unique1` which comprises `4` features is selected ></p>
 
 The tab **_Data_** in `pRolocComp`also allows for subsetting the data sets by 
-choosing accordingly `common`, `unique` and `common & unique` (default). The 
-subset is made on the basis of the feature names of the two `MSnSet` instances. 
-Selecting `common` will use only features which occur in both `MSnSet`s,
-`unique` will use no common features and `common & unique` will use all 
-feature names for each `MSnSet`.  
+choosing accordingly `common`, `unique` and `common & unique` (default) in the 
+section **_Submit MSnSets_**. The subset is made on the basis of the feature 
+names of the two `MSnSet` instances. Selecting `common` will use only features 
+which occur in both `MSnSet`s, `unique` will use no common features and 
+`common & unique` will use all feature names for each `MSnSet`.  
 
 <a id="tabspRolocGUIPCA"></a>
 
@@ -606,12 +623,14 @@ features of interests belongs to the field of the users responsibility.
 
 In `pRolocComp` another way of selecting and displaying features is possible
 via the tab **_Data_**. Features can be selected and internally stored
-by selecting a marker via the drop-down menu 
-**_select marker_** and one of the radio buttons underneath and pressing the 
-**_Submit selection_** button. The button will be only shown when the features 
-are not already stored internally. The selected row, 
-column and the number of features which is comprised in these categories
-will be displayed in bold in the summary matrix. 
+by selecting "all"/a marker via the drop-down menu 
+**_select marker_** - this will change the selected row - and one of the radio 
+buttons underneath - this will change the column. By pressing the 
+**_Submit selection_** button the features comprised in these categories will 
+be stored internally. The button will be only shown when the features 
+are not already stored internally and can be displayed/used in the other tabs. 
+The selected row, column and the number of features which is comprised in 
+these categories will be displayed in bold in the summary matrix. 
 
 As an example, for the two `MSnSet`instances `tan2009r1` and `tan2009r2` a 
 selection of `markers` and `markers` as **_marker level 1_** and 
@@ -627,11 +646,13 @@ featcomp <- compfnames(x = tan2009r1, y = tan2009r2, fcol1 = "markers", fcol2 = 
 feat <- slot(featcomp[[4]], "common") 
 feat
 ```
-The selection means that for the marker level "markers" there are nine common 
-features comprised in the two data sets which are assigned to `Mitochondrion`
+The selection means that for the marker level `markers` there are nine common 
+features comprised in the two data sets which are assigned to `Mitochondrion` in
+the column `markers` of the feature meta-data. Going to the tab 
+**_feature meta-data_** will list these features as well as meta-data. 
 
 The stored features will only displayed when the check box next to `Data`
-in the *Display selection* widget is selected. 
+in the *Display selection*(#display) widget is selected. 
 
 <a id="displayQuery"></a>
 
