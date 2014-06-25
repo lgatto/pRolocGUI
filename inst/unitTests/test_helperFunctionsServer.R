@@ -406,13 +406,12 @@ test_.fnamesFOI <- function() {
 ##
 
 ## START unit test for .dataSub ##
-## compute featureNames
-inter <- intersect(featureNames(tan2009r1), featureNames(tan2009r2))
-setdiffR1 <- setdiff(featureNames(tan2009r1), inter)
-setdiffR2 <- setdiff(featureNames(tan2009r2), inter)
-
 test_.dataSub <- function() {
     utList <- list(tan2009r1, tan2009r2)
+    ## compute featureNames
+    inter <- intersect(featureNames(tan2009r1), featureNames(tan2009r2))
+    setdiffR1 <- setdiff(featureNames(tan2009r1), inter)
+    setdiffR2 <- setdiff(featureNames(tan2009r2), inter)
     checkEquals(pRolocGUI:::.dataSub(utList)[[1]], tan2009r1)
     checkEquals(pRolocGUI:::.dataSub(utList)[[2]], tan2009r2)
     checkEquals(pRolocGUI:::.dataSub(utList, "common")[[1]], tan2009r1[inter])
