@@ -271,7 +271,8 @@ the `MSnSet` instance in the sidebar panel.
 <a id="RadioButtons"></a>
 <center><img src="figures/Screenshot_RadioButtons.png" width="30%" alt="" /> 
 </center> <p align="center">Fig. 6: Radio buttons to select `MSnSet` in 
-`pRolocComp` </p>
+`pRolocComp`. Argument `object` is a named list with `MSnSet` instances 
+`tan2009r1` and `tan2009r2`</p>
 
 The manipulation of the plots works the same way for `pRolocVis` and for 
 `pRolocComp`:
