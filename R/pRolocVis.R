@@ -1,6 +1,6 @@
 #'@name pRolocVis pRolocComp
 #'@title pRolocVis/pRolocComp
-#'@author Thomas Naake <thomasnaake@@gmx.dek>
+#'@author Thomas Naake <thomasnaake@@gmx.de>
 #'@usage pRolocVis(object)
 #'pRolocComp(object)
 #'@param object an object of class \code{MSnSet} or a list of \code{MSnSet}s (pRolocVis).
@@ -23,6 +23,11 @@
 #'\code{pRolocComp} analyses and compares two \code{MSnSet}s. 
 #'\code{pRolocComp} is especially meant for analyses of data which looks 
 #'at the change of proteins in protein localisation.
+#'
+#'To load the vignette for the functions \code{pRolocVis} and \code{pRolocGUI}
+#'enter \code{vignette("pRolocGUI")} in the console. The vignette will give more 
+#'information on how to use the shiny applications.
+#'
 #'@examples \dontrun{
 #'
 #'## load MSnSet data sets from the pRolocdata package
