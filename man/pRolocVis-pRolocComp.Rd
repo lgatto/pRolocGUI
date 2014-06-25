@@ -65,6 +65,6 @@ pRolocComp(object = namedComp)
 }
 }
 \author{
-Thomas Naake <thomasnaake@gmx.de>
+Thomas Naake <thomas.naake@merkur.uni-freiburg.de>
 }
 

@@ -58,7 +58,7 @@ for details) and the `pRoloc` vignette (available with
 `pRolocGUI` is under active development; current functionality is
 evolving and new features will be added. This software is free and
 open-source. You are invited to contact Laurent Gatto (lg390@cam.ac.uk) or 
-Thomas Naake (thomasnaake@gmx.de) in case you have any questions, suggestions or 
+Thomas Naake (thomas.naake@merkur.uni-freiburg.de) in case you have any questions, suggestions or 
 have found any bugs or typos. To reach a broader audience for more general 
 questions about proteomics analyses using R consider of writing to the 
 Bioconductor list.
