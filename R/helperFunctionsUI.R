@@ -210,6 +210,7 @@
         condition="input.tab1 == 'search'",
         wellPanel(
             h4("Searches"),
+            helpText(""),
             htmlOutput("savedSearchTextUI"),
             ## selectInput for choosing between the different 
             ## search Results
@@ -227,9 +228,13 @@
     conditionalPanel(
         condition="input.tab1 == 'Data'",
         wellPanel(
+            h4("Summary matrix"),
+            helpText(""),
             htmlOutput("markerLevel1Output"),
             htmlOutput("markerLevel2Output"),
             hr(),
+            helpText(""),
+            h4("Selection"),
             helpText(""),
             htmlOutput("selectMarker"),
             radioButtons("compRadio", label = "", 
@@ -238,6 +243,8 @@
             htmlOutput("saveDataUI")
         ),
         wellPanel(
+            h4("Subset MSnSets"),
+            helpText(""),
             radioButtons("commonFeat", "Features used",
                 choices = c("common", "unique", "common & unique"), 
                 selected = "common & unique")
