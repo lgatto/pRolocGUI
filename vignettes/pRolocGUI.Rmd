@@ -242,8 +242,8 @@ for displaying/use in other tabs. The button **_Submit selection_** will be
 only shown when the features are not already stored internally). 
 
 <img src="figures/Screenshot_Data3.png" width="100%" alt=""></img> <p 
-align="center"><Fig. 4: Appearance of `Data` tab in `pRolocComp`. The row 
-`ER` and column `unique1` which comprises `4` features is selected ></p>
+align="center">Fig. 4: Appearance of `Data` tab in `pRolocComp`. The row `ER` 
+and column `unique1` which comprises `4` features is selected</p>
 
 The tab **_Data_** in `pRolocComp`also allows for subsetting the data sets by 
 choosing accordingly `common`, `unique` and `common & unique` (default) in the 
@@ -620,7 +620,7 @@ of this kind of data manipulation in a GUI, hence, the execution of removing
 features of interests belongs to the field of the users responsibility.
 
 <a id="displayData"></a>
-### 3.4. summary matrix (pRolocComp only)
+### 3.4. summary matrix (`pRolocComp` only)
 
 In `pRolocComp` another way of selecting and displaying features is possible
 via the tab **_Data_**. Features can be selected and internally stored
