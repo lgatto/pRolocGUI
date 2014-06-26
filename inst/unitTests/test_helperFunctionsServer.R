@@ -210,11 +210,11 @@ test_.obsProtText <- function() {
 
 ## START unit test .removeFeat ##
 test_.removeFeat <- function() {
-    checkEquals(.removeFeat(NULL, "a", 1), NULL)
-    checkEquals(.removeFeat(letters[1:10], "a", 0), letters[1:10])
-    checkEquals(.removeFeat(letters[1:10], "a", 1), letters[2:10])
-    checkEquals(.removeFeat(letters[1:10], c("a", "b"), 1), letters[3:10])
-    checkEquals(.removeFeat(letters[1:10], "z", 1), letters[1:10])
+    checkEquals(pRolocGUI:::.removeFeat(NULL, "a", 1), NULL)
+    checkEquals(pRolocGUI:::.removeFeat(letters[1:10], "a", 0), letters[1:10])
+    checkEquals(pRolocGUI:::.removeFeat(letters[1:10], "a", 1), letters[2:10])
+    checkEquals(pRolocGUI:::.removeFeat(letters[1:10], c("a", "b"), 1), letters[3:10])
+    checkEquals(pRolocGUI:::.removeFeat(letters[1:10], "z", 1), letters[1:10])
     
 }
 

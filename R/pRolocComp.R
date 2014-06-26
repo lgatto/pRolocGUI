@@ -1,5 +1,5 @@
 #' @export 
-pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r2)) {
+pRolocComp <- function(object) {
     
     if (!listOf(object, "MSnSet")) stop("object not list of MSnSets")
     if (length(object) != 2) stop("length of listunequal to 2")
@@ -250,6 +250,7 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
             
             observe(.prot$plotDist <- c(.prot$plotDist1, .prot$plotDist2))
             
+            ## add features (query)
             observe({
                 if (!is.null(input$saveText)) {
                     .prot$text <- .obsProtText(
@@ -259,6 +260,7 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
                 }
             })
             
+            ## remove features (query)
             observe({
                 if (!is.null(input$removeText))
                     isolate(.prot$text <- .removeFeat(
@@ -269,6 +271,7 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
                         input$removeText))
             })
             
+            ## new features written to reactive value (data)
             cfn <- reactiveValues()
             observe({
                 if (!is.null(input$saveData))
@@ -278,7 +281,7 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
                     })
             })
             
-            
+            ## add features (common, data)
             observe({
                 if (!is.null(input$saveData) && !is.null(cfn$newfeat)) { 
                     if (input$compRadio == "common")
@@ -289,6 +292,7 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
                 }
             })
             
+            ## add features (unique1, data)
             observe({
                 if (!is.null(input$saveData) && !is.null(cfn$newfeat)) { 
                     if (input$compRadio == "unique1")
@@ -299,6 +303,7 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
                 }
             })
             
+            ## add features (unique2, data)
             observe({
                 if (!is.null(input$saveData) && !is.null(cfn$newfeat)) { 
                     if (input$compRadio == "unique2")
@@ -309,8 +314,7 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
                 }
             })
                      
-            
-            
+            ## remove features (data tab)
             observe({
                 if (!is.null(input$removeData)) 
                     isolate(.prot$data <- .removeFeat(
@@ -355,20 +359,17 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
                     .params$fcex[.ind$params] <- input$fcex}
                 if (!is.null(input$PCAn1) && !is.null(input$PCAn2)) {
                     .params$PCAn1[.ind$params] <- input$PCAn1
-                    .params$PCAn2[.ind$params] <- input$PCAn2 
-                }
+                    .params$PCAn2[.ind$params] <- input$PCAn2}
                 if (!is.null(input$fsymboltype)) {
                     .params$symbol[.ind$params] <- input$fsymboltype}
                 if (!is.null(input$legendyes)) {
                     .params$legend <- input$legendyes}
                 if (!is.null(input$xrange1) && !is.null(input$yrange1)) {
                     .params$xrange1 <- input$xrange1
-                    .params$yrange1 <- input$yrange1
-                }
+                    .params$yrange1 <- input$yrange1}
                 if (!is.null(input$xrange2) && !is.null(input$yrange2)) {
                     .params$xrange2 <- input$xrange2
-                    .params$yrange2 <- input$yrange2
-                }
+                    .params$yrange2 <- input$yrange2}
             })
         
             ## reactive Values for object selected
@@ -441,13 +442,10 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
                 .plotPCA(obj = data$obj, 
                     fcolours = .params$colours[1], 
                     fcex = .params$fcex[1],
-                    xrange = .params$xrange1,
-                    yrange = .params$yrange1,
+                    xrange = .params$xrange1, yrange = .params$yrange1,
                     sb = .params$symbol[1],
-                    PCAn1 = .params$PCAn1[1],
-                    PCAn2 = .params$PCAn2[1],
-                    legend = input$legendyes, 
-                    legendpos = input$legendpos,
+                    PCAn1 = .params$PCAn1[1], PCAn2 = .params$PCAn2[1],
+                    legend = input$legendyes, legendpos = input$legendpos,
                     sI = .searchInd1(),
                     cIS = input$chooseIdenSearch,
                     ind = "object1")
@@ -457,13 +455,10 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
                 .plotPCA(obj = data$obj, 
                     fcolours = .params$colours[1], 
                     fcex = .params$fcex[1],
-                    xrange = .params$xrange1,
-                    yrange = .params$yrange1,
+                    xrange = .params$xrange1, yrange = .params$yrange1,
                     sb = .params$symbol[1],
-                    PCAn1 = .params$PCAn1[1],
-                    PCAn2 = .params$PCAn2[1],
-                    legend = input$legendyes, 
-                    legendpos = input$legendpos,
+                    PCAn1 = .params$PCAn1[1], PCAn2 = .params$PCAn2[1],
+                    legend = input$legendyes, legendpos = input$legendpos,
                     sI = .searchInd1(),
                     cIS = input$chooseIdenSearch,
                     ind = "object1")
@@ -476,13 +471,10 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
                 .plotPCA(obj = data$obj, 
                     fcolours = .params$colours[2], 
                     fcex = .params$fcex[2],
-                    xrange = .params$xrange2,
-                    yrange = .params$yrange2,
+                    xrange = .params$xrange2, yrange = .params$yrange2,
                     sb = .params$symbol[2],
-                    PCAn1 = .params$PCAn1[2],
-                    PCAn2 = .params$PCAn2[2],
-                    legend = input$legendyes, 
-                    legendpos = input$legendpos,
+                    PCAn1 = .params$PCAn1[2], PCAn2 = .params$PCAn2[2],
+                    legend = input$legendyes, legendpos = input$legendpos,
                     sI = .searchInd2(),
                     cIS = input$chooseIdenSearch,
                     ind = "object2")
@@ -495,13 +487,10 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
                 .plotPCA(obj = data$obj, 
                     fcolours = .params$colours[2], 
                     fcex = .params$fcex[2],
-                    xrange = .params$xrange2,
-                    yrange = .params$yrange2,
+                    xrange = .params$xrange2, yrange = .params$yrange2,
                     sb = .params$symbol[2],
-                    PCAn1 = .params$PCAn1[2],
-                    PCAn2 = .params$PCAn2[2],
-                    legend = input$legendyes, 
-                    legendpos = input$legendpos,
+                    PCAn1 = .params$PCAn1[2], PCAn2 = .params$PCAn2[2],
+                    legend = input$legendyes, legendpos = input$legendpos,
                     sI = .searchInd2(),
                     cIS = input$chooseIdenSearch,
                     ind = "object2")
@@ -533,52 +522,41 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
             ## compute name of 2D-nearest protein for obj1 in PCA plot (click)
             minDist2dProt1PCA <- reactive(
                 ## will be empty initially
-                if (!is.null(input$PCA1click) && !is.null(.valuesPCA1())) {
+                if (!is.null(input$PCA1click) && !is.null(.valuesPCA1()))
                     ## compute 2D distances from click input to each component 
                     ## of the PCA plot, input$PCAclick1$x and input$PCAclick1$y
                     ## is user input (name will be returned)
                     .minDistPCA(inputx = input$PCA1click$x, 
-                           inputy = input$PCA1click$y,
-                           valuesx = .valuesPCA1()[,1],
-                           valuesy = .valuesPCA1()[,2],
-                           name = TRUE)
-                }
+                        inputy = input$PCA1click$y, valuesx = .valuesPCA1()[,1],
+                        valuesy = .valuesPCA1()[,2], name = TRUE)
             )
             
             ## compute name of 2D-nearest protein for obj1 in PCA plot (hover)
             minDist2dProt1PCAHover <- reactive(
-                if (!is.null(input$PCA1hover) && !is.null(.valuesPCA1())) {
+                if (!is.null(input$PCA1hover) && !is.null(.valuesPCA1())) 
                     .minDistPCA(inputx = input$PCA1hover$x, 
-                            inputy = input$PCA1hover$y,
-                            valuesx = .valuesPCA1()[,1], 
-                            valuesy = .valuesPCA1()[,2],
-                            name = TRUE)
-                }
+                        inputy = input$PCA1hover$y, valuesx = .valuesPCA1()[,1], 
+                        valuesy = .valuesPCA1()[,2], name = TRUE)
             )
                 
             ## compute name of 2D-nearest protein for obj2 in PCA plot (click)
             minDist2dProt2PCA <- reactive(
             ## will be empty initially
-                if (!is.null(input$PCA2click) && !is.null(.valuesPCA2())) {
+                if (!is.null(input$PCA2click) && !is.null(.valuesPCA2()))
                 ## compute 2D distances from click input to each component 
                 ## of the PCA plot, input$PCAclick2$x and input$PCAclick2$y
                 ## is user input (name will be returned)
                     .minDistPCA(inputx = input$PCA2click$x, 
-                            inputy = input$PCA2click$y,
-                            valuesx = .valuesPCA2()[,1],
-                            valuesy = .valuesPCA2()[,2],
-                            name = TRUE)
-                }
+                        inputy = input$PCA2click$y, valuesx = .valuesPCA2()[,1],
+                        valuesy = .valuesPCA2()[,2], name = TRUE)
             )
             
             ## compute name of 2D-nearest protein for obj2 in PCA plot (hover)
             minDist2dProt2PCAHover <- reactive(
                 if (!is.null(input$PCA2hover) && !is.null(.valuesPCA2())) {
                     .minDistPCA(inputx = input$PCA2hover$x, 
-                            inputy = input$PCA2hover$y,
-                            valuesx = .valuesPCA2()[,1], 
-                            valuesy = .valuesPCA2()[,2],
-                            name = TRUE)
+                        inputy = input$PCA2hover$y, valuesx = .valuesPCA2()[,1], 
+                        valuesy = .valuesPCA2()[,2], name = TRUE)
                 }
             )
             ## END: TAB PCA ## 
@@ -715,7 +693,6 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
                     sI = .searchInd1(), ind = "object1")
             )
 
-            
             .plotDist2 <- reactive(
                 .plotPlotDist(obj = data$obj, 
                     levPlotDist = .listParams$levPlotDist2,
@@ -809,8 +786,7 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
             observe({
                 if (length(.pR_SR$foi) > 0)
                     on.exit(assign("pRolocGUI_SearchResults",
-                               .pR_SR$foi, .GlobalEnv)
-                    )
+                                                    .pR_SR$foi, .GlobalEnv))
             })
 
             ## create reactiveValues for FoIColection
@@ -825,11 +801,9 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
         
             observe({
                 .newfoi$ind <- .obsNewFoI(data$obj, .unionFeat(),            
-                                    input$savedSearchText, 
-                                    input$saveLists2SR, "object1", FALSE)
-                .pR_SR$foi <- .obsSavedSearch(
-                            .pR_SR$foi, .newfoi$ind, .unionFeat(), 
-                            input$saveLists2SR, input$savedSearchText)
+                    input$savedSearchText, input$saveLists2SR, "object1", FALSE)
+                .pR_SR$foi <- .obsSavedSearch(.pR_SR$foi, .newfoi$ind, 
+                    .unionFeat(), input$saveLists2SR, input$savedSearchText)
             }) 
 
             ## text field to assign name to search results
@@ -869,19 +843,21 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
             sel <- reactiveValues(Obj = "object1")
             observe({
                 if (!is.null(input$selObj)) {
-                if (input$selObj == .namesObj(object)[1])
-                    sel$Obj <- "object1"
-                else 
-                    sel$Obj <- "object2"
+                    if (input$selObj == .namesObj(object)[1])
+                        sel$Obj <- "object1"
+                    else 
+                        sel$Obj <- "object2"
                 }
             })
             
             output$markerLevel1Output <- renderUI( 
-                .colourPCA(data$obj, "markers", "object1", "markerL1", "marker object 1")
+                .colourPCA(data$obj, "none", "object1", "markerL1", 
+                                                            "marker object 1")
             )
             
             output$markerLevel2Output <- renderUI(
-                .colourPCA(data$obj, "markers", "object2", "markerL2", "marker object 2")
+                .colourPCA(data$obj, "none", "object2", "markerL2", 
+                                                            "marker object 2")
             )
             
             output$selectMarker <- renderUI(
@@ -891,7 +867,7 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
                         selectInput("selectMarker", "select marker", 
                             choices = c("all",
                                 .mC(data$obj, input$markerL1, input$markerL2)),
-                            selected = "ER")
+                            selected = "all")
                     } else
                         selectInput("selectMarker", "select marker",
                             choices = c("all"))

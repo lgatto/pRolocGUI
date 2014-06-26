@@ -245,7 +245,7 @@ remove features from the internal selection.
 
 <img src="figures/Screenshot_Data3.png" width="100%" alt=""></img> <p 
 align="center">Fig. 4: Appearance of `Data` tab in `pRolocComp`. The row `ER` 
-and column `unique1` which comprises `4` features is selected</p>
+and column `unique1` which comprises `4` features are selected</p>
 
 The tab **_Data_** in `pRolocComp`also allows for subsetting the data sets by 
 choosing accordingly `common`, `unique` and `common & unique` (default) in the 
