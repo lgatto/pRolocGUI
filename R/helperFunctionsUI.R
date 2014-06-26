@@ -246,7 +246,8 @@
             radioButtons("compRadio", label = "", 
                 choices = c("common", "unique1", "unique2"),
                 selected = "common"),
-            htmlOutput("saveDataUI")
+            htmlOutput("saveDataUI"),
+            htmlOutput("removeDataUI")
         ),
         wellPanel(
             h4("Subset MSnSets"),
@@ -386,7 +387,8 @@
 
 .pR_tabPanelComp <- function() {
     tabPanel("Data",
-             uiOutput("dataComp")
+             uiOutput("dataComp"),
+             textOutput("help")
     )
 }
 

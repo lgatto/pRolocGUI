@@ -208,9 +208,24 @@
     }
 }
 
+## remove Features used for .prot$data
+.removeFeat <- function(oldFeat, newFeat, button) {
+   # observe({
+        ind <- match(newFeat, oldFeat)
+        if (button > 0) {
+          #  isolate({
+                if (!NA %in% ind)
+                    oldFeat <- oldFeat[-ind]
+         #  })
+        }
+        return(oldFeat)
+  # })
+}
+
+
 ## a check function to test if features are already internally stored
 ## returning TRUE or FALSE
-.checkFeatData <- function(common, unique1, unique2, newfeat, sel) {
+.checkFeatData <- function(common, unique1, unique2, newfeat, sel, rem = FALSE) {
 
     len <- length(newfeat)
     
@@ -224,8 +239,10 @@
     if (sel == "unique2")
         ans <- length(intersect(unique2, newfeat)) == len
     
-    if (is.null(newfeat))
-        ans <- FALSE
+   # if (rem) { ## for .removeFeat/removeData button
+        if (is.null(newfeat))
+            ans <- FALSE
+   # }
     
     return(ans)
 }

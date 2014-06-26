@@ -1,5 +1,5 @@
 #' @export 
-pRolocComp <- function(object) {
+pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r2)) {
     
     if (!listOf(object, "MSnSet")) stop("object not list of MSnSets")
     if (length(object) != 2) stop("length of listunequal to 2")
@@ -195,7 +195,7 @@ pRolocComp <- function(object) {
                     }
             })
             
-            ## action button to submit
+            ## action button to submit (query)
             output$saveTextUI <- renderUI(
                 if (!is.null(input$search))
                     if (!.checkFeatText(data$obj, .prot$text, input$sRTextInput, 
@@ -265,7 +265,7 @@ pRolocComp <- function(object) {
                 if (!is.null(input$saveData) && !is.null(cfn$newfeat)) { 
                     if (input$compRadio == "common")
                         if (input$saveData > 0) {
-                            .prot$data <- c(.prot$data, cfn$newfeat)
+                            .prot$data <- unique(c(.prot$data, cfn$newfeat))
                             cfn$newfeat <- NULL
                     }    
                 }
@@ -275,7 +275,7 @@ pRolocComp <- function(object) {
                 if (!is.null(input$saveData) && !is.null(cfn$newfeat)) { 
                     if (input$compRadio == "unique1")
                         if (input$saveData > 0) {
-                            .prot$datau1 <- c(.prot$datau1, cfn$newfeat)
+                            .prot$datau1 <- unique(c(.prot$datau1, cfn$newfeat))
                             cfn$newfeat <- NULL
                         }    
                 }
@@ -285,11 +285,44 @@ pRolocComp <- function(object) {
                 if (!is.null(input$saveData) && !is.null(cfn$newfeat)) { 
                     if (input$compRadio == "unique2")
                         if (input$saveData > 0) {
-                            .prot$datau2 <- c(.prot$datau2, cfn$newfeat)
+                            .prot$datau2 <- unique(c(.prot$datau2, cfn$newfeat))
                             cfn$newfeat <- NULL
                         }    
                 }
             })
+                     
+            
+            
+            observe({
+                if (!is.null(input$removeData)) 
+                    isolate(.prot$data <- .removeFeat(
+                                .prot$data, .cfnnewfeat(), input$removeData))
+            })
+            
+            observe({
+                if (!is.null(input$removeData))
+                    isolate(.prot$datau1 <- .removeFeat(
+                                .prot$datau1, .cfnnewfeat(), input$removeData))
+            })
+            
+            observe({
+                if (!is.null(input$removeData))
+                    isolate(.prot$datau2 <- .removeFeat(
+                                .prot$datau2, .cfnnewfeat(), input$removeData))
+            })
+#                     observe({
+#                     if (input$removeData > 0) {
+#                         isolate({
+#                         if (!NA %in% match(.cfnnewfeat(), .prot$data))
+#                             .prot$data <- .prot$data[-match(.cfnnewfeat(), .prot$data)]
+#                         })
+#                     }
+#                     })
+#                 }
+#             })
+            
+            output$help <- renderText(c(input$removeData,"save", input$saveData," new feat",.cfnnewfeat(),
+                                        "protdata", .prot$data, match(.cfnnewfeat(), .prot$data)))
             ## END OF SEARCHING IMPLEMENTATION ##  
             
             
@@ -839,11 +872,11 @@ pRolocComp <- function(object) {
             })
             
             output$markerLevel1Output <- renderUI( 
-                .colourPCA(data$obj, "none", "object1", "markerL1", "marker object 1")
+                .colourPCA(data$obj, "markers", "object1", "markerL1", "marker object 1")
             )
             
             output$markerLevel2Output <- renderUI(
-                .colourPCA(data$obj, "none", "object2", "markerL2", "marker object 2")
+                .colourPCA(data$obj, "markers", "object2", "markerL2", "marker object 2")
             )
             
             output$selectMarker <- renderUI(
@@ -892,9 +925,18 @@ pRolocComp <- function(object) {
             
             output$saveDataUI <- renderUI(
                 if (!.checkFeatData(.prot$data, .prot$datau1, .prot$datau2, 
-                        .cfnnewfeat(), input$compRadio))
+                        .cfnnewfeat(), input$compRadio) 
+                            && length(.cfnnewfeat()) > 0)
                     actionButton("saveData", "Submit selection")
             )
+            
+            output$removeDataUI <- renderUI(
+                if (.checkFeatData(.prot$data, .prot$datau1, .prot$datau2,
+                        .cfnnewfeat(), input$compRadio) 
+                            && length(.cfnnewfeat()) > 0)
+                    actionButton("removeData", "Remove selection")
+            )           
+            
             ### END: DATA ###
 
     
