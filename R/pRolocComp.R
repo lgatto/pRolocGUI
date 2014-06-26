@@ -126,7 +126,7 @@ pRolocComp <- function(object) {
             
             ## check boxes by clicking on plots PCA and plotDist
             dSelect <- reactiveValues(PCA = NULL, plotDist = NULL, text = NULL, 
-                                      data = NULL)
+                                      summat = NULL)
             
             observe({
                 dSelect$PCA <- .selClick(dSelect$PCA, input$PCA1click, 
@@ -146,15 +146,15 @@ pRolocComp <- function(object) {
             })
             
             observe({
-                dSelect$data <- .selButton(dSelect$data, input$saveData, 
-                    input$resetMult, c(.prot$data, .prot$datau1, .prot$datau2), 
-                    "data")
+                dSelect$summat <- .selButton(
+                    dSelect$summat, input$saveSumMat, input$resetMult, 
+                    c(.prot$summat, .prot$summatu1, .prot$summatu2), "summat")
             })
             
             ## input$chooseIdenSelect
             output$checkBoxUI <- renderUI(
                 .checkBoxdSelect(dSelect$PCA, dSelect$plotDist, dSelect$text, 
-                    dSelect$data, TRUE)
+                    dSelect$summat, TRUE)
             )
             
             ## reactive expression which contains all feature names for the 
@@ -165,13 +165,13 @@ pRolocComp <- function(object) {
                     protText = .prot$text, protPCA = .prot$PCA, 
                     protPlotDist = .prot$plotDist,  
                     protSearch = .fnamesFOI(.pR_SR$foi)[[.whichN()]],
-                    protData = .prot$data
+                    protData = .prot$summat
                 )
             )
             
-            .unique1 <- reactive(.sIUni(.prot$datau1, input$chooseIdenSearch))
+            .unique1 <- reactive(.sIUni(.prot$summatu1, input$chooseIdenSearch))
  
-            .unique2 <- reactive(.sIUni(.prot$datau2, input$chooseIdenSearch))
+            .unique2 <- reactive(.sIUni(.prot$summatu2, input$chooseIdenSearch))
             
             ## reactive expressions for general search indices are computed to 
             ## forward to plot2D, plotDist and tabs quantitation and feature 
@@ -189,9 +189,9 @@ pRolocComp <- function(object) {
                         .prot$plotDist1 <- .prot$plotDist2 <- NULL
                         .prot$plotDist <- NULL
                         .prot$text <- NULL
-                        .prot$data <- .prot$datau1 <- .prot$datau2 <- NULL
+                        .prot$summat <- .prot$summatu1 <- .prot$summatu2 <- NULL
                         dSelect$PCA <- dSelect$plotDist <- NULL
-                        dSelect$text <- dSelect$data <- NULL
+                        dSelect$text <- dSelect$summat <- NULL
                     }
             })
             
@@ -230,7 +230,7 @@ pRolocComp <- function(object) {
             ## vector with reactive values
             .prot <- reactiveValues(PCA1 = NULL, PCA2 = NULL, PCA = NULL, 
                         plotDist1 = NULL, plotDist2 = NULL, plotDist = NULL, 
-                        text = NULL, data = NULL, datau1 = NULL, datau2 = NULL)
+                        text = NULL, summat = NULL, summatu1 = NULL, summatu2 = NULL)
             
             ## observe indices and concatenate to .prot$PCA, .prot$plotDist
             ## and .prot$text
@@ -274,19 +274,19 @@ pRolocComp <- function(object) {
             ## new features written to reactive value (data)
             cfn <- reactiveValues()
             observe({
-                if (!is.null(input$saveData))
+                if (!is.null(input$saveSumMat))
                     isolate({
-                        input$saveData
+                        input$saveSumMat
                         cfn$newfeat <- .cfnnewfeat()
                     })
             })
             
             ## add features (common, data)
             observe({
-                if (!is.null(input$saveData) && !is.null(cfn$newfeat)) { 
+                if (!is.null(input$saveSumMat) && !is.null(cfn$newfeat)) { 
                     if (input$compRadio == "common")
-                        if (input$saveData > 0) {
-                            .prot$data <- unique(c(.prot$data, cfn$newfeat))
+                        if (input$saveSumMat > 0) {
+                            .prot$summat <- unique(c(.prot$summat, cfn$newfeat))
                             cfn$newfeat <- NULL
                     }    
                 }
@@ -294,10 +294,10 @@ pRolocComp <- function(object) {
             
             ## add features (unique1, data)
             observe({
-                if (!is.null(input$saveData) && !is.null(cfn$newfeat)) { 
+                if (!is.null(input$saveSumMat) && !is.null(cfn$newfeat)) { 
                     if (input$compRadio == "unique1")
-                        if (input$saveData > 0) {
-                            .prot$datau1 <- unique(c(.prot$datau1, cfn$newfeat))
+                        if (input$saveSumMat > 0) {
+                            .prot$summatu1 <- unique(c(.prot$summatu1, cfn$newfeat))
                             cfn$newfeat <- NULL
                         }    
                 }
@@ -305,10 +305,10 @@ pRolocComp <- function(object) {
             
             ## add features (unique2, data)
             observe({
-                if (!is.null(input$saveData) && !is.null(cfn$newfeat)) { 
+                if (!is.null(input$saveSumMat) && !is.null(cfn$newfeat)) { 
                     if (input$compRadio == "unique2")
-                        if (input$saveData > 0) {
-                            .prot$datau2 <- unique(c(.prot$datau2, cfn$newfeat))
+                        if (input$saveSumMat > 0) {
+                            .prot$summatu2 <- unique(c(.prot$summatu2, cfn$newfeat))
                             cfn$newfeat <- NULL
                         }    
                 }
@@ -316,21 +316,21 @@ pRolocComp <- function(object) {
                      
             ## remove features (data tab)
             observe({
-                if (!is.null(input$removeData)) 
-                    isolate(.prot$data <- .removeFeat(
-                                .prot$data, .cfnnewfeat(), input$removeData))
+                if (!is.null(input$removeSumMat)) 
+                    isolate(.prot$summat <- .removeFeat(.prot$summat, 
+                                            .cfnnewfeat(), input$removeSumMat))
             })
             
             observe({
-                if (!is.null(input$removeData))
-                    isolate(.prot$datau1 <- .removeFeat(
-                                .prot$datau1, .cfnnewfeat(), input$removeData))
+                if (!is.null(input$removeSumMat))
+                    isolate(.prot$summatu1 <- .removeFeat(.prot$summatu1, 
+                                            .cfnnewfeat(), input$removeSumMat))
             })
             
             observe({
-                if (!is.null(input$removeData))
-                    isolate(.prot$datau2 <- .removeFeat(
-                                .prot$datau2, .cfnnewfeat(), input$removeData))
+                if (!is.null(input$removeSumMat))
+                    isolate(.prot$summatu2 <- .removeFeat(.prot$summatu2, 
+                                            .cfnnewfeat(), input$removeSumMat))
             })
             ## END OF SEARCHING IMPLEMENTATION ##  
             
@@ -904,18 +904,18 @@ pRolocComp <- function(object) {
     
             output$dataComp <- renderText(.overview())
             
-            output$saveDataUI <- renderUI(
-                if (!.checkFeatData(.prot$data, .prot$datau1, .prot$datau2, 
-                        .cfnnewfeat(), input$compRadio) 
+            output$saveSumMatUI <- renderUI(
+                if (!.checkFeatData(.prot$summat, .prot$summatu1, 
+                        .prot$summatu2, .cfnnewfeat(), input$compRadio) 
                             && length(.cfnnewfeat()) > 0)
-                    actionButton("saveData", "Submit selection")
+                    actionButton("saveSumMat", "Submit selection")
             )
             
-            output$removeDataUI <- renderUI(
-                if (.checkFeatData(.prot$data, .prot$datau1, .prot$datau2,
+            output$removeSumMatUI <- renderUI(
+                if (.checkFeatData(.prot$summat, .prot$summatu1, .prot$summatu2,
                         .cfnnewfeat(), input$compRadio) 
                             && length(.cfnnewfeat()) > 0)
-                    actionButton("removeData", "Undo selection")
+                    actionButton("removeSumMat", "Undo selection")
             )           
             
             ### END: DATA ###

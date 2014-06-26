@@ -31,13 +31,13 @@
             position: relative;
             display: block;
             width: 100%;}")),
-        tags$style(HTML("#saveData{
+        tags$style(HTML("#saveSumMat{
             margin:0;
             padding: 7 10 7 1;
             position: relative;
             display: block;
             width: 100%;}")),
-        tags$style(HTML("#removeData{
+        tags$style(HTML("#removeSumMat{
             margin:0;
             padding: 7 10 7 1;
             position: relative;
@@ -259,8 +259,8 @@
             radioButtons("compRadio", label = "", 
                 choices = c("common", "unique1", "unique2"),
                 selected = "common"),
-            htmlOutput("saveDataUI"),
-            htmlOutput("removeDataUI")
+            htmlOutput("saveSumMatUI"),
+            htmlOutput("removeSumMatUI")
         ),
         wellPanel(
             h4("Subset MSnSets"),

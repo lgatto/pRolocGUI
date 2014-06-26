@@ -75,7 +75,7 @@
 
 
 
-## A helper function to select the checkbox of "query"/"data" in the 
+## A helper function to select the checkbox of "query"/"summary matrix" in the 
 ## Display selection widget, used in observer for assigning to dSelect$text/
 ## dSelect$data
 .selButton <- function(dtext, button, resetMult, protText, sel = "text") {
@@ -120,7 +120,7 @@
         ans <- c(ans, protPlotDist)
     if ("savedSearches" %in% cIS && !is.null(tagSelectList))
         ans <- c(ans, protSearch)
-    if ("data" %in% cIS)
+    if ("summat" %in% cIS)
         ans <- c(ans, protData)
     unique(ans)
 }
@@ -128,7 +128,7 @@
 ## for unique features
 .sIUni <- function(protDataU, cIS) {
     ans <- NULL
-    if ("data" %in% cIS) ans <- protDataU
+    if ("summat" %in% cIS) ans <- protDataU
     return(ans)
 }
 
@@ -212,7 +212,7 @@
     }
 }
 
-## remove Features used for .prot$data
+## remove Features used for .prot$summat
 .removeFeat <- function(oldFeat, newFeat, button) {
    # observe({
         ind <- match(newFeat, oldFeat)
@@ -274,7 +274,7 @@
                    "saved searches" = "savedSearches",
                    "query" = "text")
     if (comp)
-        choices <- c(choices[1:3], "Data" = "data", choices[4])
+        choices <- c(choices[1:3], "summary matrix" = "summat", choices[4])
     
     checkboxGroupInput("chooseIdenSearch", 
         label = "",

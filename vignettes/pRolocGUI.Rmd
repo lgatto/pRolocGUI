@@ -213,7 +213,7 @@ for all feature names of the two `MSnSet` instances (row `all`) and for
 distinct subsets which are defined by the feature variable names. The feature
 variable names can be defined by choosing appropriately the drow-down menus
 **_marker object 1_** and **_marker object 2_** which are located in the section
-**_Summary matrix_** in the sidebar panel (enter `?FeatComp` to retrieve more 
+*Summary matrix* in the sidebar panel (enter `?FeatComp` to retrieve more 
 information about the summary matrix). The matrix in the main panel will show 
 only features for distinct subsets when both drop-down menus do not have `none`
 as their value, otherwise only the row `all` will be printed. Given 
@@ -233,7 +233,7 @@ interpretation of the other rows can be deduced in the same way.
 
 Features can be selected and [displayed](#display) in the other tabs, e.g. 
 highlighted on the PCA plot. The selection is conducted in the section 
-**_Selection_**. It is made by selecting a marker via the drop-down menu 
+*Selection*. It is made by selecting a marker via the drop-down menu 
 **_select marker_** and the radio buttons underneath. The selected row, 
 column and the number of features which is comprised in these categories
 will be displayed in bold in the summary matrix. By pressing 
@@ -249,7 +249,7 @@ and column `unique1` which comprises `4` features are selected</p>
 
 The tab **_Data_** in `pRolocComp`also allows for subsetting the data sets by 
 choosing accordingly `common`, `unique` and `common & unique` (default) in the 
-section **_Submit MSnSets_**. The subset is made on the basis of the feature 
+section *Submit MSnSets*. The subset is made on the basis of the feature 
 names of the two `MSnSet` instances. Selecting `common` will use only features 
 which occur in both `MSnSet`s, `unique` will use no common features and 
 `common & unique` will use all feature names for each `MSnSet`.  
@@ -551,7 +551,7 @@ decide to remove all your features click on **_Clear features_**
 (the button will only show up if features were already selected).
 Please keep in mind that this step once carried out is
 irreversible and will delete features selected in `protein profiles`, 
-(`Data`) and `query` as well. Besides that you are also able to simply blind 
+(`summary matrix`) and `query` as well. Besides that you are also able to simply blind 
 out the selected features by deselecting the check box left of PCA in the
 *Display selection* widget. Internally, the features are still
 stored, i.e. by clicking again on the check box you will see the
@@ -664,8 +664,8 @@ features comprised in the two data sets which are assigned to `Mitochondrion` in
 the column `markers` of the feature meta-data. Going to the tab 
 **_feature meta-data_** will list these features as well as meta-data. 
 
-The stored features will only displayed when the check box next to `Data`
-in the *Display selection*(#display) widget is selected. 
+The stored features will only displayed when the check box next to 
+`summary matrix` in the *Display selection*(#display) widget is selected. 
 
 <a id="displayQuery"></a>
 
