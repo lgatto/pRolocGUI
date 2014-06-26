@@ -239,7 +239,9 @@ column and the number of features which is comprised in these categories
 will be displayed in bold in the summary matrix. By pressing 
 **_Submit selection_** the features will be saved internally, thus, available 
 for displaying/use in other tabs. The button **_Submit selection_** will be 
-only shown when the features are not already stored internally). 
+only shown when the features are not already stored internally). If the features
+are selected there will be the button **_Undo selection_** which allows to 
+remove features from the internal selection.
 
 <img src="figures/Screenshot_Data3.png" width="100%" alt=""></img> <p 
 align="center">Fig. 4: Appearance of `Data` tab in `pRolocComp`. The row `ER` 
@@ -515,7 +517,9 @@ There are four (`pRolocVis`) or five (`pRolocComp`) check boxes in the
 of searching features in the `MSnSet`. To activate the search for one
 specific method click on the check box left of its description. It is
 also possible to select more than one at a time which allows for
-greater flexibility with regard to information retrieval.
+greater flexibility with regard to information retrieval. To irreversibly reset 
+the selection press **_Clear features_** (only shown when features are 
+selected).
 
 <a id="displayPCA"></a>
 
@@ -546,8 +550,9 @@ There are two possibilities to deselect all selected features: If you
 decide to remove all your features click on **_Clear features_** 
 (the button will only show up if features were already selected).
 Please keep in mind that this step once carried out is
-irreversible. Besides that you are also able to simply blind out the
-selected features by deselecting the check box left of PCA in the
+irreversible and will delete features selected in `protein profiles`, 
+(`Data`) and `query` as well. Besides that you are also able to simply blind 
+out the selected features by deselecting the check box left of PCA in the
 *Display selection* widget. Internally, the features are still
 stored, i.e. by clicking again on the check box you will see the
 selections again. Clicking on new proteins in the PCA plot will not
@@ -631,7 +636,9 @@ buttons underneath - this will change the column. By pressing the
 be stored internally. The button will be only shown when the features 
 are not already stored internally and can be displayed/used in the other tabs. 
 The selected row, column and the number of features which is comprised in 
-these categories will be displayed in bold in the summary matrix. 
+these categories will be displayed in bold in the summary matrix. If features
+were submitted another button will be present which allows to remove the 
+features from the internal selection, the **_Undo selection_** button.
 
 When submitting features from the columns `unique1` and `unique2`, the feature 
 names will only be saved internally to the correspendent `MSnSet` and displayed 
@@ -667,8 +674,8 @@ in the *Display selection*(#display) widget is selected.
 The *Display selection* widget offers the opportunity to query 
 the feature meta-data
 of the `MSnSet` for levels. The drop-down list consists of the item `protein`,
-which is by definition the row name of the feature-meta data and depending on 
-the data accession number, protein ID, protein description, assigned markers
+which will by definition the feature names and depending 
+on the data accession number, protein ID, protein description, assigned markers
 (varying on the underlying `MSnSet`). 
 
 For demonstration purposes we will use `pRolocVis` to select and display 
@@ -689,8 +696,11 @@ select `PM` which codes for `plasma membrane`. Next, we click on
 to `PM` for the variable name `marker` 
 (the button only appears in the application when the corresponding proteins do 
 not exist in the selection). To remove the selected features from the
-internal assignment we have to reset the search by clicking on
-**_Clear features_**. Of course, we can also add other features: If we
+internal assignment we have to either reset the search by clicking on
+**_Clear features_** or click on **_Undo selection_**.  The latter will only 
+remove the current selection of features, while the former
+will clear all features (also these of `PCA`, `protein profiles` (and `Data`).
+Of course, we can also add other features: If we
 want to add all features which are assigned to the Golgi apparatus we
 simply select `Golgi` in the lower drop-down list and click on
 **_Submit selection_** to save internally the selected features.

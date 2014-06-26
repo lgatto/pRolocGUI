@@ -321,7 +321,7 @@ pRolocVis <- function(object) {
                 if (!is.null(input$search))
                     if (.checkFeatText(
                             .dI(), .prot$text, input$sRTextInput, input$search))
-                        actionButton("removeText", "Remove selection")
+                        actionButton("removeText", "Undo selection")
             )
             
             

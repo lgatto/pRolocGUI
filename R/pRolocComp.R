@@ -208,7 +208,7 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
                 if (!is.null(input$search))
                     if (.checkFeatText(data$obj, .prot$text, input$sRTextInput,
                                 input$search, sel$Obj, name = TRUE))
-                        actionButton("removeText", "Remove selection")
+                        actionButton("removeText", "Undo selection")
             )
             
             ## reset button
@@ -939,7 +939,7 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
                 if (.checkFeatData(.prot$data, .prot$datau1, .prot$datau2,
                         .cfnnewfeat(), input$compRadio) 
                             && length(.cfnnewfeat()) > 0)
-                    actionButton("removeData", "Remove selection")
+                    actionButton("removeData", "Undo selection")
             )           
             
             ### END: DATA ###
