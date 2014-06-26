@@ -179,7 +179,7 @@
 
 ## function to concatenate new features to old ones
 .obsProtText <- function(obj, protText, button, sRText, search, 
-                         ind = c("object1", "object2"), names = FALSE) {
+                    ind = c("object1", "object2"), names = FALSE, add = TRUE) {
     if (length(obj) != 0 && !is.null(button)) {        
                     
         ind <- match.arg(ind)
@@ -204,7 +204,11 @@
                     })
             }
         }
-        return(unique(protText))
+        
+        if (add == TRUE)
+            return(unique(protText))
+        else 
+            return(newFeat)
     }
 }
 

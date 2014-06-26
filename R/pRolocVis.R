@@ -308,11 +308,20 @@ pRolocVis <- function(object) {
                     .sRsubset(.dI(), input$search, input$levelSearch)
             )
             
+            ## action button to submit features (query)
             output$saveTextUI <- renderUI(
                 if (!is.null(.dI()) && !is.null(input$search))
                     if (!.checkFeatText(.dI(), 
                             .prot$text, input$sRTextInput, input$search))
                         actionButton("saveText", "Submit selection")
+            )
+            
+            ## action button to remove (query)
+            output$removeTextUI <- renderUI(
+                if (!is.null(input$search))
+                    if (.checkFeatText(
+                            .dI(), .prot$text, input$sRTextInput, input$search))
+                        actionButton("removeText", "Remove selection")
             )
             
             
@@ -334,6 +343,16 @@ pRolocVis <- function(object) {
             observe({ 
                 .prot$text <- .obsProtText(.dI(), .prot$text, input$saveText, 
                         isolate(input$sRTextInput), input$search)
+            })
+            
+            observe({
+                if (!is.null(input$removeText))
+                    isolate(.prot$text <- .removeFeat(
+                        .prot$text, .obsProtText(
+                            .dI(), .prot$text, input$saveText, 
+                            isolate(input$sRTextInput), input$search, 
+                            add = FALSE), 
+                        input$removeText))
             })
 
             ## END OF SEARCHING IMPLEMENTATION ##  

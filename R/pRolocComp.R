@@ -203,6 +203,14 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
                         actionButton("saveText", "Submit selection")
             )
             
+            ## action button to remove (query)
+            output$removeTextUI <- renderUI(
+                if (!is.null(input$search))
+                    if (.checkFeatText(data$obj, .prot$text, input$sRTextInput,
+                                input$search, sel$Obj, name = TRUE))
+                        actionButton("removeText", "Remove selection")
+            )
+            
             ## reset button
             output$resetMultUI <- renderUI(.reset(.searchInd1(), .searchInd2()))
             
@@ -249,6 +257,16 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
                         isolate(input$sRTextInput), isolate(input$search), 
                         isolate(sel$Obj), names = TRUE)
                 }
+            })
+            
+            observe({
+                if (!is.null(input$removeText))
+                    isolate(.prot$text <- .removeFeat(
+                        .prot$text, .obsProtText(
+                            data$obj, .prot$text, input$saveText, 
+                            isolate(input$sRTextInput), isolate(input$search), 
+                            isolate(sel$Obj), names = TRUE, add = FALSE), 
+                        input$removeText))
             })
             
             cfn <- reactiveValues()
@@ -310,19 +328,6 @@ pRolocComp <- function(object = list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r
                     isolate(.prot$datau2 <- .removeFeat(
                                 .prot$datau2, .cfnnewfeat(), input$removeData))
             })
-#                     observe({
-#                     if (input$removeData > 0) {
-#                         isolate({
-#                         if (!NA %in% match(.cfnnewfeat(), .prot$data))
-#                             .prot$data <- .prot$data[-match(.cfnnewfeat(), .prot$data)]
-#                         })
-#                     }
-#                     })
-#                 }
-#             })
-            
-            output$help <- renderText(c(input$removeData,"save", input$saveData," new feat",.cfnnewfeat(),
-                                        "protdata", .prot$data, match(.cfnnewfeat(), .prot$data)))
             ## END OF SEARCHING IMPLEMENTATION ##  
             
             

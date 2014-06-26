@@ -25,7 +25,19 @@
             position: relative;
             display: block;
             width: 100%;}")),
+        tags$style(HTML("#removeText{
+            margin:0;
+            padding: 7 10 7 1;
+            position: relative;
+            display: block;
+            width: 100%;}")),
         tags$style(HTML("#saveData{
+            margin:0;
+            padding: 7 10 7 1;
+            position: relative;
+            display: block;
+            width: 100%;}")),
+        tags$style(HTML("#removeData{
             margin:0;
             padding: 7 10 7 1;
             position: relative;
@@ -89,6 +101,7 @@
             ## action Button to add selected levels 
             ## to internal assignment concerning query search
             htmlOutput("saveTextUI"),
+            htmlOutput("removeTextUI"),
             tags$hr(),
             ## action Button to delete internal assignments
             htmlOutput("resetMultUI"),
@@ -387,8 +400,7 @@
 
 .pR_tabPanelComp <- function() {
     tabPanel("Data",
-             uiOutput("dataComp"),
-             textOutput("help")
+             uiOutput("dataComp")
     )
 }
 
