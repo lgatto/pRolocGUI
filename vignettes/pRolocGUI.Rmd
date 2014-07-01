@@ -30,7 +30,7 @@ This vignette describes the implemented functionality in the
 definitions of `MSnbase` [`r citep(extbib["GattoLilley2012"])`](#references)
 and on the functions defined in the package `pRoloc` 
 [`r citep(list(extbib["Breckels2013"], extbib["Gatto2014"]))`](#references). 
-`pRolocGUI` is intended for the visualization and analysis of proteomics data,
+`pRolocGUI` is intended for the visualisation and analysis of proteomics data,
 especially for the analyses of 
 LOPIT [`r citep(extbib["Dunkley2006"])`](#references)
 or PCP [`r citep(extbib["Foster2006"])`](#references) experiments.  
@@ -103,7 +103,7 @@ accepts both lists with named and unnamed objects. This allows for analysis
 of multiple data sets without stopping the application from running. 
 The names of objects of lists will appear in the drop-down menu in the 
 **_Data_** tab, while lists with unnamed objects will have a drop-down menu 
-with automatically named entries as a consequence, i.e. object1 ... objectn, 
+with automatically named entries as a consequence, i.e. object 1 ... object n, 
 where n is the length of the list. 
 ```{r, eval = FALSE, echo = TRUE}
 namedVis <- list(andy2011 = andy2011, tan2009r1 = tan2009r1, dunkley2006 = dunkley2006)
@@ -179,24 +179,26 @@ it will be the last for `pRolocComp`.
 <img src="figures/Screenshot_Data1.png" width="100%" alt="" /> <p 
 align="center"> Fig. 2: Appearance of `Data` tab in `pRolocVis` </p>
 
-For `pRolocVis` the drop-down menu lists all the names of assigned `MSnSet` 
-objects to the function. Depending if a named list - containing `MSnSet` 
-instances - is uploaded or not these names will be used or automatic names will
-be created (object1 ... objectn, where n is the length of the list).
-In addition, the entry `upload` is listed at the bottom 
-of the drop-down menu. Selecting `upload` allows to use a 
-`MSnSet` available in a `.Rda` or `.Rdata` file after uploading it to the 
-application. Clicking on **_Browse..._** will open a dialog window with 
-which you can select a file containing a saved `MSnSet` and load 
-it to `pRolocVis`. Make sure if you want to use a `MSnSet` from a `.Rda` or 
-`.Rdata` file to select `upload` in the drop-down menu. 
+For `pRolocVis` the drop-down menu lists all the names of assigned
+`MSnSet` objects to the function. Depending if a named list -
+containing `MSnSet` instances - is uploaded or not these names will be
+used or automatic names will be created (object 1 ... object n, where
+n is the length of the list).  In addition, the entry `upload` is
+listed at the bottom of the drop-down menu. Selecting `upload` allows
+to use a `MSnSet` available in a `.Rda` or `.Rdata` file after
+uploading it to the application. Clicking on **_Browse..._** will open
+a dialog window with which you can select a file containing a saved
+`MSnSet` and load it to `pRolocVis`. Make sure if you want to use a
+`MSnSet` from a `.Rda` or `.Rdata` file to select `upload` in the
+drop-down menu.
 
 <img src="figures/Screenshot_Data2.png" width="100%" alt="" /> <p 
 align="center"> Fig. 3: File upload in `pRolocVis` </p>
 
-`pRolocVis` will print a message if there are any conflicts with the uploaded 
-file. If so, either the assigned object itself or the first element in the list
-will be used instead of the uploaded `.Rda` or `.Rdata` file. 
+`pRolocVis` will print a message if there are any conflicts with the
+uploaded file. If so, either the assigned object itself or the first
+element in the list will be used instead of the uploaded `.Rda` or
+`.Rdata` file.
 
 When analysing multiple data sets in one `pRolocVis` session the selected 
 features will be (irreversibly) deleted when changing from one 
@@ -211,7 +213,7 @@ For `pRolocComp` the main panel shows a summary matrix of common and unique
 feature names consisting of common and unique features
 for all feature names of the two `MSnSet` instances (row `all`) and for 
 distinct subsets which are defined by the feature variable names. The feature
-variable names can be defined by choosing appropriately the drow-down menus
+variable names can be defined by choosing appropriately the drop-down menus
 **_marker object 1_** and **_marker object 2_** which are located in the section
 *Summary matrix* in the sidebar panel (enter `?FeatComp` to retrieve more 
 information about the summary matrix). The matrix in the main panel will show 
@@ -641,7 +643,7 @@ were submitted another button will be present which allows to remove the
 features from the internal selection, the **_Undo selection_** button.
 
 When submitting features from the columns `unique1` and `unique2`, the feature 
-names will only be saved internally to the correspendent `MSnSet` and displayed 
+names will only be saved internally to the correspondent `MSnSet` and displayed 
 there accordingly. This is done because it is possible that the same feature 
 name exists in the other `MSnSet` but is not assigned to the `organelle`.
 
