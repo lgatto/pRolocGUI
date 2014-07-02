@@ -1,11 +1,17 @@
 Package: pRolocGUI
 Title: An interactive visualisation tool for organelle (spatial)
-       proteomics data
+    proteomics data
 Version: 0.1.1
 Author: Thomas Naake and Laurent Gatto
 Maintainer: Thomas Naake <thomasnaake@gmx.de>
 Description: The package pRolocGUI comprises functions to
-	     interactively visualise organelle (spatial) proteomics
-	     data on the basis of pRoloc, pRolocdata and shiny.
-Depends: R, pRoloc (>= 1.5.2), pRolocdata, shiny (>= 0.9.1)
+    interactively visualise organelle (spatial) proteomics
+    data on the basis of pRoloc, pRolocdata and shiny.
+Depends:
+    R,
+    pRoloc (>= 1.5.2),
+    pRolocdata,
+    shiny (>= 0.9.1),
+    tools (>= 3.1.0),
+    digest (>= 0.6.4)
 License: GPL-2
