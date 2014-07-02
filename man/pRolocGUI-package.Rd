@@ -13,7 +13,7 @@ and shiny.
 \tabular{ll}{
 Package: \tab pRolocGUI\cr
 Type: \tab Package\cr
-Version: \tab 0.1\cr
+Version: \tab 0.1.0.1 \cr
 Date: \tab 2014-04-28\cr
 License: \tab GPL-2\cr
 }
