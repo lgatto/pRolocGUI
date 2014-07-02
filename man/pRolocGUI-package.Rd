@@ -20,7 +20,6 @@ Package \cr Version: \tab 0.1.1 \cr Date: \tab 2014-04-28
 Naake <thomasnaake@gmx.de> }
 }
 \seealso{
-\code{\link[pRoloc]{pRoloc-tutorial}}
 \code{\link[pRolocdata]{pRolocdata}}
 \code{\link[MSnbase]{FeaturesOfInterest-class}}
 }
