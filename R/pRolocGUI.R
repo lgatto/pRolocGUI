@@ -733,14 +733,14 @@ pRolocGUI <- function() {
         })
    
       .names.FOI <- reactive({
-        if (.isFeaturesOfInterest(.pR_SR()))
+        if (.areFeaturesOfInterest(.pR_SR()))
           .fnamesFOI(.pR_SR())
         else
           .fnamesFOI(.pR_SR())[[.whichN()]]
         })
    
       .whichNamesFOI <- reactive({
-        if (.isFeaturesOfInterest(.pR_SR()))
+        if (.areFeaturesOfInterest(.pR_SR()))
           which(match(rownames(.dI()), .fnamesFOI(.pR_SR())) != "NA")
         else
           which(
@@ -844,7 +844,7 @@ pRolocGUI <- function() {
           
             newFOI <- .newfoi()
           
-            if (.isFeaturesOfInterest(.pR_SR())){
+            if (.areFeaturesOfInterest(.pR_SR())){
               newColl <- FoICollection() ## create new collection
               ## add old FoI to collection
               newColl <- addFeaturesOfInterest(oldSR, newColl)
