@@ -9,6 +9,7 @@
 
 ```{r, eval=TRUE, echo=FALSE, warning=FALSE, message=FALSE}
 library(knitcitations)
+library(bibtex)
 cite_options(hyperlink = FALSE)
 extbib <- read.bib("pRolocGUI.bib")
 
