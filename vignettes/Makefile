@@ -7,7 +7,12 @@ ifeq (${R_HOME},)
 R_HOME= $(shell R RHOME)
 endif
 
+
 clean:
 	rm -f *.md
+	rm -f pRolocGUI.R
+	rm -f .build.timestamp
+	rm -f .Rhistory
+
 allclean: clean
 	rm -f *html
