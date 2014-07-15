@@ -732,7 +732,5 @@ string "AC". This narrows the features in the drop-down list accordingly
 
 
 ```{r, results="asis", message=FALSE, echo=FALSE}
-bibliography(bib.style = "markdown", sort = FALSE, 
-             ordering = c("authors", "year", "title", "journal",
-                 "volume", "number", "pages", "doi", "url"))
+bibliography()
 ```
