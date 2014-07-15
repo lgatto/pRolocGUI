@@ -9,7 +9,7 @@
 
 ```{r, env, eval=TRUE, echo=FALSE, warning=FALSE, message=FALSE}
 library(knitcitations)
-cite_options(linked = FALSE)
+cite_options(hyperlink = FALSE)
 library("methods")
 library(bibtex)
 extbib <- read.bib("pRolocGUI.bib")
