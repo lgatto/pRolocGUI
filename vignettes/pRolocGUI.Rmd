@@ -7,17 +7,16 @@
 -->
 
 
-```{r, eval=TRUE, echo=FALSE, warning=FALSE, message=FALSE}
+```{r, env, eval=TRUE, echo=FALSE, warning=FALSE, message=FALSE}
 library(knitcitations)
+cite_options(linked = FALSE)
+library("methods")
 library(bibtex)
-cite_options(hyperlink = FALSE)
 extbib <- read.bib("pRolocGUI.bib")
-
 ```
 
 
-<h1>pRolocGUI: Interactive visualisation of organelle (spatial) proteomics 
-data</h1>
+<h1>pRolocGUI: Interactive visualisation of organelle (spatial) proteomics data</h1>
 
 
 #### Thomas Naake and Laurent Gatto*
