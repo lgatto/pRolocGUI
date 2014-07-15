@@ -10,7 +10,6 @@
 ```{r, env, eval=TRUE, echo=FALSE, warning=FALSE, message=FALSE}
 library(knitcitations)
 cite_options(hyperlink = FALSE, style = "markdown")
-library("methods")
 library(bibtex)
 extbib <- read.bib("pRolocGUI.bib")
 ```
