@@ -332,7 +332,6 @@
                         hoverDelayType = "throttle"
                 ),
                 textOutput("hoverProt2PCA"),      
-                textOutput("help"),
                 downloadButton("plotPCA2Download", "Download")
             )  
     )
