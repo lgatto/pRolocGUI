@@ -242,7 +242,7 @@
     par(mfrow=c(1, 2))
     ## START PCA click input##
     valuesPCAr1 <- plot2D(tan2009r1, fcol = NULL, plot = FALSE)
-    valuesPCAr2 <- plot2D(tan2009r1, fcol = NULL, plot = FALSE)
+    valuesPCAr2 <- plot2D(tan2009r2, fcol = NULL, plot = FALSE)
     ## make sure that "object1" is selected
     ## select "markers" in "colour" 
     ## ("none" in symboltype, PC 1 (along x-axis) and 2 (along y-axis), 
@@ -358,8 +358,8 @@
     )
     highlightOnPlot(tan2009r1, 
                     FeaturesOfInterest(description = "hoP",
-                                       fnames = featureNames(tan2009r1)[indPlDistr1], 
-                                       object = tan2009r1),
+                        fnames = featureNames(tan2009r1)[indPlDistr1], 
+                        object = tan2009r1),
                     args = list(
                         fcol = fvarLabels(tan2009r1)[1],
                         xlim = c(min(valuesPCAr1[, 1]), max(valuesPCAr1[, 1])),
