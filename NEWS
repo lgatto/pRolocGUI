@@ -1,3 +1,7 @@
+CHANGES IN VERSION 0.99.6
+-------------------------
+ o support mirroring of PCA plots in pRolocComp [2014-07-22 Tue]
+
 CHANGES IN VERSION 0.99.5
 -------------------------
  o Update to latest knitcitations version and fix vignette
@@ -5,7 +9,7 @@ CHANGES IN VERSION 0.99.5
 
 CHANGES IN VERSION 0.99.4
 -------------------------
- o add function pRolocComp 
+ o add function pRolocComp [2014-06-24 Tue]
 
 CHANGES IN VERSION 0.99.3
 -------------------------
