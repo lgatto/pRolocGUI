@@ -271,6 +271,12 @@ For `pRolocComp` the plot whose appearance is going to altered has to be selecte
 by selecting the appropriate [radio button](#RadioButtons) left of the name of 
 the `MSnSet` instance in the sidebar panel. 
 
+In addition, `pRolocComp` offers the possibility to mirror the PCA plot of the 
+second object. By clicking on `x-axis` below **_mirror 2nd object_** features
+are mirrored along the x-axis, while clicking on `y-axis` mirrors along the
+y-axis. This may be important when you compare experiments whose PCA analysis 
+have different signs. 
+
 <a id="RadioButtons"></a>
 <center><img src="figures/Screenshot_RadioButtons.png" width="30%" alt="" /> 
 </center> <p align="center">Fig. 6: Radio buttons to select `MSnSet` in 

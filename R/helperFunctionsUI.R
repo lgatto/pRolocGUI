@@ -144,12 +144,14 @@
             ## zoom slider for x and y axis
             htmlOutput("xrangeUI"),
             htmlOutput("yrangeUI"),
+            ## mirror second object
             ## link to help page
             htmlOutput("linkPCAUI")
             
         )
     )
 }
+
 
 .pRn2_condTabPCA <- function() {
     conditionalPanel(
@@ -174,6 +176,10 @@
             htmlOutput("xrange2UI"),
             htmlOutput("yrange1UI"),
             htmlOutput("yrange2UI"),
+            ## mirror second object
+            checkboxGroupInput("mirrorObj", label = "mirror 2nd object",
+                         choices = c("x-axis" = "x", "y-axis" = "y"), 
+                         selected = NULL),
             ## link to help page
             htmlOutput("linkPCAUI")
         )
@@ -325,7 +331,7 @@
                         hoverDelay = 100,
                         hoverDelayType = "throttle"
                 ),
-                textOutput("hoverProt2PCA"),                     
+                textOutput("hoverProt2PCA"),      
                 downloadButton("plotPCA2Download", "Download")
             )  
     )
