@@ -277,15 +277,25 @@ test_.fcex <- function() {
 ## START unit test .vPCA
 test_.vPCA <- function() {
     utList <- list(andy2011, tan2009r1)
-    checkEquals(pRolocGUI:::.vPCA(NULL, NULL, NULL, "object1"), NULL)
-    checkEquals(pRolocGUI:::.vPCA(utList, NULL, NULL, "object1"), NULL)
-    checkEquals(pRolocGUI:::.vPCA(utList, 1, NULL, "object1"), NULL)
-    checkEquals(pRolocGUI:::.vPCA(utList, NULL, 1, "object1"), NULL)
-    checkEquals(pRolocGUI:::.vPCA(utList, 1, 2, "object1"), 
-                                            plot2D(andy2011, plot = FALSE))
-    checkEquals(pRolocGUI:::.vPCA(utList, 3, 2, "object1"), 
+    mirX <- -plot2D(andy2011, plot = FALSE)[, 1]
+    mirY <- -plot2D(andy2011, plot = FALSE)[, 2]
+    checkEquals(pRolocGUI:::.vPCA(NULL, NULL, NULL, "object1", FALSE, FALSE), NULL)
+    checkEquals(pRolocGUI:::.vPCA(utList, NULL, NULL, "object1", FALSE, FALSE), NULL)
+    checkEquals(pRolocGUI:::.vPCA(utList, 1, NULL, "object1", FALSE, FALSE), NULL)
+    checkEquals(pRolocGUI:::.vPCA(utList, NULL, 1, "object1", FALSE, FALSE), NULL)
+    checkEquals(pRolocGUI:::.vPCA(utList, 1, 2, "object1", FALSE, FALSE), 
+                    plot2D(andy2011, plot = FALSE))
+    checkEquals(pRolocGUI:::.vPCA(utList, 1, 2, "object1", TRUE, FALSE)[, 1], 
+                mirX)
+    checkEquals(pRolocGUI:::.vPCA(utList, 1, 2, "object1", FALSE, TRUE)[, 2],
+                mirY)
+    checkEquals(pRolocGUI:::.vPCA(utList, 1, 2, "object1", TRUE, TRUE)[, 1], 
+                mirX)
+    checkEquals(pRolocGUI:::.vPCA(utList, 1, 2, "object1", TRUE, TRUE)[, 2],
+                mirY)
+    checkEquals(pRolocGUI:::.vPCA(utList, 3, 2, "object1", FALSE, FALSE), 
                             plot2D(andy2011, dims = c(3, 2), plot = FALSE))
-    checkEquals(pRolocGUI:::.vPCA(utList, 1, 2, "object2"), 
+    checkEquals(pRolocGUI:::.vPCA(utList, 1, 2, "object2", FALSE, FALSE), 
                                             plot2D(tan2009r1, plot = FALSE))
 }
 ## END unit test .vPCA
@@ -498,6 +508,11 @@ test_.rowHTML <- function() {
     ## initially
     valuesPCA <- plot2D(andy2011, fcol=NULL, dims = c(1, 2))
 
+    ## select "x-axis" below "mirror 2nd object"
+    plot2D(andy2011, fcol=NULL, mirrorX = TRUE)
+
+    ## select in addition "y-axis" below "mirror 2nd object"
+    plot2D(andy2011, fcol=NULL, mirrorX = TRUE, mirrorY = TRUE)
     ## select "markers" in colour ("none" in symboltype, 
     ## PC 1 (along x-axis) and 2 (along y-axis), not zoomed)
     plot2D(andy2011, fcol = "markers", dims = c(1, 2), 
