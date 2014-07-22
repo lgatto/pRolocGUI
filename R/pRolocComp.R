@@ -387,9 +387,7 @@ pRolocComp <- function(object) {
                                     .params$PCAn2[1], "object1"))
        
             .valuesPCA2 <- reactive(.vPCA(data$obj, .params$PCAn1[2], 
-                            .params$PCAn2[2], "object2", mirror$x, mirror$y))
-                       
-            output$help <- renderText(c(.valuesPCA2()[1, ], input$mirrorObj, mirror$x, mirror$y))
+                            .params$PCAn2[2], "object2", mirror$x, mirror$y))         
             
             ## selectInput for colours
             output$fcoloursOutput <- renderUI({ 
@@ -942,5 +940,7 @@ pRolocComp <- function(object) {
     
         }
     )
-    runApp(app)    
+    runApp(app)
+    
+    
 }
