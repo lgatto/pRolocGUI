@@ -100,37 +100,42 @@ test_.sI <- function() {
     checkEquals(pRolocGUI:::.sI(NULL, NULL, 1:10, 1:10, 1:10, 1:10), NULL)
     checkEquals(pRolocGUI:::.sI("text", NULL, 1:10, NULL, NULL, NULL), 1:10)
     checkEquals(pRolocGUI:::.sI("cursorPCA", NULL, NULL, 1:10, NULL, NULL), 
-                                                                1:10)
+                1:10)
     checkEquals(pRolocGUI:::.sI("cursorPlotDist", NULL, NULL, NULL, 1:10, NULL), 
-                                                                1:10)
+                1:10)
     checkEquals(pRolocGUI:::.sI("savedSearches", NULL, NULL, NULL, NULL, 1:10), 
-                                                                NULL)
+                NULL)
     checkEquals(pRolocGUI:::.sI("savedSearches", "x", NULL, NULL, NULL, 1:10), 
-                                                                1:10)
-    checkEquals(pRolocGUI:::.sI(c("text", "cursorPCA"), NULL, 1:10, 1:10, NULL, 
-                                                                NULL), 1:10)
-    checkEquals(pRolocGUI:::.sI(c("text", "cursorPCA"), NULL, 1:10, 9:20, NULL, 
-                                                                NULL), 1:20)
-    checkEquals(pRolocGUI:::.sI(c("text", "cursorPCA"), "x", 1:10, 9:20, NULL, 
-                                                                NULL), 1:20)
-    checkEquals(pRolocGUI:::.sI(c("text", "cursorPCA", "savedSearches"), "x", 
-                                            1:10, 9:20, NULL, NULL), 1:20)
-    
-    checkEquals(pRolocGUI:::.sI(c("text", "savedSearches"), "x", 1:10, 9:20, 
-                                            NULL, 100:105), c(1:10, 100:105))
+                1:10)
+    checkEquals(pRolocGUI:::.sI(c("text", "cursorPCA"),
+                                NULL, 1:10, 1:10, NULL, NULL),
+                1:10)
+    checkEquals(pRolocGUI:::.sI(c("text", "cursorPCA"),
+                                NULL, 1:10, 9:20, NULL, NULL),
+                1:20)
+    checkEquals(pRolocGUI:::.sI(c("text", "cursorPCA"),
+                                "x", 1:10, 9:20, NULL, NULL),
+                1:20)
+    checkEquals(pRolocGUI:::.sI(c("text", "cursorPCA", "savedSearches"),
+                                "x", 1:10, 9:20, NULL, NULL),
+                1:20)
+    checkEquals(pRolocGUI:::.sI(c("text", "savedSearches"),
+                                "x", 1:10, 9:20, NULL, 100:105),
+                c(1:10, 100:105))
     checkEquals(pRolocGUI:::.sI(c("text", "cursorPCA", "cursorPlotDist", 
-        "savedSearches"), "x", 1:10, 9:20, 50:60, 45:55), c(1:20, 50:60, 45:49))
-    checkEquals(pRolocGUI:::.sI(c("data"), NULL, NULL, NULL, NULL, NULL, 1:10), 
-                                                                        1:10)
+                                  "savedSearches"), "x", 1:10, 9:20, 50:60, 45:55),
+                c(1:20, 50:60, 45:49))
+    checkEquals(pRolocGUI:::.sI(c("summat"), NULL, NULL, NULL, NULL, NULL, 1:10), 
+                1:10)
 }
 ## END unit test .sI ##
 
 ## START unit test .sIUni ##
 test_.sIUni <- function() {
     checkEquals(pRolocGUI:::.sIUni(NULL, NULL), NULL)
-    checkEquals(pRolocGUI:::.sIUni(NULL, "data"), NULL)
+    checkEquals(pRolocGUI:::.sIUni(NULL, "summat"), NULL)
     checkEquals(pRolocGUI:::.sIUni(1:10, NULL), NULL)
-    checkEquals(pRolocGUI:::.sIUni(1:10, "data"), 1:10)
+    checkEquals(pRolocGUI:::.sIUni(1:10, "summat"), 1:10)
 }
 ## END unit test .sIUni ##
 
@@ -425,14 +430,15 @@ test_.dataSub <- function() {
     inter <- intersect(featureNames(tan2009r1), featureNames(tan2009r2))
     setdiffR1 <- setdiff(featureNames(tan2009r1), inter)
     setdiffR2 <- setdiff(featureNames(tan2009r2), inter)
-    checkEquals(pRolocGUI:::.dataSub(utList)[[1]], tan2009r1)
-    checkEquals(pRolocGUI:::.dataSub(utList)[[2]], tan2009r2)
-    checkEquals(pRolocGUI:::.dataSub(utList, "common")[[1]], tan2009r1[inter])
-    checkEquals(pRolocGUI:::.dataSub(utList, "common")[[2]], tan2009r2[inter])
-    checkEquals(
-        pRolocGUI:::.dataSub(utList, "unique")[[1]], tan2009r1[setdiffR1])
-    checkEquals(
-        pRolocGUI:::.dataSub(utList, "unique")[[2]], tan2009r2[setdiffR2])
+    res <- pRolocGUI:::.dataSub(utList)
+    checkEquals(res[[1]], tan2009r1)
+    checkEquals(res[[2]], tan2009r2)
+    res <- pRolocGUI:::.dataSub(utList, "common")
+    checkEquals(MSnbase:::nologging(res[[1]]), MSnbase:::nologging(tan2009r1[inter, ]))
+    checkEquals(MSnbase:::nologging(res[[2]]), MSnbase:::nologging(tan2009r2[inter, ]))
+    res <- pRolocGUI:::.dataSub(utList, "unique")
+    checkEquals(MSnbase:::nologging(res[[1]]), MSnbase:::nologging(tan2009r1[setdiffR1, ]))
+    checkEquals(MSnbase:::nologging(res[[2]]), MSnbase:::nologging(tan2009r2[setdiffR2, ]))
 }
 ## END unit test for .dataSub ##
 

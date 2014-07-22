@@ -942,7 +942,5 @@ pRolocComp <- function(object) {
     
         }
     )
-    runApp(app)
-    
-    
+    runApp(app)    
 }
