@@ -336,7 +336,7 @@ pRolocComp <- function(object) {
             
             
             
-            ## START: TAB PCA ##            
+            ## START: TAB PCA ##    
             .params <- reactiveValues(
                 colours = c("none", "none"), fcex = c(1, 1), 
                 symbol = c("none", "none"), 
@@ -387,8 +387,10 @@ pRolocComp <- function(object) {
                                     .params$PCAn2[1], "object1"))
        
             .valuesPCA2 <- reactive(.vPCA(data$obj, .params$PCAn1[2], 
-                                    .params$PCAn2[2], "object2"))
+                            .params$PCAn2[2], "object2", mirror$x, mirror$y))
                        
+            output$help <- renderText(c(.valuesPCA2()[1, ], input$mirrorObj, mirror$x, mirror$y))
+            
             ## selectInput for colours
             output$fcoloursOutput <- renderUI({ 
                 .colourPCA(data$obj,
@@ -437,6 +439,23 @@ pRolocComp <- function(object) {
                 .legendPosPCA(data$obj, .params$colours[.ind$params], sel$Obj)
             )
             
+            ## mirror 2nd PCA plot when checkBoxes are respectively selected
+            mirror <- reactiveValues(x = FALSE, y = FALSE)
+            observe({
+                if ("x" %in% input$mirrorObj)
+                    mirror$x <- TRUE
+                else 
+                    mirror$x <- FALSE
+            })
+            
+            observe({
+                if ("y" %in% input$mirrorObj)
+                    mirror$y <- TRUE
+                else 
+                    mirror$y <- FALSE
+            })
+            
+            
             ## Plots and reactive expressions for download
             .PCA1 <- reactive(
                 .plotPCA(obj = data$obj, 
@@ -477,7 +496,7 @@ pRolocComp <- function(object) {
                     legend = input$legendyes, legendpos = input$legendpos,
                     sI = .searchInd2(),
                     cIS = input$chooseIdenSearch,
-                    ind = "object2")
+                    ind = "object2", mX = mirror$x, mY = mirror$y)
             )
             
             ## display 2D-nearest protein for obj2 in PCA plot
@@ -493,7 +512,7 @@ pRolocComp <- function(object) {
                     legend = input$legendyes, legendpos = input$legendpos,
                     sI = .searchInd2(),
                     cIS = input$chooseIdenSearch,
-                    ind = "object2")
+                    ind = "object2", mX = mirror$x, mY = mirror$y)
             )
             
             ## Download Handler for PCA plot

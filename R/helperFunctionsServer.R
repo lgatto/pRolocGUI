@@ -315,14 +315,22 @@
 
 ## START: TAB PCA ##
 ## values PCA
-.vPCA <- function(obj, PCAn1, PCAn2, ind = c("object1", "object2")) {
+.vPCA <- function(obj, PCAn1, PCAn2, ind = c("object1", "object2"), 
+                                                mX = FALSE, mY = FALSE) { 
     if (length(obj) != 0) {
         ind <- match.arg(ind)
         obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
         if (!is.null(PCAn1) && !is.null(PCAn2)) {
             ans <- plot2D(obj, fcol=NULL,
                     dims=c(as.numeric(PCAn1), as.numeric(PCAn2)), 
-                    plot=FALSE)
+                    mirrorX = mX, mirrorY = mY, plot=FALSE)
+            if (mX && !mY)
+                ans[, 1] <- -ans[, 1]
+            if (!mX && mY)
+                ans[, 2] <- -ans[, 2]
+            if (mX && mY) 
+                ans <- -ans
+            
             return(ans)
         }
     }
@@ -444,7 +452,8 @@
 ## FeaturesOfInterest using highlightOnPlot
 .plotPCA <- function(obj, fcolours, fcex, xrange, yrange,
                      sb, PCAn1, PCAn2, legend = c(FALSE, TRUE), legendpos,
-                     sI, cIS, ind = c("object1", "object2")) {
+                     sI, cIS, ind = c("object1", "object2"), 
+                     mX = FALSE, mY = FALSE) {
     if (length(obj) != 0) {
         ind <- match.arg(ind)
         obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
@@ -475,7 +484,8 @@
                         ylim = c(yrange[1], yrange[2]),
                         dims = c(as.numeric(PCAn1),
                                 as.numeric(PCAn2)),
-                        cex = fcex)
+                        cex = fcex,
+                        mirrorX = mX, mirrorY = mY)
             else
                 ## create plot2D and assign reactive variables to 
                 ## arguments take input$fsymboltype for symboltype
@@ -484,7 +494,8 @@
                         ylim = c(yrange[1], yrange[2]),
                         dims = c(as.numeric(PCAn1),
                                 as.numeric(PCAn2)),
-                        cex = fcex)
+                        cex = fcex,
+                        mirrorX = mX, mirrorY = mY)
         }
         
         if (!is.null(legend))
@@ -507,10 +518,12 @@
                         ylim = c(yrange[1], 
                                 yrange[2]),
                         dims = c(as.numeric(PCAn1),
-                                as.numeric(PCAn2))),
-                        col = ifelse(fcolours == "none", "steelblue", "black"),
-                        cex = 1.5,
-                        lwd = ifelse(fcolours == "none", 2, 1.5))
+                                as.numeric(PCAn2)),
+                        mirrorX = mX, mirrorY = mY
+                        ),
+                    col = ifelse(fcolours == "none", "steelblue", "black"),
+                    cex = 1.5,
+                    lwd = ifelse(fcolours == "none", 2, 1.5))
         }
     }
 }
