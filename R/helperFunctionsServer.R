@@ -523,7 +523,7 @@
                         ),
                     col = ifelse(fcolours == "none", "steelblue", "black"),
                     cex = 1.5,
-                    lwd = ifelse(fcolours == "none", 2, 1.5))
+                    lwd = 3)
         }
     }
 }
@@ -632,7 +632,7 @@
                 plotDist(objPlotDist, ylim = ylim)
                 
                 if (!is.null(sI) && length(sI) > 0)
-                    apply(X = exprs(obj[sI, ]), MARGIN = 1, FUN = lines)
+                    apply(X = exprs(obj[sI, ]), MARGIN = 1, FUN = lines, lwd = 3)
                 
                 title(levPlotDistOrg[i])
             } ## end for loop
