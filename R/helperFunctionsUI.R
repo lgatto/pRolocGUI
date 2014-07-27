@@ -307,7 +307,7 @@
             hoverId = "PCAhover", hoverDelay = 100,
             hoverDelayType = "throttle"
         ),
-        textOutput("hoverProtPCAUI"),
+        tableOutput("hoverProtPCAUI"),
         downloadButton("plotPCADownload","Download Plot")
     )
 }
@@ -321,8 +321,8 @@
                         hoverDelay = 100,
                         hoverDelayType = "throttle"
                 ),
-                textOutput("hoverProt1PCA"),
-                downloadButton("plotPCA1Download", "Download")
+                downloadButton("plotPCA1Download", "Download"),
+                helpText("")
             ),
             column(width = 6,
                 plotOutput("PCA2", width = "100%",height="600px",
@@ -330,10 +330,12 @@
                         hoverId = "PCA2hover",
                         hoverDelay = 100,
                         hoverDelayType = "throttle"
-                ),
-                textOutput("hoverProt2PCA"),      
-                downloadButton("plotPCA2Download", "Download")
-            )  
+                ),   
+                downloadButton("plotPCA2Download", "Download"),
+                helpText("")
+            ),
+            tableOutput("hoverProt1PCA"),
+            tableOutput("hoverProt2PCA")
     )
 }
 
@@ -347,7 +349,7 @@
             hoverId = "plotDisthover", hoverDelay = 100,
             hoverDelayType = "throttle"
         ),
-        textOutput("hoverProtPlotDistUI"),
+        tableOutput("hoverProtPlotDistUI"),
         downloadButton("plotDistDownload","Download Plot")
     )
 }
@@ -363,8 +365,8 @@
                 hoverId = "plotDist1hover", hoverDelay = 100,
                 hoverDelayType = "throttle"
             ),
-            textOutput("hoverPlotDist1"),
-            downloadButton("plotDist1Download", "Download")
+            downloadButton("plotDist1Download", "Download"),
+            helpText("")
         ),
         column(6,
             plotOutput(
@@ -374,9 +376,11 @@
                 hoverId = "plotDist2hover", hoverDelay = 100,
                 hoverDelayType = "throttle"
             ),
-            textOutput("hoverPlotDist2"),
-            downloadButton("plotDist2Download","Download")
-        )
+            downloadButton("plotDist2Download","Download"),
+            helpText("")
+        ),
+        tableOutput("hoverPlotDist1"),
+        tableOutput("hoverPlotDist2")
     )
 }
 

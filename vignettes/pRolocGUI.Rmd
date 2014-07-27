@@ -535,7 +535,7 @@ selected).
 If you decide to identify proteins in the PCA plot, change to the tab
 **_PCA_** and start clicking on features in the PCA plot (tip: the
 zoom function may be of great expedient). When hovering over the PCA plot 
-the name of the nearest feature will be displayed below the plot. 
+the feature meta-data of the nearest feature will be displayed below the plot. 
 The check box will be checked when you start clicking in the PCA plot. 
 As soon as you have clicked on a feature it will be marked with a 
 black circle around it (or a blueish if `colour` is set to `none`).
@@ -591,7 +591,8 @@ In principle the search for features in protein profiles is in
 accordance with the search in the PCA plot. Though, bear in mind that
 you are only able to select features when `1` is selected in the
 drop-down list **_number of plots to display_**. Hovering over the 
-plot will display the nearest protein below the plot. Clicking on (or near)
+plot will display the feature meta-data of the nearest protein below the plot. 
+Clicking on (or near)
 the points in the plot will select, clicking another time will
 deselect features.  The features will only be shown when the check box
 left of **_protein profiles_** is activated. Note, that you can only 
