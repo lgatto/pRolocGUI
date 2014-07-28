@@ -2,6 +2,8 @@ CHANGES IN VERSION 0.99.7
 -------------------------
  o display feature meta-data instead of protein name when hovering
    [2014-07-27 Tue]
+ o better feature highlighting [2014-07-27 Tue]
+ o only 1 vignette [2014-07-27 Tue]
 
 CHANGES IN VERSION 0.99.6
 -------------------------

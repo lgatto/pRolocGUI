@@ -1,7 +1,6 @@
 <!--
 %\VignetteEngine{knitr::knitr}
-%\VignetteIndexEntry{pRolocVis application}
-%\VignetteIndexEntry{pRolocComp application}
+%\VignetteIndexEntry{pRolocVis and pRolocComp application}
 %\VignetteKeywords{Visualisation, Organelle, Spatial, Proteomics, Shiny}
 %\VignettePackage{pRolocGUI}
 -->
