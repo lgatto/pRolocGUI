@@ -78,8 +78,8 @@ pRolocVis <- function(object) {
     app <- list(  
         ui = 
             bootstrapPage( 
-                fluidPage(
-                    responsive = TRUE,
+                fluidRow(
+                    #responsive = TRUE,
                     ## Application title
                     .pRn1_setTitlePanel(),
                     ## Sidebar Panel
@@ -93,7 +93,7 @@ pRolocVis <- function(object) {
                         .pR_condTabfData(),
                         .pR_condTabpData(),
                         .pR_condTabSearch(),
-                        width = 3
+                        width = 2
                     ),
                     ## Main Panel
                     mainPanel(
@@ -106,8 +106,8 @@ pRolocVis <- function(object) {
                             .pR_tabPanelpData(),
                             .pR_tabPanelSearch(),
                             id = "tab1"
-                        ),
-                        width = 9
+                        )#,
+                        #width = 10
                     )
                 )
             ),
@@ -204,8 +204,8 @@ pRolocVis <- function(object) {
             ## .dI (data Input)
             .dI <- reactive({
                 if (!is.null(input$data)) {
-                    .lenObject <- length(.namesObj(object))
-                    .indObject <- which(input$data == .namesObj(object))
+                    .lenObject <- length(.namesObj(object, upload = TRUE))
+                    .indObject <- which(input$data == .namesObj(object, upload=TRUE))
                     ## upload
                     if (.lenObject == .indObject) {
                         if (inherits(.dIownData(), "MSnSet"))
@@ -332,7 +332,7 @@ pRolocVis <- function(object) {
             ## and .prot$text
             observe({
                     .prot$PCA <- .obsProtClick(
-                        .prot$PCA, minDist2dProtPCA(), input$PCAclick)
+                        .prot$PCA, .minDist2dProtPCA(), input$PCAclick)
             })
             
             observe({
@@ -442,7 +442,7 @@ pRolocVis <- function(object) {
             )
                 
             ## reactive expressions for search based on cursor input for PCA
-            minDist2dProtPCA <- reactive(
+            .minDist2dProtPCA <- reactive(
                 ## will be empty initially
                 if (!is.null(input$PCAclick) && !is.null(.valuesPCA())) {
                     ## compute 2D distances from click input to each component 
@@ -456,18 +456,21 @@ pRolocVis <- function(object) {
                 }
             )
             
-            minDist2dProtPCAHover <- reactive(
+            .minDist2dProtPCAHover <- reactive(
                 if (!is.null(input$PCAhover) && !is.null(.valuesPCA())) {
                     .minDistPCA(inputx = input$PCAhover$x, 
                                 inputy = input$PCAhover$y,
                                 valuesx = .valuesPCA()[,1], 
                                 valuesy = .valuesPCA()[,2],
-                                name = TRUE)
+                                name = FALSE)
                 }
             )
             
             ## display name of 2D-nearest protein in PCA plot
-            output$hoverProtPCAUI <- renderText(minDist2dProtPCAHover())
+            output$hoverProtPCAUI <- renderTable(
+                if (!is.null(.minDist2dProtPCAHover()))
+                    fData(.dI()[[1]])[.minDist2dProtPCAHover(), ]
+            )
             ## END: PCA PLOT ##
 
             ## TAB: PLOTDIST ##            
@@ -515,12 +518,14 @@ pRolocVis <- function(object) {
                                 org = .listParams$levPlotDistOrg[1],
                                 inputx = input$plotDisthover$x,
                                 inputy = input$plotDisthover$y,
-                                name = TRUE)[1]
+                                name = FALSE)[1]
                 }
             })
             
-            output$hoverProtPlotDistUI <- renderText(
-                    .minDistProtPlotDistHover()
+            ## display name of 2D-nearest protein in plotDist plot
+            output$hoverProtPlotDistUI <- renderTable(
+                if (!is.null(.minDistProtPlotDistHover()))
+                    fData(.dI()[[1]])[.minDistProtPlotDistHover(),]
             )
             
             ## levels for plotDist to choose to plot

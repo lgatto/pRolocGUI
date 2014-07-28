@@ -12,7 +12,7 @@ pRolocComp <- function(object) {
     
     app <- list(
         ui = bootstrapPage(
-                fluidRow( # was fluidPage
+                fluidRow( 
                     ## Application title
                     .pRn2_setTitlePanel(),
                     ## Sidebar Panel
@@ -482,7 +482,12 @@ pRolocComp <- function(object) {
             )            
             
             ## display 2D-nearest protein for obj1 in PCA plot
-            output$hoverProt1PCA <- renderText(minDist2dProt1PCAHover())
+            output$hoverProt1PCA <- renderTable(
+                if (!is.null(minDist2dProt1PCAHover()))
+                    fData(data$obj[[1]])[minDist2dProt1PCAHover(), ]
+    
+            )
+        
             
             .PCA2 <- reactive(
                 .plotPCA(obj = data$obj, 
@@ -498,7 +503,10 @@ pRolocComp <- function(object) {
             )
             
             ## display 2D-nearest protein for obj2 in PCA plot
-            output$hoverProt2PCA <- renderText(minDist2dProt2PCAHover())
+            output$hoverProt2PCA <- renderTable(
+                if (!is.null(minDist2dProt2PCAHover()))
+                    fData(data$obj[[2]])[minDist2dProt2PCAHover(),]
+            )
             
             output$PCA2 <- renderPlot(                
                 .plotPCA(obj = data$obj, 
@@ -553,7 +561,7 @@ pRolocComp <- function(object) {
                 if (!is.null(input$PCA1hover) && !is.null(.valuesPCA1())) 
                     .minDistPCA(inputx = input$PCA1hover$x, 
                         inputy = input$PCA1hover$y, valuesx = .valuesPCA1()[,1], 
-                        valuesy = .valuesPCA1()[,2], name = TRUE)
+                        valuesy = .valuesPCA1()[,2], name = FALSE)
             )
                 
             ## compute name of 2D-nearest protein for obj2 in PCA plot (click)
@@ -573,7 +581,7 @@ pRolocComp <- function(object) {
                 if (!is.null(input$PCA2hover) && !is.null(.valuesPCA2())) {
                     .minDistPCA(inputx = input$PCA2hover$x, 
                         inputy = input$PCA2hover$y, valuesx = .valuesPCA2()[,1], 
-                        valuesy = .valuesPCA2()[,2], name = TRUE)
+                        valuesy = .valuesPCA2()[,2], name = FALSE)
                 }
             )
             ## END: TAB PCA ## 
@@ -651,11 +659,15 @@ pRolocComp <- function(object) {
                             inputx = input$plotDist1hover$x,
                             inputy = input$plotDist1hover$y,
                             ind = "object1",
-                            name = TRUE)[1]
+                            name = FALSE)[1]
                 }
             })
 
-            output$hoverPlotDist1 <- renderText(.minPlotDist1Hover())
+            ## display 2D-nearest protein for obj1 in plotDist plot
+            output$hoverPlotDist1 <- renderTable(
+                if (!is.null(.minPlotDist1Hover()))
+                    fData(data$obj[[1]])[.minPlotDist1Hover(), ]
+            )
 
             .minPlotDist2Hover <- reactive({
                 if (length(data$obj) != 0 && !is.null(input$plotDist2hover$x)) {
@@ -667,12 +679,16 @@ pRolocComp <- function(object) {
                             inputx = input$plotDist2hover$x,
                             inputy = input$plotDist2hover$y,
                             ind = "object1",
-                            name = TRUE)[1]
+                            name = FALSE)[1]
                 }
             })
 
-            output$hoverPlotDist2 <- renderText(.minPlotDist2Hover())
-
+            ## display 2D-nearest protein for obj2 in plotDist plot
+            output$hoverPlotDist2 <- renderTable(
+                if (!is.null(.minPlotDist2Hover()))
+                    fData(data$obj[[2]])[.minPlotDist2Hover(), ]
+            )
+            
             ## select fvarLabels or "all" for all features UI    
             output$allOrganellesUI <- renderUI(
                 .featuresPlotDist(data$obj, sel$Obj))
