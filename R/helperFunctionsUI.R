@@ -244,7 +244,9 @@
             htmlOutput("initSaveUI"),
             ## action Button
             htmlOutput("saveLists2SRUI"),
-            htmlOutput("linkSearchUI")
+            htmlOutput("checkBoxSaSe"),
+            htmlOutput("linkSearchUI"),
+            textOutput("help")
         )
     )
 }

@@ -280,7 +280,8 @@ pRolocVis <- function(object) {
             .searchInd <- reactive(
                     .sI(input$chooseIdenSearch, input$tagSelectList, .prot$text, 
                         .prot$PCA, .prot$plotDist, 
-                        .whichFOI(.dI(), .pR_SR$foi, .whichN()))
+                        .indSavedSearch())
+                       # .whichFOI(.dI(), .pR_SR$foi, .whichN()))
             )
             
             ## reset button
@@ -648,6 +649,21 @@ pRolocVis <- function(object) {
             ## text field to assign name to search results
             ## display information about selected FoI
             .whichN <- reactive(.whichTag(input$tagSelectList, .pR_SR$foi))
+            
+            output$checkBoxSaSe <- renderUI({
+                if (!is.null(input$tagSelectList)) 
+                    checkboxGroupInput("selCB", "display", choices = description(.pR_SR$foi))
+                
+            })
+            
+            .indSavedSearch <- reactive({
+                .indSR <- na.omit(match(input$selCB, description(.pR_SR$foi)))
+                .protNames <- unlist(lapply(foi(.pR_SR$foi)[.indSR], foi))
+                .protNames <- unique(.protNames)
+                match(.protNames, rownames(.dI()[[1]]))
+            })
+            
+            output$help <- renderText(.indSavedSearch())
             
             output$infoSavedSearchUI <- renderText({
                 if (length(.dI()) != 0 && !is.null(.pR_SR$foi) && 
