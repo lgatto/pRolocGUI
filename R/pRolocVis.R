@@ -663,8 +663,6 @@ pRolocVis <- function(object) {
                 match(.protNames, rownames(.dI()[[1]]))
             })
             
-            output$help <- renderText(.indSavedSearch())
-            
             output$infoSavedSearchUI <- renderText({
                 if (length(.dI()) != 0 && !is.null(.pR_SR$foi) && 
                         length(.pR_SR$foi) != 0) {
