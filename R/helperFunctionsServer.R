@@ -719,10 +719,11 @@
 
 ## selectInput for collection of features to choose between in tab search
 .tagListSearch <- function(coll) {
-    if(length(coll) != 0)
-        selectInput("tagSelectList", "Select search result", 
-            choices = description(coll)
-        )
+    if (!is.null(coll)) 
+        if(length(coll) != 0)
+            selectInput("tagSelectList", "Display information", 
+                choices = description(coll)
+            )
 }
 
 ## text Input to enter description for new features of interest
@@ -738,7 +739,7 @@
             actionButton("saveLists2SR",
                          "Create new features of interest")
         else
-            return("name already exists, choose another name")
+            return("name exists already")
     }   
 }
 
