@@ -268,7 +268,8 @@
 }
 
 ## checkBox helper function for Display selection
-.checkBoxdSelect <- function(dPCA, dPlotDist, dText, dData = NULL, comp = FALSE) {
+.checkBoxdSelect <- function(dPCA, dPlotDist, dSaSe, dText, dData = NULL, 
+                                                                comp = FALSE) {
     choices <- c("PCA" = "cursorPCA",
                    "protein profiles" = "cursorPlotDist",
                    "saved searches" = "savedSearches",
@@ -279,7 +280,7 @@
     checkboxGroupInput("chooseIdenSearch", 
         label = "",
         choices = choices,
-        selected = c(dPCA, dPlotDist, dText, dData)
+        selected = c(dPCA, dPlotDist, dSaSe, dText, dData)
     )
 }
 
@@ -453,7 +454,7 @@
 .plotPCA <- function(obj, fcolours, fcex, xrange, yrange,
                      sb, PCAn1, PCAn2, legend = c(FALSE, TRUE), legendpos,
                      sI, cIS, ind = c("object1", "object2"), 
-                     mX = FALSE, mY = FALSE) {
+                     mX = FALSE, mY = FALSE, listSaSe = list()) {
     if (length(obj) != 0) {
         ind <- match.arg(ind)
         obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
@@ -524,6 +525,27 @@
                     col = ifelse(fcolours == "none", "steelblue", "black"),
                     cex = 1.5,
                     lwd = 3)
+        }
+        
+        if (length(listSaSe) > 0 && length(cIS)) {
+            for (i in 1:length(listSaSe)) {
+                foiSaSe <- FeaturesOfInterest(description = "hoP",
+                                fnames = featureNames(obj)[listSaSe[[i]]])
+                highlightOnPlot(obj, foiSaSe, 
+                    args = list(
+                        fcol = fvarLabels(obj)[1],
+                        xlim = c(xrange[1], 
+                                 xrange[2]),
+                        ylim = c(yrange[1],
+                                 yrange[2]),
+                        dims = c(as.numeric(PCAn1), 
+                                 as.numeric(PCAn2)),
+                        mirrorX = mX, mirrorY = mY
+                    ),
+                    cex = 1.5, lwd = 3, pch = 21, 
+                    col = getStockcol()[i],
+                    bg = paste0(getStockcol()[i], "50"))  
+            }
         }
     }
 }
