@@ -665,7 +665,7 @@ pRolocVis <- function(object) {
             .indSavedSearchlist <- reactive({
                 .indSR <- na.omit(match(input$selCB, description(.pR_SR$foi)))
                 .protNames <- lapply(foi(.pR_SR$foi)[.indSR], foi)
-                lapply(.protNames, match, rownames(dunkley2006))
+                lapply(.protNames, match, rownames(object))
             })
             
             .indSavedSearch <- reactive({unique(unlist(.indSavedSearchlist()))})
