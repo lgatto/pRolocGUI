@@ -237,13 +237,12 @@
             h4("Searches"),
             helpText(""),
             htmlOutput("savedSearchTextUI"),
-            ## selectInput for choosing between the different 
-            ## search Results
-            htmlOutput("tagsListSearchUI"),
             ## initilialize search
             htmlOutput("initSaveUI"),
             ## action Button
             htmlOutput("saveLists2SRUI"),
+            br(""),
+            htmlOutput("multSaSe"),
             htmlOutput("linkSearchUI")
         )
     )
@@ -404,6 +403,9 @@
 
 .pR_tabPanelSearch <- function() {
     tabPanel("search",
+             ## selectInput for choosing between the different 
+             ## search Results
+             htmlOutput("tagsListSearchUI"),
              verbatimTextOutput("infoSavedSearchUI")
     )
 }

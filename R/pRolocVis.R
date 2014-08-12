@@ -255,7 +255,8 @@ pRolocVis <- function(object) {
             ## START OF SEARCH IMPLEMENTATION ##
             
             ## check boxes by clicking on plots PCA and plotDist
-            dSelect <- reactiveValues(PCA = NULL, plotDist = NULL, text = NULL)
+            dSelect <- reactiveValues(PCA = NULL, plotDist = NULL, SaSe = NULL, 
+                                      text = NULL)
             
              observe({
                 dSelect$PCA <- .selClick(
@@ -265,6 +266,7 @@ pRolocVis <- function(object) {
                     dSelect$plotDist, input$plotDistclick, 
                     .prot$plotDist, FALSE
                 )
+                dSelect$SaSe <- ifelse(input$selCB > 0, "savedSearches", NULL)
                 dSelect$text <- .selButton(
                     dSelect$text, input$saveText, input$resetMult, 
                     .prot$text
@@ -272,15 +274,15 @@ pRolocVis <- function(object) {
             })
      
             output$checkBoxUI <- renderUI(
-                .checkBoxdSelect(dSelect$PCA, dSelect$plotDist, dSelect$text)
+                .checkBoxdSelect(dSelect$PCA, dSelect$plotDist, dSelect$SaSe, dSelect$text)
             )
                     
             ## reactive expression to forward indices to plot2D, plotDist and 
             ## tabs quantitation and feature meta-data
             .searchInd <- reactive(
                     .sI(input$chooseIdenSearch, input$tagSelectList, .prot$text, 
-                        .prot$PCA, .prot$plotDist, 
-                        .whichFOI(.dI(), .pR_SR$foi, .whichN()))
+                        .prot$PCA, .prot$plotDist, .indSavedSearch())
+                       # .whichFOI(.dI(), .pR_SR$foi, .whichN()))
             )
             
             ## reset button
@@ -407,7 +409,8 @@ pRolocVis <- function(object) {
                         legendpos = input$legendpos,
                         sI = .searchInd(),
                         cIS = input$chooseIdenSearch,
-                        ind = "object1"
+                        ind = "object1",
+                        listSaSe = .indSavedSearchlist()
                     )
                 )
             
@@ -426,7 +429,8 @@ pRolocVis <- function(object) {
                         legendpos = input$legendpos,
                         sI = .searchInd(),
                         cIS = input$chooseIdenSearch,
-                        ind = "object1"
+                        ind = "object1",
+                        listSaSe = .indSavedSearchlist()
                 )
             )
             
@@ -570,7 +574,6 @@ pRolocVis <- function(object) {
                )
             )
             
-            
             output$plotDistDownload <- downloadHandler(
                 filename = function() {
                     paste(input$data, "-plotDist-", Sys.Date(), ".jpg", sep="")
@@ -649,9 +652,27 @@ pRolocVis <- function(object) {
             ## display information about selected FoI
             .whichN <- reactive(.whichTag(input$tagSelectList, .pR_SR$foi))
             
+            selected <- reactiveValues(SaSe = NULL)
+            observe(selected$SaSe <- input$selCB)
+            
+            output$multSaSe <- renderUI({
+                if (length(.pR_SR$foi) > 0) 
+                    selectInput(inputId = "selCB", label = "display", 
+                        choices = description(.pR_SR$foi), multiple = TRUE,
+                        selected = selected$SaSe)
+            })
+            
+            .indSavedSearchlist <- reactive({
+                .indSR <- na.omit(match(input$selCB, description(.pR_SR$foi)))
+                .protNames <- lapply(foi(.pR_SR$foi)[.indSR], foi)
+                lapply(.protNames, match, rownames(object))
+            })
+            
+            .indSavedSearch <- reactive({unique(unlist(.indSavedSearchlist()))})
+            
             output$infoSavedSearchUI <- renderText({
                 if (length(.dI()) != 0 && !is.null(.pR_SR$foi) && 
-                        length(.pR_SR$foi) != 0) {
+                        length(.pR_SR$foi) != 0 && !is.null(.whichN())) {
                     showFOI <- .showFOI(.pR_SR$foi, .dI(), .whichN(), FALSE)
                     paste0(showFOI, sep = "\n", collapse = "")
                 } else
