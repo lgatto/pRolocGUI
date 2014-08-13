@@ -461,9 +461,9 @@ class `FeaturesOfInterest` or `FoICollection` (enter
 
 In case this objects exists it will automatically be loaded to
 `pRolocVis`/`pRolocComp` and its content is displayed in the tab **_search_**. 
-Use the drop-down list in the sidebar panel to browse through the
-different features of interest in case the object is of class
-`FoICollection`.
+Use the drop-down list in the main panel to browse through the
+different features of the `FoICollection`. To select features and display them
+in multiple tabs add them to the field in the multiple drow-down list.
 
 If no object called `pRolocGUI_SearchResults` exists in the global
 environment you still have the possibility to assign `FeaturesOfInterest`
@@ -620,10 +620,11 @@ load the selected features of the class `FeaturesOfInterest`. These
 will be displayed in the PCA plot, in the plots for protein profiles
 (depending on the displayed features) and will be available in the
 tabs **_quantitation_** and **_feature meta-data_** for information
-retrieval.  If there is an `FoICollection` loaded change the selected
-search result in the drop-down list **_Search result_** in the tab
-**_search_**; thus accordingly altering the selected features in the
-*Display selection* widget context.
+retrieval.  Add `FeaturesOfInterest` by clicking on the respective features in 
+the tab **_search_** in the multiple drop-down list; thus accordingly 
+altering the selected features in the *Display selection* widget context. Each
+`FeaturesOfInterest`instance will be highlighted in a different colour to 
+distinguish easily between them.
 
 In `pRolocVis`/`pRolocComp` there is no functionality implemented to remove 
 features from the object `pRolocGUI_SearchResults` in the global environment. 

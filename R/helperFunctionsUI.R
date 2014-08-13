@@ -406,7 +406,8 @@
              ## selectInput for choosing between the different 
              ## search Results
              htmlOutput("tagsListSearchUI"),
-             verbatimTextOutput("infoSavedSearchUI")
+             verbatimTextOutput("infoSavedSearchUI"),
+             htmlOutput("help")
     )
 }
 
