@@ -356,7 +356,7 @@
 .pRn2_tabPanelProteinProfiles <- function() {
     tabPanel(
         "protein profiles",
-        column(6,
+        column(width = 6,
             plotOutput(
                 "plotDist1UI", 
                 width="100%", height="800px",
@@ -367,7 +367,7 @@
             downloadButton("plotDist1Download", "Download"),
             helpText("")
         ),
-        column(6,
+        column(width = 6,
             plotOutput(
                 "plotDist2UI",
                 width="100%", height="800px",

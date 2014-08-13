@@ -876,7 +876,6 @@ pRolocComp <- function(object) {
             
             .indSavedSearch2 <- reactive({unique(unlist(.indSavedSearchlist2()))})
             
-            output$help <- renderText(c(.indSavedSearch2()))
             ## text field to assign name to search results
             ## display information about selected FoI
             .whichN <- reactive(.whichTag(input$tagSelectList, .pR_SR$foi))
