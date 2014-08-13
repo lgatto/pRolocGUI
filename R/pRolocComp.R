@@ -146,6 +146,10 @@ pRolocComp <- function(object) {
             })
             
             observe({
+                dSelect$SaSe <- ifelse(input$selCB > 0, "savedSearches", NULL)    
+            })
+            
+            observe({
                 dSelect$summat <- .selButton(
                     dSelect$summat, input$saveSumMat, input$resetMult, 
                     c(.prot$summat, .prot$summatu1, .prot$summatu2), "summat")
@@ -153,8 +157,8 @@ pRolocComp <- function(object) {
             
             ## input$chooseIdenSelect
             output$checkBoxUI <- renderUI(
-                .checkBoxdSelect(dSelect$PCA, dSelect$plotDist, dSelect$text, 
-                    dSelect$summat, TRUE)
+                .checkBoxdSelect(dSelect$PCA, dSelect$plotDist, dSelect$SaSe, 
+                    dSelect$text, dSelect$summat, TRUE)
             )
             
             ## reactive expression which contains all feature names for the 
@@ -164,7 +168,7 @@ pRolocComp <- function(object) {
                     tagSelectList = input$tagSelectList, 
                     protText = .prot$text, protPCA = .prot$PCA, 
                     protPlotDist = .prot$plotDist,  
-                    protSearch = .fnamesFOI(.pR_SR$foi)[[.whichN()]],
+                    protSearch = unlist(.indSavedSearchReac()),
                     protData = .prot$summat
                 )
             )
@@ -465,7 +469,8 @@ pRolocComp <- function(object) {
                     legend = input$legendyes, legendpos = input$legendpos,
                     sI = .searchInd1(),
                     cIS = input$chooseIdenSearch,
-                    ind = "object1")
+                    ind = "object1",
+                    listSaSe = .indSavedSearchlist1())
             )
             
             output$PCA1 <- renderPlot(
@@ -478,7 +483,8 @@ pRolocComp <- function(object) {
                     legend = input$legendyes, legendpos = input$legendpos,
                     sI = .searchInd1(),
                     cIS = input$chooseIdenSearch,
-                    ind = "object1")
+                    ind = "object1",
+                    listSaSe = .indSavedSearchlist1())
             )            
             
             ## display 2D-nearest protein for obj1 in PCA plot
@@ -499,7 +505,8 @@ pRolocComp <- function(object) {
                     legend = input$legendyes, legendpos = input$legendpos,
                     sI = .searchInd2(),
                     cIS = input$chooseIdenSearch,
-                    ind = "object2", mX = mirror$x, mY = mirror$y)
+                    ind = "object2", mX = mirror$x, mY = mirror$y,
+                    listSaSe = .indSavedSearchlist2())
             )
             
             ## display 2D-nearest protein for obj2 in PCA plot
@@ -518,7 +525,8 @@ pRolocComp <- function(object) {
                     legend = input$legendyes, legendpos = input$legendpos,
                     sI = .searchInd2(),
                     cIS = input$chooseIdenSearch,
-                    ind = "object2", mX = mirror$x, mY = mirror$y)
+                    ind = "object2", mX = mirror$x, mY = mirror$y,
+                    listSaSe = .indSavedSearchlist2())
             )
             
             ## Download Handler for PCA plot
@@ -839,6 +847,36 @@ pRolocComp <- function(object) {
                     .unionFeat(), input$saveLists2SR, input$savedSearchText)
             }) 
 
+            selected <- reactiveValues(SaSe = NULL)
+            observe(selected$SaSe <- input$selCB)
+            
+            output$multSaSe <- renderUI({
+                if (length(.pR_SR$foi) > 0) 
+                    selectInput(inputId = "selCB", label = "display", 
+                            choices = description(.pR_SR$foi), multiple = TRUE,
+                            selected = selected$SaSe)
+            })
+            
+            .indSavedSearchReac <- reactive({
+                .indSR <- na.omit(match(input$selCB, description(.pR_SR$foi)))
+                lapply(foi(.pR_SR$foi)[.indSR], foi)
+                
+            })
+            
+            .indSavedSearchlist1 <- reactive({
+                lapply(.indSavedSearchReac(), match, rownames(data$obj[[1]]))
+                
+            })
+            
+            .indSavedSearch1 <- reactive({unique(unlist(.indSavedSearchlist1()))})
+            
+            .indSavedSearchlist2 <- reactive({
+                lapply(.indSavedSearchReac(), match, rownames(data$obj[[2]]))
+            })
+            
+            .indSavedSearch2 <- reactive({unique(unlist(.indSavedSearchlist2()))})
+            
+            output$help <- renderText(c(.indSavedSearch2()))
             ## text field to assign name to search results
             ## display information about selected FoI
             .whichN <- reactive(.whichTag(input$tagSelectList, .pR_SR$foi))
