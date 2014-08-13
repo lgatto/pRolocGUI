@@ -507,7 +507,7 @@
                     where = legendpos,
                     bty = "n", cex = 1)
 
-        if (length(sI) && length(cIS)) {
+        if (length(na.exlude(sI)) && length(cIS)) {
             foiPCA <- FeaturesOfInterest(description = "hoP",
                                         fnames = featureNames(obj)[sI],
                                         object = obj)
