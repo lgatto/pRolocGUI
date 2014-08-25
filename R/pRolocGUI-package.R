@@ -15,7 +15,7 @@
 #'@author {Thomas Naake and Laurent Gatto \cr
 #'Maintainer: Thomas Naake <thomasnaake@@gmx.de>
 #'}
-#'@seealso \code{\link[pRoloc]{pRoloc-tutorial}}
+#'@seealso 
 #'\code{\link[pRolocdata]{pRolocdata}}
 #'\code{\link[MSnbase]{FeaturesOfInterest-class}}
 #'@examples \dontrun{pRolocGUI()}
