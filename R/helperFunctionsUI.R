@@ -84,6 +84,7 @@
     ## Panel showing up when tab 'protein profiles' 
     ## is selected
     conditionalPanel(
+<<<<<<< HEAD
       condition = "input.tab1 == 'protein profiles'",
       hr(),
       h4("Display"),
@@ -105,6 +106,41 @@
       htmlOutput("organelleAllUI"),
       htmlOutput("numberPlotDistUI")
       ),
+=======
+        condition = "input.tab1 == 'feature meta-data'",
+        wellPanel(
+            htmlOutput("fDataRadioUI"),
+            htmlOutput("linkfDataUI"))
+    )
+}
+
+.pR_condTabpData <- function() {
+    conditionalPanel(
+        condition = "input.tab1 == 'sample meta-data'",
+        htmlOutput("linkpDataUI")
+    )
+}
+
+.pR_condTabSearch <- function() {
+    conditionalPanel(
+        condition="input.tab1 == 'search'",
+        wellPanel(
+            h4("Searches"),
+            helpText(""),
+            htmlOutput("savedSearchTextUI"),
+            ## initilialize search
+            htmlOutput("initSaveUI"),
+            ## action Button
+            htmlOutput("saveLists2SRUI"),
+            br(""),
+            htmlOutput("multSaSe"),
+            htmlOutput("linkSearchUI")
+        )
+    )
+}
+
+.pR_condTabComp <- function() {
+>>>>>>> master
     conditionalPanel(
       condition="input.tab1 == 'search'",
       h4("Display"),
@@ -153,6 +189,7 @@
         plotOutput("plotdist", width="100%", height="800px",
             clickId = "plotDistclick"),
         downloadButton("plotDistDownload","Download Plot")
+<<<<<<< HEAD
         ),
       tabPanel("quantitation", 
         dataTableOutput("MSnExprs")
@@ -171,3 +208,71 @@
     #actionButton("closebutton", "Stop pRolocGUI"), 
     width=9)
 }
+=======
+    )
+}
+
+.pRn2_tabPanelProteinProfiles <- function() {
+    tabPanel(
+        "protein profiles",
+        column(width = 6,
+            plotOutput(
+                "plotDist1UI", 
+                width="100%", height="800px",
+                clickId = "plotDist1click",
+                hoverId = "plotDist1hover", hoverDelay = 100,
+                hoverDelayType = "throttle"
+            ),
+            downloadButton("plotDist1Download", "Download"),
+            helpText("")
+        ),
+        column(width = 6,
+            plotOutput(
+                "plotDist2UI",
+                width="100%", height="800px",
+                clickId = "plotDist2click",
+                hoverId = "plotDist2hover", hoverDelay = 100,
+                hoverDelayType = "throttle"
+            ),
+            downloadButton("plotDist2Download","Download"),
+            helpText("")
+        ),
+        tableOutput("hoverPlotDist1"),
+        tableOutput("hoverPlotDist2")
+    )
+}
+
+.pR_tabPanelQuantitation <- function() {
+    tabPanel("quantitation",
+             dataTableOutput("MSnExprsUI")
+    )
+}    
+
+.pR_tabPanelfData <- function() {
+    tabPanel("feature meta-data", 
+             dataTableOutput("MSnfDataUI")
+    )
+}
+
+.pR_tabPanelpData <- function() {
+    tabPanel("sample meta-data", 
+             dataTableOutput("MSnpDataUI")
+    )
+}
+
+.pR_tabPanelSearch <- function() {
+    tabPanel("search",
+             ## selectInput for choosing between the different 
+             ## search Results
+             htmlOutput("tagsListSearchUI"),
+             verbatimTextOutput("infoSavedSearchUI")
+    )
+}
+
+.pR_tabPanelComp <- function() {
+    tabPanel("Data",
+             uiOutput("dataComp")
+    )
+}
+
+>>>>>>> master

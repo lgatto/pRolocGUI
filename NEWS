@@ -1,0 +1,44 @@
+CHANGES IN VERSION 0.99.8
+-------------------------
+ o selection and display of multiple features of interest in pRolocVis and
+   pRolocComp [2014-08-13 Wed]
+
+CHANGES IN VERSION 0.99.7
+-------------------------
+ o display feature meta-data instead of protein name when hovering
+   [2014-07-27 Tue]
+ o better feature highlighting [2014-07-27 Tue]
+ o only 1 vignette [2014-07-27 Tue]
+
+CHANGES IN VERSION 0.99.6
+-------------------------
+ o support mirroring of PCA plots in pRolocComp [2014-07-22 Tue]
+
+CHANGES IN VERSION 0.99.5
+-------------------------
+ o Update to latest knitcitations version and fix vignette
+   [2014-07-15 Tue]
+
+CHANGES IN VERSION 0.99.4
+-------------------------
+ o add function pRolocComp [2014-06-24 Tue]
+
+CHANGES IN VERSION 0.99.3
+-------------------------
+ o multiple objects can be passed to pRolocVis by using a list [2014-06-03 Tue] 
+ o improve query search (submit and select check box) [2014-06-02 Mon]
+ o add unit tests for helper functions and add manual unit test [2014-06-03 Tue]
+
+CHANGES IN VERSION 0.99.2
+------------------------
+ o change access and assignment to object pRolocGUI_SearchResults in
+   .GlobalEnv [2014-05-30 Fri]
+
+CHANGES IN VERSION 0.99.1
+-------------------------
+ o fix biocViews [2014-05-27 Tue]
+ o misc refactoring [2014-05-27 Tue]
+
+CHANGES IN VERSION 0.99.0
+-------------------------
+ o Bioc submission
