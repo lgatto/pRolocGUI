@@ -3,7 +3,8 @@ Title: Interactive visualisation of organelle (spatial)
        proteomics data
 Version: 0.99.8
 Author: Thomas Naake and Laurent Gatto
-Maintainer: Thomas Naake <thomasnaake@gmx.de>
+Maintainer: Laurent Gatto <lg390@cam.ac.uk>, 
+	    Thomas Naake <thomas.naake@merkur.uni-freiburg.de>
 Description: The package pRolocGUI comprises functions to
 	     interactively visualise organelle (spatial) proteomics
 	     data on the basis of pRoloc, pRolocdata and shiny.
@@ -13,3 +14,7 @@ Imports: pRolocdata, shiny (>= 0.9.1), tools (>= 3.1.0)
 Suggests: RUnit, BiocGenerics, knitr, knitrBootstrap, bibtex,
 	  knitcitations (>= 1.0-1)
 License: GPL-2
+URL: https://github.com/ComputationalProteomicsUnit/pRolocGUI
+BugReports: https://github.com/ComputationalProteomicsUnit/pRolocGUI/issues
+VignetteBuilder: knitr
+biocViews: Proteomics, Visualization, GUI
