@@ -126,14 +126,14 @@ the interface is loaded or can be
 
 ### Videos
 
-1. [A brief introduction to `pRolocGUI`](http://youtu.be/PWawrsYjrxo)
-2. [Downloading and install `R`](http://youtu.be/zf0_s5ZWU6w)
-3. [Using RStudio](http://youtu.be/hL4BzkQseHw)
-4. [Installing the `pRolocGUI` interface](http://youtu.be/92ADnjwd4AY)
-5. [Starting `pRolocGUI`](http://youtu.be/PPWgha514Q0)
-6. [Using `pRolocGUI` to explore and visualise experimental spatial proteomics data](http://youtu.be/R4LGYJoOEq0)
+1. [A brief introduction to `pRolocGUI`])(http://youtu.be/zXtiiAoB_vM
+2. [Downloading and install `R`](http://youtu.be/qHMUnZnrkdA)
+3. [Using RStudio](http://youtu.be/vlSbKf0OK3g)
+4. [Installing the `pRolocGUI` interface](http://youtu.be/_VmAZF1g_O4)
+5. [Starting `pRolocGUI`](http://youtu.be/24gntTd133w)
+6. [Using `pRolocGUI` to explore and visualise experimental spatial proteomics data](http://youtu.be/cG3PEQ-uWhM)
 
-Tutorial [playlist](https://www.youtube.com/playlist?list=PLE215vVnnijw0LCCsKGxa4ZD1-2pVxEPp).
+Tutorial [playlist](https://www.youtube.com/watch?v=qHMUnZnrkdA&list=PLvIXxpatSLA2loV5Srs2VBpJIYUlVJ4ow).
 
 ### General resources
 
