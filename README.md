@@ -56,9 +56,8 @@ If you use these open-source software for your research, please cite:
 programming language. Before installing the software you need to
 download `R` and also preferably `RStudio`.
 
-1) [Download](http://www.r-project.org/) `R` version >= 3.1.1 for your
-operating system from the R website [http://www.r-project.org/] and
-install it.
+1) Download `R` version >= 3.1.1 for your operating system from the (R
+website)[http://www.r-project.org/] and install it.
 
 2) Optional, but
 recommended. [Download](http://www.rstudio.com/products/rstudio/download/)
@@ -67,9 +66,10 @@ excellent integration with the `R` terminal.
 
 3) Start `R` or `RStudio`. 
 
-4) Install the Bioconductor packages `pRoloc`, `pRolocdata` and `pRolocGUI`:
+4) Install the Bioconductor packages `pRoloc`, `pRolocdata` and
+`pRolocGUI`:
 
-[`pRolocGUI`] requires `R >= 3.1.1` and Bioconductor version `>=
+`pRolocGUI` requires `R >= 3.1.1` and Bioconductor version `>=
 3.0`. If you are using version is 3.1.x, type in to the console
 
 ```{r dev, eval=FALSE}
