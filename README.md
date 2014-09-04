@@ -143,3 +143,6 @@ Tutorial [playlist](https://www.youtube.com/watch?v=qHMUnZnrkdA&list=PLvIXxpatSL
   [package](http://www.bioconductor.org/packages/release/data/experiment/html/RforProteomics.html).
 
 
+## More ressources
+
+Coming soon.
