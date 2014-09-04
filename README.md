@@ -126,7 +126,7 @@ the interface is loaded or can be
 
 ### Videos
 
-1. [A brief introduction to `pRolocGUI`])(http://youtu.be/zXtiiAoB_vM
+1. [A brief introduction to `pRolocGUI`](http://youtu.be/zXtiiAoB_vM
 2. [Downloading and install `R`](http://youtu.be/qHMUnZnrkdA)
 3. [Using RStudio](http://youtu.be/vlSbKf0OK3g)
 4. [Installing the `pRolocGUI` interface](http://youtu.be/_VmAZF1g_O4)
