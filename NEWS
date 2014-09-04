@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 CHANGES IN VERSION 0.99.10
 --------------------------
  o 
@@ -5,6 +6,11 @@ CHANGES IN VERSION 0.99.10
 CHANGES IN VERSION 0.99.9
 -------------------------
  o fix vignette error on Windows (Dan Tenenbaum) [2014-08-26 Tue]
+=======
+CHANGES IN VERSION 0.99.9
+-------------------------
+ o 
+>>>>>>> new devel version
 
 CHANGES IN VERSION 0.99.8
 -------------------------
