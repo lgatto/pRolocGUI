@@ -14,7 +14,7 @@ Imports: pRolocdata, shiny (>= 0.9.1), tools (>= 3.1.0)
 Suggests: RUnit, BiocGenerics, knitr, knitrBootstrap, bibtex,
 	  knitcitations (>= 1.0-1)
 License: GPL-2
-URL: https://github.com/ComputationalProteomicsUnit/pRolocGUI
+URL: http://ComputationalProteomicsUnit.github.io/pRolocGUI/
 BugReports: https://github.com/ComputationalProteomicsUnit/pRolocGUI/issues
 VignetteBuilder: knitr
 biocViews: Proteomics, Visualization, GUI
