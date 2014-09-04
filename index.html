@@ -88,7 +88,7 @@ documentation and vignettes for full details about the software.</p>
 programming language. Before installing the software you need to
 download <code>R</code> and also preferably <code>RStudio</code>.</p>
 
-<p>1) Download <code>R</code> version &gt;= 3.1.1 for your operating system from the (R
+<p>1) Download <code>R</code> version <code>&gt;= 3.1.1</code> for your operating system from the (R
 website)[<a href="http://www.r-project.org/">http://www.r-project.org/</a>] and install it.</p>
 
 <p>2) Optional, but
@@ -101,15 +101,15 @@ excellent integration with the <code>R</code> terminal.</p>
 <p>4) Install the Bioconductor packages <code>pRoloc</code>, <code>pRolocdata</code> and
 <code>pRolocGUI</code>:</p>
 
-<p><code>pRolocGUI</code> requires <code>R &gt;= 3.1.1</code> and Bioconductor version <code>&gt;=
-3.0</code>. If you are using version is 3.1.x, type in to the console</p>
+<p><code>pRolocGUI</code> requires <code>R &gt;= 3.1.1</code> and Bioconductor version <code>&gt;= 3.0</code>.
+If you are using version is <code>3.1.x</code>, type in to the console</p>
 
 <div class="highlight highlight-r"><pre><span class="kn">source</span><span class="p">(</span><span class="s">"http://www.bioconductor.org/biocLite.R"</span><span class="p">)</span>
 useDevel<span class="p">(</span><span class="kc">TRUE</span><span class="p">)</span> <span class="c1">## to use Bioc 3.0 with R 3.1.1</span>
 biocLite<span class="p">(</span><span class="kt">c</span><span class="p">(</span><span class="s">"pRoloc"</span><span class="p">,</span> <span class="s">"pRolocdata"</span><span class="p">,</span> <span class="s">"pRolocGUI"</span><span class="p">))</span>
 </pre></div>
 
-<p>For any later version &gt;= 3.2:</p>
+<p>For any later version <code>&gt;= 3.2</code>:</p>
 
 <div class="highlight highlight-r"><pre><span class="kn">source</span><span class="p">(</span><span class="s">"http://www.bioconductor.org/biocLite.R"</span><span class="p">)</span>
 biocLite<span class="p">(</span><span class="kt">c</span><span class="p">(</span><span class="s">"pRoloc"</span><span class="p">,</span> <span class="s">"pRolocdata"</span><span class="p">,</span> <span class="s">"pRolocGUI"</span><span class="p">))</span>
@@ -143,8 +143,8 @@ function and pass the <code>R</code> data to be visualised as input:</p>
 <div class="highlight highlight-r"><pre>pRolocVis<span class="p">(</span>dunkley2006<span class="p">)</span>
 </pre></div>
 
-<p>The graphical interface is details in the package vignette that is
-included in the package itself (get it by typing
+<p>The graphical interface is described in details in the package
+vignette that is included in the package itself (get it by typing
 <code>vignette("pRolocGUI")</code> in <code>R</code>), available by clicking the <code>?</code> once
 the interface is loaded or can be
 <a href="http://bioconductor.org/packages/devel/bioc/vignettes/pRolocGUI/inst/doc/pRolocGUI.html">consulted online</a>.</p>
