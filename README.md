@@ -1,7 +1,7 @@
 Exploring and visualising spatial proteomics data
 =================================================
 
-# Introduction
+## Introduction
 
 The
 [`pRolocGUI`](http://www.bioconductor.org/packages/devel/bioc/html/pRolocGUI.html)
