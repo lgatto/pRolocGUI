@@ -122,6 +122,22 @@ vignette that is included in the package itself (get it by typing
 the interface is loaded or can be
 [consulted online](http://bioconductor.org/packages/devel/bioc/vignettes/pRolocGUI/inst/doc/pRolocGUI.html).
 
-## More ressources
+## More resources
 
-Coming soon.
+### Videos
+
+1) [A brief introduction to `pRolocGUI`](http://youtu.be/PWawrsYjrxo)
+2) [Downloading and install `R`](http://youtu.be/zf0_s5ZWU6w)
+3) [Using RStudio](http://youtu.be/hL4BzkQseHw)
+4) [Installing the `pRolocGUI` interface](http://youtu.be/92ADnjwd4AY)
+5) [Starting `pRolocGUI`](http://youtu.be/PPWgha514Q0)
+6) [Using `pRolocGUI` to explore and visualise experimental spatial proteomics data](http://youtu.be/R4LGYJoOEq0)
+
+Tutorial [playlist](https://www.youtube.com/playlist?list=PLE215vVnnijw0LCCsKGxa4ZD1-2pVxEPp).
+
+### General resources
+
+- [Teaching material](http://lgatto.github.io/TeachingMaterial/)
+- R and Bioconductor for proteomics
+  [web page](http://lgatto.github.io/RforProteomics/) and
+  [package](http://www.bioconductor.org/packages/release/data/experiment/html/RforProteomics.html).
