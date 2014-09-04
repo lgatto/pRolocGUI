@@ -120,6 +120,31 @@ information:</p>
 
 <div class="highlight highlight-r"><pre>sessionInfo<span class="p">()</span>
 </pre></div>
+
+<h2>
+<a name="getting-started" class="anchor" href="#getting-started"><span class="octicon octicon-link"></span></a>Getting started</h2>
+
+<p>Before using a package's functionality, it needs to be loaded:</p>
+
+<div class="highlight highlight-r"><pre><span class="kn">library</span><span class="p">(</span><span class="s">"pRolocGUI"</span><span class="p">)</span>
+</pre></div>
+
+<p>We first load data from
+<a href="http://www.pnas.org/content/103/17/6518.abstract">Dunkley et al. (2006)</a>
+distributed in the <code>pRolocdata</code> package:</p>
+
+<div class="highlight highlight-r"><pre><span class="kn">library</span><span class="p">(</span><span class="s">"pRolocdata"</span><span class="p">)</span>
+data<span class="p">(</span>dunkley2006<span class="p">)</span>
+</pre></div>
+
+<p>We can now start the graphical interface using the <code>pRolocVis</code>
+function and pass the <code>R</code> data to be visualised as input:</p>
+
+<div class="highlight highlight-r"><pre>pRolocVis<span class="p">(</span>dunkley2006<span class="p">)</span>
+</pre></div>
+
+<h2>
+<a name="more-ressources" class="anchor" href="#more-ressources"><span class="octicon octicon-link"></span></a>More ressources</h2>
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/ComputationalProteomicsUnit">ComputationalProteomicsUnit</a></p>
