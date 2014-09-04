@@ -116,4 +116,10 @@ function and pass the `R` data to be visualised as input:
 pRolocVis(dunkley2006)
 ```
 
+The graphical interface is details in the package vignette that is
+included in the package itself (get it by typing
+`vignette("pRolocGUI")` in `R`), available by clicking the `?` once
+the interface is loaded or can be
+[consulted online](http://bioconductor.org/packages/devel/bioc/vignettes/pRolocGUI/inst/doc/pRolocGUI.html).
+
 ## More ressources
