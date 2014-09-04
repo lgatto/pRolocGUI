@@ -92,3 +92,28 @@ information:
 sessionInfo()
 ```
 
+## Getting started
+
+Before using a package's functionality, it needs to be loaded:
+
+```{r load}
+library("pRolocGUI")
+```
+
+We first load data from
+[Dunkley et al. (2006)](http://www.pnas.org/content/103/17/6518.abstract)
+distributed in the `pRolocdata` package:
+
+```{r dunkley}
+library("pRolocdata")
+data(dunkley2006)
+```
+
+We can now start the graphical interface using the `pRolocVis`
+function and pass the `R` data to be visualised as input:
+
+```{r gui}
+pRolocVis(dunkley2006)
+```
+
+## More ressources
