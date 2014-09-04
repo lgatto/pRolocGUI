@@ -123,3 +123,5 @@ the interface is loaded or can be
 [consulted online](http://bioconductor.org/packages/devel/bioc/vignettes/pRolocGUI/inst/doc/pRolocGUI.html).
 
 ## More ressources
+
+Coming soon.
