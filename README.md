@@ -116,8 +116,8 @@ function and pass the `R` data to be visualised as input:
 pRolocVis(dunkley2006)
 ```
 
-![PCA](./vignettes/figures/Screenshot_PCA2.png)
-![PP](./vignettes/figures/Screenshot_PP1.png)
+![Screenshot - PCA](/vignettes/figures/Screenshot_PCA2.png)
+![Screenshot - protein profiles](vignettes/figures/Screenshot_PP1.png)
 
 
 The graphical interface is described in details in the package
