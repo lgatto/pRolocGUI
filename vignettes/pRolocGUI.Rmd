@@ -137,13 +137,13 @@ browser tab, where `pRolocVis`/`pRolocComp` is running.
 To optimise ease of use the interfaces of `pRolocVis` and `pRolocComp` are
 subdivided in seven tabs:  
 
-* Data (at the last position for `pRolocComp`),  
 * PCA,    
 * protein profiles,  
 * quantitation,  
 * feature meta-data,  
 * sample meta-data and  
-* search.  
+* search,
+* data.  
 
 You browse through the tabs by simply clicking on them. Each tab
 selected will have a different kind of appearance while some (PCA,
@@ -157,106 +157,19 @@ widget) click on `?` which will open the vignette in a new browser tab in the
 corresponding section.  
 
 In general, the tabs for `pRolocVis` and `pRolocComp` will look alike. The tab 
-`Data` however differs for the two applications. While in `pRolocVis` this tab
+`data` however differs for the two applications. While in `pRolocVis` this tab
 allows for the selection of the used `MSnSet` and the upload of `.Rda` or 
-`.Rdata` files, in `pRolocComp` there's the possibility to subset the used 
+`.Rdata` files, in `pRolocComp` there is the possibility to subset the used 
 `MSnSet`s (in terms of using common, unique and common & unique features in the
 two `MSnSet`s used) as well as to submit features for selection. See
-[2.1. Data](#tabspRolocGUIDataComp) for further details. 
+[2.7. Data](#tabspRolocGUIDataComp) for further details. 
 
 <img src="figures/Screenshot_Help1.png" width="100%" alt="" /> <p 
 align="center"> Fig. 1: Vignette of `pRolocVis` and `pRolocComp` </p>
 
-<a id="tabspRolocGUIDataVis"></a>
-
-### 2.1. Data
-
-The tab **_Data_** is the first tab you will see when you start `pRolocVis` and 
-it will be the last for `pRolocComp`.
-
-<img src="figures/Screenshot_Data1.png" width="100%" alt="" /> <p 
-align="center"> Fig. 2: Appearance of `Data` tab in `pRolocVis` </p>
-
-For `pRolocVis` the drop-down menu lists all the names of assigned
-`MSnSet` objects to the function. Depending if a named list -
-containing `MSnSet` instances - is uploaded or not these names will be
-used or automatic names will be created (object 1 ... object n, where
-n is the length of the list).  In addition, the entry `upload` is
-listed at the bottom of the drop-down menu. Selecting `upload` allows
-to use a `MSnSet` available in a `.Rda` or `.Rdata` file after
-uploading it to the application. Clicking on **_Browse..._** will open
-a dialog window with which you can select a file containing a saved
-`MSnSet` and load it to `pRolocVis`. Make sure if you want to use a
-`MSnSet` from a `.Rda` or `.Rdata` file to select `upload` in the
-drop-down menu.
-
-<img src="figures/Screenshot_Data2.png" width="100%" alt="" /> <p 
-align="center"> Fig. 3: File upload in `pRolocVis` </p>
-
-`pRolocVis` will print a message if there are any conflicts with the
-uploaded file. If so, either the assigned object itself or the first
-element in the list will be used instead of the uploaded `.Rda` or
-`.Rdata` file.
-
-When analysing multiple data sets in one `pRolocVis` session the selected 
-features will be (irreversibly) deleted when changing from one 
-`MSnSet` to the other! It is therefore highly recommended if this
-behaviour is not intended to save selected features by using the 
-functionality to save features in a `FoICollection` first before changing the
-`MSnSet` (see [2.7. search](#tabspRolocVisSearch) for further details).
-
-<a id="tabspRolocGUIDataComp"></a>
-
-For `pRolocComp` the main panel shows a summary matrix of common and unique
-feature names consisting of common and unique features
-for all feature names of the two `MSnSet` instances (row `all`) and for 
-distinct subsets which are defined by the feature variable names. The feature
-variable names can be defined by choosing appropriately the drop-down menus
-**_marker object 1_** and **_marker object 2_** which are located in the section
-*Summary matrix* in the sidebar panel (enter `?FeatComp` to retrieve more 
-information about the summary matrix). The matrix in the main panel will show 
-only features for distinct subsets when both drop-down menus do not have `none`
-as their value, otherwise only the row `all` will be printed. Given 
-`tan2009r1` and `tan2009r2` as input for `pRolocComp`, when selecting `markers`
-both for **_marker object 1_** and **_marker object 2_** the matrix will consist 
-of six rows (`all`, `unknown`, `ER`, `mitochondrion`, `Golgi`, `PM`). The table
-can be interpreted as follows: For the row `all` we have `545` common features,
-i.e. there are `545` features in the two `MSnSet`s which have identical feature
-names. In `tan2009r1` however, there are `343` feature names which do not exist
-in `tan2009r1` and `326` feature names are unique for `tan2009r2`. For `markers`
-the matrix tells us that features were assigned to 4 organelles on an 
-experimental evidence (`ER`, `mitochondrion`, `Golgi`, `PM`) for `833` features
-in both `MSnSet`s the affiliation to a certain organelle is `unknown`. In total
-`20` features are assigned to `ER` for `tan2009r1`, therefrom `16` features 
-are also present in `tan2009r2`, however, `4` are unique to `tan2009r1`. The 
-interpretation of the other rows can be deduced in the same way. 
-
-Features can be selected and [displayed](#display) in the other tabs, e.g. 
-highlighted on the PCA plot. The selection is conducted in the section 
-*Selection*. It is made by selecting a marker via the drop-down menu 
-**_select marker_** and the radio buttons underneath. The selected row, 
-column and the number of features which is comprised in these categories
-will be displayed in bold in the summary matrix. By pressing 
-**_Submit selection_** the features will be saved internally, thus, available 
-for displaying/use in other tabs. The button **_Submit selection_** will be 
-only shown when the features are not already stored internally). If the features
-are selected there will be the button **_Undo selection_** which allows to 
-remove features from the internal selection.
-
-<img src="figures/Screenshot_Data3.png" width="100%" alt=""></img> <p 
-align="center">Fig. 4: Appearance of `Data` tab in `pRolocComp`. The row `ER` 
-and column `unique1` which comprises `4` features are selected</p>
-
-The tab **_Data_** in `pRolocComp`also allows for subsetting the data sets by 
-choosing accordingly `common`, `unique` and `common & unique` (default) in the 
-section *Submit MSnSets*. The subset is made on the basis of the feature 
-names of the two `MSnSet` instances. Selecting `common` will use only features 
-which occur in both `MSnSet`s, `unique` will use no common features and 
-`common & unique` will use all feature names for each `MSnSet`.  
-
 <a id="tabspRolocGUIPCA"></a>
 
-### 2.2. PCA
+### 2.1. PCA
 
 The tab **_PCA_** is characterised by its main panel which shows a
 PCA plot for the selected `MSnSet` in the case of `pRolocVis`
@@ -264,7 +177,7 @@ and two PCA plots for `pRolocVis`. The sidebar panel is divided into
 *Display selection* and *Plot*.
 
 <img src="figures/Screenshot_PCA1.png" width="100%" alt="" /> <p 
-align="center"> Fig. 5: Appearance of `PCA` tab for `pRolocVis` (`andy2011`)</p>
+align="center"> Fig. 2: Appearance of `PCA` tab for `pRolocVis` (`andy2011`)</p>
 
 For `pRolocComp` the plot whose appearance is going to altered has to be selected
 by selecting the appropriate [radio button](#RadioButtons) left of the name of 
@@ -278,7 +191,7 @@ have different signs.
 
 <a id="RadioButtons"></a>
 <center><img src="figures/Screenshot_RadioButtons.png" width="30%" alt="" /> 
-</center> <p align="center">Fig. 6: Radio buttons to select `MSnSet` in 
+</center> <p align="center">Fig. 3: Radio buttons to select `MSnSet` in 
 `pRolocComp`. Argument `object` is a named list with `MSnSet` instances 
 `tan2009r1` and `tan2009r2`</p>
 
@@ -313,7 +226,7 @@ their numerical value in the variable label (for example
 classification scores).
 
 <img src="figures/Screenshot_PCA3.png" width="100%" alt="" /> <p
-align="center"> Fig. 7: Appearance of PCA tab (`andy2011`). `markers`
+align="center"> Fig. 4: Appearance of PCA tab (`andy2011`). `markers`
 used for colours, legend added. </p>
 
 
@@ -335,7 +248,7 @@ the PCA plot as it is displayed in the main panel.
 
 <a id="tabspRolocGUIPP"></a>
 
-### 2.3. protein profiles
+### 2.2. protein profiles
 
 For `pRolocVis` the tab **_protein profiles_** shows the protein profiles in 
 the main panel (with an option of exporting the plot as it is shown in the main
@@ -374,7 +287,7 @@ change its parameter.
 
 
 <img src="figures/Screenshot_PP3.png" width="100%" alt="" /> <p 
-align="center"> Fig. 8: Appearance of `protein profiles` tab in `pRolocVis`
+align="center"> Fig. 5: Appearance of `protein profiles` tab in `pRolocVis`
 showing protein profiles  of organelles/compartments 
 Endoplasmic reticulum, Golgi apparatus, Mitochondrion and plasma 
 membrane of markers (`andy2011`) </p>
@@ -382,7 +295,7 @@ membrane of markers (`andy2011`) </p>
 
 <a id="tabspRolocGUIExprs"></a>
 
-### 2.4. quantitation   
+### 2.3. quantitation   
 
 The tab **_quantitation_** displays the quantitation data for the proteins 
 as a data table. 
@@ -400,14 +313,14 @@ there is also another well panel to select the appropriate
 respective quantitation data. 
 
 <img src="figures/Screenshot_Quant1.png" width="100%" alt="" /> <p
-align="center"> Fig. 9: Appearance of `quantitation` tab
+align="center"> Fig. 6: Appearance of `quantitation` tab
 (`andy2011`) in `pRolocVis`. Features shown originate from selection made in 
 the PCA and protein profiles plots </p>
 
 
 <a id="tabspRolocGUIfData"></a>
 
-### 2.5. feature meta-data  
+### 2.4. feature meta-data  
 
 The tab **_feature meta-data_** displays the feature meta-data for 
 the proteins as a data table.
@@ -424,14 +337,14 @@ thus, the feature meta-data will be rendered to the selected `MSnSet`.
 
 
 <img src="figures/Screenshot_fData1.png" width="100%" alt="" /> <p
-align="center"> Fig. 10: Appearance of `feature meta-data` tab
+align="center"> Fig. 7: Appearance of `feature meta-data` tab
 (`andy2011`) in `pRolocVis`. Features shown originate from selection made in 
 protein profiles plot </p>
 
 
 <a id="tabspRolocGUIpData"></a>
 
-### 2.6. sample meta-data   
+### 2.5. sample meta-data   
 
 The tab **_sample meta-data_** displays the sample meta-data for the 
 experiment, the name of the isotopes used for tagging and the associated
@@ -441,12 +354,12 @@ In `pRolocComp` select the appropriate [radio button](#RadioButtons) next to
 the object name in sidebar panel to display the corresponding sample meta-data. 
 
 <img src="figures/Screenshot_pData1.png" width="100%" alt="" /> <p
-align="center"> Fig. 11: Appearance of `sample meta-data` tab
+align="center"> Fig. 8: Appearance of `sample meta-data` tab
 (`andy2011`) in `pRolocVis`</p>
 
 <a id="tabspRolocGUISearch"></a>
 
-### 2.7. search  
+### 2.6. search  
 
 The appearance and operation are identical for `pRolocVis` and `pRolocGUI`.
 
@@ -500,10 +413,97 @@ pRolocGUI_SearchResults <- addFeaturesOfInterest(newFeat, pRolocGUI_SearchResult
 ```
 
 <img src="figures/Screenshot_SaSe1.png" width="100%" alt="" /> <p
-align="center"> Fig. 12: Appearance of `search` tab (`andy2011`) in `pRolocVis`. 
+align="center"> Fig. 9: Appearance of `search` tab (`andy2011`) in `pRolocVis`. 
 Search result `pRolocVis_Test1` contains one feature of interest 
 (PGAP1_Human)
 </p>
+
+<a id="tabspRolocGUIDataVis"></a>
+
+### 2.7. Data
+
+The tab **_Data_** is the last tab for `pRolocVis` and `pRolocComp`.
+
+<img src="figures/Screenshot_Data1.png" width="100%" alt="" /> <p 
+align="center"> Fig. 10: Appearance of `Data` tab in `pRolocVis` </p>
+
+For `pRolocVis` the drop-down menu lists all the names of assigned
+`MSnSet` objects to the function. Depending if a named list -
+containing `MSnSet` instances - is uploaded or not these names will be
+used or automatic names will be created (object 1 ... object n, where
+n is the length of the list).  In addition, the entry `upload` is
+listed at the bottom of the drop-down menu. Selecting `upload` allows
+to use a `MSnSet` available in a `.Rda` or `.Rdata` file after
+uploading it to the application. Clicking on **_Browse..._** will open
+a dialog window with which you can select a file containing a saved
+`MSnSet` and load it to `pRolocVis`. Make sure if you want to use a
+`MSnSet` from a `.Rda` or `.Rdata` file to select `upload` in the
+drop-down menu.
+
+<img src="figures/Screenshot_Data2.png" width="100%" alt="" /> <p 
+align="center"> Fig. 11: File upload in `pRolocVis` </p>
+
+`pRolocVis` will print a message if there are any conflicts with the
+uploaded file. If so, either the assigned object itself or the first
+element in the list will be used instead of the uploaded `.Rda` or
+`.Rdata` file.
+
+When analysing multiple data sets in one `pRolocVis` session the selected 
+features will be (irreversibly) deleted when changing from one 
+`MSnSet` to the other! It is therefore highly recommended if this
+behaviour is not intended to save selected features by using the 
+functionality to save features in a `FoICollection` first before changing the
+`MSnSet` (see [2.7. search](#tabspRolocVisSearch) for further details).
+
+<a id="tabspRolocGUIDataComp"></a>
+
+For `pRolocComp` the main panel shows a summary matrix of common and unique
+feature names consisting of common and unique features
+for all feature names of the two `MSnSet` instances (row `all`) and for 
+distinct subsets which are defined by the feature variable names. The feature
+variable names can be defined by choosing appropriately the drop-down menus
+**_marker object 1_** and **_marker object 2_** which are located in the section
+*Summary matrix* in the sidebar panel (enter `?FeatComp` to retrieve more 
+information about the summary matrix). The matrix in the main panel will show 
+only features for distinct subsets when both drop-down menus do not have `none`
+as their value, otherwise only the row `all` will be printed. Given 
+`tan2009r1` and `tan2009r2` as input for `pRolocComp`, when selecting `markers`
+both for **_marker object 1_** and **_marker object 2_** the matrix will consist 
+of six rows (`all`, `unknown`, `ER`, `mitochondrion`, `Golgi`, `PM`). The table
+can be interpreted as follows: For the row `all` we have `545` common features,
+i.e. there are `545` features in the two `MSnSet`s which have identical feature
+names. In `tan2009r1` however, there are `343` feature names which do not exist
+in `tan2009r1` and `326` feature names are unique for `tan2009r2`. For `markers`
+the matrix tells us that features were assigned to 4 organelles on an 
+experimental evidence (`ER`, `mitochondrion`, `Golgi`, `PM`) for `833` features
+in both `MSnSet`s the affiliation to a certain organelle is `unknown`. In total
+`20` features are assigned to `ER` for `tan2009r1`, therefrom `16` features 
+are also present in `tan2009r2`, however, `4` are unique to `tan2009r1`. The 
+interpretation of the other rows can be deduced in the same way. 
+
+Features can be selected and [displayed](#display) in the other tabs, e.g. 
+highlighted on the PCA plot. The selection is conducted in the section 
+*Selection*. It is made by selecting a marker via the drop-down menu 
+**_select marker_** and the radio buttons underneath. The selected row, 
+column and the number of features which is comprised in these categories
+will be displayed in bold in the summary matrix. By pressing 
+**_Submit selection_** the features will be saved internally, thus, available 
+for displaying/use in other tabs. The button **_Submit selection_** will be 
+only shown when the features are not already stored internally). If the features
+are selected there will be the button **_Undo selection_** which allows to 
+remove features from the internal selection.
+
+<img src="figures/Screenshot_Data3.png" width="100%" alt=""></img> <p 
+align="center">Fig. 12: Appearance of `Data` tab in `pRolocComp`. The row `ER` 
+and column `unique1` which comprises `4` features are selected</p>
+
+The tab **_Data_** in `pRolocComp`also allows for subsetting the data sets by 
+choosing accordingly `common`, `unique` and `common & unique` (default) in the 
+section *Submit MSnSets*. The subset is made on the basis of the feature 
+names of the two `MSnSet` instances. Selecting `common` will use only features 
+which occur in both `MSnSet`s, `unique` will use no common features and 
+`common & unique` will use all feature names for each `MSnSet`.  
+
 
 -------------------
 <a id="display"></a>
