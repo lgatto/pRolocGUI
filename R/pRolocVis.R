@@ -2,7 +2,7 @@
 #'@aliases pRolocVis
 #'@aliases pRolocComp
 #'@title pRolocVis/pRolocComp
-#'@author Thomas Naake <thomas.naake@@merkur.uni-freiburg.de>
+#'@author Thomas Naake <naake@@stud.uni-heidelberg.de>
 #'@usage pRolocVis(object)
 #'@usage pRolocComp(object)
 #'@param object an object of class \code{MSnSet} or a list of \code{MSnSet}s 
