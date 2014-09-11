@@ -98,13 +98,13 @@ pRolocVis <- function(object) {
                     ## Main Panel
                     mainPanel(
                         tabsetPanel(
-                            .pRn1_tabPanelData(),
                             .pRn1_tabPanelPCA(),
                             .pRn1_tabPanelProteinProfiles(),
                             .pR_tabPanelQuantitation(),
                             .pR_tabPanelfData(),
                             .pR_tabPanelpData(),
                             .pR_tabPanelSearch(),
+                            .pRn1_tabPanelData(),
                             id = "tab1"
                         )#,
                         #width = 10
@@ -203,7 +203,13 @@ pRolocVis <- function(object) {
             
             ## .dI (data Input)
             .dI <- reactive({
-                if (!is.null(input$data)) {
+                ## initially when tab data was not loaded
+                if (is.null(input$data)) {
+                    if (is.list(object))
+                        .dI <- list(object[[1]])
+                    else
+                        .dI <- list(object)
+                } else { ## after tab data was loaded
                     .lenObject <- length(.namesObj(object, upload = TRUE))
                     .indObject <- which(input$data == .namesObj(object, upload=TRUE))
                     ## upload
@@ -223,7 +229,7 @@ pRolocVis <- function(object) {
                             .dI <- list(object)
                     }
                     .dI
-                }
+                } 
             })
 
             output$warningUploadUI <- renderUI({

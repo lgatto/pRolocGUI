@@ -114,10 +114,6 @@
 .pR_condTabData <- function() {
     conditionalPanel(
         condition = "input.tab1 == 'Data'",
-        strong("Welcome to", span("pRolocVis", style = "color:gray"), 
-            ", an interactive visualisation tool 
-            for organelle proteomics data."),
-        helpText(""),
         ## link to help page
         htmlOutput("linkDataUI")
     )
