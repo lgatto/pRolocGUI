@@ -27,16 +27,20 @@
 
 ## a helper function to create names from an object x
 ## which can be selected in the 'Data' tab
-.namesObj <- function(x, upload = FALSE) {
+.namesObj <- function(x, name = NULL, upload = FALSE) {
+    ## argument name is of type character and is the name of the object 
+    ## obtained by MSnbase:::getVariableName(match.call(), "object")
+    ## e.g. "andy2011" when starting pRolocVis(andy2011)
     if (is.null(names(x))) {
         ans <- c(paste("object", 1:length(x), sep = ""), "upload")
         if (!is.list(x))
-            ans <- c("object", "upload")
+            ans <- c(name, "upload")
     }
     if (!is.null(names(x))) {
         ans <- vector("character", length(x) + 1)
         
         if (FALSE %in% !nchar(names(x))) {
+            ##nolist <- MSnbase:::getVariableName(match.call(), "x")
             unnamed <- paste("object", which(!nchar(names(x))), sep = "")
             ans[which(!nchar(names(x)))] <- unnamed
         }

@@ -65,9 +65,11 @@ pRolocVis <- function(object) {
     if (is.list(object)) {
         if (!listOf(object, "MSnSet"))
             stop("object not list of MSnSets")
-    } else
+    } else {
+        name <- MSnbase:::getVariableName(match.call(), "object")
         if (!inherits(object, "MSnSet"))
             stop("object not of class MSnSet")
+    }
     
     ## increase upload limit to 20 MB
     options(shiny.maxRequestSize = 20*1024^2)
@@ -179,14 +181,12 @@ pRolocVis <- function(object) {
         
             ## END: Links to vignette ## 
             
-            
-            
             ## TAB: DATA/UPLOAD ##
             
             ## choose Data source
             output$Data1UI <- renderUI(
                 selectInput("data", "Choose MSnSet data source:",
-                                    choices = .namesObj(object, upload = TRUE))     
+                                    choices = .namesObj(object, name, upload = TRUE))     
             )
 
             .dIownData <- reactive({
@@ -210,8 +210,8 @@ pRolocVis <- function(object) {
                     else
                         .dI <- list(object)
                 } else { ## after tab data was loaded
-                    .lenObject <- length(.namesObj(object, upload = TRUE))
-                    .indObject <- which(input$data == .namesObj(object, upload=TRUE))
+                    .lenObject <- length(.namesObj(object, name, upload = TRUE))
+                    .indObject <- which(input$data == .namesObj(object, name, upload=TRUE))
                     ## upload
                     if (.lenObject == .indObject) {
                         if (inherits(.dIownData(), "MSnSet"))
