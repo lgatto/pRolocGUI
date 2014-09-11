@@ -315,10 +315,12 @@ pRolocVis <- function(object) {
             .searchResultsText <- reactive(
                     .sRsubset(.dI(), input$search, input$levelSearch)
             )
-            
+                        
             ## action button to submit features (query)
             output$saveTextUI <- renderUI(
-                if (!is.null(.dI()) && !is.null(input$search))
+                if (!is.null(.dI()) 
+                    && !is.null(input$search) 
+                        && length(.searchResultsText()) >= 1)
                     if (!.checkFeatText(.dI(), 
                             .prot$text, input$sRTextInput, input$search))
                         actionButton("saveText", "Submit selection")
