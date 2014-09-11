@@ -673,10 +673,13 @@ pRolocVis <- function(object) {
             .indSavedSearchlist <- reactive({
                 .indSR <- na.omit(match(input$selCB, description(.pR_SR$foi)))
                 .protNames <- lapply(foi(.pR_SR$foi)[.indSR], foi)
-                lapply(.protNames, match, rownames(object))
+                lapply(.protNames, match, featureNames(object))
             })
             
-            .indSavedSearch <- reactive({unique(unlist(.indSavedSearchlist()))})
+            .indSavedSearch <- reactive({
+                .protInd <- unique(unlist(.indSavedSearchlist()))
+                .protInd[!is.na(.protInd)]
+            })
             
             output$infoSavedSearchUI <- renderText({
                 if (length(.dI()) != 0 && !is.null(.pR_SR$foi) && 

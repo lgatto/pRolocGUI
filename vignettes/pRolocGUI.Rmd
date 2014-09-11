@@ -100,7 +100,7 @@ Alternatively, to upload multiple objects of class `MSnSet`, `pRolocVis`
 accepts both lists with named and unnamed objects. This allows for analysis
 of multiple data sets without stopping the application from running. 
 The names of objects of lists will appear in the drop-down menu in the 
-**_Data_** tab, while lists with unnamed objects will have a drop-down menu 
+**_data_** tab, while lists with unnamed objects will have a drop-down menu 
 with automatically named entries as a consequence, i.e. object 1 ... object n, 
 where n is the length of the list. 
 ```{r, eval = FALSE, echo = TRUE}
@@ -157,12 +157,12 @@ widget) click on `?` which will open the vignette in a new browser tab in the
 corresponding section.  
 
 In general, the tabs for `pRolocVis` and `pRolocComp` will look alike. The tab 
-`data` however differs for the two applications. While in `pRolocVis` this tab
-allows for the selection of the used `MSnSet` and the upload of `.Rda` or 
+**_data_** however differs for the two applications. While in `pRolocVis` this 
+tab allows for the selection of the used `MSnSet` and the upload of `.Rda` or 
 `.Rdata` files, in `pRolocComp` there is the possibility to subset the used 
 `MSnSet`s (in terms of using common, unique and common & unique features in the
 two `MSnSet`s used) as well as to submit features for selection. See
-[2.7. Data](#tabspRolocGUIDataComp) for further details. 
+[2.7. data](#tabspRolocGUIDataComp) for further details. 
 
 <img src="figures/Screenshot_Help1.png" width="100%" alt="" /> <p 
 align="center"> Fig. 1: Vignette of `pRolocVis` and `pRolocComp` </p>
@@ -177,7 +177,7 @@ and two PCA plots for `pRolocVis`. The sidebar panel is divided into
 *Display selection* and *Plot*.
 
 <img src="figures/Screenshot_PCA1.png" width="100%" alt="" /> <p 
-align="center"> Fig. 2: Appearance of `PCA` tab for `pRolocVis` (`andy2011`)</p>
+align="center"> Fig. 2: Appearance of **_PCA_** tab for `pRolocVis` (`andy2011`)</p>
 
 For `pRolocComp` the plot whose appearance is going to altered has to be selected
 by selecting the appropriate [radio button](#RadioButtons) left of the name of 
@@ -226,7 +226,7 @@ their numerical value in the variable label (for example
 classification scores).
 
 <img src="figures/Screenshot_PCA3.png" width="100%" alt="" /> <p
-align="center"> Fig. 4: Appearance of PCA tab (`andy2011`). `markers`
+align="center"> Fig. 4: Appearance of **_PCA_** tab (`andy2011`). `markers`
 used for colours, legend added. </p>
 
 
@@ -287,7 +287,7 @@ change its parameter.
 
 
 <img src="figures/Screenshot_PP3.png" width="100%" alt="" /> <p 
-align="center"> Fig. 5: Appearance of `protein profiles` tab in `pRolocVis`
+align="center"> Fig. 5: Appearance of **_protein profiles_** tab in `pRolocVis`
 showing protein profiles  of organelles/compartments 
 Endoplasmic reticulum, Golgi apparatus, Mitochondrion and plasma 
 membrane of markers (`andy2011`) </p>
@@ -313,7 +313,7 @@ there is also another well panel to select the appropriate
 respective quantitation data. 
 
 <img src="figures/Screenshot_Quant1.png" width="100%" alt="" /> <p
-align="center"> Fig. 6: Appearance of `quantitation` tab
+align="center"> Fig. 6: Appearance of **_quantitation_** tab
 (`andy2011`) in `pRolocVis`. Features shown originate from selection made in 
 the PCA and protein profiles plots </p>
 
@@ -337,7 +337,7 @@ thus, the feature meta-data will be rendered to the selected `MSnSet`.
 
 
 <img src="figures/Screenshot_fData1.png" width="100%" alt="" /> <p
-align="center"> Fig. 7: Appearance of `feature meta-data` tab
+align="center"> Fig. 7: Appearance of **_feature meta-data_** tab
 (`andy2011`) in `pRolocVis`. Features shown originate from selection made in 
 protein profiles plot </p>
 
@@ -354,7 +354,7 @@ In `pRolocComp` select the appropriate [radio button](#RadioButtons) next to
 the object name in sidebar panel to display the corresponding sample meta-data. 
 
 <img src="figures/Screenshot_pData1.png" width="100%" alt="" /> <p
-align="center"> Fig. 8: Appearance of `sample meta-data` tab
+align="center"> Fig. 8: Appearance of **_sample meta-data_** tab
 (`andy2011`) in `pRolocVis`</p>
 
 <a id="tabspRolocGUISearch"></a>
@@ -413,19 +413,18 @@ pRolocGUI_SearchResults <- addFeaturesOfInterest(newFeat, pRolocGUI_SearchResult
 ```
 
 <img src="figures/Screenshot_SaSe1.png" width="100%" alt="" /> <p
-align="center"> Fig. 9: Appearance of `search` tab (`andy2011`) in `pRolocVis`. 
-Search result `pRolocVis_Test1` contains one feature of interest 
-(PGAP1_Human)
-</p>
+align="center"> Fig. 9: Appearance of **_search_** tab (`andy2011`) in 
+`pRolocVis`. Search result `pRolocVis_Test1` contains one feature of interest 
+(PGAP1_Human)</p>
 
 <a id="tabspRolocGUIDataVis"></a>
 
-### 2.7. Data
+### 2.7. data
 
-The tab **_Data_** is the last tab for `pRolocVis` and `pRolocComp`.
+The tab **_data_** is the last tab for `pRolocVis` and `pRolocComp`.
 
 <img src="figures/Screenshot_Data1.png" width="100%" alt="" /> <p 
-align="center"> Fig. 10: Appearance of `data` tab in `pRolocVis` </p>
+align="center"> Fig. 10: Appearance of **_data_** tab in `pRolocVis` </p>
 
 For `pRolocVis` the drop-down menu lists all the names of assigned
 `MSnSet` objects to the function. Depending if a named list -
@@ -494,8 +493,8 @@ are selected there will be the button **_Undo selection_** which allows to
 remove features from the internal selection.
 
 <img src="figures/Screenshot_Data3.png" width="100%" alt=""></img> <p 
-align="center">Fig. 12: Appearance of `data` tab in `pRolocComp`. The row `ER` 
-and column `unique1` which comprises `4` features are selected</p>
+align="center">Fig. 12: Appearance of **_data_** tab in `pRolocComp`. The row 
+`ER` and column `unique1` which comprises `4` features are selected</p>
 
 The tab **_Data_** in `pRolocComp`also allows for subsetting the data sets by 
 choosing accordingly `common`, `unique` and `common & unique` (default) in the 
@@ -636,7 +635,7 @@ features of interests belongs to the field of the users responsibility.
 ### 3.4. summary matrix (`pRolocComp` only)
 
 In `pRolocComp` another way of selecting and displaying features is possible
-via the tab **_Data_**. Features can be selected and internally stored
+via the tab **_data_**. Features can be selected and internally stored
 by selecting "all"/a marker via the drop-down menu 
 **_select marker_** - this will change the selected row - and one of the radio 
 buttons underneath - this will change the column. By pressing the 
@@ -708,10 +707,9 @@ internal assignment we have to either reset the search by clicking on
 **_Clear features_** or click on **_Undo selection_**.  The latter will only 
 remove the current selection of features, while the former
 will clear all features (also these of **_PCA_**, 
-**_protein profiles_** (and **_data_**).
-Of course, we can also add other features: If we
-want to add all features which are assigned to the Golgi apparatus we
-simply select `Golgi` in the lower drop-down list and click on
+**_protein profiles_** (and **_data_**). Of course, we can also add other 
+features: If we want to add all features which are assigned to the Golgi 
+apparatus we simply select `Golgi` in the lower drop-down list and click on
 **_Submit selection_** to save internally the selected features.
 
 It is relatively easy to find levels when the drop-down list for these
