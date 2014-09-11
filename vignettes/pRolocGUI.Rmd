@@ -425,7 +425,7 @@ Search result `pRolocVis_Test1` contains one feature of interest
 The tab **_Data_** is the last tab for `pRolocVis` and `pRolocComp`.
 
 <img src="figures/Screenshot_Data1.png" width="100%" alt="" /> <p 
-align="center"> Fig. 10: Appearance of `Data` tab in `pRolocVis` </p>
+align="center"> Fig. 10: Appearance of `data` tab in `pRolocVis` </p>
 
 For `pRolocVis` the drop-down menu lists all the names of assigned
 `MSnSet` objects to the function. Depending if a named list -
@@ -453,7 +453,7 @@ features will be (irreversibly) deleted when changing from one
 `MSnSet` to the other! It is therefore highly recommended if this
 behaviour is not intended to save selected features by using the 
 functionality to save features in a `FoICollection` first before changing the
-`MSnSet` (see [2.7. search](#tabspRolocVisSearch) for further details).
+`MSnSet` (see [2.6. search](#tabspRolocVisSearch) for further details).
 
 <a id="tabspRolocGUIDataComp"></a>
 
@@ -494,7 +494,7 @@ are selected there will be the button **_Undo selection_** which allows to
 remove features from the internal selection.
 
 <img src="figures/Screenshot_Data3.png" width="100%" alt=""></img> <p 
-align="center">Fig. 12: Appearance of `Data` tab in `pRolocComp`. The row `ER` 
+align="center">Fig. 12: Appearance of `data` tab in `pRolocComp`. The row `ER` 
 and column `unique1` which comprises `4` features are selected</p>
 
 The tab **_Data_** in `pRolocComp`also allows for subsetting the data sets by 
@@ -516,7 +516,7 @@ in `pRolocVis`/`pRolocComp` and allows for identifying features.
 You can do this by selecting points in the PCA plot, clicking on features 
 in the tab **_protein profiles_**, using past searches and/or querying for 
 features in the `MSnSet` data. In `pRolocComp`there is in addition the 
-possibility to retrieve features from the summary matrix in the tab `Data`.
+possibility to retrieve features from the summary matrix in the tab `data`.
 
 There are four (`pRolocVis`) or five (`pRolocComp`) check boxes in the
 *Display selection* widget which represent the before mentioned ways
@@ -603,7 +603,7 @@ one of the protein profile plots (make sure that `1` is selected in the
 drop-down list **_number of plots to display_**), thus highlighting
 the same feature in the other plot if the same feature name is present. 
 If you want to analyse features which are only common in the two 
-`MSnSet` instances, go to tab **_Data_** and select `common` in the 
+`MSnSet` instances, go to tab **_data_** and select `common` in the 
 radio button list **_Features used_**. 
 
 <img src="figures/Screenshot_PP1.png" width="100%" alt="" /> <p
@@ -696,7 +696,7 @@ Let's assume we want to look at `andy2011` which was derived from
 experiments of Breckels et al. (2013) for all proteins which are
 assigned by experimental evidence to the organelle `plasma membrane`. 
 We ensure ourselves that `andy2011` is selected in the tab
-**_Data_** and change to a tab where the *Display selection* widget is
+**_data_** and change to a tab where the *Display selection* widget is
 loaded. We select `marker` in the upper drop-down list (for we are looking for
 organelles assigned to marker proteins). In the next drop-down list below we 
 select `PM` which codes for `plasma membrane`. Next, we click on 
@@ -707,7 +707,8 @@ not exist in the selection). To remove the selected features from the
 internal assignment we have to either reset the search by clicking on
 **_Clear features_** or click on **_Undo selection_**.  The latter will only 
 remove the current selection of features, while the former
-will clear all features (also these of `PCA`, `protein profiles` (and `Data`).
+will clear all features (also these of **_PCA_**, 
+**_protein profiles_** (and **_data_**).
 Of course, we can also add other features: If we
 want to add all features which are assigned to the Golgi apparatus we
 simply select `Golgi` in the lower drop-down list and click on
