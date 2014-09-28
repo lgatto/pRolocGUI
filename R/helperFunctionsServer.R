@@ -27,16 +27,20 @@
 
 ## a helper function to create names from an object x
 ## which can be selected in the 'Data' tab
-.namesObj <- function(x, upload = FALSE) {
+.namesObj <- function(x, name = NULL, upload = FALSE) {
+    ## argument name is of type character and is the name of the object 
+    ## obtained by MSnbase:::getVariableName(match.call(), "object")
+    ## e.g. "andy2011" when starting pRolocVis(andy2011)
     if (is.null(names(x))) {
         ans <- c(paste("object", 1:length(x), sep = ""), "upload")
         if (!is.list(x))
-            ans <- c("object", "upload")
+            ans <- c(name, "upload")
     }
     if (!is.null(names(x))) {
         ans <- vector("character", length(x) + 1)
         
         if (FALSE %in% !nchar(names(x))) {
+            ##nolist <- MSnbase:::getVariableName(match.call(), "x")
             unnamed <- paste("object", which(!nchar(names(x))), sep = "")
             ans[which(!nchar(names(x)))] <- unnamed
         }
@@ -530,32 +534,34 @@
         if (length(listSaSe) > 0 && length(cIS)) {
             
             for (i in 1:length(listSaSe)) {
+                if (!(length(listSaSe[[i]]) == 1 && is.na(listSaSe[[i]]))) {
+                    
+                    .ind <- na.exclude(listSaSe[[i]])
+                    if (length(.ind) == 0)
+                        .ind <- NULL
+                    .f <- i/13
+                    .f <- floor(.f)
+                    if ((i %% 13) == 0)
+                        .f <- .f - 1
                 
-                .ind <- na.exclude(listSaSe[[i]])
-                if (length(.ind) == 0)
-                    .ind <- NULL
-                .f <- i/13
-                .f <- floor(.f)
-                if ((i %% 13) == 0)
-                    .f <- .f - 1
-                
-                if (length(.ind) > 0) {
-                    foiSaSe <- FeaturesOfInterest(description = "hoP",
-                                    fnames = featureNames(obj)[.ind])
-                    highlightOnPlot(obj, foiSaSe, 
-                        args = list(
-                            fcol = fvarLabels(obj)[1],
-                            xlim = c(xrange[1], 
-                                     xrange[2]),
-                            ylim = c(yrange[1],
-                                     yrange[2]),
-                            dims = c(as.numeric(PCAn1), 
-                                     as.numeric(PCAn2)),
-                            mirrorX = mX, mirrorY = mY
-                        ),
-                        cex = 1.5, lwd = 3, pch = 21, 
-                        col = getStockcol()[i - (.f*13)],
-                        bg = paste0(getStockcol()[i - (.f*13)], "50")) 
+                    if (length(.ind) > 0) {
+                        foiSaSe <- FeaturesOfInterest(description = "hoP",
+                                        fnames = featureNames(obj)[.ind])
+                        highlightOnPlot(obj, foiSaSe, 
+                            args = list(
+                                fcol = fvarLabels(obj)[1],
+                                xlim = c(xrange[1], 
+                                         xrange[2]),
+                                ylim = c(yrange[1],
+                                         yrange[2]),
+                                dims = c(as.numeric(PCAn1), 
+                                         as.numeric(PCAn2)),
+                                mirrorX = mX, mirrorY = mY
+                            ),
+                            cex = 1.5, lwd = 3, pch = 21, 
+                            col = getStockcol()[i - (.f*13)],
+                            bg = paste0(getStockcol()[i - (.f*13)], "50")) 
+                    }
                 }
             }
         }

@@ -1,3 +1,9 @@
+CHANGES IN VERSION 0.99.11
+--------------------------
+ o Add screenshot to README [2014-09-05 Fri]
+ o fix bug when features of fois are not present 
+ o move data tab to the end
+
 CHANGES IN VERSION 0.99.10
 --------------------------
  o Updated README [2014-09-04 Thu]

@@ -116,6 +116,10 @@ function and pass the `R` data to be visualised as input:
 pRolocVis(dunkley2006)
 ```
 
+![Screenshot - PCA](https://raw.githubusercontent.com/ComputationalProteomicsUnit/pRolocGUI/master/vignettes/figures/Screenshot_PCA2.png)
+![Screenshot - protein profiles](https://raw.githubusercontent.com/ComputationalProteomicsUnit/pRolocGUI/master/vignettes/figures/Screenshot_PP2.png)
+
+
 The graphical interface is described in details in the package
 vignette that is included in the package itself (get it by typing
 `vignette("pRolocGUI")` in `R`), available by clicking the `?` once

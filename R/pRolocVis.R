@@ -2,7 +2,7 @@
 #'@aliases pRolocVis
 #'@aliases pRolocComp
 #'@title pRolocVis/pRolocComp
-#'@author Thomas Naake <thomas.naake@@merkur.uni-freiburg.de>
+#'@author Thomas Naake <naake@@stud.uni-heidelberg.de>
 #'@usage pRolocVis(object)
 #'@usage pRolocComp(object)
 #'@param object an object of class \code{MSnSet} or a list of \code{MSnSet}s 
@@ -65,9 +65,11 @@ pRolocVis <- function(object) {
     if (is.list(object)) {
         if (!listOf(object, "MSnSet"))
             stop("object not list of MSnSets")
-    } else
+    } else {
+        name <- MSnbase:::getVariableName(match.call(), "object")
         if (!inherits(object, "MSnSet"))
             stop("object not of class MSnSet")
+    }
     
     ## increase upload limit to 20 MB
     options(shiny.maxRequestSize = 20*1024^2)
@@ -98,13 +100,13 @@ pRolocVis <- function(object) {
                     ## Main Panel
                     mainPanel(
                         tabsetPanel(
-                            .pRn1_tabPanelData(),
                             .pRn1_tabPanelPCA(),
                             .pRn1_tabPanelProteinProfiles(),
                             .pR_tabPanelQuantitation(),
                             .pR_tabPanelfData(),
                             .pR_tabPanelpData(),
                             .pR_tabPanelSearch(),
+                            .pRn1_tabPanelData(),
                             id = "tab1"
                         )#,
                         #width = 10
@@ -179,14 +181,12 @@ pRolocVis <- function(object) {
         
             ## END: Links to vignette ## 
             
-            
-            
             ## TAB: DATA/UPLOAD ##
             
             ## choose Data source
             output$Data1UI <- renderUI(
                 selectInput("data", "Choose MSnSet data source:",
-                                    choices = .namesObj(object, upload = TRUE))     
+                                    choices = .namesObj(object, name, upload = TRUE))     
             )
 
             .dIownData <- reactive({
@@ -203,9 +203,15 @@ pRolocVis <- function(object) {
             
             ## .dI (data Input)
             .dI <- reactive({
-                if (!is.null(input$data)) {
-                    .lenObject <- length(.namesObj(object, upload = TRUE))
-                    .indObject <- which(input$data == .namesObj(object, upload=TRUE))
+                ## initially when tab data was not loaded
+                if (is.null(input$data)) {
+                    if (is.list(object))
+                        .dI <- list(object[[1]])
+                    else
+                        .dI <- list(object)
+                } else { ## after tab data was loaded
+                    .lenObject <- length(.namesObj(object, name, upload = TRUE))
+                    .indObject <- which(input$data == .namesObj(object, name, upload=TRUE))
                     ## upload
                     if (.lenObject == .indObject) {
                         if (inherits(.dIownData(), "MSnSet"))
@@ -223,7 +229,7 @@ pRolocVis <- function(object) {
                             .dI <- list(object)
                     }
                     .dI
-                }
+                } 
             })
 
             output$warningUploadUI <- renderUI({
@@ -309,10 +315,12 @@ pRolocVis <- function(object) {
             .searchResultsText <- reactive(
                     .sRsubset(.dI(), input$search, input$levelSearch)
             )
-            
+                        
             ## action button to submit features (query)
             output$saveTextUI <- renderUI(
-                if (!is.null(.dI()) && !is.null(input$search))
+                if (!is.null(.dI()) 
+                    && !is.null(input$search) 
+                        && length(.searchResultsText()) >= 1)
                     if (!.checkFeatText(.dI(), 
                             .prot$text, input$sRTextInput, input$search))
                         actionButton("saveText", "Submit selection")
@@ -665,10 +673,13 @@ pRolocVis <- function(object) {
             .indSavedSearchlist <- reactive({
                 .indSR <- na.omit(match(input$selCB, description(.pR_SR$foi)))
                 .protNames <- lapply(foi(.pR_SR$foi)[.indSR], foi)
-                lapply(.protNames, match, rownames(object))
+                lapply(.protNames, match, featureNames(object))
             })
             
-            .indSavedSearch <- reactive({unique(unlist(.indSavedSearchlist()))})
+            .indSavedSearch <- reactive({
+                .protInd <- unique(unlist(.indSavedSearchlist()))
+                .protInd[!is.na(.protInd)]
+            })
             
             output$infoSavedSearchUI <- renderText({
                 if (length(.dI()) != 0 && !is.null(.pR_SR$foi) && 

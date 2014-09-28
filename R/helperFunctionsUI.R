@@ -61,7 +61,7 @@
 
 .pRn2_selObj <- function() {
     conditionalPanel(
-        condition = "input.tab1 != 'search' && input.tab1 != 'Data'",
+        condition = "input.tab1 != 'search' && input.tab1 != 'data'",
             wellPanel(
                 htmlOutput("selObjUI")
             )
@@ -113,11 +113,7 @@
 
 .pR_condTabData <- function() {
     conditionalPanel(
-        condition = "input.tab1 == 'Data'",
-        strong("Welcome to", span("pRolocVis", style = "color:gray"), 
-            ", an interactive visualisation tool 
-            for organelle proteomics data."),
-        helpText(""),
+        condition = "input.tab1 == 'data'",
         ## link to help page
         htmlOutput("linkDataUI")
     )
@@ -250,7 +246,7 @@
 
 .pR_condTabComp <- function() {
     conditionalPanel(
-        condition="input.tab1 == 'Data'",
+        condition="input.tab1 == 'data'",
         wellPanel(
             h4("Summary matrix"),
             helpText(""),
@@ -285,7 +281,7 @@
     
 .pRn1_tabPanelData <- function() {
     tabPanel(
-        "Data",
+        "data",
         htmlOutput("Data1UI"),
         ## upload function for own data, access to data path implemented 
         ## by index "datapath", 
@@ -411,7 +407,7 @@
 }
 
 .pR_tabPanelComp <- function() {
-    tabPanel("Data",
+    tabPanel("data",
              uiOutput("dataComp")
     )
 }
