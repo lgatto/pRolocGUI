@@ -6,22 +6,22 @@
 
 ## START unit test .namesObj ##
 test_.namesObj <- function() {
-    checkEquals(pRolocGUI:::.namesObj(NULL), c("object"))
-    checkEquals(pRolocGUI:::.namesObj(NULL, TRUE), c("object", "upload"))
-    checkEquals(pRolocGUI:::.namesObj(1:10), c("object"))
-    checkEquals(pRolocGUI:::.namesObj(1:10, TRUE), c("object", "upload"))
-    checkEquals(pRolocGUI:::.namesObj(andy2011), c("object"))
+    checkEquals(pRolocGUI:::.namesObj(NULL), character())
+    checkEquals(pRolocGUI:::.namesObj(NULL, upload = TRUE), c("upload"))
+    checkEquals(pRolocGUI:::.namesObj(1:10, name = "object"), c("object"))
+    checkEquals(pRolocGUI:::.namesObj(1:10, name = "object", upload = TRUE), c("object", "upload"))
+    checkEquals(pRolocGUI:::.namesObj(andy2011, name = "object"), c("object"))
     checkEquals(pRolocGUI:::.namesObj(list(NULL)), c("object1"))
     checkEquals(pRolocGUI:::.namesObj(list(andy2011)), c("object1"))
-    checkEquals(pRolocGUI:::.namesObj(list(NULL, NULL), TRUE), 
+    checkEquals(pRolocGUI:::.namesObj(list(NULL, NULL), upload = TRUE), 
                                         c("object1", "object2", "upload"))
-    checkEquals(pRolocGUI:::.namesObj(list(1:10, 2:11), TRUE), 
+    checkEquals(pRolocGUI:::.namesObj(list(1:10, 2:11), upload = TRUE), 
                                         c("object1", "object2", "upload"))
     checkEquals(pRolocGUI:::.namesObj(list(andy2011, tan2009r1)), 
                                         c("object1", "object2"))
     checkEquals(pRolocGUI:::.namesObj(list(ut1 = andy2011, ut2 = tan2009r1)), 
                                         c("ut1", "ut2"))
-    checkEquals(pRolocGUI:::.namesObj(list(andy2011, ut2 = tan2009r1), TRUE), 
+    checkEquals(pRolocGUI:::.namesObj(list(andy2011, ut2 = tan2009r1), upload = TRUE), 
                                         c("object1", "ut2", "upload"))
 }
 ## END unit test .namesObj ##
