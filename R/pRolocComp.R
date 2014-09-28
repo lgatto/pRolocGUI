@@ -201,7 +201,7 @@ pRolocComp <- function(object) {
             
             ## action button to submit (query)
             output$saveTextUI <- renderUI(
-                if (!is.null(input$search))
+                if (!is.null(input$search) && length(.searchResultsText()) >= 1)
                     if (!.checkFeatText(data$obj, .prot$text, input$sRTextInput, 
                                 input$search, sel$Obj, name = TRUE))
                         actionButton("saveText", "Submit selection")
