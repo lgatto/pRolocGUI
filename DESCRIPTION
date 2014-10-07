@@ -1,6 +1,6 @@
 Package: pRolocGUI
 Title: Interactive visualisation of spatial proteomics data
-Version: 0.99.11
+Version: 0.99.12
 Author: Thomas Naake and Laurent Gatto
 Maintainer: Laurent Gatto <lg390@cam.ac.uk>, 
 	    Thomas Naake <naake@stud.uni-heidelberg.de>
@@ -16,4 +16,5 @@ License: GPL-2
 URL: http://ComputationalProteomicsUnit.github.io/pRolocGUI/
 BugReports: https://github.com/ComputationalProteomicsUnit/pRolocGUI/issues
 VignetteBuilder: knitr
+Video: https://www.youtube.com/playlist?list=PLvIXxpatSLA2loV5Srs2VBpJIYUlVJ4ow
 biocViews: Proteomics, Visualization, GUI
