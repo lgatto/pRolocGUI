@@ -130,6 +130,7 @@ the interface is loaded or can be
 
 ### Videos
 
+0. [An introduction to Bioconductor](https://www.youtube.com/watch?v=fofS2o6HzKA)
 1. [A brief introduction to `pRolocGUI`](http://youtu.be/zXtiiAoB_vM)
 2. [Downloading and install `R`](http://youtu.be/qHMUnZnrkdA)
 3. [Using RStudio](http://youtu.be/vlSbKf0OK3g)
