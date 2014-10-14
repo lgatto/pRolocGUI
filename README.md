@@ -84,8 +84,9 @@ information:
 sessionInfo()
 ```
 
-See the Bioconductor [http://bioconductor.org/install/](installation
-page) for more details. 
+See the Bioconductor
+[installation page](http://bioconductor.org/install/) for more
+details.
 
 ## Getting started
 
