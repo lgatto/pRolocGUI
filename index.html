@@ -86,7 +86,7 @@ documentation and vignettes for full details about the software.</p>
 
 <p><code>pRolocGUI</code> is written in the <a href="http://www.r-project.org/"><code>R</code></a>
 programming language. Before installing the software you need to
-download <code>R</code> and also preferably <code>RStudio</code>.</p>
+download <code>R</code> and (optionally) <code>RStudio</code>.</p>
 
 <p>1) Download <code>R</code> version <code>&gt;= 3.1.1</code> for your operating system from the (R
 website)[<a href="http://www.r-project.org/">http://www.r-project.org/</a>] and install it.</p>
@@ -102,14 +102,7 @@ excellent integration with the <code>R</code> terminal.</p>
 <code>pRolocGUI</code>:</p>
 
 <p><code>pRolocGUI</code> requires <code>R &gt;= 3.1.1</code> and Bioconductor version <code>&gt;= 3.0</code>.
-If you are using version is <code>3.1.x</code>, type in to the console</p>
-
-<div class="highlight highlight-r"><pre><span class="kn">source</span><span class="p">(</span><span class="s">"http://www.bioconductor.org/biocLite.R"</span><span class="p">)</span>
-useDevel<span class="p">(</span><span class="kc">TRUE</span><span class="p">)</span> <span class="c1">## to use Bioc 3.0 with R 3.1.1</span>
-biocLite<span class="p">(</span><span class="kt">c</span><span class="p">(</span><span class="s">"pRoloc"</span><span class="p">,</span> <span class="s">"pRolocdata"</span><span class="p">,</span> <span class="s">"pRolocGUI"</span><span class="p">))</span>
-</pre></div>
-
-<p>For any later version <code>&gt;= 3.2</code>:</p>
+In an <code>R</code> console, type</p>
 
 <div class="highlight highlight-r"><pre><span class="kn">source</span><span class="p">(</span><span class="s">"http://www.bioconductor.org/biocLite.R"</span><span class="p">)</span>
 biocLite<span class="p">(</span><span class="kt">c</span><span class="p">(</span><span class="s">"pRoloc"</span><span class="p">,</span> <span class="s">"pRolocdata"</span><span class="p">,</span> <span class="s">"pRolocGUI"</span><span class="p">))</span>
@@ -120,6 +113,8 @@ information:</p>
 
 <div class="highlight highlight-r"><pre>sessionInfo<span class="p">()</span>
 </pre></div>
+
+<p>See the Bioconductor <a href="installation%0Apage">http://bioconductor.org/install/</a> for more details. </p>
 
 <h2>
 <a name="getting-started" class="anchor" href="#getting-started"><span class="octicon octicon-link"></span></a>Getting started</h2>
@@ -143,7 +138,8 @@ function and pass the <code>R</code> data to be visualised as input:</p>
 <div class="highlight highlight-r"><pre>pRolocVis<span class="p">(</span>dunkley2006<span class="p">)</span>
 </pre></div>
 
-<p><img src="https://raw.githubusercontent.com/ComputationalProteomicsUnit/pRolocGUI/master/vignettes/figures/Screenshot_PCA2.png" alt="Screenshot - PCA"><img src="https://raw.githubusercontent.com/ComputationalProteomicsUnit/pRolocGUI/master/vignettes/figures/Screenshot_PP2.png" alt="Screenshot - protein profiles"></p>
+<p><img src="https://raw.githubusercontent.com/ComputationalProteomicsUnit/pRolocGUI/master/vignettes/figures/Screenshot_PCA2.png" alt="Screenshot - PCA">
+<img src="https://raw.githubusercontent.com/ComputationalProteomicsUnit/pRolocGUI/master/vignettes/figures/Screenshot_PP2.png" alt="Screenshot - protein profiles"></p>
 
 <p>The graphical interface is described in details in the package
 vignette that is included in the package itself (get it by typing
@@ -158,13 +154,16 @@ the interface is loaded or can be
 <a name="videos" class="anchor" href="#videos"><span class="octicon octicon-link"></span></a>Videos</h3>
 
 <ol>
+<li><a href="https://www.youtube.com/watch?v=fofS2o6HzKA">An introduction to Bioconductor</a></li>
 <li><a href="http://youtu.be/zXtiiAoB_vM">A brief introduction to <code>pRolocGUI</code></a></li>
 <li><a href="http://youtu.be/qHMUnZnrkdA">Downloading and install <code>R</code></a></li>
 <li><a href="http://youtu.be/vlSbKf0OK3g">Using RStudio</a></li>
 <li><a href="http://youtu.be/_VmAZF1g_O4">Installing the <code>pRolocGUI</code> interface</a></li>
 <li><a href="http://youtu.be/24gntTd133w">Starting <code>pRolocGUI</code></a></li>
 <li><a href="http://youtu.be/cG3PEQ-uWhM">Using <code>pRolocGUI</code> to explore and visualise experimental spatial proteomics data</a></li>
-</ol><p>Tutorial <a href="https://www.youtube.com/watch?v=qHMUnZnrkdA&amp;list=PLvIXxpatSLA2loV5Srs2VBpJIYUlVJ4ow">playlist</a>.</p>
+</ol>
+
+<p>Tutorial <a href="https://www.youtube.com/watch?v=qHMUnZnrkdA&amp;list=PLvIXxpatSLA2loV5Srs2VBpJIYUlVJ4ow">playlist</a>.</p>
 
 <h3>
 <a name="general-resources" class="anchor" href="#general-resources"><span class="octicon octicon-link"></span></a>General resources</h3>
