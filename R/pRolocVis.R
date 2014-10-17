@@ -63,13 +63,20 @@ pRolocVis <- function(object) {
 
     ## global
     if (is.list(object)) {
+        if (TRUE %in% sapply(X = object, FUN = function(x) anyNA(exprs(x))))
+            warning("list item contains NA", immediate. = TRUE)
         if (!listOf(object, "MSnSet"))
             stop("object not list of MSnSets")
+        
     } else {
+        if (anyNA(exprs(object)))
+            warning("object contains NA", immediate. = TRUE)
         name <- MSnbase:::getVariableName(match.call(), "object")
         if (!inherits(object, "MSnSet"))
             stop("object not of class MSnSet")
     }
+    
+    
     
     ## increase upload limit to 20 MB
     options(shiny.maxRequestSize = 20*1024^2)
