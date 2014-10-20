@@ -63,7 +63,7 @@ pRolocVis <- function(object) {
 
     ## global
     if (is.list(object)) {
-        if (TRUE %in% sapply(X = object, FUN = function(x) anyNA(exprs(x))))
+        if (any(sapply(X = object, FUN = function(x) anyNA(exprs(x)))))
             warning("list item contains NA", immediate. = TRUE)
         if (!listOf(object, "MSnSet"))
             stop("object not list of MSnSets")
