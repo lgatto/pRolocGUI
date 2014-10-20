@@ -4,7 +4,6 @@ pRolocComp <- function(object) {
     if (!listOf(object, "MSnSet")) stop("object not list of MSnSets")
     if (length(object) != 2) stop("length of listunequal to 2")
     if (any(sapply(X = object, FUN = function(x) anyNA(exprs(x)))))
-    ##if (TRUE %in% sapply(X = object, FUN = function(x) anyNA(exprs(x))))
         warning("list item contains NA", immediate. = TRUE)
     
     ## increase upload limit to 20 MB
