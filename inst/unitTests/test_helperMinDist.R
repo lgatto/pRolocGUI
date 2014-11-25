@@ -28,13 +28,13 @@ test_.minDistPlotDist <- function() {
             "all", "all", 3, 0.4957, "object1", TRUE), "PGAP1_HUMAN")
     checkEqualsNumeric(
         pRolocGUI:::.minDistPlotDist(list(andy2011, tan2009r1), 
-            "markers", "ER", 1, 0.27, "object1", FALSE), 29)
+            "markers", "ER", 1, 0.27, "object1", FALSE), 1044)
     checkEqualsNumeric(
         pRolocGUI:::.minDistPlotDist(list(andy2011, tan2009r1), 
             "all", "all", 4, 0.4435, "object2", FALSE), 383)
     checkEqualsNumeric(
         pRolocGUI:::.minDistPlotDist(list(andy2011, tan2009r1),
-            "all", "all", 1, 0, "object2", TRUE), "FBgn0004584")
+            "all", "all", 1, 0, "object2", TRUE), "P27864")
 }
 ## END unit test .minDistPlotDist ## 
 
