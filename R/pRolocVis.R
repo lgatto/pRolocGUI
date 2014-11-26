@@ -64,13 +64,21 @@ pRolocVis <- function(object) {
     ## global
     if (is.list(object)) {
         if (!listOf(object, "MSnSet"))
-            stop("object not list of MSnSets")
+            stop("The input must be list of MSnSet instances.")
+        if (any(sapply(X = object, FUN = function(x) anyNA(exprs(x))))) {
+            warning("Removing features with missing values.", immediate. = TRUE)
+            object <- lapply(object, filterNA)
+        }
     } else {
-        name <- MSnbase:::getVariableName(match.call(), "object")
         if (!inherits(object, "MSnSet"))
-            stop("object not of class MSnSet")
+            stop("The input must be an instance of class MSnSet")
+        if (anyNA(exprs(object))) {
+            warning("Removing features with missing values.", immediate. = TRUE)
+            object <- filterNA(object)
+        }
+        name <- MSnbase:::getVariableName(match.call(), "object")
     }
-    
+
     ## increase upload limit to 20 MB
     options(shiny.maxRequestSize = 20*1024^2)
     
