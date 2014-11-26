@@ -1,3 +1,13 @@
+CHANGES IN VERSION 1.1.1
+------------------------
+ o Update README with uptodate installation instructions
+   [2014-10-14 Tue]
+ o handling and filtering missing value in input data [2014-10-21 Tue]
+
+CHANGES IN VERSION 1.0.0
+------------------------
+ o Release for Bioc 3.0 [2014-10-14 Tue]
+
 CHANGES IN VERSION 0.99.12
 --------------------------
  o added Video tag in DESCRIPTION [2014-10-07 Tue]

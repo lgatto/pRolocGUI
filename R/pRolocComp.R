@@ -1,8 +1,22 @@
 #' @export 
 pRolocComp <- function(object) {
+
+
+    if (!listOf(object, "MSnSet"))
+        stop("The input must be list of MSnSet instances.")
+
+    if (length(object) != 2)
+        stop("The input list must be of length 2.")
     
-    if (!listOf(object, "MSnSet")) stop("object not list of MSnSets")
-    if (length(object) != 2) stop("length of listunequal to 2")
+    if (any(sapply(X = object, FUN = function(x) anyNA(exprs(x))))) {
+        warning("Removing features with missing values.", immediate. = TRUE)
+        object <- lapply(object, filterNA)
+    }
+
+
+    
+    if (any(sapply(X = object, FUN = function(x) anyNA(exprs(x)))))
+        warning("list item contains NA", immediate. = TRUE)
     
     ## increase upload limit to 20 MB
     options(shiny.maxRequestSize = 20*1024^2)

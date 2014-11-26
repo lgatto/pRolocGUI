@@ -54,7 +54,7 @@ If you use these open-source software for your research, please cite:
 
 `pRolocGUI` is written in the [`R`](http://www.r-project.org/)
 programming language. Before installing the software you need to
-download `R` and also preferably `RStudio`.
+download `R` and (optionally) `RStudio`.
 
 1) Download `R` version `>= 3.1.1` for your operating system from the (R
 website)[http://www.r-project.org/] and install it.
@@ -70,17 +70,9 @@ excellent integration with the `R` terminal.
 `pRolocGUI`:
 
 `pRolocGUI` requires `R >= 3.1.1` and Bioconductor version `>= 3.0`.
-If you are using version is `3.1.x`, type in to the console
+In an `R` console, type
 
 ```{r dev, eval=FALSE}
-source("http://www.bioconductor.org/biocLite.R")
-useDevel(TRUE) ## to use Bioc 3.0 with R 3.1.1
-biocLite(c("pRoloc", "pRolocdata", "pRolocGUI"))
-```
-
-For any later version `>= 3.2`:
-
-```{r install, eval=FALSE}
 source("http://www.bioconductor.org/biocLite.R")
 biocLite(c("pRoloc", "pRolocdata", "pRolocGUI"))
 ```
@@ -91,6 +83,10 @@ information:
 ```{r version}
 sessionInfo()
 ```
+
+See the Bioconductor
+[installation page](http://bioconductor.org/install/) for more
+details.
 
 ## Getting started
 
