@@ -88,9 +88,9 @@ test_.computeInd <- function() {
     checkEquals(pRolocGUI:::.computeInd(utList, 
                     "XPO1_HUMAN", "object2"), integer())
     checkEquals(pRolocGUI:::.computeInd(utList, 
-        c("XPO1_HUMAN", "FBgn0004925", "FBgn0015776"), "object2"), c(886, 843))
+        c("XPO1_HUMAN", "P41374", "Q24046"), "object2"), c(886, 843))
     checkEquals(pRolocGUI:::.computeInd(utList, 
-            c("XPO1_HUMAN", "FBgn0004925", "FBgn0015776"), "object1"), c(1355))
+            c("XPO1_HUMAN", "P41374", "Q24046"), "object1"), c(1355))
 }
 ## END unit test .computeInd ##
 
@@ -110,12 +110,14 @@ test_.sI <- function() {
     checkEquals(pRolocGUI:::.sI(c("text", "cursorPCA"),
                                 NULL, 1:10, 1:10, NULL, NULL),
                 1:10)
+    
     checkEquals(pRolocGUI:::.sI(c("text", "cursorPCA"),
                                 NULL, 1:10, 9:20, NULL, NULL),
                 1:20)
     checkEquals(pRolocGUI:::.sI(c("text", "cursorPCA"),
                                 "x", 1:10, 9:20, NULL, NULL),
                 1:20)
+    
     checkEquals(pRolocGUI:::.sI(c("text", "cursorPCA", "savedSearches"),
                                 "x", 1:10, 9:20, NULL, NULL),
                 1:20)
