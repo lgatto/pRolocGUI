@@ -531,7 +531,7 @@
                     lwd = 3)
         }
         
-        if (length(listSaSe) > 0) && length(cIS)) {
+        if (length(listSaSe) > 0 && length(cIS)) {
             
             for (i in 1:length(listSaSe)) {
                 if (!(length(listSaSe[[i]]) == 1 && is.na(listSaSe[[i]]))) {
