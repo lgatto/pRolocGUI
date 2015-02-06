@@ -6,13 +6,13 @@ valuesPCA <- plot2D(andy2011, fcol=NULL, plot = FALSE)
 test_.minDistPCA <- function() {
     checkEqualsNumeric(
         pRolocGUI:::.minDistPCA(-4.047683, 5.663844, 
-                valuesPCA[, 1], valuesPCA[, 2], FALSE), 922)
+                valuesPCA[, 1], valuesPCA[, 2]), "PARP1_HUMAN")
     checkEquals(
-        pRolocGUI:::.minDistPCA(-4.047683, 5.663844, 
-                valuesPCA[, 1], valuesPCA[, 2], TRUE), "PARP1_HUMAN")
+        pRolocGUI:::.minDistPCA(-4.4935615, -2.340266, 
+                valuesPCA[, 1], valuesPCA[, 2]), "HINT1_HUMAN")
     checkTrue(
         is.null(pRolocGUI:::.minDistPCA(NULL, NULL, 
-                valuesPCA[, 1], valuesPCA[, 2], TRUE)))
+                valuesPCA[, 1], valuesPCA[, 2])))
 } 
 ## END unit test .minDistPCA ## 
 
@@ -22,19 +22,16 @@ test_.minDistPCA <- function() {
 test_.minDistPlotDist <- function() {
     checkEqualsNumeric(
         pRolocGUI:::.minDistPlotDist(list(andy2011, tan2009r1), 
-            "all", "all", 3, 0.4957, "object1", FALSE), 47)
-    checkEquals(
-        pRolocGUI:::.minDistPlotDist(list(andy2011, tan2009r1), 
-            "all", "all", 3, 0.4957, "object1", TRUE), "PGAP1_HUMAN")
+            "all", "all", 3, 0.4957, "object1"), "PGAP1_HUMAN")
     checkEqualsNumeric(
         pRolocGUI:::.minDistPlotDist(list(andy2011, tan2009r1), 
-            "markers", "ER", 1, 0.27, "object1", FALSE), 1044)
+            "markers", "ER", 1, 0.27, "object1"), "REEP4_HUMAN")
     checkEqualsNumeric(
         pRolocGUI:::.minDistPlotDist(list(andy2011, tan2009r1), 
-            "all", "all", 4, 0.4435, "object2", FALSE), 383)
+            "all", "all", 4, 0.4436, "object2"), c("Q9GU68", "Q86BR8"))
     checkEqualsNumeric(
         pRolocGUI:::.minDistPlotDist(list(andy2011, tan2009r1),
-            "all", "all", 1, 0, "object2", TRUE), "P27864")
+            "all", "all", 1, 0, "object2"), "P27864")
 }
 ## END unit test .minDistPlotDist ## 
 
