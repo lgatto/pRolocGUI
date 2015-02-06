@@ -402,10 +402,11 @@
         ## create a range slider
         sliderInput(id,
                     ifelse(col == 1, "zoom x-axis", "zoom y-axis"),
-                    min = min(valuesPCA[, col]) - 1,
-                    max = max(valuesPCA[, col]) + 1,
-                    value = c(min(valuesPCA[, col]), 
-                              max(valuesPCA[, col]))
+                    min = round(min(valuesPCA[, col]), 2) - 1,
+                    step = 0.01,
+                    max = round(max(valuesPCA[, col]), 2) + 1,
+                    value = c(round(min(valuesPCA[, col]), 2), 
+                              round(max(valuesPCA[, col]), 2))
         )  
 }
 
