@@ -515,7 +515,7 @@
             foiPCA <- FeaturesOfInterest(description = "hoP",
                                         fnames = featureNames(obj)[sI]) ##,
                                         ## object = obj)
-            highlightOnPlot(obj, foiPCA, 
+            highlightOnPlot(obj, foiPCA,
                     args = list(
                         fcol = fvarLabels(obj)[1],
                         xlim = c(xrange[1], 
@@ -532,7 +532,7 @@
         }
         
         if (length(listSaSe) > 0 && length(cIS)) {
-            
+
             for (i in 1:length(listSaSe)) {
                 if (!(length(listSaSe[[i]]) == 1 && is.na(listSaSe[[i]]))) {
                     .ind <- listSaSe[[i]]
@@ -798,8 +798,8 @@
                 && !is.null(sI)) {
             if (indtrace)
                 ans <- FeaturesOfInterest(description = searchText,
-                            fnames = featureNames(dataInput)[sI],
-                            object = dataInput)
+                                          fnames = featureNames(dataInput)[sI],
+                                          object = dataInput)
             else
                 ans <- FeaturesOfInterest(description = searchText, fnames = sI)
             return(ans)
