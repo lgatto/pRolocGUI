@@ -301,12 +301,7 @@
                                            .prot$PCA, .prot$plotDist, 
                                            .SavedSearch())
                 })
-                ##.searchInd <- reactive(
-                ##        .sI(input$chooseIdenSearch, input$tagSelectList, .prot$text, 
-                ##            .prot$PCA, .prot$plotDist, .SavedSearch())
-                ##           # .whichFOI(.dI(), .pR_SR$foi, .whichN()))
-                ##)
-                
+
                 ## reset button
                 output$resetMultUI <- renderUI(.reset(.prot$search))
                 
