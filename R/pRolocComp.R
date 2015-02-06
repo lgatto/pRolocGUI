@@ -575,7 +575,7 @@ pRolocComp <- function(object) {
                     ## is user input (name will be returned)
                     .minDistPCA(inputx = input$PCA1click$x, 
                         inputy = input$PCA1click$y, valuesx = .valuesPCA1()[,1],
-                        valuesy = .valuesPCA1()[,2], name = TRUE)
+                        valuesy = .valuesPCA1()[,2])
             )
             
             ## compute name of 2D-nearest protein for obj1 in PCA plot (hover)
@@ -583,7 +583,7 @@ pRolocComp <- function(object) {
                 if (!is.null(input$PCA1hover) && !is.null(.valuesPCA1())) 
                     .minDistPCA(inputx = input$PCA1hover$x, 
                         inputy = input$PCA1hover$y, valuesx = .valuesPCA1()[,1], 
-                        valuesy = .valuesPCA1()[,2], name = FALSE)
+                        valuesy = .valuesPCA1()[,2])
             )
                 
             ## compute name of 2D-nearest protein for obj2 in PCA plot (click)
@@ -595,7 +595,7 @@ pRolocComp <- function(object) {
                 ## is user input (name will be returned)
                     .minDistPCA(inputx = input$PCA2click$x, 
                         inputy = input$PCA2click$y, valuesx = .valuesPCA2()[,1],
-                        valuesy = .valuesPCA2()[,2], name = TRUE)
+                        valuesy = .valuesPCA2()[,2])
             )
             
             ## compute name of 2D-nearest protein for obj2 in PCA plot (hover)
@@ -603,7 +603,7 @@ pRolocComp <- function(object) {
                 if (!is.null(input$PCA2hover) && !is.null(.valuesPCA2())) {
                     .minDistPCA(inputx = input$PCA2hover$x, 
                         inputy = input$PCA2hover$y, valuesx = .valuesPCA2()[,1], 
-                        valuesy = .valuesPCA2()[,2], name = FALSE)
+                        valuesy = .valuesPCA2()[,2])
                 }
             )
             ## END: TAB PCA ## 
@@ -650,8 +650,7 @@ pRolocComp <- function(object) {
                             org = .listParams$levPlotDistOrg1[1],
                             inputx = input$plotDist1click$x,
                             inputy = input$plotDist1click$y,
-                            ind = "object1",
-                            name = TRUE)[1]
+                            ind = "object1")
                 }
             )
 
@@ -664,8 +663,7 @@ pRolocComp <- function(object) {
                             org = .listParams$levPlotDistOrg2[1],
                             inputx = input$plotDist2click$x,
                             inputy = input$plotDist2click$y,
-                            ind = "object2",
-                            name = TRUE)[1]
+                            ind = "object2")
                 }
             )
             
@@ -680,8 +678,7 @@ pRolocComp <- function(object) {
                             org = .listParams$levPlotDistOrg1[1],
                             inputx = input$plotDist1hover$x,
                             inputy = input$plotDist1hover$y,
-                            ind = "object1",
-                            name = FALSE)[1]
+                            ind = "object1")
                 }
             })
 
@@ -700,8 +697,7 @@ pRolocComp <- function(object) {
                             org = .listParams$levPlotDistOrg2[1],
                             inputx = input$plotDist2hover$x,
                             inputy = input$plotDist2hover$y,
-                            ind = "object1",
-                            name = FALSE)[1]
+                            ind = "object1")
                 }
             })
 

@@ -485,8 +485,7 @@
                         .minDistPCA(inputx = input$PCAclick$x, 
                                     inputy = input$PCAclick$y,
                                     valuesx = .valuesPCA()[,1],
-                                    valuesy = .valuesPCA()[,2],
-                                    name = TRUE)
+                                    valuesy = .valuesPCA()[,2])
                     }
                 )
                 
@@ -495,8 +494,7 @@
                         .minDistPCA(inputx = input$PCAhover$x, 
                                     inputy = input$PCAhover$y,
                                     valuesx = .valuesPCA()[,1], 
-                                    valuesy = .valuesPCA()[,2],
-                                    name = TRUE)
+                                    valuesy = .valuesPCA()[,2])
                     }
                 )
                 
@@ -538,8 +536,7 @@
                                     marker = .listParams$levPlotDist[1],
                                     org = .listParams$levPlotDistOrg[1],
                                     inputx = input$plotDistclick$x,
-                                    inputy = input$plotDistclick$y,
-                                    name = TRUE)[1]
+                                    inputy = input$plotDistclick$y)
                     }
                 )
                             
@@ -551,8 +548,7 @@
                                     marker = .listParams$levPlotDist[1],
                                     org = .listParams$levPlotDistOrg[1],
                                     inputx = input$plotDisthover$x,
-                                    inputy = input$plotDisthover$y,
-                                    name = TRUE)[1]
+                                    inputy = input$plotDisthover$y)
                     }
                 })
                 
