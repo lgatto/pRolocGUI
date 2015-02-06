@@ -259,7 +259,6 @@
                 observe({
                     .dI()
                     .prot$text <- .prot$PCA <- .prot$plotDist <- NULL
-                    .pR_SR$foi <- .createSR()
                     .newfoi$ind <- NULL
                     .prot$search <- NULL
                     selected$SaSe <- NULL
