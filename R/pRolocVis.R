@@ -240,6 +240,7 @@ pRolocVis <- function(object) {
                 } 
             })
             
+<<<<<<< HEAD
             output$warningUploadUI <- renderUI({
                 if (!is.null(input$data)) {
                     if (input$data == "upload" 
@@ -311,6 +312,152 @@ pRolocVis <- function(object) {
                     if (input$resetMult > 0) {
                         .prot$PCA <- .prot$plotDist <- .prot$text <- NULL
                         dSelect$PCA <- dSelect$plotDist <- dSelect$text <- NULL
+=======
+                output$PCAn2UI <- renderUI(.PC(.dI(), "y", 2))
+                
+                ## legend 
+                output$PCALegendUI <- renderUI(.legendPCA(.dI(), input$fcolours))
+                
+                output$PCALegendposUI <- renderUI(
+                    .legendPosPCA(.dI(), input$fcolours)
+                )
+                
+                .searchInd <- reactive({
+                    .computeInd(.dI(), .prot$search)    
+                })
+                
+                .listSaSeInd <- reactive({
+                    sase <- lapply(.SavedSearchList(), match, featureNames(.dI()))
+                    sase <- lapply(sase, na.omit)
+                    lapply(sase, as.vector)
+                })
+                
+                ## Generate PCA plot, use fcolours for colours and add legend
+                ## function (appearance and position dependent of user input)
+                output$PCAUI <- renderPlot(
+                        .plotPCA(obj = .dI(), 
+                            fcolours = input$fcolours, 
+                            fcex = input$fcex,
+                            xrange = input$xrange,
+                            yrange = input$yrange,
+                            sb = input$fsymboltype,
+                            PCAn1 = input$PCAn1,
+                            PCAn2 = input$PCAn2,
+                            legend = input$legendyes, 
+                            legendpos = input$legendpos,
+                            sI = .searchInd(),
+                            cIS = input$chooseIdenSearch,
+                            ind = "object1",
+                            listSaSe = .listSaSeInd()
+                        )
+                    )
+                
+                
+                ## for Plot/Download button (needs a reactive expression)
+                .PCAPlotReac <- reactive(
+                        .plotPCA(obj = .dI(), 
+                            fcolours = input$fcolours, 
+                            fcex = input$fcex,
+                            xrange = input$xrange,
+                            yrange = input$yrange,
+                            sb = input$fsymboltype,
+                            PCAn1 = input$PCAn1,
+                            PCAn2 = input$PCAn2,
+                            legend = input$legendyes, 
+                            legendpos = input$legendpos,
+                            sI = .searchInd(),
+                            cIS = input$chooseIdenSearch,
+                            ind = "object1",
+                            listSaSe = .listSaseInd()
+                    )
+                )
+                
+                ## Download Handler for PCA plot
+                output$plotPCADownload <- downloadHandler(
+                    filename = function() {
+                        paste(input$data, "-PCA-", Sys.Date(), ".jpg", sep="")
+                    },
+                    content = function(file) {
+                        jpeg(file, quality = 100, width = 800, height = 800)
+                        .PCAPlotReac()
+                        dev.off()}
+                )
+                    
+                ## reactive expressions for search based on cursor input for PCA
+                .minDist2dProtPCA <- reactive(
+                    ## will be empty initially
+                    if (!is.null(input$PCAclick) && !is.null(.valuesPCA())) {
+                        ## compute 2D distances from click input to each component 
+                        ## of the PCA plot, input$PCAclick$x and input$PCAclick$y
+                        ## is user input (index will be returned)
+                        .minDistPCA(inputx = input$PCAclick$x, 
+                                    inputy = input$PCAclick$y,
+                                    valuesx = .valuesPCA()[,1],
+                                    valuesy = .valuesPCA()[,2])
+                    }
+                )
+                
+                .minDist2dProtPCAHover <- reactive(
+                    if (!is.null(input$PCAhover) && !is.null(.valuesPCA())) {
+                        .minDistPCA(inputx = input$PCAhover$x, 
+                                    inputy = input$PCAhover$y,
+                                    valuesx = .valuesPCA()[,1], 
+                                    valuesy = .valuesPCA()[,2])
+                    }
+                )
+                
+                ## display name of 2D-nearest protein in PCA plot
+                output$hoverProtPCAUI <- renderTable(
+                    if (!is.null(.minDist2dProtPCAHover()))
+                        fData(.dI()[[1]])[.minDist2dProtPCAHover(), ]
+                )
+                ## END: PCA PLOT ##
+    
+                ## TAB: PLOTDIST ##            
+                ## Index of element in list where parameters are stored
+                .nCol <- reactive(.nC(input$numberPlotDist, input$quantityPlotDist))
+                    
+                ## list where parameters for plot are stored
+                ## create a list with reactive values
+                .listParams <- reactiveValues(
+                    levPlotDist = NULL, 
+                    levPlotDistOrg = NULL
+                )
+                
+                ## write paramters to list for plotDist at index of .nCol()
+                observe({
+                    if (!is.null(input$organelleAll) &&
+                            !is.null(input$fNamesplDist)) {
+                        .listParams$levPlotDist[.nCol()] <- 
+                            input$fNamesplDist
+                        .listParams$levPlotDistOrg[.nCol()] <- 
+                            input$organelleAll
+                    }
+                })
+                
+                ## calculate protein nearest to user input
+                .minDistProtPlotDist <- reactive(
+                    if (length(.dI()) != 0 && !is.null(input$plotDistclick)) {
+                        if (!is.null(input$quantityPlotDist) && 
+                                input$quantityPlotDist == "1")
+                            .minDistPlotDist(obj = .dI(), 
+                                    marker = .listParams$levPlotDist[1],
+                                    org = .listParams$levPlotDistOrg[1],
+                                    inputx = input$plotDistclick$x,
+                                    inputy = input$plotDistclick$y)
+                    }
+                )
+                            
+                .minDistProtPlotDistHover <- reactive({
+                    if (length(.dI()) != 0 && !is.null(input$plotDisthover$x)) {
+                        if (!is.null(input$quantityPlotDist) && 
+                                input$quantityPlotDist == "1") 
+                            .minDistPlotDist(obj = .dI(),
+                                    marker = .listParams$levPlotDist[1],
+                                    org = .listParams$levPlotDistOrg[1],
+                                    inputx = input$plotDisthover$x,
+                                    inputy = input$plotDisthover$y)
+>>>>>>> 95764834c33e9d73f4f0b5af6e47d91b7ba3252e
                     }
             })
             
