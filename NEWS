@@ -1,7 +1,7 @@
 CHANGES IN VERSION 1.1.2
 ------------------------
- o Add GNU make sys requirement to replace warning by note
- [2015-01-24 Sat]
+ o Fix bug with FoIs and multiple data sets (reported by Harriet
+   Parsons) [2015-02-06 Fri]
 
 CHANGES IN VERSION 1.1.1
 ------------------------
