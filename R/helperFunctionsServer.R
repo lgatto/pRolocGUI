@@ -513,8 +513,8 @@
 
         if (length(na.exclude(sI)) && length(cIS)) {
             foiPCA <- FeaturesOfInterest(description = "hoP",
-                                        fnames = featureNames(obj)[sI],
-                                        object = obj)
+                                        fnames = featureNames(obj)[sI]) ##,
+                                        ## object = obj)
             highlightOnPlot(obj, foiPCA, 
                     args = list(
                         fcol = fvarLabels(obj)[1],
@@ -531,11 +531,11 @@
                     lwd = 3)
         }
         
-        if (length(listSaSe) > 0 && length(cIS)) {
+        if (length(listSaSe) > 0) && length(cIS)) {
             
             for (i in 1:length(listSaSe)) {
                 if (!(length(listSaSe[[i]]) == 1 && is.na(listSaSe[[i]]))) {
-                    
+                    .ind <- listSaSe[[i]]
                     .ind <- na.exclude(listSaSe[[i]])
                     if (length(.ind) == 0)
                         .ind <- NULL
