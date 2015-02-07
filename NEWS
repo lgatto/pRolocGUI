@@ -1,3 +1,8 @@
+CHANGES IN VERSION 1.1.2
+------------------------
+ o Fix bug with FoIs and multiple data sets (reported by Harriet
+   Parsons) [2015-02-06 Fri]
+
 CHANGES IN VERSION 1.1.1
 ------------------------
  o Update README with uptodate installation instructions
