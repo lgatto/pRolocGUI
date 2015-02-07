@@ -1,24 +1,21 @@
 ## Function to compute min2d distance from user input for PCA
 .minDistPCA <- function(inputx, inputy, 
-                            valuesx, valuesy, name = c(TRUE, FALSE)) {
+                            valuesx, valuesy) {
     if (!is.null(inputx) && !is.null(inputy)) {
         dist <- sqrt(
             (inputx - valuesx)^2 + ## x-component
                 (inputy - valuesy)^2 ## y-component
         )
         ## compute the element (row index, i.e. the protein) which has the 
-        ## shortest distance to the input (index will be returned)
-        if (name)
-            return(names(which(dist == min(dist))))
-        else
-            return(as.vector(which(dist == min(dist))))
+        ## shortest distance to the input (name will be returned)
+        return(names(which(dist == min(dist))))
     }
 }
 
 ## Function to compute min2d distance from user input for plotDist
 ## calculate protein nearest to user input
 .minDistPlotDist <- function(obj, marker, org, inputx, inputy, 
-                        ind = c("object1", "object2"), name = c(FALSE, TRUE)) {
+                        ind = c("object1", "object2")) {
     if (!is.null(inputx) && !is.null(inputy)) {
         ind <- match.arg(ind)
         obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
@@ -36,11 +33,8 @@
             dist <- abs(inputy - exprs(obj)[j, round(inputx, 0)])
             minDist <- min(dist)
             whichMinDist <- which(minDist == dist)
-            ## return index
-            if (name == TRUE)
-                return(names(whichMinDist))
-            else
-                return(j[whichMinDist[[1]]])
+            ## return name
+            return(names(whichMinDist))
         }
     }
 }

@@ -402,10 +402,11 @@
         ## create a range slider
         sliderInput(id,
                     ifelse(col == 1, "zoom x-axis", "zoom y-axis"),
-                    min = min(valuesPCA[, col]) - 1,
-                    max = max(valuesPCA[, col]) + 1,
-                    value = c(min(valuesPCA[, col]), 
-                              max(valuesPCA[, col]))
+                    min = round(min(valuesPCA[, col]), 2) - 1,
+                    step = 0.01,
+                    max = round(max(valuesPCA[, col]), 2) + 1,
+                    value = c(round(min(valuesPCA[, col]), 2), 
+                              round(max(valuesPCA[, col]), 2))
         )  
 }
 
@@ -513,9 +514,9 @@
 
         if (length(na.exclude(sI)) && length(cIS)) {
             foiPCA <- FeaturesOfInterest(description = "hoP",
-                                        fnames = featureNames(obj)[sI],
-                                        object = obj)
-            highlightOnPlot(obj, foiPCA, 
+                                        fnames = featureNames(obj)[sI]) ##,
+                                        ## object = obj)
+            highlightOnPlot(obj, foiPCA,
                     args = list(
                         fcol = fvarLabels(obj)[1],
                         xlim = c(xrange[1], 
@@ -532,10 +533,10 @@
         }
         
         if (length(listSaSe) > 0 && length(cIS)) {
-            
+
             for (i in 1:length(listSaSe)) {
                 if (!(length(listSaSe[[i]]) == 1 && is.na(listSaSe[[i]]))) {
-                    
+                    .ind <- listSaSe[[i]]
                     .ind <- na.exclude(listSaSe[[i]])
                     if (length(.ind) == 0)
                         .ind <- NULL
@@ -798,8 +799,8 @@
                 && !is.null(sI)) {
             if (indtrace)
                 ans <- FeaturesOfInterest(description = searchText,
-                            fnames = featureNames(dataInput)[sI],
-                            object = dataInput)
+                                          fnames = featureNames(dataInput)[sI],
+                                          object = dataInput)
             else
                 ans <- FeaturesOfInterest(description = searchText, fnames = sI)
             return(ans)
