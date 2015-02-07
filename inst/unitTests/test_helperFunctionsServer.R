@@ -117,15 +117,8 @@ test_.sI <- function() {
     checkEquals(pRolocGUI:::.sI(c("text", "cursorPCA"),
                                 "x", 1:10, 9:20, NULL, NULL),
                 1:20)
-<<<<<<< HEAD
-    
-    checkEquals(pRolocGUI:::.sI(c("text", "cursorPCA", "savedSearches"),
-                                "x", 1:10, 9:20, NULL, NULL),
-                1:20)
-=======
     checkEquals(pRolocGUI:::.sI(c("text", "cursorPCA", "savedSearches"),
                                 "x", 1:10, 9:20, NULL, NULL), 1:20)
->>>>>>> master
     checkEquals(pRolocGUI:::.sI(c("text", "savedSearches"),
                                 "x", 1:10, 9:20, NULL, 100:105),
                 c(1:10, 100:105))
