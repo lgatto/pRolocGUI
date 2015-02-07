@@ -1,4 +1,4 @@
-#########################
+########################
 ## ui helper functions ##
 #########################
 
@@ -143,7 +143,6 @@
             ## mirror second object
             ## link to help page
             htmlOutput("linkPCAUI")
-            
         )
     )
 }
