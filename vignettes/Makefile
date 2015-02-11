@@ -2,11 +2,7 @@
 all:
 	"$(R_HOME)/bin/Rscript" -e "library(methods);library(knitrBootstrap); knit_bootstrap('pRolocGUI.Rmd', show_code=TRUE, boot_style='Flatly')"
 
-setvars:
-ifeq (${R_HOME},)
-R_HOME= $(shell R RHOME)
-endif
-
+R_HOME = `R RHOME`
 
 clean:
 	rm -f *.md
