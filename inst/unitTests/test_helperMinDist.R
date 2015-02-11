@@ -6,6 +6,7 @@ valuesPCA <- plot2D(andy2011, fcol=NULL, plot = FALSE)
 test_.minDistPCA <- function() {
     checkEqualsNumeric(
         pRolocGUI:::.minDistPCA(-4.047683, 5.663844, 
+                valuesPCA[, 1], valuesPCA[, 2]), "PARP1_HUMAN")
     checkEquals(
         pRolocGUI:::.minDistPCA(-4.4935615, -2.340266, 
                 valuesPCA[, 1], valuesPCA[, 2]), "HINT1_HUMAN")
