@@ -1,3 +1,7 @@
+CHANGES IN VERSION 1.1.4
+------------------------
+ o fix R_HOME error [2015-02-26 Thu]
+ 
 CHANGES IN VERSION 1.1.3
 ------------------------
  o don't require GNU make [2015-02-11 Wed]
