@@ -9,15 +9,15 @@ valuesPCA <- plot2D(andy2011, fcol = NULL, plot = FALSE)
 ## ("none" in symboltype, PC 1 (along x-axis) and 2 (along y-axis), 
 ## not zoomed)
 ## click on the feature belonging to "ER" at (3.59, -1.54)
-indPCA <- which(featureNames(andy2011) == "PGAP1_HUMAN")
+indPCA <- which(featureNames(andy2011) == "Q75T13")
 ## click on the feature belongin to "PM" at (2.56, -2.24)
-indPCA <- c(indPCA, which(featureNames(andy2011) == "SLK_HUMAN")) 
+indPCA <- c(indPCA, which(featureNames(andy2011) == "Q9H2G2")) 
 ## click on the feature belonging to "Golgi" at (-0.33, 1.92)
-indPCA <- c(indPCA, which(featureNames(andy2011) == "TPPC8_HUMAN"))
+indPCA <- c(indPCA, which(featureNames(andy2011) == "Q9Y2L5"))
 ## click on the feature belonging to "Mitochondrion" at (-2.94, 3.99)
-indPCA <- c(indPCA, which(featureNames(andy2011) == "NDUS5_HUMAN")) 
+indPCA <- c(indPCA, which(featureNames(andy2011) == "O43920")) 
 ## click on the feature belonging to "unknown" at (-4.64, 5.43)
-indPCA <- c(indPCA, which(featureNames(andy2011) == "HMGB1_HUMAN"))
+indPCA <- c(indPCA, which(featureNames(andy2011) == "P09429"))
 ## select "markers" in "colour" 
 ## ("none" in symboltype, PC 1 (along x-axis) and 2 (along y-axis), 
 ## not zoomed)
@@ -61,19 +61,19 @@ fData(andy2011[indPCA])
 ## select "1" in "number of plots to display"
 ## select "all" in "feature(s) in" and "all" in "assigned to"
 ## click on the feature at (1, 0.65)
-indPlDist <- which(featureNames(andy2011) == "BCD1_HUMAN")
+indPlDist <- which(featureNames(andy2011) == "Q9NWK9")
 ## click on the feature at (2, 0.47)
-indPlDist <- c(indPlDist, which(featureNames(andy2011) == "PGAP1_HUMAN"))
+indPlDist <- c(indPlDist, which(featureNames(andy2011) == "Q75T13"))
 ## click on the feature at (4, 0.34)
-indPlDist <- c(indPlDist, which(featureNames(andy2011) == "L12R1_HUMAN"))
+indPlDist <- c(indPlDist, which(featureNames(andy2011) == "Q969J3"))
 ## click on the feature at (5, 0.44)
-indPlDist <- c(indPlDist, which(featureNames(andy2011) == "SPTA2_HUMAN"))
+indPlDist <- c(indPlDist, which(featureNames(andy2011) == "Q13813"))
 ## click on the feature at (6, 0.60)
-indPlDist <- c(indPlDist, which(featureNames(andy2011) == "DHE3_HUMAN"))
+indPlDist <- c(indPlDist, which(featureNames(andy2011) == "P00367"))
 ## click on the feature at (7, 0.47)
-indPlDist <- c(indPlDist, which(featureNames(andy2011) == "PARP1_HUMAN"))
+indPlDist <- c(indPlDist, which(featureNames(andy2011) == "P09874"))
 ## click on the feature at (8, 0.91)
-indPlDist <- c(indPlDist, which(featureNames(andy2011) == "MCM6_HUMAN"))
+indPlDist <- c(indPlDist, which(featureNames(andy2011) == "Q14566"))
 ## the plot in tab "protein profiles" should look like this (make sure the 
 ## box next to "protein profiles" is selected:
 plotDist(andy2011)
@@ -121,9 +121,9 @@ indQuery <- which(fData(andy2011)$pd.markers == "Lysosome")
 ## click on "Submit selection"
 indQuery <- c(indQuery, which(fData(andy2011)$pd.2013 == "Phenotype 5"))
 ## select "protein" in "query" 
-## select "AL3A2_HUMAN" in the second drop-down list
+## select "" in the second drop-down list
 ## click on "Submit selection"
-indQuery <- c(indQuery, which(featureNames(andy2011) == "AL3A2_HUMAN"))
+indQuery <- c(indQuery, which(featureNames(andy2011) == ""))
 
 ## select "markers" in "colour" 
 ## ("none" in symboltype, PC 1 (along x-axis) and 2 (along y-axis), 
@@ -169,8 +169,8 @@ fData(andy2011[indQuery])
 indSaSe <- which(fData(andy2011)$pd.markers == "Lysosome")
 ## query for "Phenotype 5" in "pd.2013" and click on "Submit selection"
 indSaSe <- c(indSaSe, which(fData(andy2011)$pd.2013 == "Phenotype 5"))
-## query for "AL3A2_HUMAN" in "protein" and click on "Submit selection"
-indSaSe <- c(indSaSe, which(featureNames(andy2011) == "AL3A2_HUMAN"))
+## query for "P09874" in "protein" and click on "Submit selection"
+indSaSe <- c(indSaSe, which(featureNames(andy2011) == "P09874"))
 indSaSe <- unique(indSaSe)
 ## make sure the checkBox next to query is checked and go to the tab
 ## "searches" 
@@ -399,7 +399,7 @@ indQueryr1 <- which(fData(tan2009r1)$pd.markers == "Lysosome")
 ## click on "Submit selection"
 indQueryr1 <- c(indQueryr1, which(fData(tan2009r1)$pd.2013 == "Phenotype 5"))
 ## select "protein" in "query" 
-## select "AL3A2_HUMAN" in the second drop-down list
+## select "O97428" in the second drop-down list
 ## click on "Submit selection"
 indQueryr1 <- c(indQueryr1, which(featureNames(tan2009r1) == "O97428"))
 indQueryr2 <- match(featureNames(tan2009r1)[indQueryr1], featureNames(tan2009r2))
