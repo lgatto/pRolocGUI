@@ -81,16 +81,16 @@ test_.computeInd <- function() {
     checkEquals(pRolocGUI:::.computeInd(list(NULL, NULL), NULL, "object1"), integer())
     checkEquals(pRolocGUI:::.computeInd(utList, NULL, "object1"), integer())
     checkEquals(pRolocGUI:::.computeInd(list(NULL, NULL), 
-                                "XPO1_HUMAN", "object1"), integer())
-    checkEquals(pRolocGUI:::.computeInd(utList, "XPO1_HUMAN", "object1"), 1355)
+                                        "O14980", "object1"), integer())
+    checkEquals(pRolocGUI:::.computeInd(utList, "O14980", "object1"), 1355)
     checkEquals(pRolocGUI:::.computeInd(utList, 
-                    c("XPO1_HUMAN", "ZN207_HUMAN"), "object1"), c(1355, 1364))
+                    c("O14980", "O43670"), "object1"), c(1355, 1364))
     checkEquals(pRolocGUI:::.computeInd(utList, 
-                    "XPO1_HUMAN", "object2"), integer())
+                    "O14980", "object2"), integer())
     checkEquals(pRolocGUI:::.computeInd(utList, 
-        c("XPO1_HUMAN", "P41374", "Q24046"), "object2"), c(886, 843))
+        c("O14980", "P41374", "Q24046"), "object2"), c(886, 843))
     checkEquals(pRolocGUI:::.computeInd(utList, 
-            c("XPO1_HUMAN", "P41374", "Q24046"), "object1"), c(1355))
+            c("O14980", "P41374", "Q24046"), "object1"), c(1355))
 }
 ## END unit test .computeInd ##
 
@@ -209,7 +209,7 @@ test_.obsProtText <- function() {
         "pd.markers", "object2", FALSE), 
         c(1:10, 14, 61, 104, 163, 213, 425, 435, 562, 734, 853))
     checkEquals(pRolocGUI:::.obsProtText(utList, "O75312", 1, "O75312", 
-                    "protein", "object1", TRUE), c("O75312", "O75312"))
+                    "protein", "object1", TRUE), c("O75312"))
 }
 ## END unit test .obsProtText ##
 
