@@ -330,13 +330,8 @@
             ans <- plot2D(obj, fcol=NULL,
                           dims=c(as.numeric(PCAn1), as.numeric(PCAn2)), 
                           mirrorX = mX, mirrorY = mY, plot=FALSE)
-            if (mX && !mY)
-                ans[, 1] <- -ans[, 1]
-            if (!mX && mY)
-                ans[, 2] <- -ans[, 2]
-            if (mX && mY) 
-                ans <- -ans
-            
+            if (mX) ans[, 1] <- -ans[, 1]
+            if (mY) ans[, 2] <- -ans[, 2]
             return(ans)
         }
     }
