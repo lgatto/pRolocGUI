@@ -3,11 +3,12 @@ import(pRoloc)
 import(MSnbase)
 import(methods)
 
-
 ## Imports
 import(pRolocdata)
 import(shiny)
+import(scales)
 importFrom(tools,file_ext)
 
+export(plotMat2D)
 export(pRolocVis)
 export(pRolocComp)

@@ -6,22 +6,22 @@
 
 ## START unit test .namesObj ##
 test_.namesObj <- function() {
-    checkEquals(pRolocGUI:::.namesObj(NULL), c("object"))
-    checkEquals(pRolocGUI:::.namesObj(NULL, TRUE), c("object", "upload"))
-    checkEquals(pRolocGUI:::.namesObj(1:10), c("object"))
-    checkEquals(pRolocGUI:::.namesObj(1:10, TRUE), c("object", "upload"))
-    checkEquals(pRolocGUI:::.namesObj(andy2011), c("object"))
+    checkEquals(pRolocGUI:::.namesObj(NULL), character())
+    checkEquals(pRolocGUI:::.namesObj(NULL, upload = TRUE), c("upload"))
+    checkEquals(pRolocGUI:::.namesObj(1:10, name = "object"), c("object"))
+    checkEquals(pRolocGUI:::.namesObj(1:10, name = "object", upload = TRUE), c("object", "upload"))
+    checkEquals(pRolocGUI:::.namesObj(andy2011, name = "object"), c("object"))
     checkEquals(pRolocGUI:::.namesObj(list(NULL)), c("object1"))
     checkEquals(pRolocGUI:::.namesObj(list(andy2011)), c("object1"))
-    checkEquals(pRolocGUI:::.namesObj(list(NULL, NULL), TRUE), 
+    checkEquals(pRolocGUI:::.namesObj(list(NULL, NULL), upload = TRUE), 
                                         c("object1", "object2", "upload"))
-    checkEquals(pRolocGUI:::.namesObj(list(1:10, 2:11), TRUE), 
+    checkEquals(pRolocGUI:::.namesObj(list(1:10, 2:11), upload = TRUE), 
                                         c("object1", "object2", "upload"))
     checkEquals(pRolocGUI:::.namesObj(list(andy2011, tan2009r1)), 
                                         c("object1", "object2"))
     checkEquals(pRolocGUI:::.namesObj(list(ut1 = andy2011, ut2 = tan2009r1)), 
                                         c("ut1", "ut2"))
-    checkEquals(pRolocGUI:::.namesObj(list(andy2011, ut2 = tan2009r1), TRUE), 
+    checkEquals(pRolocGUI:::.namesObj(list(andy2011, ut2 = tan2009r1), upload = TRUE), 
                                         c("object1", "ut2", "upload"))
 }
 ## END unit test .namesObj ##
@@ -81,16 +81,16 @@ test_.computeInd <- function() {
     checkEquals(pRolocGUI:::.computeInd(list(NULL, NULL), NULL, "object1"), integer())
     checkEquals(pRolocGUI:::.computeInd(utList, NULL, "object1"), integer())
     checkEquals(pRolocGUI:::.computeInd(list(NULL, NULL), 
-                                "XPO1_HUMAN", "object1"), integer())
-    checkEquals(pRolocGUI:::.computeInd(utList, "XPO1_HUMAN", "object1"), 1355)
+                                        "O14980", "object1"), integer())
+    checkEquals(pRolocGUI:::.computeInd(utList, "O14980", "object1"), 1355)
     checkEquals(pRolocGUI:::.computeInd(utList, 
-                    c("XPO1_HUMAN", "ZN207_HUMAN"), "object1"), c(1355, 1364))
+                    c("O14980", "O43670"), "object1"), c(1355, 1364))
     checkEquals(pRolocGUI:::.computeInd(utList, 
-                    "XPO1_HUMAN", "object2"), integer())
+                    "O14980", "object2"), integer())
     checkEquals(pRolocGUI:::.computeInd(utList, 
-        c("XPO1_HUMAN", "FBgn0004925", "FBgn0015776"), "object2"), c(886, 843))
+        c("O14980", "P41374", "Q24046"), "object2"), c(886, 843))
     checkEquals(pRolocGUI:::.computeInd(utList, 
-            c("XPO1_HUMAN", "FBgn0004925", "FBgn0015776"), "object1"), c(1355))
+            c("O14980", "P41374", "Q24046"), "object1"), c(1355))
 }
 ## END unit test .computeInd ##
 
@@ -110,6 +110,7 @@ test_.sI <- function() {
     checkEquals(pRolocGUI:::.sI(c("text", "cursorPCA"),
                                 NULL, 1:10, 1:10, NULL, NULL),
                 1:10)
+    
     checkEquals(pRolocGUI:::.sI(c("text", "cursorPCA"),
                                 NULL, 1:10, 9:20, NULL, NULL),
                 1:20)
@@ -117,8 +118,7 @@ test_.sI <- function() {
                                 "x", 1:10, 9:20, NULL, NULL),
                 1:20)
     checkEquals(pRolocGUI:::.sI(c("text", "cursorPCA", "savedSearches"),
-                                "x", 1:10, 9:20, NULL, NULL),
-                1:20)
+                                "x", 1:10, 9:20, NULL, NULL), 1:20)
     checkEquals(pRolocGUI:::.sI(c("text", "savedSearches"),
                                 "x", 1:10, 9:20, NULL, 100:105),
                 c(1:10, 100:105))
@@ -142,18 +142,18 @@ test_.sIUni <- function() {
 ## START unit test .sRsubset ##
 test_.sRsubset <- function() {
     utList <- list(andy2011, tan2009r1)
-    checkEquals(pRolocGUI:::.sRsubset(utList, "protein", "ACA", "object1"), 
-                                            c("ACAD9_HUMAN", "ACADV_HUMAN"))
-    checkEquals(pRolocGUI:::.sRsubset(utList, "protein", "FBgn000307", 
-                                "object2"), c("FBgn0003075", "FBgn0003071"))
-    checkEquals(pRolocGUI:::.sRsubset(utList, "markers", "E", "object1"), "ER")
+    checkEquals(pRolocGUI:::.sRsubset(utList, "protein", "P16", "object1"), 
+                                        c("P16615", "P16435", "P16152"))
+    checkEquals(pRolocGUI:::.sRsubset(utList, "protein", "Q9W3M", 
+                                "object2"), c("Q9W3M7", "Q9W3M8"))
+    checkEquals(pRolocGUI:::.sRsubset(utList, "markers", "En", "object1"), "Endosome")
     checkEquals(pRolocGUI:::.sRsubset(utList, "markers", "ER", "object1"), "ER")
-    checkEquals(pRolocGUI:::.sRsubset(utList, "markers", "", "object2"), 
-                                            levels(fData(tan2009r1)$markers))
+    checkEquals(sort(pRolocGUI:::.sRsubset(utList, "markers", "", "object2")), 
+                                            sort(unique(fData(tan2009r1)$markers)))
     checkEquals(pRolocGUI:::.sRsubset(utList, "pd.markers", "", "object1"), 
                                             levels(fData(andy2011)$pd.markers))
-    checkEquals(pRolocGUI:::.sRsubset(utList, "markers", "er", "object2"), 
-                                                                    character())
+    checkEquals(pRolocGUI:::.sRsubset(utList, "markers", "eri", "object2"), 
+                                                                   character())
 }
 ## END unit test .sRsubset ##
 
@@ -162,24 +162,23 @@ test_.sRsubset <- function() {
 ## START unit test .checkFeatText ##
 test_.checkFeatText <- function() {
     utList <- list(andy2011, tan2009r1)
-    checkTrue(!pRolocGUI:::.checkFeatText(utList, NULL, "ZPR1_HUMAN", 
+    checkTrue(!pRolocGUI:::.checkFeatText(utList, NULL, "O75312", 
                                             "protein", "object1", TRUE))
-    checkTrue(pRolocGUI:::.checkFeatText(utList, "ZPR1_HUMAN", "ZPR1_HUMAN", 
+    checkTrue(pRolocGUI:::.checkFeatText(utList, "O75312", "O75312", 
                                             "protein", "object1", TRUE))
-    checkTrue(!pRolocGUI:::.checkFeatText(utList, "ZPR1_HUMAN", "ZPR1_HUMAN", 
+    checkTrue(!pRolocGUI:::.checkFeatText(utList, "O75312", "O75312", 
                                             "protein", "object1", FALSE))
-    checkTrue(pRolocGUI:::.checkFeatText(utList, 1371, "ZPR1_HUMAN", 
+    checkTrue(pRolocGUI:::.checkFeatText(utList, 1371, "O75312", 
                                             "protein", "object1", FALSE))
-    checkTrue(!pRolocGUI:::.checkFeatText(utList, "ZPR1_HUMAN", "ER", 
+    checkTrue(!pRolocGUI:::.checkFeatText(utList, "O75312", "ER", 
                                             "markers", "object1", TRUE))
     checkTrue(pRolocGUI:::.checkFeatText(utList,
-        c("BCLF1_HUMAN", "HNRPK_HUMAN", "IF4G1_HUMAN", "MAN1_HUMAN", 
-          "NP1L4_HUMAN", "TCP4_HUMAN", "ZN787_HUMAN"), "Nucleus", 
-        "pd.markers", "object1", TRUE))
-    checkTrue(pRolocGUI:::.checkFeatText(utList, 882:888, "FBgn0001215", 
+        c("Q9NYF8", "P61978", "Q04637", "Q9Y2U8", "Q99733", "P53999", "Q6DD87"), 
+        "Nucleus", "pd.markers", "object1", TRUE))
+    checkTrue(pRolocGUI:::.checkFeatText(utList, 882:888, "Q9V3V2", 
                                             "protein", "object2", FALSE))
-    checkTrue(pRolocGUI:::.checkFeatText(utList, c("FBgn0035726", 
-        "FBgn0001215"), "FBgn0001215", "protein", "object2", TRUE))
+    checkTrue(pRolocGUI:::.checkFeatText(utList, c("Q8SZM1", 
+        "Q8MSI9"), "Q8MSI9", "protein", "object2", TRUE))
 }
 ## END unit test .checkFeatText ##
 
@@ -197,19 +196,20 @@ test_.obsProtText <- function() {
                                                                 FALSE), 1:10)
     checkEquals(pRolocGUI:::.obsProtText(utList, 1:10, 1, NULL, NULL, "object2", 
                                                                 FALSE), 1:10)
-    checkEquals(pRolocGUI:::.obsProtText(utList, 1:10, 1, "ZPR1_HUMAN", NULL, 
+    checkEquals(pRolocGUI:::.obsProtText(utList, 1:10, 1, "O75312", NULL, 
                                                         "object1", FALSE), 1:10)
-    checkEquals(pRolocGUI:::.obsProtText(utList, 1:10, 1, "ZPR1_HUMAN", 
+    checkEquals(pRolocGUI:::.obsProtText(utList, 1:10, 1, "O75312", 
                                     "protein", "object1", FALSE), c(1:10, 1371))
-    checkEquals(pRolocGUI:::.obsProtText(utList, 1:10, 1, "ER", "markers", 
-                                                        "object1", FALSE), 1:80)
+    checkEquals(pRolocGUI:::.obsProtText(utList, 1:10, 1, "Golgi", "markers", 
+                                                        "object1", FALSE), 
+                c(1:10, 82, 84:93, 98:103, 106, 611, 632, 790, 1147, 1212, 1282))
     checkEquals(pRolocGUI:::.obsProtText(utList, 1:10, 0, "ER", "markers", 
                                                         "object2", FALSE), 1:10) 
     checkEquals(pRolocGUI:::.obsProtText(utList, 1:10, 1, "Proteasome", 
         "pd.markers", "object2", FALSE), 
         c(1:10, 14, 61, 104, 163, 213, 425, 435, 562, 734, 853))
-    checkEquals(pRolocGUI:::.obsProtText(utList, "ZPR1_HUMAN", 1, "ZNRF1_HUMAN", 
-                    "protein", "object1", TRUE), c("ZPR1_HUMAN", "ZNRF1_HUMAN"))
+    checkEquals(pRolocGUI:::.obsProtText(utList, "O75312", 1, "O75312", 
+                    "protein", "object1", TRUE), c("O75312"))
 }
 ## END unit test .obsProtText ##
 
@@ -321,10 +321,10 @@ test_.orgName <- function() {
     checkEquals(pRolocGUI:::.orgName(utList, NULL, "object1"), NULL)
     checkEquals(pRolocGUI:::.orgName(utList, "all", "object1"), "all")
     checkEquals(pRolocGUI:::.orgName(utList, "markers", "object1"), 
-        c("ER", "Golgi", "Mitochondrion", "PM", "unknown"))
+        sort(unique(fData(andy2011)$markers)))
     checkEquals(pRolocGUI:::.orgName(utList, "all", "object2"), "all")
     checkEquals(pRolocGUI:::.orgName(utList, "markers", "object2"),
-        c("ER", "Golgi", "mitochondrion", "PM", "unknown"))
+        sort(unique(fData(tan2009r1)$markers)))
 }
 ## END unit test .orgName ##
 
@@ -419,9 +419,8 @@ test_.fnamesFOI <- function() {
     xx <- addFeaturesOfInterest(x, xx)
     
     ## features to compare with
-    features <- c("FBgn0001104", "FBgn0000044", "FBgn0035720", "FBgn0003731", 
-                  "FBgn0029506", "FBgn0010638", "FBgn0028689", "FBgn0031871",
-                  "FBgn0040227", "FBgn0032799")
+    features <- c("P20353", "P53501", "Q7KU78", "P04412", "Q7KJ73", "Q7JZN0", 
+                  "Q7KLV9", "Q9VM65", "Q9VCK0", "Q9VIU7")
     ## create list
     featuresList <- list(features)
     checkEquals(pRolocGUI:::.fnamesFOI(x), features)
@@ -439,16 +438,17 @@ test_.dataSub <- function() {
     ## compute featureNames
     inter <- intersect(featureNames(tan2009r1), featureNames(tan2009r2))
     setdiffR1 <- setdiff(featureNames(tan2009r1), inter)
+    setdiffR1 <- sort(setdiffR1)
     setdiffR2 <- setdiff(featureNames(tan2009r2), inter)
     res <- pRolocGUI:::.dataSub(utList)
-    checkEquals(res[[1]], tan2009r1)
-    checkEquals(res[[2]], tan2009r2)
+    checkEquals(sort(featureNames(res[[1]])), sort(featureNames(tan2009r1)))
+    checkEquals(sort(featureNames(res[[2]])), sort(featureNames(tan2009r2)))
     res <- pRolocGUI:::.dataSub(utList, "common")
-    checkEquals(MSnbase:::nologging(res[[1]]), MSnbase:::nologging(tan2009r1[inter, ]))
-    checkEquals(MSnbase:::nologging(res[[2]]), MSnbase:::nologging(tan2009r2[inter, ]))
+    checkEquals(sort(featureNames(res[[1]])), sort(featureNames(tan2009r1[inter, ])))
+    checkEquals(sort(featureNames(res[[2]])), sort(featureNames(tan2009r2[inter, ])))
     res <- pRolocGUI:::.dataSub(utList, "unique")
-    checkEquals(MSnbase:::nologging(res[[1]]), MSnbase:::nologging(tan2009r1[setdiffR1, ]))
-    checkEquals(MSnbase:::nologging(res[[2]]), MSnbase:::nologging(tan2009r2[setdiffR2, ]))
+    checkEquals(sort(featureNames(res[[1]])), sort(featureNames(tan2009r1[setdiffR1, ])))
+    checkEquals(sort(featureNames(res[[2]])), sort(featureNames(tan2009r2[setdiffR2, ])))
 }
 ## END unit test for .dataSub ##
 
@@ -458,8 +458,10 @@ markers <- c("unknown", "ER", "mitochondrion", "Golgi", "PM")
 
 test_.mC <- function() {
     checkEquals(pRolocGUI:::.mC(utList, NULL, NULL), list())
-    checkEquals(pRolocGUI:::.mC(utList, "markers", "markers"), markers)
-    checkEquals(pRolocGUI:::.mC(utList, "markers", "PLSDA"), c(markers, "ER/Golgi"))
+    checkEquals(pRolocGUI:::.mC(utList, "markers", "markers"), 
+        union(fData(tan2009r1)$markers, fData(tan2009r2)$markers))
+    checkEquals(pRolocGUI:::.mC(utList, "markers", "PLSDA"), 
+        union(fData(tan2009r1)$markers, fData(tan2009r2)$PLSDA))
 }
 ## end unit test for .mC ##
 

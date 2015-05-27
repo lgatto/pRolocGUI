@@ -1,6 +1,51 @@
+CHANGES IN VERSION 1.3.1
+------------------------
+ o new plotMat2D function <2015-05-20 Wed>
+ 
+CHANGES IN VERSION 1.3.0
+------------------------
+ o Devel for Bioc 3.2
+ 
+CHANGES IN VERSION 1.2.0
+------------------------
+ o Release for Bioc 3.1
+ 
+CHANGES IN VERSION 1.1.5
+------------------------
+ o updating failing unit test [2015-04-03 Fri]
+ 
+CHANGES IN VERSION 1.1.4
+------------------------
+ o fix R_HOME error [2015-02-26 Thu]
+ 
+CHANGES IN VERSION 1.1.3
+------------------------
+ o don't require GNU make [2015-02-11 Wed]
+ 
+CHANGES IN VERSION 1.1.2
+------------------------
+ o Fix bug with FoIs and multiple data sets (reported by Harriet
+   Parsons) [2015-02-06 Fri]
+
+CHANGES IN VERSION 1.1.1
+------------------------
+ o Update README with uptodate installation instructions
+   [2014-10-14 Tue]
+ o handling and filtering missing value in input data [2014-10-21 Tue]
+
+CHANGES IN VERSION 1.0.0
+------------------------
+ o Release for Bioc 3.0 [2014-10-14 Tue]
+
+CHANGES IN VERSION 0.99.12
+--------------------------
+ o added Video tag in DESCRIPTION [2014-10-07 Tue]
+
 CHANGES IN VERSION 0.99.11
 --------------------------
  o Add screenshot to README [2014-09-05 Fri]
+ o fix bug when features of fois are not present 
+ o move data tab to the end
 
 CHANGES IN VERSION 0.99.10
 --------------------------
