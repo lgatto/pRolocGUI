@@ -784,7 +784,7 @@ pRolocComp <- function(object) {
                     .radioButton(.searchInd2(), TRUE)
             )
             
-            output$MSnExprsUI <- renderDataTable(
+            output$MSnExprsUI <- DT::renderDataTable(
                 if (sel$Obj == "object1")
                     .dTable(data$obj, "quant", input$exprsRadio, 
                                 .searchInd1(), "object1")
@@ -804,7 +804,7 @@ pRolocComp <- function(object) {
                     .radioButton(.searchInd2(), FALSE)
             )
 
-            output$MSnfDataUI <- renderDataTable(
+            output$MSnfDataUI <- DT::renderDataTable(
                 if (sel$Obj == "object1")
                     .dTable(data$obj, "fD", input$fDataRadio, 
                                 .searchInd1(), "object1")
@@ -818,7 +818,7 @@ pRolocComp <- function(object) {
 
             ## TAB: SAMPLE META-DATA ##
             ## Generate the sample meta-data
-            output$MSnpDataUI <- renderDataTable(
+            output$MSnpDataUI <- DT::renderDataTable(
                 .dTable(data$obj, "pD", ind = sel$Obj))
             ## END: SAMPLE META-DATA ##
 

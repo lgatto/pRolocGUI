@@ -297,9 +297,11 @@
         plotOutput(
             "PCAUI", 
             width = "100%",height="800px",
-            clickId = "PCAclick",
-            hoverId = "PCAhover", hoverDelay = 100,
-            hoverDelayType = "throttle"
+            click = "PCAclick",
+            hover = hoverOpts(
+                id = "PCAhover",
+                delay = 100,
+                delayType = "throttle")
         ),
         tableOutput("hoverProtPCAUI"),
         downloadButton("plotPCADownload","Download Plot")
@@ -309,21 +311,25 @@
 .pRn2_tabPanelPCA <- function() {
     tabPanel("PCA",
             column(width = 6,
-                plotOutput("PCA1", width = "100%",height="600px",
-                        clickId = "PCA1click",
-                        hoverId = "PCA1hover",
-                        hoverDelay = 100,
-                        hoverDelayType = "throttle"
+                   plotOutput("PCA1",
+                              width = "100%",
+                              height="600px",
+                              click = "PCA1click",
+                              hover = hoverOpts(
+                                  id = "PCA1hover",
+                                  delay = 100,
+                                  delayType = "throttle")
                 ),
                 downloadButton("plotPCA1Download", "Download"),
                 helpText("")
             ),
             column(width = 6,
                 plotOutput("PCA2", width = "100%",height="600px",
-                        clickId = "PCA2click",
-                        hoverId = "PCA2hover",
-                        hoverDelay = 100,
-                        hoverDelayType = "throttle"
+                        click = "PCA2click",
+                           hover = hoverOpts(
+                               id = "PCA2hover",
+                               delay = 100,
+                               delayType = "throttle")
                 ),   
                 downloadButton("plotPCA2Download", "Download"),
                 helpText("")
@@ -339,9 +345,11 @@
         plotOutput(
             "plotDistUI", 
             width="100%", height="800px",
-            clickId = "plotDistclick",
-            hoverId = "plotDisthover", hoverDelay = 100,
-            hoverDelayType = "throttle"
+            click = "plotDistclick",
+            hover = hoverOpts(
+                id = "plotDisthover",
+                delay = 100,
+                delayType = "throttle")
         ),
         tableOutput("hoverProtPlotDistUI"),
         downloadButton("plotDistDownload","Download Plot")
@@ -355,9 +363,11 @@
             plotOutput(
                 "plotDist1UI", 
                 width="100%", height="800px",
-                clickId = "plotDist1click",
-                hoverId = "plotDist1hover", hoverDelay = 100,
-                hoverDelayType = "throttle"
+                click = "plotDist1click",
+                hover = hoverOpts(
+                    id = "plotDist1hover",
+                    delay = 100,
+                    delayType = "throttle")
             ),
             downloadButton("plotDist1Download", "Download"),
             helpText("")
@@ -366,9 +376,11 @@
             plotOutput(
                 "plotDist2UI",
                 width="100%", height="800px",
-                clickId = "plotDist2click",
-                hoverId = "plotDist2hover", hoverDelay = 100,
-                hoverDelayType = "throttle"
+                click = "plotDist2click",
+                hover = hoverOpts(
+                    id = "plotDist2hover",
+                    delay = 100,
+                    delayType = "throttle")
             ),
             downloadButton("plotDist2Download","Download"),
             helpText("")
@@ -380,19 +392,19 @@
 
 .pR_tabPanelQuantitation <- function() {
     tabPanel("quantitation",
-             dataTableOutput("MSnExprsUI")
+             DT::dataTableOutput("MSnExprsUI")
     )
 }    
 
 .pR_tabPanelfData <- function() {
     tabPanel("feature meta-data", 
-             dataTableOutput("MSnfDataUI")
+             DT::dataTableOutput("MSnfDataUI")
     )
 }
 
 .pR_tabPanelpData <- function() {
     tabPanel("sample meta-data", 
-             dataTableOutput("MSnpDataUI")
+             DT::dataTableOutput("MSnpDataUI")
     )
 }
 
