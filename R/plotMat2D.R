@@ -4,6 +4,10 @@
 ##' @param object An instance of class \code{MSnSet}.
 ##' @param fcol The name of the markers matrix. Default is
 ##' \code{"Markers"}.
+##' @param ncol. Number of columns to be used for the legend. The
+##' default value (4 of less) depends on the length of the
+##' labels. Reduce this if the labels are too long and the legend does
+##' not fit in the display panel.
 ##' @param ... Additional parameters that can be used to choose the
 ##' dimentionality reduction method, as defined in
 ##' \code{\link{plot2D}}.
@@ -15,7 +19,7 @@
 ##' ## adds matrix markers
 ##' dunkley2006 <- mrkVecToMat(dunkley2006)
 ##' plotMat2D(dunkley2006)
-plotMat2D <- function(object, fcol = "Markers", ...) {
+plotMat2D <- function(object, fcol = "Markers", ncol., ...) {
     if (!inherits(object, "MSnSet"))
         stop("The input must be of class MSnSet")
     if (is.null(fData(object)[, fcol]))
@@ -33,6 +37,15 @@ plotMat2D <- function(object, fcol = "Markers", ...) {
     if (length(cols) < ncol(pmarkers)) {
         n <- ncol(pmarkers) %/% length(cols)
         cols <- rep(cols, n + 1)
+    }
+    ## when labels are too long, parts of the legend
+    ## span outside the panel
+    if (missing(ncol.)) {
+        mx <- max(nchar(colnames(pmarkers)))
+        if (mx > 50) ncol. <- 1
+        if (mx <= 50) ncol. <- 2
+        if (mx < 35) ncol. <- 3
+        if (mx < 15) ncol. <- 4
     }
     ## Build shiny app
     ui <- shinyUI(pageWithSidebar(
@@ -74,7 +87,7 @@ plotMat2D <- function(object, fcol = "Markers", ...) {
                         output$legend <- renderPlot({
                             legend("center",
                                    input$goTerms, col = myCols(),
-                                   ncol = 4, bty = "n",
+                                   ncol = ncol., bty = "n",
                                    pch = 16, cex = 1.4)
                         })
                     })
