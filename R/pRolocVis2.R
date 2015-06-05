@@ -1,6 +1,20 @@
+## TODO:
+## - foi, passed as arg
+## - fix legend
+## - profiles selection and highlighting
+
+## Shiny: spinning loading wheel on top of plot while plot is recalculating
+## https://gist.github.com/daattali/edd7c20cd09f484b7f32
+
+## Very slow with bigger data (fusion data), server side table flaky
+## and warinings about size
+
 ## References
+## http://shiny.rstudio.com/articles/plot-interaction-advanced.html
 ## https://gallery.shinyapps.io/095-plot-interaction-advanced/
 ## https://gallery.shinyapps.io/105-plot-interaction-zoom/
+## https://gallery.shinyapps.io/106-plot-interaction-exclude/
+## https://github.com/rstudio/shiny-examples
 
 ##' pRoloc interactive visualisation
 ##' 
@@ -21,6 +35,7 @@
 ##' dunkley2006 <- dunkley2006[, order(dunkley2006$fraction)]
 ##' pRolocVis2(dunkley2006)
 pRolocVis2 <- function(object, fcol = "Markers",
+                       foi,
                        fig.height = "600px",
                        fig.width = "600px",
                        legend.cex = 1,
@@ -29,7 +44,9 @@ pRolocVis2 <- function(object, fcol = "Markers",
         stop("The input must be of class MSnSet")
     if (is.null(fData(object)[, fcol]))
         stop("fcol missing in fData")
-    pmarkers <- fData(object)[, fcol]
+    if (!isMrkMat(object, fcol))
+        stop("Markers must be encoded as a matrix.")
+    pmarkers <- fData(object)[, fcol]        
     if (length(grep("GO:", colnames(pmarkers))) > 0) {
         cn <- pRoloc::flipGoTermId(colnames(pmarkers))
         names(cn) <- NULL
@@ -44,6 +61,10 @@ pRolocVis2 <- function(object, fcol = "Markers",
         n <- ncol(pmarkers) %/% length(cols)
         cols <- rep(cols, n + 1)
     }
+    pmsel <- TRUE
+    if (ncol(pmarkers) > 10)
+        pmsel <- 1:3
+    
     ## Build shiny app
     ui <- fluidPage(
         sidebarLayout(
@@ -51,7 +72,7 @@ pRolocVis2 <- function(object, fcol = "Markers",
                 selectizeInput("markers", "Markers",
                                choices = colnames(pmarkers),
                                multiple = TRUE,
-                               selected = colnames(pmarkers)),
+                               selected = colnames(pmarkers)[pmsel]),
                 sliderInput("trans", "Transparancy",
                             min = 0,  max = 1, value = 0.5),
                 plotOutput("legend"),
@@ -83,7 +104,7 @@ pRolocVis2 <- function(object, fcol = "Markers",
                             ## feature data table is always visible
                             fluidRow(
                                 column(12,
-                                       column(ncol(fData(object)),
+                                       column(ncol(fData(object)), ## FIXME - this is limited to 12
                                               DT::dataTableOutput("brushDataTable"))))
                             )
                 )
@@ -186,3 +207,5 @@ pRolocVis2 <- function(object, fcol = "Markers",
     app <- list(ui = ui, server = server)
     runApp(app)
 }
+
+
