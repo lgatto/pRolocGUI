@@ -92,6 +92,8 @@ pRolocVis2 <- function(object, fcol,
         n <- ncol(pmarkers) %/% length(cols)
         cols <- rep(cols, n + 1)
     }
+    ## Remove fcol from fData(object)    
+    fData(object) <- fData(object)[, -grep(fcol, fvarLabels(object))]
     ## There can't be more than 12 columns in the DT table
     if ((nfd <- length(fvarLabels(object))) > 12) {
         message("There can't be more than 12 feature variables. Using 6 first and last.")
@@ -171,7 +173,7 @@ pRolocVis2 <- function(object, fcol,
                             ## feature data table is always visible
                             fluidRow(
                                 column(12,
-                                       column(ncol(fData(object)), ## FIXME - this is limited to 12
+                                       column(ncol(fData(object)), 
                                               DT::dataTableOutput("fDataTable"))))
                             )
                 )
