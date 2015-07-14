@@ -1,13 +1,11 @@
 ## TODO:
-## - foi, passed as arg
-## - fix legend
 ## - profiles selection and highlighting
 
 ## Shiny: spinning loading wheel on top of plot while plot is recalculating
 ## https://gist.github.com/daattali/edd7c20cd09f484b7f32
 
 ## Very slow with bigger data (fusion data), server side table flaky
-## and warinings about size
+## and warnings about size
 
 ## Possibly automate mrkVecToMat?
 
