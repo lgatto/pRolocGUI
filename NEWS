@@ -1,3 +1,15 @@
+CHANGES IN VERSION 1.3.1
+------------------------
+ o
+ 
+CHANGES IN VERSION 1.3.0
+------------------------
+ o Devel for Bioc 3.2
+ 
+CHANGES IN VERSION 1.2.0
+------------------------
+ o Release for Bioc 3.1
+ 
 CHANGES IN VERSION 1.1.5
 ------------------------
  o updating failing unit test [2015-04-03 Fri]
