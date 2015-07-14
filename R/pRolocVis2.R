@@ -1,11 +1,14 @@
-##' Shiny App for visualising a matrix of markers
+
+## References
+## https://gallery.shinyapps.io/095-plot-interaction-advanced/
+## https://gallery.shinyapps.io/105-plot-interaction-zoom/
+
+##' pRoloc interactive visualisation
 ##' 
-##' @title Plot a matrix of markers
+##' @title Visualise your pRoloc data
 ##' @param object An instance of class \code{MSnSet}.
 ##' @param fcol The name of the markers matrix. Default is
 ##' \code{"Markers"}.
-##' @param ncol. Number of columns to be used for the legend. Default
-##' is 2.
 ##' @param ... Additional parameters that can be used to choose the
 ##' dimentionality reduction method, as defined in
 ##' \code{\link{plot2D}}.
@@ -17,7 +20,10 @@
 ##' ## adds matrix markers
 ##' dunkley2006 <- mrkVecToMat(dunkley2006)
 ##' pRolocVis2(dunkley2006)
-pRolocVis2 <- function(object, fcol = "Markers", ncol. = 2, ...) {
+pRolocVis2 <- function(object, fcol = "Markers",
+                       fig.height = "600px",
+                       fig.width = "600px",
+                       ...) {
     if (!inherits(object, "MSnSet"))
         stxoop("The input must be of class MSnSet")
     if (is.null(fData(object)[, fcol]))
@@ -31,53 +37,76 @@ pRolocVis2 <- function(object, fcol = "Markers", ncol. = 2, ...) {
     if (!pRoloc::isMrkMat(object, fcol))
         stop("Selected feature data is not a matrix of markers")
     pcas <- pRoloc::plot2D(object, fcol = NULL, plot = FALSE, ...)
+    profs <- exprs(object)
     cols <- pRoloc::getLisacol()
     if (length(cols) < ncol(pmarkers)) {
         n <- ncol(pmarkers) %/% length(cols)
         cols <- rep(cols, n + 1)
     }
     ## Build shiny app
-    ui <- shinyUI(pageWithSidebar(
-        headerPanel("pRoloc visualisation interface"),
-        sidebarPanel(
-            selectizeInput("goTerms", "GO CC term",
-                           choices = colnames(pmarkers),
-                           multiple = TRUE, selected = colnames(pmarkers)[1]),
-            sliderInput("trans", "Transparancy",
-                        min = 0,  max = 1, value = 0.5),
-            plotOutput("legend")),
-        mainPanel(
-            plotOutput("pca",
-                       click = "pcaClick",
-                       dblclick = "pcaDblclick",
-                       hover = hoverOpts(
-                           id = "pcaHover"
-                           ),
-                       brush = brushOpts(
-                           id = "pcaBrush",
-                           resetOnNew = TRUE)),
-            fluidRow(
-                column(ncol(fData(dunkley2006)),
-                       DT::dataTableOutput("brushDataTable")
-                       )
+    ui <- shinyUI(fluidPage(
+        sidebarLayout(
+            sidebarPanel(
+                selectizeInput("markers", "Markers",
+                               choices = colnames(pmarkers),
+                               multiple = TRUE,
+                               selected = colnames(pmarkers)),
+                sliderInput("trans", "Transparancy",
+                            min = 0,  max = 1, value = 0.5),
+                plotOutput("legend"),
+                width = 2),
+            mainPanel(
+                tabsetPanel(type = "tabs",
+                            tabPanel("PCA",
+                                     fluidRow(
+                                         column(9, offset = 1,
+                                                plotOutput("pca",
+                                                           height = fig.height,
+                                                           width = fig.width,
+                                                           click = "pcaClick",
+                                                           dblclick = "pcaDblclick",
+                                                           hover = hoverOpts(
+                                                               id = "pcaHover"
+                                                               ),
+                                                           brush = brushOpts(
+                                                               id = "pcaBrush",
+                                                               resetOnNew = TRUE))))
+                                     ),
+                            tabPanel("Profiles",
+                                     fluidRow(
+                                         column(9, offset = 1,
+                                                plotOutput("profile",
+                                                           height = fig.height,
+                                                           width = fig.width)))
+                                     ),
+                            fluidRow(
+                                column(12,
+                                       column(ncol(fData(dunkley2006)),
+                                              DT::dataTableOutput("brushDataTable"))))
+                            )
                 )
-            )
-        ))
-
+            )))
+    
     server <-
         shinyServer(function(input, output, session) {
                         ranges <- reactiveValues(x = NULL, y = NULL)                        
                         ## Get coords for proteins according to GO term specified in input
-                        pcasGo <- reactive({
-                            lapply(input$goTerms, function(z) pcas[which(pmarkers[, z] == 1), ])
+                        pcaMrkSel <- reactive({
+                            lapply(input$markers,
+                                   function(z) pcas[which(pmarkers[, z] == 1), ])
                         })
+                        profMrkSel <- reactive({
+                            lapply(input$markers,
+                                   function(z) profs[which(pmarkers[, z] == 1), ])
+                        })
+
                         ## Update colour transparacy according to slider input
                         myCols <- reactive({
                             scales::alpha(cols, input$trans)[
-                                                             sapply(input$goTerms, function(z) 
+                                                             sapply(input$markers, function(z) 
                                                                  which(colnames(pmarkers) == z))]
                         })
-                        ## Output main plot
+                        ## PCA plot
                         output$pca <- renderPlot({
                             par(mar = c(5.1, 4.1, 0, 1))
                             plot(pcas,
@@ -85,29 +114,33 @@ pRolocVis2 <- function(object, fcol = "Markers", ncol. = 2, ...) {
                                  pch = 21, cex = 1,
                                  xlim = ranges$x,
                                  ylim = ranges$y)
-                            for (i in 1:length(input$goTerms)) {
-                                points(pcasGo()[[i]], pch = 16, cex = 1.4, col = myCols()[i])
-                            }
+                            for (i in 1:length(input$markers)) 
+                                points(pcaMrkSel()[[i]], pch = 16, cex = 1.4, col = myCols()[i])
                             s <- input$brushDataTable_rows_selected
                             if (length(s))
                                 points(pcas[s, , drop = FALSE], pch = 19, cex = 2)
                         })
-                        ## points information
-                        ## output$click_info <- renderPrint({
-                        ##     cat("input$pcaClick:\n")
-                        ##     str(input$pcaClick)
-                        ## })
-                        ## output$hover_info <- renderPrint({
-                        ##     cat("input$pcaHover:\n")
-                        ##     str(input$pcaHover)
-                        ## })
+                        ## Protein profile
+                        output$profile <- renderPlot({
+                            par(mar = c(5.1, 4.1, 0, 1))
+                            matplot(t(profs),
+                                    col = getUnknowncol(),
+                                    lty = 1,
+                                    type = "l")
+                            for (i in 1:length(input$markers)) 
+                                matlines(t(profMrkSel()[[i]]),
+                                         col = myCols()[i],
+                                         lty = 1,
+                                         lwd = 1.5)
+                        })                        
+                        ## Freature data table
                         output$brushDataTable <- DT::renderDataTable({
                             if (is.null(input$pcaBrush)) {
-                                j <- i <- TRUE
+                                i <- j <- TRUE
                             } else {
-                                    i <- pcas[, 1] >= input$pcaBrush$xmin & pcas[, 1] <= input$pcaBrush$xmax
-                                    j <- pcas[, 2] >= input$pcaBrush$ymin & pcas[, 2] <= input$pcaBrush$ymax
-                                }
+                                i <- pcas[, 1] >= input$pcaBrush$xmin & pcas[, 1] <= input$pcaBrush$xmax
+                                j <- pcas[, 2] >= input$pcaBrush$ymin & pcas[, 2] <= input$pcaBrush$ymax
+                            }
                             DT::datatable(fData(object)[i & j, ],
                                           rownames = TRUE,
                                           options = list(searchHighlight = TRUE))
@@ -129,9 +162,11 @@ pRolocVis2 <- function(object, fcol = "Markers", ncol. = 2, ...) {
                         ## Output legend
                         output$legend <- renderPlot({
                             legend("center",
-                                   input$goTerms, col = myCols(),
-                                   ncol = ncol., bty = "n",
-                                   pch = 16, cex = 1.4)
+                                   input$markers,
+                                   col = myCols(),
+                                   inset = 1/10,
+                                   ncol = 1, bty = "n",
+                                   pch = 16, cex = .75)
                         })
                     })
     app <- list(ui = ui, server = server)
