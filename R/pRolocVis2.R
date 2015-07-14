@@ -110,6 +110,9 @@ pRolocVis2 <- function(object, fcol,
     ## data to be displayed
     pcas <- pRoloc::plot2D(object, fcol = NULL, plot = FALSE, ...)
     profs <- exprs(object)
+
+    ## all feautres are in the table when starting
+    tabfeats <- 1:nrow(object)
     
     ## Build shiny app
     ui <- fluidPage(
@@ -187,7 +190,7 @@ pRolocVis2 <- function(object, fcol,
                 for (i in 1:length(input$markers)) 
                     points(pcaMrkSel()[[i]], pch = 16, cex = 1.4, col = myCols()[i])
                 ## FIXME this does not work when brushed/subset of points selected
-                s <- input$brushDataTable_rows_selected
+                s <- tabfeats[input$brushDataTable_rows_selected]
                 if (length(s))
                     points(pcas[s, , drop = FALSE], pch = 19, cex = 2)
             })
@@ -203,7 +206,7 @@ pRolocVis2 <- function(object, fcol,
                              col = myCols()[i],
                              lty = 1,
                              lwd = 1.5)
-                s <- input$brushDataTable_rows_selected
+                s <- tabfeats[input$brushDataTable_rows_selected]
                 if (length(s))
                     matlines(t(profs[s, , drop = FALSE]),
                              col = "black",
@@ -219,10 +222,11 @@ pRolocVis2 <- function(object, fcol,
                     i <- pcas[, 1] >= input$pcaBrush$xmin & pcas[, 1] <= input$pcaBrush$xmax
                     j <- pcas[, 2] >= input$pcaBrush$ymin & pcas[, 2] <= input$pcaBrush$ymax
                 }
+                tabfeats <<- which(i & j)
                 DT::datatable(fData(object)[i & j, ],
                               rownames = TRUE,
-                              options = list(searchHighlight = TRUE),
-                              filter = 'top')
+                              options = list(searchHighlight = TRUE))
+                              ## filter = 'top')
             })                        
             ## When a double-click happens, check if there's a brush on the plot.
             ## If so, zoom to the brush bounds; if not, reset the zoom.
