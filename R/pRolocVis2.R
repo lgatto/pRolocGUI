@@ -30,10 +30,14 @@
 ##' \code{\link{FoICollection}}, that will be available for display.
 ##' @param fig.height Height of the figure. Default is \code{"600px"}.
 ##' @param fig.width Width of the figure. Default is \code{"600px"}.
+##' @param legend.width 
 ##' @param legend.cex Character expansion for the vignette
 ##' labels. Default is 1.
 ##' @param nchar Maximum number of characters if the markers class
 ##' names, before their names are truncated. Default is 10.
+##' @param all If there are more than 10 clusters, only the first
+##' three are discplayed on start-up, unless \code{all} is set to
+##' \code{TRUE}. Default is \code{FALSE}.
 ##' @param ... Additional parameters that can be used to choose the
 ##' dimentionality reduction method, as defined in
 ##' \code{\link{plot2D}}.
@@ -54,6 +58,7 @@ pRolocVis2 <- function(object, fcol,
                        legend.width = "100%",
                        legend.cex = 1,
                        nchar = 15,
+                       all = FALSE,
                        ...) {
     if (!inherits(object, "MSnSet"))
         stop("The input must be of class MSnSet")
@@ -116,7 +121,7 @@ pRolocVis2 <- function(object, fcol,
     ## If there are too many marker sets, better
     ## to display few and let the user choose
     pmsel <- TRUE
-    if (ncol(pmarkers) > 10)
+    if (!all & ncol(pmarkers) > 10)
         pmsel <- 1:3
 
     ## data to be displayed
