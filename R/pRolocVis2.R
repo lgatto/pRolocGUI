@@ -9,8 +9,6 @@
 ## Very slow with bigger data (fusion data), server side table flaky
 ## and warinings about size
 
-## FIXME: matlines[1, ] does not higlight single profile
-
 ## Possibly automate mrkVecToMat?
 
 ## References
@@ -28,9 +26,12 @@
 ##' \code{"Markers"}). Can be missing if \code{foi} is available.
 ##' @param foi A \code{\link{FeaturesOfInterest}} or a
 ##' \code{\link{FoICollection}}, that will be available for display.
-##' @param fig.height 
-##' @param fig.width 
-##' @param legend.cex 
+##' @param fig.height Height of the figure. Default is \code{"600px"}.
+##' @param fig.width Width of the figure. Default is \code{"600px"}.
+##' @param legend.cex Character expansion for the vignette
+##' labels. Default is 1.
+##' @param nchar Maximum number of characters if the markers class
+##' names, before their names are truncated. Default is 10.
 ##' @param ... Additional parameters that can be used to choose the
 ##' dimentionality reduction method, as defined in
 ##' \code{\link{plot2D}}.
@@ -59,9 +60,10 @@ pRolocVis2 <- function(object, fcol,
         if (is.null(fData(object)[, fcol]))
             stop("fcol missing in fData")
         if (!isMrkMat(object, fcol))
-            stop("Markers must be encoded as a matrix.")
+            stop("Markers must be encoded as a matrix. See ?markers for details.")
         pmarkers <- fData(object)[, fcol]
     }
+    ## Setting features to be displayed
     if (!missing(foi)) {
         if (inherits(foi, "FeaturesOfInterest"))
             foi <- FoICollection(list(foi))
@@ -78,15 +80,14 @@ pRolocVis2 <- function(object, fcol,
         names(cn) <- NULL
         colnames(pmarkers) <- cn
     }
-    pcas <- pRoloc::plot2D(object, fcol = NULL, plot = FALSE, ...)
-    profs <- exprs(object)
+    ## Marker colours
     cols <- getStockcol()
     if (length(cols) < ncol(pmarkers)) {
         message("Too many features for available colours. Some colours will be duplicated.")
         n <- ncol(pmarkers) %/% length(cols)
         cols <- rep(cols, n + 1)
     }
-
+    ## Shorten markers names if too long
     cn <- sapply(colnames(pmarkers),
                  function(x) {
                      if (nchar(x) > nchar) {
@@ -99,10 +100,16 @@ pRolocVis2 <- function(object, fcol,
                  })    
     names(cn) <- NULL
     colnames(pmarkers) <- cn
-    
+
+    ## If there are too many marker sets, better
+    ## to display few and let the user choose
     pmsel <- TRUE
     if (ncol(pmarkers) > 10)
         pmsel <- 1:3
+
+    ## data to be displayed
+    pcas <- pRoloc::plot2D(object, fcol = NULL, plot = FALSE, ...)
+    profs <- exprs(object)
     
     ## Build shiny app
     ui <- fluidPage(
@@ -198,7 +205,7 @@ pRolocVis2 <- function(object, fcol,
                              lwd = 1.5)
                 s <- input$brushDataTable_rows_selected
                 if (length(s))
-                    batlines(t(profs[s, , drop = FALSE]),
+                    matlines(t(profs[s, , drop = FALSE]),
                              col = "black",
                              lty = 1,
                              lwd = 2)
