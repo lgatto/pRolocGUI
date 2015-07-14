@@ -53,7 +53,7 @@ pRolocVis2 <- function(object, fcol = "Markers",
                                selected = colnames(pmarkers)),
                 sliderInput("trans", "Transparancy",
                             min = 0,  max = 1, value = 0.5),
-                plotOutput("legend"),                
+                plotOutput("legend"),
                 width = 2),
             mainPanel(
                 tabsetPanel(type = "tabs",
@@ -79,6 +79,7 @@ pRolocVis2 <- function(object, fcol = "Markers",
                                                            height = fig.height,
                                                            width = fig.width)))
                                      ),
+                            ## feature data table is always visible
                             fluidRow(
                                 column(12,
                                        column(ncol(fData(dunkley2006)),
@@ -90,7 +91,7 @@ pRolocVis2 <- function(object, fcol = "Markers",
     server <-
         function(input, output, session) {
             ranges <- reactiveValues(x = NULL, y = NULL)
-            ## Get coords for proteins according to GO term specified in input
+            ## Get coords for proteins according to selectized marker class(es)
             pcaMrkSel <- reactive({
                 lapply(input$markers,
                        function(z) pcas[which(pmarkers[, z] == 1), ])
@@ -117,6 +118,7 @@ pRolocVis2 <- function(object, fcol = "Markers",
                 usr <<- par("usr")
                 for (i in 1:length(input$markers)) 
                     points(pcaMrkSel()[[i]], pch = 16, cex = 1.4, col = myCols()[i])
+                ## FIXME this does not work when brushed/subset of points selected
                 s <- input$brushDataTable_rows_selected
                 if (length(s))
                     points(pcas[s, , drop = FALSE], pch = 19, cex = 2)
@@ -168,12 +170,15 @@ pRolocVis2 <- function(object, fcol = "Markers",
                          })
             ## Output legend
             output$legend <- renderPlot({
+                plot(0, type = "n",
+                     xaxt = "n", yaxt = "n",
+                     xlab = "", ylab = "",
+                     bty = "n")
                 legend("center",
                        input$markers,
                        col = myCols(),
-                       inset = 1/10,
                        ncol = 1, bty = "n",
-                       pch = 16, cex = .75)
+                       pch = 16, cex = 1)
             })
         }
     app <- list(ui = ui, server = server)
