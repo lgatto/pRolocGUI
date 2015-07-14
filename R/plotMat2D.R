@@ -4,6 +4,9 @@
 ##' @param object An instance of class \code{MSnSet}.
 ##' @param fcol The name of the markers matrix. Default is
 ##' \code{"Markers"}.
+##' @param ... Additional parameters that can be used to choose the
+##' dimentionality reduction method, as defined in
+##' \code{\link{plot2D}}.
 ##' @author Lisa M Breckels
 ##' @examples
 ##' library("pRoloc")
@@ -12,7 +15,7 @@
 ##' ## adds matrix markers
 ##' dunkley2006 <- mrkVecToMat(dunkley2006)
 ##' plotMat2D(dunkley2006)
-plotMat2D <- function(object, fcol = "Markers") {
+plotMat2D <- function(object, fcol = "Markers", ...) {
     if (!inherits(object, "MSnSet"))
         stop("The input must be of class MSnSet")
     if (is.null(fData(object)[, fcol]))
@@ -25,7 +28,7 @@ plotMat2D <- function(object, fcol = "Markers") {
     }
     if (!pRoloc::isMrkMat(object, fcol))
         stop("Selected feature data is not a matrix of markers")
-    pcas <- pRoloc::plot2D(object, fcol = fcol, plot = FALSE)
+    pcas <- pRoloc::plot2D(object, fcol = NULL, plot = FALSE, ...)
     cols <- pRoloc::getLisacol()
     if (length(cols) < ncol(pmarkers)) {
         n <- ncol(pmarkers) %/% length(cols)
