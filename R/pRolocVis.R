@@ -611,7 +611,7 @@ pRolocVis <- function(object) {
                 ## Generate the quantitation data
                 output$exprsRadioUI <- renderUI(.radioButton(.searchInd(), TRUE))
     
-                output$MSnExprsUI <- renderDataTable(
+                output$MSnExprsUI <- DT::renderDataTable(
                         .dTable(.dI(), "quant", input$exprsRadio, .searchInd())
                 )
                 ## END: QUANTITATION DATA ##
@@ -622,7 +622,7 @@ pRolocVis <- function(object) {
                 ## Generate the feature meta-data
                 output$fDataRadioUI <- renderUI(.radioButton(.searchInd(), FALSE))
                 
-                output$MSnfDataUI <- renderDataTable(
+                output$MSnfDataUI <- DT::renderDataTable(
                         .dTable(.dI(), "fD", input$fDataRadio, .searchInd())
                 )
                 ## END: FEATURE META-DATA ##
@@ -631,7 +631,7 @@ pRolocVis <- function(object) {
                 
                 ## TAB: SAMPLE META-DATA ##
                 ## Generate the sample meta-data
-                output$MSnpDataUI <- renderDataTable(
+                output$MSnpDataUI <- DT::renderDataTable(
                         .dTable(.dI(), "pD"))
                 ## END: SAMPLE META-DATA ##
                 
