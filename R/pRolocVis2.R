@@ -9,6 +9,10 @@
 ## Very slow with bigger data (fusion data), server side table flaky
 ## and warinings about size
 
+## Features of interest: support fois of foic. If fcol is missing (or
+## null), then convert the fois (foic) in a marker matrix and display
+## then. If fois/foic and fcol, cbind. 
+
 ## References
 ## http://shiny.rstudio.com/articles/plot-interaction-advanced.html
 ## https://gallery.shinyapps.io/095-plot-interaction-advanced/
