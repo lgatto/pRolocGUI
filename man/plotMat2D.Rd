@@ -4,13 +4,17 @@
 \alias{plotMat2D}
 \title{Plot a matrix of markers}
 \usage{
-plotMat2D(object, fcol = "Markers")
+plotMat2D(object, fcol = "Markers", ...)
 }
 \arguments{
 \item{object}{An instance of class \code{MSnSet}.}
 
 \item{fcol}{The name of the markers matrix. Default is
 \code{"Markers"}.}
+
+\item{...}{Additional parameters that can be used to choose the
+dimentionality reduction method, as defined in
+\code{\link{plot2D}}.}
 }
 \description{
 Shiny App for visualising a matrix of markers

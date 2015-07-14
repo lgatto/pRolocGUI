@@ -320,15 +320,16 @@
 
 ## START: TAB PCA ##
 ## values PCA
-.vPCA <- function(obj, PCAn1, PCAn2, ind = c("object1", "object2"), 
-                                                mX = FALSE, mY = FALSE) { 
+.vPCA <- function(obj, PCAn1, PCAn2,
+                  ind = c("object1", "object2"), 
+                  mX = FALSE, mY = FALSE) { 
     if (length(obj) != 0) {
         ind <- match.arg(ind)
         obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
         if (!is.null(PCAn1) && !is.null(PCAn2)) {
             ans <- plot2D(obj, fcol=NULL,
-                    dims=c(as.numeric(PCAn1), as.numeric(PCAn2)), 
-                    mirrorX = mX, mirrorY = mY, plot=FALSE)
+                          dims=c(as.numeric(PCAn1), as.numeric(PCAn2)), 
+                          mirrorX = mX, mirrorY = mY, plot=FALSE)
             if (mX && !mY)
                 ans[, 1] <- -ans[, 1]
             if (!mX && mY)
@@ -348,7 +349,7 @@
         ind <- match.arg(ind)
         obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
         ans <- selectInput(inputname, label, c("none", fvarLabels(obj)),
-                    selected = sel)
+                           selected = sel)
         return(ans)
     }
 }
@@ -376,7 +377,7 @@
         if (length(colours) > 0 && length(.fcex(obj)) > 0) 
             if (colours != "none") {
                 ans <- selectInput("fcex", "point size", c("1", .fcex(obj)),
-                        selected = sel)
+                                   selected = sel)
                 return(ans)
             }
     }
@@ -389,7 +390,7 @@
         obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
         if (!is.null(colours) && colours %in% fvarLabels(obj)) {
             ans <- selectInput("fsymboltype", "symbol type", 
-                    c("none", fvarLabels(obj)), selected = sel)
+                               c("none", fvarLabels(obj)), selected = sel)
             return(ans)
         }
     }
@@ -406,8 +407,8 @@
                     step = 0.01,
                     max = round(max(valuesPCA[, col]), 2) + 1,
                     value = c(round(min(valuesPCA[, col]), 2), 
-                              round(max(valuesPCA[, col]), 2))
-        )  
+                        round(max(valuesPCA[, col]), 2))
+                    )  
 }
 
 ## UI for principal components
@@ -416,10 +417,10 @@
         ind <- match.arg(ind)
         obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
         ans <- selectInput(
-                    ifelse(axis == "x", "PCAn1", "PCAn2"),
-                    ifelse(axis == "x", "PC along x-axis", "PC along y-axis"),
-                    selected = sel,
-                    choices = isolate(c(1:nrow(pData(obj)))))
+            ifelse(axis == "x", "PCAn1", "PCAn2"),
+            ifelse(axis == "x", "PC along x-axis", "PC along y-axis"),
+            selected = sel,
+            choices = isolate(c(1:nrow(pData(obj)))))
         return(ans)
     }
 }
@@ -445,10 +446,10 @@
             if (colours %in% fvarLabels(obj)) {
                 ## drop down menu for position of legend
                 ans <- selectInput("legendpos", "position of legend",
-                        choices = c("bottomright", "bottom",
-                            "bottomleft","left", "topleft", "top",
-                            "topright", "right","center"), 
-                        selected="bottomright")
+                                   choices = c("bottomright", "bottom",
+                                       "bottomleft","left", "topleft", "top",
+                                       "topright", "right","center"), 
+                                   selected="bottomright")
                 return(ans)
             }
     }
@@ -457,8 +458,8 @@
 ## a helper function for plotting the PCA plot and highlighting
 ## FeaturesOfInterest using highlightOnPlot
 .plotPCA <- function(obj, fcolours, fcex, xrange, yrange,
-                     sb, PCAn1, PCAn2, legend = c(FALSE, TRUE), legendpos,
-                     sI, cIS, ind = c("object1", "object2"), 
+                     sb, PCAn1, PCAn2, legend = c(FALSE, TRUE),
+                     legendpos, sI, cIS, ind = c("object1", "object2"), 
                      mX = FALSE, mY = FALSE, listSaSe = list()) {
     if (length(obj) != 0) {
         ind <- match.arg(ind)
@@ -486,22 +487,22 @@
                 ## arguments, do not assign fpch (no symboltypes 
                 ## are plotted)
                 plot2D(obj, fcol = colour,
-                        xlim = c(xrange[1], xrange[2]),
-                        ylim = c(yrange[1], yrange[2]),
-                        dims = c(as.numeric(PCAn1),
-                                as.numeric(PCAn2)),
-                        cex = fcex,
-                        mirrorX = mX, mirrorY = mY)
+                       xlim = c(xrange[1], xrange[2]),
+                       ylim = c(yrange[1], yrange[2]),
+                       dims = c(as.numeric(PCAn1),
+                           as.numeric(PCAn2)),
+                       cex = fcex,
+                       mirrorX = mX, mirrorY = mY)
             else
                 ## create plot2D and assign reactive variables to 
                 ## arguments take input$fsymboltype for symboltype
                 plot2D(obj, fcol = colour, fpch = sb,
-                        xlim = c(xrange[1], xrange[2]),
-                        ylim = c(yrange[1], yrange[2]),
-                        dims = c(as.numeric(PCAn1),
-                                as.numeric(PCAn2)),
-                        cex = fcex,
-                        mirrorX = mX, mirrorY = mY)
+                       xlim = c(xrange[1], xrange[2]),
+                       ylim = c(yrange[1], yrange[2]),
+                       dims = c(as.numeric(PCAn1),
+                           as.numeric(PCAn2)),
+                       cex = fcex,
+                       mirrorX = mX, mirrorY = mY)
         }
         
         if (!is.null(legend))
@@ -509,27 +510,27 @@
                 ## add a legend to the plot with reactive 
                 ## variable as arguments
                 addLegend(obj, fcol = colour, 
-                    where = legendpos,
-                    bty = "n", cex = 1)
+                          where = legendpos,
+                          bty = "n", cex = 1)
 
         if (length(na.exclude(sI)) && length(cIS)) {
             foiPCA <- FeaturesOfInterest(description = "hoP",
-                                        fnames = featureNames(obj)[sI]) ##,
-                                        ## object = obj)
+                                         fnames = featureNames(obj)[sI]) ##,
+            ## object = obj)
             highlightOnPlot(obj, foiPCA,
-                    args = list(
-                        fcol = fvarLabels(obj)[1],
-                        xlim = c(xrange[1], 
-                                xrange[2]),
-                        ylim = c(yrange[1], 
-                                yrange[2]),
-                        dims = c(as.numeric(PCAn1),
-                                as.numeric(PCAn2)),
-                        mirrorX = mX, mirrorY = mY
-                        ),
-                    col = ifelse(fcolours == "none", "steelblue", "black"),
-                    cex = 1.5,
-                    lwd = 3)
+                            args = list(
+                                fcol = fvarLabels(obj)[1],
+                                xlim = c(xrange[1], 
+                                    xrange[2]),
+                                ylim = c(yrange[1], 
+                                    yrange[2]),
+                                dims = c(as.numeric(PCAn1),
+                                    as.numeric(PCAn2)),
+                                mirrorX = mX, mirrorY = mY
+                                ),
+                            col = ifelse(fcolours == "none", "steelblue", "black"),
+                            cex = 1.5,
+                            lwd = 3)
         }
         
         if (length(listSaSe) > 0 && length(cIS)) {
@@ -547,21 +548,21 @@
                 
                     if (length(.ind) > 0) {
                         foiSaSe <- FeaturesOfInterest(description = "hoP",
-                                        fnames = featureNames(obj)[.ind])
+                                                      fnames = featureNames(obj)[.ind])
                         highlightOnPlot(obj, foiSaSe, 
-                            args = list(
-                                fcol = fvarLabels(obj)[1],
-                                xlim = c(xrange[1], 
-                                         xrange[2]),
-                                ylim = c(yrange[1],
-                                         yrange[2]),
-                                dims = c(as.numeric(PCAn1), 
-                                         as.numeric(PCAn2)),
-                                mirrorX = mX, mirrorY = mY
-                            ),
-                            cex = 1.5, lwd = 3, pch = 21, 
-                            col = getStockcol()[i - (.f*13)],
-                            bg = paste0(getStockcol()[i - (.f*13)], "50")) 
+                                        args = list(
+                                            fcol = fvarLabels(obj)[1],
+                                            xlim = c(xrange[1], 
+                                                xrange[2]),
+                                            ylim = c(yrange[1],
+                                                yrange[2]),
+                                            dims = c(as.numeric(PCAn1), 
+                                                as.numeric(PCAn2)),
+                                            mirrorX = mX, mirrorY = mY
+                                            ),
+                                        cex = 1.5, lwd = 3, pch = 21, 
+                                        col = getStockcol()[i - (.f*13)],
+                                        bg = paste0(getStockcol()[i - (.f*13)], "50")) 
                     }
                 }
             }
@@ -574,7 +575,7 @@
 
 .quantPlotDist <- function(choices, sel) {
     selectInput("quantityPlotDist", "number of plots to display",
-        choices = choices, selected = sel)
+                choices = choices, selected = sel)
 }
 
 .nC <- function(numberPlotDist, quantityPlotDist) {
@@ -605,8 +606,8 @@
         ind <- match.arg(ind)
         obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
         ans <- selectInput("fNamesplDist",
-                    "feature(s) in",
-                    choices = c("all", fvarLabels(obj))) 
+                           "feature(s) in",
+                           choices = c("all", fvarLabels(obj))) 
         return(ans)
     }
 }
@@ -624,19 +625,19 @@
         sliderInput("numberPlotDist", "Selected plot",
                     min = 1, max = as.numeric(quantity), 
                     value = 1, step = 1
-        )
+                    )
 }
 
 ## A helper function for plotting protein profile plots 
 ## and highlighting FeaturesOfInterest
 .plotPlotDist <- function(obj, levPlotDist, levPlotDistOrg,
-                            quantity, sI, ind = c("object1", "object2")) {
+                          quantity, sI, ind = c("object1", "object2")) {
     if (length(obj) != 0) {
         ind <- match.arg(ind)
         obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
     
         if (!is.null(levPlotDist) && !is.null(quantity) && 
-                !(is.null(levPlotDistOrg))) {
+            !(is.null(levPlotDistOrg))) {
         
             if (as.numeric(quantity) %% 2 == 0)
                 col <- as.numeric(quantity) / 2
@@ -656,7 +657,7 @@
                     objPlotDist <- obj
                 else
                     objPlotDist <- subset(obj, 
-                            fData(obj)[, levPlotDist[i]] == levPlotDistOrg[i])
+                                          fData(obj)[, levPlotDist[i]] == levPlotDistOrg[i])
             
                 if (is.null(sI))
                     ylim <- range(exprs(objPlotDist))
@@ -692,7 +693,7 @@
         "Features",
         choices = list("all or"="all", "selected"="selected"),
         selected = ifelse(length(indices), "selected", "all")
-    )
+        )
 }
 
 .dTable <- function(obj, mdata, radiobutton = "all", 
@@ -701,29 +702,29 @@
         ind <- match.arg(ind)
         obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
         
-    if (!is.null(radiobutton)) {
-        if (radiobutton == "all") {
-            ## cbind to display data properly
-            if(mdata == "quant")
-                ans <- as.data.frame(
-                    cbind(" " = rownames(exprs(obj)), exprs(obj)))
-            if (mdata == "fD")
-                ans <- as.data.frame(
-                    cbind(" " = rownames(fData(obj)), fData(obj)))
-            if (mdata == "pD")
-                ans <- as.data.frame(
-                    cbind(" " = rownames(pData(obj)), pData(obj)))
-        } else {
-            ## cbind to display data properly
-            if(mdata == "quant") 
-                ans <- as.data.frame(cbind(" " = rownames(exprs(obj[indices])), 
-                                       exprs(obj[indices])))
-            else
-                ans <- as.data.frame(cbind(" " = rownames(fData(obj[indices])),
-                         fData(obj[indices])))
+        if (!is.null(radiobutton)) {
+            if (radiobutton == "all") {
+                ## cbind to display data properly
+                if(mdata == "quant")
+                    ans <- as.data.frame(
+                        cbind(" " = rownames(exprs(obj)), exprs(obj)))
+                if (mdata == "fD")
+                    ans <- as.data.frame(
+                        cbind(" " = rownames(fData(obj)), fData(obj)))
+                if (mdata == "pD")
+                    ans <- as.data.frame(
+                        cbind(" " = rownames(pData(obj)), pData(obj)))
+            } else {
+                ## cbind to display data properly
+                if(mdata == "quant") 
+                    ans <- as.data.frame(cbind(" " = rownames(exprs(obj[indices])), 
+                                               exprs(obj[indices])))
+                else
+                    ans <- as.data.frame(cbind(" " = rownames(fData(obj[indices])),
+                                               fData(obj[indices])))
+            }
+            return(ans)
         }
-        return(ans)
-    }
     }
 }
 ## END: TAB Quantitation and feature meta-data ##
@@ -733,7 +734,7 @@
 .obsSavedSearch <- function(coll, newfeat, indices, button, descr) {
     if (!is.null(button)
         && button > 0
-            && length(indices) > 0) {
+        && length(indices) > 0) {
         isolate(
             if (!(descr %in% description(coll))) {
                 coll <- addFeaturesOfInterest(newfeat, coll)
