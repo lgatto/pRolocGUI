@@ -4,13 +4,18 @@
 \alias{plotMat2D}
 \title{Plot a matrix of markers}
 \usage{
-plotMat2D(object, fcol = "Markers", ...)
+plotMat2D(object, fcol = "Markers", ncol., ...)
 }
 \arguments{
 \item{object}{An instance of class \code{MSnSet}.}
 
 \item{fcol}{The name of the markers matrix. Default is
 \code{"Markers"}.}
+
+\item{ncol.}{Number of columns to be used for the legend. The
+default value (4 of less) depends on the length of the
+labels. Reduce this if the labels are too long and the legend does
+not fit in the display panel.}
 
 \item{...}{Additional parameters that can be used to choose the
 dimentionality reduction method, as defined in
