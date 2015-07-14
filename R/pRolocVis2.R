@@ -23,6 +23,7 @@
 pRolocVis2 <- function(object, fcol = "Markers",
                        fig.height = "600px",
                        fig.width = "600px",
+                       legend.cex = 1,
                        ...) {
     if (!inherits(object, "MSnSet"))
         stop("The input must be of class MSnSet")
@@ -82,7 +83,7 @@ pRolocVis2 <- function(object, fcol = "Markers",
                             ## feature data table is always visible
                             fluidRow(
                                 column(12,
-                                       column(ncol(fData(dunkley2006)),
+                                       column(ncol(fData(object)),
                                               DT::dataTableOutput("brushDataTable"))))
                             )
                 )
@@ -178,7 +179,8 @@ pRolocVis2 <- function(object, fcol = "Markers",
                        input$markers,
                        col = myCols(),
                        ncol = 1, bty = "n",
-                       pch = 16, cex = 1)
+                       pch = 16,
+                       cex = legend.cex)
             })
         }
     app <- list(ui = ui, server = server)
