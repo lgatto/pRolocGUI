@@ -18,6 +18,10 @@
 ## https://gallery.shinyapps.io/106-plot-interaction-exclude/
 ## https://github.com/rstudio/shiny-examples
 
+
+## http://shiny.rstudio.com/articles/selecting-rows-of-data.html
+## http://shiny.rstudio.com/articles/plot-interaction-advanced.html
+
 ##' pRoloc interactive visualisation
 ##' 
 ##' @title Visualise your pRoloc data
@@ -111,8 +115,8 @@ pRolocVis2 <- function(object, fcol,
     pcas <- pRoloc::plot2D(object, fcol = NULL, plot = FALSE, ...)
     profs <- exprs(object)
 
-    ## all feautres are in the table when starting
-    tabfeats <- 1:nrow(object)
+    ## all feautres are displayed on start
+    feats <- 1:nrow(object)
     
     ## Build shiny app
     ui <- fluidPage(
@@ -154,7 +158,7 @@ pRolocVis2 <- function(object, fcol,
                             fluidRow(
                                 column(12,
                                        column(ncol(fData(object)), ## FIXME - this is limited to 12
-                                              DT::dataTableOutput("brushDataTable"))))
+                                              DT::dataTableOutput("fDataTable"))))
                             )
                 )
             ))
@@ -190,23 +194,23 @@ pRolocVis2 <- function(object, fcol,
                 for (i in 1:length(input$markers)) 
                     points(pcaMrkSel()[[i]], pch = 16, cex = 1.4, col = myCols()[i])
                 ## FIXME this does not work when brushed/subset of points selected
-                s <- tabfeats[input$brushDataTable_rows_selected]
+                s <- feats[input$fDataTable_rows_selected]
                 if (length(s))
                     points(pcas[s, , drop = FALSE], pch = 19, cex = 2)
             })
             ## Protein profile
             output$profile <- renderPlot({
                 par(mar = c(5.1, 4.1, 1, 1))
-                matplot(t(profs),
+                matplot(t(profs[feats, ]),
                         col = getUnknowncol(),
                         lty = 1,
                         type = "l")
-                for (i in 1:length(input$markers)) 
-                    matlines(t(profMrkSel()[[i]]),
-                             col = myCols()[i],
-                             lty = 1,
-                             lwd = 1.5)
-                s <- tabfeats[input$brushDataTable_rows_selected]
+                ## for (i in 1:length(input$markers)) 
+                ##     matlines(t(profMrkSel()[[i]]),
+                ##              col = myCols()[i],
+                ##              lty = 1,
+                ##              lwd = 1.5)
+                s <- feats[input$fDataTable_rows_selected]
                 if (length(s))
                     matlines(t(profs[s, , drop = FALSE]),
                              col = "black",
@@ -214,7 +218,7 @@ pRolocVis2 <- function(object, fcol,
                              lwd = 2)
             })                        
             ## Freature data table
-            output$brushDataTable <- DT::renderDataTable({
+            output$fDataTable <- DT::renderDataTable({
                 if (is.null(input$pcaBrush)) {
                     i <- try(pcas[, 1] >= usr[1] & pcas[, 1] <= usr[2])
                     j <- try(pcas[, 2] >= usr[3] & pcas[, 2] <= usr[4])
@@ -222,7 +226,7 @@ pRolocVis2 <- function(object, fcol,
                     i <- pcas[, 1] >= input$pcaBrush$xmin & pcas[, 1] <= input$pcaBrush$xmax
                     j <- pcas[, 2] >= input$pcaBrush$ymin & pcas[, 2] <= input$pcaBrush$ymax
                 }
-                tabfeats <<- which(i & j)
+                feats <<- which(i & j)
                 DT::datatable(fData(object)[i & j, ],
                               rownames = TRUE,
                               options = list(searchHighlight = TRUE))
@@ -257,3 +261,13 @@ pRolocVis2 <- function(object, fcol,
     app <- list(ui = ui, server = server)
     runApp(app)
 }
+
+
+## feats
+##  features to display on PCA plot
+##  profiles to diplay on matplot
+##  features to show in DT::datatable
+
+## feats[input$fDataTable_rows_selected]
+##  features to highlight
+##  feature selected in DT::datatable
