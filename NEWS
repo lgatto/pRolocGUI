@@ -3,6 +3,7 @@ CHANGES IN VERSION 1.3.1
  o new plotMat2D function <2015-05-20 Wed>
  o Fix query search in pRolocVis, contributed by pierremj
    <2015-05-27 Wed>
+ o pRolocVis has new method arg <2015-05-29 Fri>
  
 CHANGES IN VERSION 1.3.0
 ------------------------

@@ -322,14 +322,15 @@
 ## values PCA
 .vPCA <- function(obj, PCAn1, PCAn2,
                   ind = c("object1", "object2"), 
-                  mX = FALSE, mY = FALSE) { 
+                  mX = FALSE, mY = FALSE, method) { 
     if (length(obj) != 0) {
         ind <- match.arg(ind)
         obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
         if (!is.null(PCAn1) && !is.null(PCAn2)) {
             ans <- plot2D(obj, fcol=NULL,
                           dims=c(as.numeric(PCAn1), as.numeric(PCAn2)), 
-                          mirrorX = mX, mirrorY = mY, plot=FALSE)
+                          mirrorX = mX, mirrorY = mY, plot=FALSE,
+                          method = method)
             if (mX) ans[, 1] <- -ans[, 1]
             if (mY) ans[, 2] <- -ans[, 2]
             return(ans)
@@ -455,7 +456,8 @@
 .plotPCA <- function(obj, fcolours, fcex, xrange, yrange,
                      sb, PCAn1, PCAn2, legend = c(FALSE, TRUE),
                      legendpos, sI, cIS, ind = c("object1", "object2"), 
-                     mX = FALSE, mY = FALSE, listSaSe = list()) {
+                     mX = FALSE, mY = FALSE, listSaSe = list(),
+                     method) {
     if (length(obj) != 0) {
         ind <- match.arg(ind)
         obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]
@@ -487,7 +489,8 @@
                        dims = c(as.numeric(PCAn1),
                            as.numeric(PCAn2)),
                        cex = fcex,
-                       mirrorX = mX, mirrorY = mY)
+                       mirrorX = mX, mirrorY = mY,
+                       method = method)
             else
                 ## create plot2D and assign reactive variables to 
                 ## arguments take input$fsymboltype for symboltype
@@ -497,7 +500,8 @@
                        dims = c(as.numeric(PCAn1),
                            as.numeric(PCAn2)),
                        cex = fcex,
-                       mirrorX = mX, mirrorY = mY)
+                       mirrorX = mX, mirrorY = mY,
+                       method = method)
         }
         
         if (!is.null(legend))
@@ -514,6 +518,7 @@
             ## object = obj)
             highlightOnPlot(obj, foiPCA,
                             args = list(
+                                method = method,
                                 fcol = fvarLabels(obj)[1],
                                 xlim = c(xrange[1], 
                                     xrange[2]),
@@ -546,6 +551,7 @@
                                                       fnames = featureNames(obj)[.ind])
                         highlightOnPlot(obj, foiSaSe, 
                                         args = list(
+                                            method = method,
                                             fcol = fvarLabels(obj)[1],
                                             xlim = c(xrange[1], 
                                                 xrange[2]),

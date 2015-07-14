@@ -31,6 +31,8 @@
 ##' @usage pRolocComp(object)
 ##' @param object an object of class \code{MSnSet} or a list of \code{MSnSet}s 
 ##' (pRolocVis), a list of length 2 of \code{MSnSet}s (pRolocComp).
+##' @param method The method to be used for dimenstionality
+##' reduction. See \code{plot2D} for details.
 ##' @examples \dontrun{
 ##' ## load MSnSet data sets from the pRolocdata package
 ##' data(andy2011, package = "pRolocdata")
@@ -40,12 +42,15 @@
 ##' 
 ##' ## create lists with unnamed and named objects
 ##' unnamedVis <- list(andy2011, tan2009r1, dunkley2006)
-##' namedVis <- list(andy2011 = andy2011, tan2009r1 = tan2009r1, dunkley2006 = dunkley2006)
+##' namedVis <- list(andy2011 = andy2011,
+##'                  tan2009r1 = tan2009r1,
+##'                  dunkley2006 = dunkley2006)
 ##' unnamedComp <- list(tan2009r1, tan2009r2)
-##' namedComp <- list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r2)
+##' namedComp <- list(tan2009r1 = tan2009r1,
+##'                   tan2009r2 = tan2009r2)
 ##' 
-##' ## launch application by either assigning a MSnSet, an unnamed or a 
-##' ## named list to the argument object
+##' ## launch application by either assigning a MSnSet, 
+##' ## an unnamed or a named list to the argument object
 ##' pRolocVis(object = andy2011)
 ##' pRolocVis(object = unnamedVis)
 ##' pRolocVis(object = namedVis)
@@ -53,10 +58,10 @@
 ##' pRolocComp(object = unnamedComp)
 ##' pRolocComp(object = namedComp)
 ##' }
-##' @return An object \code{pRolocGUI_SearchResults} of class \code{FoICollection}
-##' when the object existed already or when a new \code{FoICollection} was
-##' created during a session. 
-pRolocVis <- function(object) {    
+##' @return An object \code{pRolocGUI_SearchResults} of class
+##' \code{FoICollection} when the object existed already or when a new
+##' \code{FoICollection} was created during a session.
+pRolocVis <- function(object, method = "PCA") {    
     ## global
     if (is.list(object)) {
         if (!listOf(object, "MSnSet"))
@@ -378,7 +383,8 @@ pRolocVis <- function(object) {
                 
                 ## values of PCA, dims is dependent on user input,
                 ## so is xlim and ylim
-                .valuesPCA <- reactive(.vPCA(.dI(), input$PCAn1, input$PCAn2))
+                .valuesPCA <- reactive(.vPCA(.dI(), input$PCAn1, input$PCAn2,
+                                             method = method))
                 
                 ## render colour selectInput accordingly to fvarLabels()
                 output$fcoloursUI <- renderUI(.colourPCA(.dI())) 
@@ -433,7 +439,8 @@ pRolocVis <- function(object) {
                              sI = .searchInd(),
                              cIS = input$chooseIdenSearch,
                              ind = "object1",
-                             listSaSe = .listSaSeInd())
+                             listSaSe = .listSaSeInd(),
+                             method = method)
                     )
                 
                 
@@ -452,7 +459,8 @@ pRolocVis <- function(object) {
                              sI = .searchInd(),
                              cIS = input$chooseIdenSearch,
                              ind = "object1",
-                             listSaSe = .listSaseInd())
+                             listSaSe = .listSaseInd(),
+                             method = method)
                     )
                 
                 ## Download Handler for PCA plot
@@ -709,10 +717,9 @@ pRolocVis <- function(object) {
                 output$saveLists2SRUI <- renderUI(
                     .buttonSearch(.pR_SR$foi, .prot$search, input$savedSearchText)
                     )
-### END: SEARCH ###
-            
-                                   } ## end server function        
-                                              ) ## end list 
-        runApp(app)
-    } ## end function
+                ## END: SEARCH ###                
+            } ## end server function        
+        ) ## end list 
+    runApp(app)
+} ## end function
     
