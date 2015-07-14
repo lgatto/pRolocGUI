@@ -3,11 +3,10 @@
                             valuesx, valuesy) {
     if (!is.null(inputx) && !is.null(inputy)) {
         dist <- sqrt(
-            (inputx - valuesx)^2 + ## x-component
-                (inputy - valuesy)^2 ## y-component
-        )
-        ## compute the element (row index, i.e. the protein) which has the 
-        ## shortest distance to the input (name will be returned)
+            (inputx - valuesx)^2 +    ## x-component
+                (inputy - valuesy)^2) ## y-component
+        ## compute the element (row index, i.e. the protein) which has 
+        ## the shortest distance to the input (name will be returned)
         return(names(which(dist == min(dist))))
     }
 }
