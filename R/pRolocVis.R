@@ -357,7 +357,7 @@ pRolocVis <- function(object) {
                 
                 observe({ 
                     .prot$text <- .obsProtText(.dI(), .prot$text, input$saveText, 
-                            isolate(input$sRTextInput), input$search)
+                            isolate(input$sRTextInput), input$search, names=TRUE)
                 })
                 
                 observe({
