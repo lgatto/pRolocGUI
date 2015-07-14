@@ -1,20 +1,13 @@
-#' @export 
+##' @rdname pRolocVis-pRolocComp
 pRolocComp <- function(object) {
-
-
     if (!listOf(object, "MSnSet"))
         stop("The input must be list of MSnSet instances.")
-
     if (length(object) != 2)
         stop("The input list must be of length 2.")
-    
     if (any(sapply(X = object, FUN = function(x) anyNA(exprs(x))))) {
         warning("Removing features with missing values.", immediate. = TRUE)
         object <- lapply(object, filterNA)
     }
-
-
-    
     if (any(sapply(X = object, FUN = function(x) anyNA(exprs(x)))))
         warning("list item contains NA", immediate. = TRUE)
     
@@ -23,7 +16,6 @@ pRolocComp <- function(object) {
     
     ## pRolocGUI_SearchResults
     sr <- .createSR()
-    
     app <- list(
         ui = bootstrapPage(
                 fluidRow( 
