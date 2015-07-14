@@ -52,16 +52,17 @@
 pRolocVis2 <- function(object, fcol,
                        foi,
                        fig.height = "600px",
-                       fig.width = "600px",
+                       fig.width = "100%",
+                       legend.width = "100%",
                        legend.cex = 1,
-                       nchar = 10,
+                       nchar = 15,
                        ...) {
     if (!inherits(object, "MSnSet"))
         stop("The input must be of class MSnSet")
-    if (missing(foi) & missing(fcol))
+    if (missing(foi) & missing(fcol)) 
         fcol <- "Markers"
     if (!missing(fcol)) {
-        if (is.null(fData(object)[, fcol]))
+        if (!fcol %in% fvarLabels(object))
             stop("fcol missing in fData")
         if (!isMrkMat(object, fcol))
             stop("Markers must be encoded as a matrix. See ?markers for details.")
@@ -91,6 +92,13 @@ pRolocVis2 <- function(object, fcol,
         n <- ncol(pmarkers) %/% length(cols)
         cols <- rep(cols, n + 1)
     }
+    ## There can't be more than 12 columns in the DT table
+    if ((nfd <- length(fvarLabels(object))) > 12) {
+        message("There can't be more than 12 feature variables. Using 6 first and last.")
+        fData(object) <- fData(object)[, c(1:6, (nfd-5):nfd)]
+    }
+    ## a hyphen in a pmarkers name breaks the app?!?
+    colnames(pmarkers) <- sub("-", "", colnames(pmarkers))
     ## Shorten markers names if too long
     cn <- sapply(colnames(pmarkers),
                  function(x) {
@@ -128,13 +136,13 @@ pRolocVis2 <- function(object, fcol,
                                selected = colnames(pmarkers)[pmsel]),
                 sliderInput("trans", "Transparancy",
                             min = 0,  max = 1, value = 0.5),
-                plotOutput("legend"),
+                checkboxInput("checkbox", label = "Show labels", value = TRUE),
                 width = 2),
             mainPanel(
                 tabsetPanel(type = "tabs",
                             tabPanel("PCA",
                                      fluidRow(
-                                         column(9, offset = 1,
+                                         column(10, 
                                                 plotOutput("pca",
                                                            height = fig.height,
                                                            width = fig.width,
@@ -145,7 +153,13 @@ pRolocVis2 <- function(object, fcol,
                                                                ),
                                                            brush = brushOpts(
                                                                id = "pcaBrush",
-                                                               resetOnNew = TRUE))))
+                                                               resetOnNew = TRUE)),
+                                                offset = 0),
+                                         column(2, 
+                                                plotOutput("legend",
+                                                           height = fig.height,
+                                                           width = legend.width))
+                                         )
                                      ),
                             tabPanel("Profiles",
                                      fluidRow(
@@ -184,7 +198,8 @@ pRolocVis2 <- function(object, fcol,
             })
             ## PCA plot
             output$pca <- renderPlot({
-                par(mar = c(5.1, 4.1, 1, 1))
+                par(mar = c(4, 4, 0, 0))
+                par(oma = c(1, 0, 0, 0))
                 plot(pcas,
                      col = getUnknowncol(),
                      pch = 21, cex = 1,
@@ -195,8 +210,14 @@ pRolocVis2 <- function(object, fcol,
                     points(pcaMrkSel()[[i]], pch = 16, cex = 1.4, col = myCols()[i])
                 ## FIXME this does not work when brushed/subset of points selected
                 s <- feats[input$fDataTable_rows_selected]
-                if (length(s))
-                    points(pcas[s, , drop = FALSE], pch = 19, cex = 2)
+                if (length(s)) {
+                    points(pcas[s, , drop = FALSE],
+                           pch = 19, cex = 2, col = "#00000060")
+                    if (input$checkbox)
+                        text(pcas[s, 1], pcas[s, 2],
+                             rownames(pcas)[s],
+                             pos = 1)
+                }
             })
             ## Protein profile
             output$profile <- renderPlot({
@@ -231,7 +252,7 @@ pRolocVis2 <- function(object, fcol,
                               rownames = TRUE,
                               options = list(searchHighlight = TRUE))
                               ## filter = 'top')
-            })                        
+            })
             ## When a double-click happens, check if there's a brush on the plot.
             ## If so, zoom to the brush bounds; if not, reset the zoom.
             observeEvent(input$pcaDblclick, {
@@ -246,11 +267,13 @@ pRolocVis2 <- function(object, fcol,
                          })
             ## Output legend
             output$legend <- renderPlot({
+                par(mar = rep(1, 4))
+                par(oma = c(1, 0, 0, 0))
                 plot(0, type = "n",
                      xaxt = "n", yaxt = "n",
                      xlab = "", ylab = "",
                      bty = "n")
-                legend("center",
+                legend("topleft",
                        input$markers,
                        col = myCols(),
                        ncol = 1, bty = "n",
