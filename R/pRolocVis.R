@@ -1,109 +1,102 @@
-    #'@name pRolocVis/pRolocComp
-    #'@aliases pRolocVis
-    #'@aliases pRolocComp
-    #'@title pRolocVis/pRolocComp
-    #'@author Thomas Naake <naake@@stud.uni-heidelberg.de>
-    #'@usage pRolocVis(object)
-    #'@usage pRolocComp(object)
-    #'@param object an object of class \code{MSnSet} or a list of \code{MSnSet}s 
-    #'(pRolocVis), a list of length 2 of \code{MSnSet}s (pRolocComp).
-    #'@description \code{pRolocVis} and \code{pRolocComp} launch shiny sessions 
-    #'to interactively analyse and visualise proteomics data. 
-    #'
-    #'@details \code{pRolocVis} is a function to start a shiny session with 
-    #'one MSnSet data set or a list of \code{MSnSet}s. \code{pRolocComp} launches
-    #'with a list of two \code{MSnSet}s. 
-    #'
-    #'The functions allow to explore and analyse interactively spatial proteomics 
-    #'data, especially LOPIT and PCP experiments. Both functions offer high 
-    #'interactivity for exploring Principle Component Analysis (PCA) plots, 
-    #'protein profile plots and quantatative and qualitative meta-data. 
-    #'Additionally, \code{pRolocVis} and \code{pRolocComp} support import/export 
-    #'abilities for past and new search results using the 
-    #'\code{FeaturesOfInterest}/\code{FoICollection} infrastructure defined in the 
-    #'\code{MSnbase} package. 
-    #'
-    #'\code{pRolocVis} enables to analyse one \code{MSnSet} at a time, while
-    #'\code{pRolocComp} analyses and compares two \code{MSnSet}s. 
-    #'\code{pRolocComp} is especially meant for analyses of data which looks 
-    #'at the change of proteins in protein localisation.
-    #'
-    #'To load the vignette for the functions \code{pRolocVis} and \code{pRolocGUI}
-    #'enter \code{vignette("pRolocGUI")} in the console. The vignette will give more 
-    #'information on how to use the shiny applications.
-    #'
-    #'@examples \dontrun{
-    #'
-    #'## load MSnSet data sets from the pRolocdata package
-    #'data(andy2011, package = "pRolocdata")
-    #'data(tan2009r1, package = "pRolocdata")
-    #'data(tan2009r2, package = "pRolocdata")
-    #'data(dunkley2006, package = "pRolocdata")
-    #'
-    #'## create lists with unnamed and named objects
-    #'unnamedVis <- list(andy2011, tan2009r1, dunkley2006)
-    #'namedVis <- list(andy2011 = andy2011, tan2009r1 = tan2009r1, dunkley2006 = dunkley2006)
-    #'unnamedComp <- list(tan2009r1, tan2009r2)
-    #'namedComp <- list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r2)
-    #'
-    #'## launch application by either assigning a MSnSet, an unnamed or a 
-    #'## named list to the argument object
-    #'pRolocVis(object = andy2011)
-    #'pRolocVis(object = unnamedVis)
-    #'pRolocVis(object = namedVis)
-    #'
-    #'pRolocComp(object = unnamedComp)
-    #'pRolocComp(object = namedComp)
-    #'}
-    #'@return An object \code{pRolocGUI_SearchResults} of class \code{FoICollection}
-    #'when the object existed already or when a new \code{FoICollection} was
-    #'created during a session. 
-    #'@export
-    pRolocVis <- function(object) {    
-    
-        ## global
-        if (is.list(object)) {
-            if (!listOf(object, "MSnSet"))
-                stop("The input must be list of MSnSet instances.")
-            if (any(sapply(X = object, FUN = function(x) anyNA(exprs(x))))) {
-                warning("Removing features with missing values.", immediate. = TRUE)
-                object <- lapply(object, filterNA)
-            }
-        } else {
-            if (!inherits(object, "MSnSet"))
-                stop("The input must be an instance of class MSnSet")
-            if (anyNA(exprs(object))) {
-                warning("Removing features with missing values.", immediate. = TRUE)
-                object <- filterNA(object)
-            }
-            name <- MSnbase:::getVariableName(match.call(), "object")
+##' @rdname pRolocVis-pRolocComp
+##' @aliases pRolocVis
+##' @aliases pRolocComp
+##' @title pRolocVis/pRolocComp
+##' @author Thomas Naake <naake@@stud.uni-heidelberg.de>
+##' @usage pRolocVis(object)
+##' @usage pRolocComp(object)
+##' @param object an object of class \code{MSnSet} or a list of \code{MSnSet}s 
+##' (pRolocVis), a list of length 2 of \code{MSnSet}s (pRolocComp).
+##' @description \code{pRolocVis} and \code{pRolocComp} launch shiny sessions 
+##' to interactively analyse and visualise proteomics data. 
+##' 
+##' @details \code{pRolocVis} is a function to start a shiny session with 
+##' one MSnSet data set or a list of \code{MSnSet}s. \code{pRolocComp} launches
+##' with a list of two \code{MSnSet}s. 
+##' 
+##' The functions allow to explore and analyse interactively spatial proteomics 
+##' data, especially LOPIT and PCP experiments. Both functions offer high 
+##' interactivity for exploring Principle Component Analysis (PCA) plots, 
+##' protein profile plots and quantatative and qualitative meta-data. 
+##' Additionally, \code{pRolocVis} and \code{pRolocComp} support import/export 
+##' abilities for past and new search results using the 
+##' \code{FeaturesOfInterest}/\code{FoICollection} infrastructure defined in the 
+##' \code{MSnbase} package. 
+##' 
+##' \code{pRolocVis} enables to analyse one \code{MSnSet} at a time, while
+##' \code{pRolocComp} analyses and compares two \code{MSnSet}s. 
+##' \code{pRolocComp} is especially meant for analyses of data which looks 
+##' at the change of proteins in protein localisation.
+##' 
+##' To load the vignette for the functions \code{pRolocVis} and \code{pRolocGUI}
+##' enter \code{vignette("pRolocGUI")} in the console. The vignette will give more 
+##' information on how to use the shiny applications.
+##' @examples \dontrun{
+##' ## load MSnSet data sets from the pRolocdata package
+##' data(andy2011, package = "pRolocdata")
+##' data(tan2009r1, package = "pRolocdata")
+##' data(tan2009r2, package = "pRolocdata")
+##' data(dunkley2006, package = "pRolocdata")
+##' 
+##' ## create lists with unnamed and named objects
+##' unnamedVis <- list(andy2011, tan2009r1, dunkley2006)
+##' namedVis <- list(andy2011 = andy2011, tan2009r1 = tan2009r1, dunkley2006 = dunkley2006)
+##' unnamedComp <- list(tan2009r1, tan2009r2)
+##' namedComp <- list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r2)
+##' 
+##' ## launch application by either assigning a MSnSet, an unnamed or a 
+##' ## named list to the argument object
+##' pRolocVis(object = andy2011)
+##' pRolocVis(object = unnamedVis)
+##' pRolocVis(object = namedVis)
+##' 
+##' pRolocComp(object = unnamedComp)
+##' pRolocComp(object = namedComp)
+##' }
+##' @return An object \code{pRolocGUI_SearchResults} of class \code{FoICollection}
+##' when the object existed already or when a new \code{FoICollection} was
+##' created during a session. 
+pRolocVis <- function(object) {    
+    ## global
+    if (is.list(object)) {
+        if (!listOf(object, "MSnSet"))
+            stop("The input must be list of MSnSet instances.")
+        if (any(sapply(X = object, FUN = function(x) anyNA(exprs(x))))) {
+            warning("Removing features with missing values.", immediate. = TRUE)
+            object <- lapply(object, filterNA)
         }
-    
-        ## increase upload limit to 20 MB
-        options(shiny.maxRequestSize = 20*1024^2)
-        
-        ## pRolocGUI_SearchResults
-        sr <- .createSR()
-            
-        app <- list(  
-            ui = 
-                bootstrapPage( 
-                    fluidRow(
-                        #responsive = TRUE,
-                        ## Application title
-                        .pRn1_setTitlePanel(),
-                        ## Sidebar Panel
-                        sidebarPanel(
-                            .pR_tags(), 
-                            .pR_condDisplaySelection(),
-                            .pR_condTabData(),
-                            .pRn1_condTabPCA(),
-                            .pR_condTabProteinProfiles(),
-                            .pR_condTabQuantitation(),
-                            .pR_condTabfData(),
-                            .pR_condTabpData(),
-                            .pR_condTabSearch(),
-                            width = 2
+    } else {
+        if (!inherits(object, "MSnSet"))
+            stop("The input must be an instance of class MSnSet")
+        if (anyNA(exprs(object))) {
+            warning("Removing features with missing values.", immediate. = TRUE)
+            object <- filterNA(object)
+        }
+        name <- MSnbase:::getVariableName(match.call(), "object")
+    }
+    ## increase upload limit to 20 MB
+    options(shiny.maxRequestSize = 20*1024^2)
+    ## pRolocGUI_SearchResults
+    sr <- .createSR()
+    app <- list(  
+        ui = 
+            bootstrapPage( 
+                fluidRow(
+                                        #responsive = TRUE,
+                    ## Application title
+                    .pRn1_setTitlePanel(),
+                    ## Sidebar Panel
+                    sidebarPanel(
+                        .pR_tags(), 
+                        .pR_condDisplaySelection(),
+                        .pR_condTabData(),
+                        .pRn1_condTabPCA(),
+                        .pR_condTabProteinProfiles(),
+                        .pR_condTabQuantitation(),
+                        .pR_condTabfData(),
+                        .pR_condTabpData(),
+                        .pR_condTabSearch(),
+                        width = 2
                         ),
                         ## Main Panel
                         mainPanel(
