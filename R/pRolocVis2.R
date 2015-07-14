@@ -85,8 +85,10 @@ pRolocVis2 <- function(object, fcol,
     }
     if (length(grep("GO:", colnames(pmarkers))) > 0) {
         cn <- pRoloc::flipGoTermId(colnames(pmarkers))
-        names(cn) <- NULL
-        colnames(pmarkers) <- cn
+        if (all(!is.na(cn))) {
+            names(cn) <- NULL
+            colnames(pmarkers) <- cn
+        }
     }
     ## Marker colours
     cols <- getStockcol()
@@ -103,7 +105,7 @@ pRolocVis2 <- function(object, fcol,
         fData(object) <- fData(object)[, c(1:6, (nfd-5):nfd)]
     }
     ## a hyphen in a pmarkers name breaks the app?!?
-    colnames(pmarkers) <- sub("-", "", colnames(pmarkers))
+    colnames(pmarkers) <- gsub("-", "", colnames(pmarkers))
     ## Shorten markers names if too long
     cn <- sapply(colnames(pmarkers),
                  function(x) {
