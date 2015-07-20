@@ -5,16 +5,16 @@
 \alias{pRolocVis}
 \title{pRolocVis/pRolocComp}
 \usage{
-pRolocComp(object)
+pRolocComp(object, method = "PCA")
 
-pRolocVis(object)
+pRolocVis(object, method = "PCA")
 }
 \arguments{
 \item{object}{an object of class \code{MSnSet} or a list of \code{MSnSet}s
 (pRolocVis), a list of length 2 of \code{MSnSet}s (pRolocComp).}
 
 \item{method}{The method to be used for dimenstionality
-reduction. See \code{plot2D} for details.}
+reduction. Default is \code{"PCA"}. See \code{plot2D} for details.}
 }
 \value{
 An object \code{pRolocGUI_SearchResults} of class
@@ -49,7 +49,6 @@ enter \code{vignette("pRolocGUI")} in the console. The vignette will give more
 information on how to use the shiny applications.
 }
 \examples{
-\dontrun{
 ## load MSnSet data sets from the pRolocdata package
 data(andy2011, package = "pRolocdata")
 data(tan2009r1, package = "pRolocdata")
@@ -67,12 +66,12 @@ namedComp <- list(tan2009r1 = tan2009r1,
 
 ## launch application by either assigning a MSnSet,
 ## an unnamed or a named list to the argument object
-pRolocVis(object = andy2011)
-pRolocVis(object = unnamedVis)
-pRolocVis(object = namedVis)
-
-pRolocComp(object = unnamedComp)
-pRolocComp(object = namedComp)
+if (interactive()) {
+   pRolocVis(object = andy2011)
+   pRolocVis(object = unnamedVis)
+   pRolocVis(object = namedVis)
+   pRolocComp(object = unnamedComp)
+   pRolocComp(object = namedComp)
 }
 }
 \author{

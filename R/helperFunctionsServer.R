@@ -322,7 +322,7 @@
 ## values PCA
 .vPCA <- function(obj, PCAn1, PCAn2,
                   ind = c("object1", "object2"), 
-                  mX = FALSE, mY = FALSE, method) { 
+                  mX = FALSE, mY = FALSE, method = "PCA") { 
     if (length(obj) != 0) {
         ind <- match.arg(ind)
         obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]

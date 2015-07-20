@@ -1,5 +1,5 @@
 ##' @rdname pRolocVis-pRolocComp
-pRolocComp <- function(object) {
+pRolocComp <- function(object, method = "PCA") {
     if (!listOf(object, "MSnSet"))
         stop("The input must be list of MSnSet instances.")
     if (length(object) != 2)
@@ -351,14 +351,14 @@ pRolocComp <- function(object) {
                 colours = c("none", "none"), fcex = c(1, 1), 
                 symbol = c("none", "none"), 
                 PCAn1 = c(1, 1), PCAn2 = c(2, 2),
-                xrange1 = c(min(.vPCA(isolate(data$obj), 1, 2, "object1")[, 1]),
-                        max(.vPCA(isolate(data$obj), 1, 2, "object1")[, 1])),
-                xrange2 = c(min(.vPCA(isolate(data$obj), 1, 2, "object2")[, 1]), 
-                        max(.vPCA(isolate(data$obj), 1, 2, "object2")[, 1])),
-                yrange1 = c(min(.vPCA(isolate(data$obj), 1, 2, "object1")[, 2]), 
-                        max(.vPCA(isolate(data$obj), 1, 2, "object1")[, 2])),
-                yrange2 = c(min(.vPCA(isolate(data$obj), 1, 2, "object2")[, 2]), 
-                        max(.vPCA(isolate(data$obj), 1, 2, "object2")[, 2])),
+                xrange1 = c(min(.vPCA(isolate(data$obj), 1, 2, "object1", method = method)[, 1]),
+                        max(.vPCA(isolate(data$obj), 1, 2, "object1", method = method)[, 1])),
+                xrange2 = c(min(.vPCA(isolate(data$obj), 1, 2, "object2", method = method)[, 1]), 
+                        max(.vPCA(isolate(data$obj), 1, 2, "object2", method = method)[, 1])),
+                yrange1 = c(min(.vPCA(isolate(data$obj), 1, 2, "object1", method = method)[, 2]), 
+                        max(.vPCA(isolate(data$obj), 1, 2, "object1", method = method)[, 2])),
+                yrange2 = c(min(.vPCA(isolate(data$obj), 1, 2, "object2", method = method)[, 2]), 
+                        max(.vPCA(isolate(data$obj), 1, 2, "object2", method = method)[, 2])),
                 legend = FALSE
             )
         
@@ -394,10 +394,13 @@ pRolocComp <- function(object) {
             ## values of PCA, dims is dependent on user input,
             ## so is xlim and ylim
             .valuesPCA1 <- reactive(.vPCA(data$obj, .params$PCAn1[1], 
-                                    .params$PCAn2[1], "object1"))
+                                          .params$PCAn2[1], "object1",
+                                          method = method))
        
             .valuesPCA2 <- reactive(.vPCA(data$obj, .params$PCAn1[2], 
-                            .params$PCAn2[2], "object2", mirror$x, mirror$y))         
+                                          .params$PCAn2[2], "object2",
+                                          mirror$x, mirror$y,
+                                          method = method))         
             
             ## selectInput for colours
             output$fcoloursOutput <- renderUI({ 
