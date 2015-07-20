@@ -27,13 +27,11 @@
 ##' @rdname pRolocVis-pRolocComp
 ##' @title pRolocVis/pRolocComp
 ##' @author Thomas Naake <naake@@stud.uni-heidelberg.de>
-##' @usage pRolocVis(object)
-##' @usage pRolocComp(object)
 ##' @param object an object of class \code{MSnSet} or a list of \code{MSnSet}s 
 ##' (pRolocVis), a list of length 2 of \code{MSnSet}s (pRolocComp).
 ##' @param method The method to be used for dimenstionality
-##' reduction. See \code{plot2D} for details.
-##' @examples \dontrun{
+##' reduction. Default is \code{"PCA"}. See \code{plot2D} for details.
+##' @examples 
 ##' ## load MSnSet data sets from the pRolocdata package
 ##' data(andy2011, package = "pRolocdata")
 ##' data(tan2009r1, package = "pRolocdata")
@@ -51,12 +49,12 @@
 ##' 
 ##' ## launch application by either assigning a MSnSet, 
 ##' ## an unnamed or a named list to the argument object
-##' pRolocVis(object = andy2011)
-##' pRolocVis(object = unnamedVis)
-##' pRolocVis(object = namedVis)
-##' 
-##' pRolocComp(object = unnamedComp)
-##' pRolocComp(object = namedComp)
+##' if (interactive()) {
+##'    pRolocVis(object = andy2011)
+##'    pRolocVis(object = unnamedVis)
+##'    pRolocVis(object = namedVis)
+##'    pRolocComp(object = unnamedComp)
+##'    pRolocComp(object = namedComp)
 ##' }
 ##' @return An object \code{pRolocGUI_SearchResults} of class
 ##' \code{FoICollection} when the object existed already or when a new
