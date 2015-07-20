@@ -30,7 +30,7 @@
 ##' \code{\link{FoICollection}}, that will be available for display.
 ##' @param fig.height Height of the figure. Default is \code{"600px"}.
 ##' @param fig.width Width of the figure. Default is \code{"600px"}.
-##' @param legend.width 
+##' @param legend.width Width of the legend. Default is \code{"100\%"}.
 ##' @param legend.cex Character expansion for the vignette
 ##' labels. Default is 1.
 ##' @param nchar Maximum number of characters if the markers class
@@ -50,7 +50,8 @@
 ##' dunkley2006 <- mrkVecToMat(dunkley2006)
 ##' ## order the fractions 
 ##' dunkley2006 <- dunkley2006[, order(dunkley2006$fraction)]
-##' pRolocVis2(dunkley2006)
+##' if (interactive())
+##'   pRolocGUI:::pRolocVis2(dunkley2006)
 pRolocVis2 <- function(object, fcol,
                        foi,
                        fig.height = "600px",

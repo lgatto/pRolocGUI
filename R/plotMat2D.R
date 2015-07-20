@@ -18,7 +18,8 @@
 ##' data(dunkley2006)
 ##' ## adds matrix markers
 ##' dunkley2006 <- mrkVecToMat(dunkley2006)
-##' plotMat2D(dunkley2006)
+##' if (interactive())
+##'    plotMat2D(dunkley2006)
 plotMat2D <- function(object, fcol = "Markers", ncol., ...) {
     if (!inherits(object, "MSnSet"))
         stop("The input must be of class MSnSet")

@@ -4,8 +4,8 @@
 \alias{pRolocVis2}
 \title{Visualise your pRoloc data}
 \usage{
-pRolocVis2(object, fcol, foi, fig.height = "600px", fig.width = "600px",
-  legend.cex = 1, nchar = 10, ...)
+pRolocVis2(object, fcol, foi, fig.height = "600px", fig.width = "100\%",
+  legend.width = "100\%", legend.cex = 1, nchar = 15, all = FALSE, ...)
 }
 \arguments{
 \item{object}{An instance of class \code{MSnSet}.}
@@ -20,11 +20,17 @@ pRolocVis2(object, fcol, foi, fig.height = "600px", fig.width = "600px",
 
 \item{fig.width}{Width of the figure. Default is \code{"600px"}.}
 
+\item{legend.width}{Width of the legend. Default is \code{"100\%"}.}
+
 \item{legend.cex}{Character expansion for the vignette
 labels. Default is 1.}
 
 \item{nchar}{Maximum number of characters if the markers class
 names, before their names are truncated. Default is 10.}
+
+\item{all}{If there are more than 10 clusters, only the first
+three are discplayed on start-up, unless \code{all} is set to
+\code{TRUE}. Default is \code{FALSE}.}
 
 \item{...}{Additional parameters that can be used to choose the
 dimentionality reduction method, as defined in
@@ -41,7 +47,8 @@ data(dunkley2006)
 dunkley2006 <- mrkVecToMat(dunkley2006)
 ## order the fractions
 dunkley2006 <- dunkley2006[, order(dunkley2006$fraction)]
-pRolocVis2(dunkley2006)
+if (interactive())
+  pRolocGUI:::pRolocVis2(dunkley2006)
 }
 \author{
 Laurent Gatto
