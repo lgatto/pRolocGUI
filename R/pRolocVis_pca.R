@@ -52,20 +52,21 @@
 ##' dunkley2006 <- dunkley2006[, order(dunkley2006$fraction)]
 ##' if (interactive())
 ##'   pRolocGUI:::pRolocVis2(dunkley2006)
-pRolocVis2 <- function(object, fcol,
-                       foi,
-                       fig.height = "600px",
-                       fig.width = "100%",
-                       legend.width = "100%",
-                       legend.cex = 1,
-                       nchar = 15,
-                       all = FALSE,
-                       ...) {
+pRolocVis_pca <- function(object, fcol,
+                          foi,
+                          fig.height = "600px",
+                          fig.width = "100%",
+                          legend.width = "100%",
+                          legend.cex = 1,
+                          nchar = 15,
+                          all = FALSE,
+                          ...) {
+  
     if (!inherits(object, "MSnSet"))
         stop("The input must be of class MSnSet")
     if (missing(foi) & missing(fcol)) 
         fcol <- "Markers"
-    if (!missing(fcol)) {
+    if (!missing(fcol)) {  
         if (!fcol %in% fvarLabels(object))
             stop("fcol missing in fData")
         if (!isMrkMat(object, fcol))

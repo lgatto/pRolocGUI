@@ -1,5 +1,5 @@
 ##' @rdname pRolocVis-pRolocComp
-pRolocComp <- function(object, method = "PCA") {
+pRolocVis_comp <- function(object, method = "PCA") {
     if (!listOf(object, "MSnSet"))
         stop("The input must be list of MSnSet instances.")
     if (length(object) != 2)
