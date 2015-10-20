@@ -457,7 +457,7 @@
                      sb, PCAn1, PCAn2, legend = c(FALSE, TRUE),
                      legendpos, sI, cIS, ind = c("object1", "object2"), 
                      mX = FALSE, mY = FALSE, listSaSe = list(),
-                     method) {
+                     method = "PCA") {
     if (length(obj) != 0) {
         ind <- match.arg(ind)
         obj <- ifelse(ind == "object1", obj[1], obj[2])[[1]]

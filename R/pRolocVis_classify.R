@@ -1,47 +1,23 @@
-library("shiny")
-source("class.R")
-
-##' pRoloc classification interactive visualisation
-##' 
-##' @title Visualise pRoloc classification results
-##' @param object An instance of class \code{MSnSet}.
-##' @param fcol The feature meta data column containing the 
-##' classification result.
+##' @rdname pRolocVis-apps
 ##' @param scol The feature meta data column containing the 
 ##' classification scores.
-##' @param mcol The feature meta data column containing the marker 
-##' definitons. The default is \code{markers}.
-##' @param legend.cex Character expansion for the legend labels.
-##' Default is 1.
-##' @param legend.ncol Number of columns to use for the legend. 
-##' Default is 1.
-##' @param method An instance of class \code{matrix} where its 
-##' rownames must match the object's feature names and represent 
-##' a projection of the data in object in two dimensions, as 
-##' produced (and invisibly returned) by \code{plot2D}.
-##' @author Lisa M Breckels
-##' @examples
-##' library("pRoloc")
-##' library("pRolocdata")
-##' data(dunkley2006)
-##' opt <- knnOptimisation(dunkley2006, times = 10)
-##' dunkley2006 <- knnClassification(dunkley2006, opt)
-##' if (interactive())
-##'   pRolocVis_classify(dunkley2006, fcol = "knn")
+##' @param mcol The feature meta data column containing the labelled training 
+##' data, for use with "classify".
+##' @return For \code{classify} a vector of thresholds, one per class, to use with
+##' \code{\link{getPredictions}}
 pRolocVis_classify <- function(object,
                                fcol,
                                scol,
                                mcol = "markers",
                                legend.cex = 1,
-                               legend.ncol = 1,
                                method,
+#                                verbose = TRUE,
                                ...) {
-                       
-  on.exit(return(us))
   
   if (!inherits(object, "MSnSet"))
     stop("The input must be of class MSnSet")
-  stopifnot(!missing(fcol))
+  if (missing(fcol))
+    stop("fcol prediction column not specified")
   if (missing(scol)) 
     scol <- paste0(fcol, ".scores")
   if (missing(mcol)) 
@@ -51,11 +27,23 @@ pRolocVis_classify <- function(object,
       stop("fcol missing in fData")
     }
   }
-  if (!missing(method)) {
-    if (!inherits(method, "matrix"))
-      stop("Input object method must be of class matrix")
-    if (all(rownames(method) != featureNames(object)))
-      stop("rownames in method and featureNames in object do not match") 
+  
+  ## Return scores
+  on.exit(return(us))
+  
+  ## check validpRolocVisMethod
+  if (missing(method)) {
+    pcas <- plot2D(object, fcol = NULL, plot = FALSE)
+  } else {
+    if (.validpRolocVisMethod(method)) {
+      if (class(method) == "matrix") {
+        pcas <- method
+      } else {
+        pcas <- plot2D(object, fcol = NULL, plot = FALSE, method = method)
+      }
+    } else {
+      stop("Invalid visualisation method")
+    }
   }
  
   ## Marker colours
@@ -64,7 +52,8 @@ pRolocVis_classify <- function(object,
   cols <- getLisacol()
   nc <- length(cols)
   if (nc < nk) {
-    message("Too many features for available colours. Some colours will be duplicated.")
+    message("Too many features for available colours. 
+            Some colours will be duplicated.")
     n <- nk %/% nc
     cols <- rep(cols, n + 1)
   }
@@ -75,12 +64,6 @@ pRolocVis_classify <- function(object,
   uns <- unknownMSnSet(object, fcol = mcol)
   class.ind <- sapply(orgs, function(z) which(fData(uns)[, fcol] == z))
   scores <- sapply(class.ind, function(z) fData(uns)[z, scol])
-  
-  ## pcas for boxplot
-  if (missing(method)) 
-    pcas <- plot2D(object, fcol = NULL, plot = FALSE)
-  else
-    pcas <- method[, 1:2]
   mrk.ind <- sapply(orgs, function(z) which(fData(object)[, mcol] == z))
   
   
@@ -99,8 +82,7 @@ pRolocVis_classify <- function(object,
                                       value = 1, 
                                       step = .05)
   }
-  ## Quantile slider
-  ## Needed to add leading zeros to maintain organelle order when returning `us`
+  ## Quantile slider: Needed to add leading zeros to maintain organelle order for `us`
   labelNames <- paste0("org", formatC(1:nk, width = 2, flag = "0"))
   quantile.slider <- sliderInput(inputId = "quantile",
                                  label = NULL,
@@ -109,7 +91,7 @@ pRolocVis_classify <- function(object,
                                  value = .5,
                                  step = .05)
   
-  ## INTERFACE
+  ## Build shiny interface
   ui <- fluidPage(
     headerPanel("Classification results"),
     sidebarLayout(
@@ -132,7 +114,7 @@ pRolocVis_classify <- function(object,
                                 height = "380px",
                                 width = "500px"),
                      plotOutput("boxplot",
-                                height = "500px",
+                                height = "400px",
                                 width = "500px")),
               column(2, 
                      plotOutput("legend",
@@ -144,31 +126,30 @@ pRolocVis_classify <- function(object,
       )
     )
   
-  
-  ## SERVER
+  ## Shiny server
   server <-
     function(input, output, session) {
       ranges <- reactiveValues(x = NULL, y = NULL)
-      ## Update PCA plot according to sliders
+      ## Update PCA plot according to sliders      
       pcaSel <- reactive({
         k <- names(input)[grep("org", names(input))]
-        #setAll <- FALSE
         if (input$cutoff == "quant") {
-          us <<- getOrgThresholds(object, fcol = fcol, scol = scol, 
-                                 mcol = mcol, t = input$quantile)
-          pred <- getPredictions(object, fcol = fcol, 
+          us <<- orgQuants(object, fcol = fcol, scol = scol, mcol = mcol,
+                           t = input$quantile, verbose = FALSE)
+          pred <- getPredictions(object, fcol = fcol, mcol = mcol,
                                  t = us, verbose = FALSE)
+          pred <- fData(pred)[, paste0(fcol, ".pred")]
           sapply(orgs, function(z) pcas[which(pred == z), ], USE.NAMES = TRUE)
           ## update user.sliders with the values **RETURNED** 
           ## from getAssignments
         } else {
           for (ii in 1:nk) us[ii] <<- input[[k[ii]]]
-          pred <- getPredictions(object, fcol = fcol, 
+          pred <- getPredictions(object, fcol = fcol, mcol = mcol,
                                  t = us, verbose = FALSE)
+          pred <- fData(pred)[, paste0(fcol, ".pred")]
           sapply(orgs, function(z) pcas[which(pred == z), ], USE.NAMES = TRUE)
         }
-      })
-      
+      }) 
       ## PCA plot
       output$pca <- renderPlot({
         par(mar = c(5.1, 4.1, 2, 0)) 
@@ -190,20 +171,18 @@ pRolocVis_classify <- function(object,
                  col = getLisacol()[i])
         }
       })
-      
       ## Add points to boxplot
       nn <- reactive({
         k <- names(input)[grep("org", names(input))]
-        #setAll <- FALSE
         if (input$cutoff == "quant") {
-          us <<- getOrgThresholds(object, fcol = fcol, scol = scol, 
-                                  mcol = mcol, t = input$quantile)
+          us <<- orgQuants(object, fcol = fcol, scol = scol, 
+                           mcol = mcol, t = input$quantile,
+                           verbose = FALSE)
         } else {
           for (ii in 1:nk) us[ii] <<- input[[k[ii]]]
           us
         }
       })
-      
       ## Boxplot of scores
       output$boxplot <- renderPlot({
         par(mar = c((max(sapply(orgs, nchar))/2), 4.1, 2, 1)) 
@@ -215,7 +194,6 @@ pRolocVis_classify <- function(object,
           lcol = paste0(getStockcol(), 80)[2]
         points(1:length(orgs), nn(), col = lcol, pch = 19, cex = 1.5) 
       })
-      
       ## Output legend
       output$legend <- renderPlot({
         par(mar = c(1, 0, 2, 1))
@@ -233,7 +211,6 @@ pRolocVis_classify <- function(object,
                pch = 16,
                cex = .8)
       })
-      
 #       ##
 #       observe({
 #         if (input$cutoff == "quant") {
@@ -245,9 +222,7 @@ pRolocVis_classify <- function(object,
 #         }
 #         #updateSliderInput(session, "org01", value = .5)
 #       })
-
     }
   app <- list(ui = ui, server = server)
   runApp(app)
 }
-

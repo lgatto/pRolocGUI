@@ -1,5 +1,5 @@
-##' @rdname pRolocVis-pRolocComp
-pRolocVis_comp <- function(object, method = "PCA") {
+##' @rdname pRolocVis-apps
+pRolocVis_compare <- function(object, method = "PCA") {
     if (!listOf(object, "MSnSet"))
         stop("The input must be list of MSnSet instances.")
     if (length(object) != 2)
@@ -479,7 +479,8 @@ pRolocVis_comp <- function(object, method = "PCA") {
                     sI = .searchInd1(),
                     cIS = input$chooseIdenSearch,
                     ind = "object1",
-                    listSaSe = .indSavedSearchlist1())
+                    listSaSe = .indSavedSearchlist1(),
+                    method = method)
             )
             
             output$PCA1 <- renderPlot(
@@ -493,7 +494,8 @@ pRolocVis_comp <- function(object, method = "PCA") {
                     sI = .searchInd1(),
                     cIS = input$chooseIdenSearch,
                     ind = "object1",
-                    listSaSe = .indSavedSearchlist1())
+                    listSaSe = .indSavedSearchlist1(),
+                    method = method)
             )            
             
             ## display 2D-nearest protein for obj1 in PCA plot
@@ -515,7 +517,8 @@ pRolocVis_comp <- function(object, method = "PCA") {
                     sI = .searchInd2(),
                     cIS = input$chooseIdenSearch,
                     ind = "object2", mX = mirror$x, mY = mirror$y,
-                    listSaSe = .indSavedSearchlist2())
+                    listSaSe = .indSavedSearchlist2(),
+                    method = method)
             )
             
             ## display 2D-nearest protein for obj2 in PCA plot
@@ -535,7 +538,8 @@ pRolocVis_comp <- function(object, method = "PCA") {
                     sI = .searchInd2(),
                     cIS = input$chooseIdenSearch,
                     ind = "object2", mX = mirror$x, mY = mirror$y,
-                    listSaSe = .indSavedSearchlist2())
+                    listSaSe = .indSavedSearchlist2(),
+                    method = method)
             )
             
             ## Download Handler for PCA plot

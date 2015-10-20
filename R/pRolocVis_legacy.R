@@ -1,65 +1,28 @@
-##' \code{pRolocVis} and \code{pRolocComp} launch shiny sessions 
-##' to interactively analyse and visualise proteomics data. 
+
+## The functions allow to explore and analyse interactively spatial proteomics 
+## data, especially LOPIT and PCP experiments. Both functions offer high 
+## interactivity for exploring Principle Component Analysis (PCA) plots, 
+## protein profile plots and quantatative and qualitative meta-data. 
+## Additionally, \code{pRolocVis} and \code{pRolocComp} support import/export 
+## abilities for past and new search results using the 
+## \code{FeaturesOfInterest}/\code{FoICollection} infrastructure defined in the 
+## \code{MSnbase} package. 
 ##' 
-##' \code{pRolocVis} is a function to start a shiny session with 
-##' one MSnSet data set or a list of \code{MSnSet}s. \code{pRolocComp} launches
-##' with a list of two \code{MSnSet}s. 
-##' 
-##' The functions allow to explore and analyse interactively spatial proteomics 
-##' data, especially LOPIT and PCP experiments. Both functions offer high 
-##' interactivity for exploring Principle Component Analysis (PCA) plots, 
-##' protein profile plots and quantatative and qualitative meta-data. 
-##' Additionally, \code{pRolocVis} and \code{pRolocComp} support import/export 
-##' abilities for past and new search results using the 
-##' \code{FeaturesOfInterest}/\code{FoICollection} infrastructure defined in the 
-##' \code{MSnbase} package. 
-##' 
-##' \code{pRolocVis} enables to analyse one \code{MSnSet} at a time, while
-##' \code{pRolocComp} analyses and compares two \code{MSnSet}s. 
-##' \code{pRolocComp} is especially meant for analyses of data which looks 
-##' at the change of proteins in protein localisation.
-##' 
-##' To load the vignette for the functions \code{pRolocVis} and \code{pRolocGUI}
-##' enter \code{vignette("pRolocGUI")} in the console. The vignette will give more 
-##' information on how to use the shiny applications.
-##' @aliases pRolocVis
-##' @aliases pRolocComp
-##' @rdname pRolocVis-pRolocComp
-##' @title pRolocVis/pRolocComp
-##' @author Thomas Naake <naake@@stud.uni-heidelberg.de>
-##' @param object an object of class \code{MSnSet} or a list of \code{MSnSet}s 
-##' (pRolocVis), a list of length 2 of \code{MSnSet}s (pRolocComp).
-##' @param method The method to be used for dimenstionality
-##' reduction. Default is \code{"PCA"}. See \code{plot2D} for details.
-##' @examples 
-##' ## load MSnSet data sets from the pRolocdata package
-##' data(andy2011, package = "pRolocdata")
-##' data(tan2009r1, package = "pRolocdata")
-##' data(tan2009r2, package = "pRolocdata")
-##' data(dunkley2006, package = "pRolocdata")
-##' 
-##' ## create lists with unnamed and named objects
-##' unnamedVis <- list(andy2011, tan2009r1, dunkley2006)
-##' namedVis <- list(andy2011 = andy2011,
-##'                  tan2009r1 = tan2009r1,
-##'                  dunkley2006 = dunkley2006)
-##' unnamedComp <- list(tan2009r1, tan2009r2)
-##' namedComp <- list(tan2009r1 = tan2009r1,
-##'                   tan2009r2 = tan2009r2)
-##' 
-##' ## launch application by either assigning a MSnSet, 
-##' ## an unnamed or a named list to the argument object
-##' if (interactive()) {
-##'    pRolocVis(object = andy2011)
-##'    pRolocVis(object = unnamedVis)
-##'    pRolocVis(object = namedVis)
-##'    pRolocComp(object = unnamedComp)
-##'    pRolocComp(object = namedComp)
-##' }
-##' @return An object \code{pRolocGUI_SearchResults} of class
+## \code{pRolocVis} enables to analyse one \code{MSnSet} at a time, while
+## \code{pRolocComp} analyses and compares two \code{MSnSet}s. 
+## \code{pRolocComp} is especially meant for analyses of data which looks 
+## at the change of proteins in protein localisation.
+## 
+## To load the vignette for the functions \code{pRolocVis} and \code{pRolocGUI}
+## enter \code{vignette("pRolocGUI")} in the console. The vignette will give more 
+## information on how to use the shiny applications.
+
+##' @rdname pRolocVis-apps
+##' @return For \code{legacy} an object \code{pRolocGUI_SearchResults} of class
 ##' \code{FoICollection} when the object existed already or when a new
 ##' \code{FoICollection} was created during a session.
-pRolocVis <- function(object, method = "PCA") {    
+pRolocVis_legacy <- function(object, method = "PCA") { 
+  
     ## global
     if (is.list(object)) {
         if (!listOf(object, "MSnSet"))

@@ -1,98 +1,93 @@
-##' pRoloc interactive visualisation
+##' These functions allow one to explore spatial proteomics data interactively. 
 ##' 
-##' @title Visualise your pRoloc data
-##' @param object An instance of class \code{MSnSet}, of list of \code{MSnSet}
-##' objects of length 2 if using dynamic application.
+##' The function \code{pRolocVis} is a wrapper for \code{pRolocVis_pca}, 
+##' \code{pRolocVis_profiles}, \code{pRolocVis_classification}, 
+##' \code{pRolocVis_compare} and \code{pRolocVis_legacy}.These Shiny apps 
+##' allow to explore and analyse interactively spatial proteomics data.
+##'  
+##' The \code{pca} Shiny app allows exploration of quantitatuve data (1) visually 
+##' through Principle Component Analysis (PCA), (2) protein profiles, and (3)
+##' a searchable feature data table, allowing visualisation of particualr proteins
+##' of interest. 
+##' 
+##' The \code{profiles} Shiny app allows one to simultaneously view protein
+##' profiles and PCA locations of sub-cellular annotated sets of proteins.
+##' 
+##' The \code{classify} Shiny app is used to visualise classification results
+##' and set user-specified thresholds for sub-cellular location predictions. 
+##' 
+##' The \code{legacy} Shiny app is the original (legacy) \code{pRolocVis} app
+##' that appears in older versions of \code{pRolocGUI}, the \code{pca} app has
+##' been designed to replace this app. 
+##' 
+##' The \code{compare} Shiny app is meant for comparing protein localisation 
+##' between two conditions, or two different experiments, replicates etc. 
+##' 
+##' @title Interactive visualisation of `pRoloc` data 
+##' @aliases pRolocVis_pca
+##' @aliases pRolocVis_profiles
+##' @aliases pRolocVis_classify
+##' @aliases pRolocVis_compare
+##' @aliases pRolocVis_legacy
+##' @rdname pRolocVis-apps
+##' @param object An instance of class \code{MSnSet}, or a list of \code{MSnSet}
+##' objects of length 2 if using "compare" application.
 ##' @param what The type of application requested: "pca", "profiles",
-##' "classification", "dynamic". The default is "pca". See description below.
-##' @param fcol The feature meta data column containing the 
-##' classification result. 
-##' @param fig.height Height of the figure. Default is \code{"600px"}.
-##' @param fig.width Width of the figure. Default is \code{"600px"}.
-##' @param legend.width Width of the legend. Default is \code{"100\%"}.
+##' "classify", "compare", "legacy". The default is "pca". See description below.
+##' @param fcol The feature meta-data label (fData column name). This will correspond
+##' to the prediction column if using "classify", or the markers (labelled data) 
+##' to be plotted otherwise.
 ##' @param legend.cex Character expansion for the vignette
 ##' labels. Default is 1.
-##' @param nchar Maximum number of characters if the markers class
-##' names, before their names are truncated. Default is 10.
-##' @param all If there are more than 10 clusters, only the first
-##' three are discplayed on start-up, unless \code{all} is set to
-##' \code{TRUE}. Default is \code{FALSE}.
-##' @param ... Additional parameters that can be used to choose the
-##' dimentionality reduction method, as defined in
-##' \code{\link{plot2D}}.
-##' @author Laurent Gatto and Lisa Breckels
+##' @param method An instance of class \code{matrix} where its 
+##' rownames must match the object's feature names and represent 
+##' a projection of the data in object in two dimensions, as 
+##' produced (and invisibly returned) by \code{plot2D}.
+##' @param ... Additional parameters.
+##' @author Laurent Gatto, Lisa Breckels and Thomas Naake
 ##' @examples
 ##' library("pRoloc")
 ##' library("pRolocdata")
-##' data(dunkley2006)
-##' ## markers matrix ecoding
-##' dunkley2006 <- mrkVecToMat(dunkley2006)
-##' ## order the fractions 
-##' dunkley2006 <- dunkley2006[, order(dunkley2006$fraction)]
+##' data(hyperLOPIT2015)
 ##' if (interactive())
-##'   pRolocVis(dunkley2006, what = "pca")
-
-
-## Note remove code to check scol and mcol object etc. inside functions? 
-## However if I do we can not call these separately
-
-pRolocVis <- function(object,
-                      what = c("pca", "profiles", "classification", "dynamic"),
-                      fcol,
-                      scol,
-                      mcol,
-                      legend.cex = 1,
-                      legend.ncol = 1,
-                      fig.height = "600px",
-                      fig.width = "100%",
-                      legend.width = "100%",
-                      all = FALSE,
-                      nchar = 15,
-                      ...) {
+##'   pRolocVis(hyperLOPIT2015, what = "pca")
+##'   pRolocVis(hyperLOPIT2015, what = "profiles")
+##' ## Classification  
+##' opt <- knnOptimisation(hyperLOPIT2015, times = 10)
+##' res <- knnClassification(hyperLOPIT2015, opt)
+##' if (interactive())
+##'   myThreshold <- pRolocVis(res, what = "classify", fcol = "knn")
+##'   newPredictions <- getPredictions(res, fcol = "knn", t = myThreshold) 
   
-  if (!inherits(object, "MSnSet"))
-    stop("The input must be of class MSnSet")
-  
-  if (missing(fcol)) 
-    stop("No fcol specified")
-  
+pRolocVis <- function(object, what, fcol, legend.cex = 1, ...) {
+
   if (missing(what)) 
     what = "pca"
   
+  if (missing(fcol) && what != "classify") 
+    fcol = "markers"
+
   if (what == "pca") {
-    pRolocVis_pca(object, fcol = fcol,
-                  fig.height = fig.height,
-                  fig.width = fig.width,
-                  legend.width = legend.width,
-                  legend.cex = legend.cex,
-                  nchar = nchar,
-                  all = all,
-                  ...)
+    pRolocVis_pca(object, fcol = fcol, ...)
   }
   
   if (what == "profiles") {
-    pRolocVis_profiles(object, fcol = fcol,
-                       legend.cex = legend.cex,
-                       legend.ncol = 1,
-                       all = all,
-                       ...)
+    pRolocVis_profiles(object, fcol = fcol, legend.cex = legend.cex, ...)
     
   }
   
-  if (what == "classification") {
-    if (missing(scol)) 
-      scol <- paste0(fcol, ".scores")
-    if (missing(mcol))
-      mcol = "markers"
-    pRolocVis_classify(object,
-                       fcol = fcol,
-                       mcol = mcol,
-                       legend.cex = legend.cex,
-                       legend.ncol = 1,
-                       ...)
+  if (what == "classify") {
+    weights <- pRolocVis_classify(object, fcol = fcol,  
+                       legend.cex = legend.cex, ...)
+    
   }
   
-  if (what == "dynamic") {
-    pRoloc_comp(object, ...)
+  if (what == "compare") {
+    pRolocVis_compare(object, ...)
   }
+ 
+  if (what == "legacy") {
+    pRolocVis_legacy(object, ...)
+  }
+return(weights)
 }
