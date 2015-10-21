@@ -88,7 +88,7 @@ pRolocVis_pca <- function(object, fcol,
         fData(object) <- fData(object)[, c(1:6, (nfd-5):nfd)]
     }
     ## a hyphen in a pmarkers name breaks the app?!?
-    colnames(pmarkers) <- gsub(" -", "", colnames(pmarkers))
+    #colnames(pmarkers) <- gsub(" -", "", colnames(pmarkers))
     ## Shorten markers names if too long
     cn <- sapply(colnames(pmarkers),
                  function(x) {
