@@ -34,9 +34,9 @@ pRolocVis_pca <- function(object, fcol,
                           foi,
                           fig.height = "600px",
                           fig.width = "100%",
-                          legend.width = "100%",
+                          legend.width = "200%",
                           legend.cex = 1,
-                          nchar = 15,
+                          nchar = 40,
                           all = TRUE, 
                           method) {
 
@@ -88,7 +88,7 @@ pRolocVis_pca <- function(object, fcol,
         fData(object) <- fData(object)[, c(1:6, (nfd-5):nfd)]
     }
     ## a hyphen in a pmarkers name breaks the app?!?
-    colnames(pmarkers) <- gsub("-", "", colnames(pmarkers))
+    colnames(pmarkers) <- gsub(" -", "", colnames(pmarkers))
     ## Shorten markers names if too long
     cn <- sapply(colnames(pmarkers),
                  function(x) {
@@ -146,7 +146,7 @@ pRolocVis_pca <- function(object, fcol,
                 tabsetPanel(type = "tabs",
                             tabPanel("PCA",
                                      fluidRow(
-                                         column(10, 
+                                         column(9, 
                                                 plotOutput("pca",
                                                            height = fig.height,
                                                            width = fig.width,
@@ -159,7 +159,7 @@ pRolocVis_pca <- function(object, fcol,
                                                                id = "pcaBrush",
                                                                resetOnNew = TRUE)),
                                                 offset = 0),
-                                         column(2, 
+                                         column(3, 
                                                 plotOutput("legend",
                                                            height = fig.height,
                                                            width = legend.width))
@@ -271,8 +271,8 @@ pRolocVis_pca <- function(object, fcol,
                          })
             ## Output legend
             output$legend <- renderPlot({
-                par(mar = rep(1, 4))
-                par(oma = c(1, 0, 0, 0))
+                par(mar = c(0, 0, 0, 0))
+                par(oma = c(0, 0, 0, 0))
                 plot(0, type = "n",
                      xaxt = "n", yaxt = "n",
                      xlab = "", ylab = "",

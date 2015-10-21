@@ -23,7 +23,7 @@
 ##' The \code{compare} Shiny app is meant for comparing protein localisation 
 ##' between two conditions, or two different experiments, replicates etc. 
 ##' 
-##' @title Interactive visualisation of `pRoloc` data 
+##' @title Interactive visualisation of spatial proteomics data 
 ##' @aliases pRolocVis_pca
 ##' @aliases pRolocVis_profiles
 ##' @aliases pRolocVis_classify
