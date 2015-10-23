@@ -1,4 +1,6 @@
 ##' @rdname pRolocVis-apps
+##' @author Lisa Breckels
+
 pRolocVis_profiles <- function(object, fcol,
                                legend.cex = 1,
                                all = TRUE,

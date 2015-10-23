@@ -30,6 +30,7 @@
 ##' three are discplayed on start-up, unless \code{all} is set to
 ##' \code{TRUE}. Default is \code{FALSE}.
 ##' \code{\link{FoICollection}}, that will be available for display.
+##' @author Laurent Gatto
 pRolocVis_pca <- function(object, fcol,
                           foi,
                           fig.height = "600px",

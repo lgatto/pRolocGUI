@@ -1,0 +1,233 @@
+---
+title: "pRolocGUI: Interactive visualisation of spatial proteomics data"
+author: "Lisa Breckels, Thomas Naake and Laurent Gatto"
+output: 
+  BiocStyle::html_document
+vignette: >
+  %\VignetteIndexEntry{pRolocGUI: Interactive visualisation of spatial proteomics data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}  
+---
+
+
+```{r, env, eval=TRUE, echo=FALSE, warning=FALSE, message=FALSE}
+library(knitcitations)
+cite_options(hyperlink = FALSE, style = "markdown")
+library(bibtex)
+extbib <- read.bib("pRolocGUI.bib")
+```
+
+# Foreword
+
+This vignette describes the implemented functionality in the
+`pRolocGUI` package. The package is based on the `MSnSet` class
+definitions of `MSnbase` [`r citep(extbib["GattoLilley2012"])`](#references)
+and on the functions defined in the package `pRoloc` 
+[`r citep(list(extbib["Breckels2013"], extbib["Gatto2014"]))`](#references). 
+`pRolocGUI` is intended for, but not limited to, the visualisation and 
+analysis of quantitative spatial  proteomics data, for example, from experiments 
+using the LOPIT [`r citep(extbib["Dunkley2006"])`](#references),
+hyperLOPIT [`r citep(extbib["hyper"])`](#references),
+or PCP [`r citep(extbib["Foster2006"])`](#references) technologies etc.  
+To achieve reactivity and interactivity, `pRolocGUI` relies on the
+[`shiny`](http://www.rstudio.com/shiny/) framework.  
+
+There are 5 applications distributed with `pRolocGUI` which are 
+wrapped and launched by the `pRolocVis` function. These 5 applications 
+are called according to the argument `what` in `pRolocVis` which may be one
+of "pca", "profiles", "classify", "legacy" and "compare". The `pca` 
+application launches a Principal Components Analysis (PCA) plot of the 
+data and features a searchable data table to allow highlighting of 
+specific proteins on plots and an import/export functionality by using 
+the `FeaturesOfInterest`/`FoICollection` infrastructure distributed by 
+the `MSnbase` package. The `profiles` application allows visualisation
+of protein profiles according to sub-cellular location which is particualrly
+useful for looking at sub-cellular resolution as it allows visualisation
+of all data dimensions in one plot. The `classify` application has been 
+designed to view machine learning classification results and set user-specified
+thresholds for sub-cellular localisation predictions. The `legacy` and `compare`
+applications are the original `pRolocVis` and `pRolocComp` applications that
+featured in previous versions of `pRolocGUI` (<= X.X.X). The `pca` 
+application has been written to replace the `legacy` app, providing a simpler 
+user interface and easier highlighting and searching. The `compare` application, 
+allows forcomparison of two comparable `MSnSet` instances, e.g. this might be of 
+great help for analyses of changes in protein localisation in different 
+conditions, or two different replicate experiments etc.
+
+This tutorial illustrates the usage of the `pRolocGUI` R package for the
+interactive visualisation of spatial proteomics data. 
+We recommend some familiarity with the `MSnSet` class (see `?MSnSet`
+for details) and the `pRoloc` vignette (available with 
+`vignette("pRoloc-tutorial")`) before using `pRolocGUI`.
+
+`pRolocGUI` is under active development; current functionality is
+evolving and new features will be added. This software is free and
+open-source. You are invited to contact Laurent Gatto (lg390@cam.ac.uk) or
+Lisa Breckels (lms79@cam.ac.uk) in case you have any questions, 
+suggestions or have found any bugs or typos. To reach a broader audience
+for more general questions about proteomics analyses using R consider 
+of writing to the Bioconductor list.
+
+# Introduction
+
+Currently, `pRolocGUI` distributes 5 visualisation applications via 
+the `pRolocVis` function. These are:
+* `pRolocVis_pca`
+* `pRolocVis_profiles`
+* `pRolocVis_classify`
+* `pRolocVis_compare`
+* `pRolocVis_legacy`
+
+To begin, once R is started, the first step to enable functionality 
+of the package is to load it. We also load `pRolocGUI`'s sister data package
+`pRolocdata` using the library function, as shown in the code chunk below:
+
+```{r loadPkgs, echo = FALSE, message = FALSE, warning = FALSE}
+library("pRolocGUI")
+library("pRolocdata")
+```
+The `pRolocVis` function requires a minimum of two key arguments
+to load an application, these are `object` and `what`. The argument `object`
+must be of class `MSnSet` (or a list of `MSnSet` objects of length 2 for 
+the `compare` application). The argument `what` tells the `pRolocVis` function
+exactly what type of application to load. One can choose from:
+
+* `pca`
+* `profiles`
+* `classify`
+* `compare`
+* `legacy`
+
+The default if `what` is not specified is `pca`. The argument `fcol` is the
+the feature meta-data label (`fData` column name) to be plotted. This will  
+correspond to the prediction column if using "classify", or the markers 
+(labelled data) otherwise (for all applications except classify, if no `fcol` 
+is specied `markers` is used as default) . 
+
+We begin by loading an example dataset from the `pRolocdata` data package.
+
+```{r loadData, echo = TRUE, message = FALSE, warning = FALSE}
+data(hyperLOPIT2015)
+```
+
+The dataset `hyperLOPIT2015` is data from using the hyperLOPIT technology on 
+mouse E14TG2a embryonic stem cells [`r citep(extbib["hyper"])`](#references).
+
+`pRolocVis` needs an object of class `MSnSet` as an argument. We can launch the
+application with an `MSnSet` by assigning it to the argument `object`, and 
+specifying the type of application to load using the argument `what`, for 
+example, to load the `pca` application or `profiles` application:
+```{r example, eval = FALSE, echo = TRUE}
+pRolocVis(object = hyperLOPIT2015, what = "pca")
+pRolocVis(object = hyperLOPIT2015, what = "profiles")
+```
+
+Launching any of the `pRolocVis` applications will open a new tab in a separate
+pop-up window, and can then be opened in your default Internet browser if
+desired.
+
+To stop the applications from running press `Esc` or `Ctrl-C` in the
+console (or use the "STOP" button when using RStudio) and close the
+browser tab, where `pRolocVis` is running.
+
+# The `pca` application
+
+To run the `pca` application using `pRolocVis`:
+```{r pca1, eval = FALSE, echo = TRUE}
+pRolocVis(object = hyperLOPIT2015, what = "pca")
+```
+
+The `pca` application is subdivided in to two tabs: (1) PCA, and (2) profiles.
+A searchable data table containing the experimental feature meta-data is 
+permanantly dispalyed at the bottom of the screen for ease. You browse between 
+the two tabs by simply clicking on them. 
+
+![The PCA Tab](figures/SS_PCA1.jpg)
+
+The PCA tab is characterised by its main panel which shows a
+PCA plot for the selected `MSnSet`. By default a PCA plot is used to
+display the data and the first two principal components are plotted.
+Given a multivariate dataset, PCA transforms the original high dimensional 
+data into a smaller lower-dimensional set of uncorrelated variables (principal
+components) such that the first principal component has the largest possible 
+variance to account for as much variability in the data as possible and each 
+succeeding component in turn has the highest variance possible under the 
+constraint that it be orthogonal to the preceding components. Other ordinance
+methods are available for displaying the data and can be specified using
+the `method` argument, for example, multidimensional scaling (MDS), and kernal-PCA,
+among other are available and are listed in `plot2Dmethods` in `pRoloc`. 
+A matrix can also be passed to `method` where the rownames must match object's 
+feature names and represent a projection of the data in \code{object} in two 
+dimensions.
+
+The sidebar panel controls what features
+to highlight on the PCA plot; input can be selected by clicking on and off
+the data classe names, or by typing and searching in the white input box. 
+Selected items can then be deleted and the PCA plot will be updated accordingly.
+Below the select box is a transparancy slider bar which controls the opacity of  
+the highlighted data classes. At the bottom of the sidebar panel there 
+is a checkbox which when checked shows the protein names of any selected 
+proteins on the PCA plot. 
+
+Below the PCA plot is a searchable data table containing the fetaure meta
+data (`fData`). For LOPIT experiments, such as the one used in this example,
+this may contain protein accession numbers, protein entry names, protein
+description, the number of quantified peptides per protein, and also other 
+columns containing sub-cellular localisation information. One can search for proteins
+of interest by typing informationin the white search box, above the table to the right. Searching is done by partial pattern matching with table elements. Any matches
+or partial text matches are highlighted in yellow. To select/unselect a protein of 
+interest one can simply click/unclick on the corresponding row in the table and the
+protein will be highlighted/removed on/from the PCA plot (the protein name will be
+displayed if the checkbox 'labels' is ticked.)
+
+![Selecting and searching for proteins of interest](figures/SS_PCA2.jpg)
+
+A user can switch between the PCA and profiles tab by clicking the tab at the
+top of the page. All protein profiles are shown in grey. For LOPIT experiments
+these protein profiles show the relative abundance of each protein across 
+the fractions employed. Proteins that co-localise are expected to have 
+similar profiles based on De Duve's principle.
+
+![The profiles tab](figures/SS_PCA3.jpg)
+
+# The `profiles` application
+
+Plotting the first two principal components of the data usually gives one a good  
+general overview of the quality/separartion of the sub-cellular niches in their
+data, but it also limits us to viewing a N-dimensional dataset in 2-dimensions, 
+and one can potenitally miss niches of interest. To examine the quality of 
+sub-cellular clusters one is better to look at the profiles of the residents
+in these clusers, to see if they share the same pattern. To do this, one can 
+use the `profiles` application.
+
+To launch the `profiles` application;
+```{r profiles1, eval = FALSE, echo = TRUE}
+pRolocVis(object = hyperLOPIT2015, what = "profiles")
+```
+
+The `profiles` application is characterised by two plots: a small PCA plot and
+a profiles plot. Both are updated according to the input selected in the
+sidebar panel on the left. This menu works the same as the select menu for the
+`pca` application, as detailed above. Also, as per the `pca` application, 
+automatically, all sub-cellular classes that appear in the selected `fcol` 
+are highlighted (if `fcol` is not specified, as in the above example, the 
+default is `fcol = "markers"`).  
+
+![The profiles application, all classes highlighted](figures/SS_Profiles1.jpg)
+
+Classes can be deleted by clicking on them re-added by selecting them from the
+drop down menu which appears when you click in the white select box.
+
+![The profiles application, single class highlighted](figures/SS_Profiles2.jpg)
+
+# The `classify` application
+
+
+
+
+<a id="references"></a>
+<h2>4. References</h2>
+
+```{r, results="asis", message=FALSE, echo=FALSE}
+bibliography()
+```

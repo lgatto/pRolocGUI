@@ -7,7 +7,7 @@
 \alias{pRolocVis_legacy}
 \alias{pRolocVis_pca}
 \alias{pRolocVis_profiles}
-\title{Interactive visualisation of `pRoloc` data}
+\title{Interactive visualisation of spatial proteomics data}
 \usage{
 pRolocVis(object, what, fcol, legend.cex = 1, ...)
 
@@ -19,7 +19,7 @@ pRolocVis_compare(object, method = "PCA")
 pRolocVis_legacy(object, method = "PCA")
 
 pRolocVis_pca(object, fcol, foi, fig.height = "600px", fig.width = "100\%",
-  legend.width = "100\%", legend.cex = 1, nchar = 15, all = TRUE,
+  legend.width = "200\%", legend.cex = 1, nchar = 40, all = TRUE,
   method)
 
 pRolocVis_profiles(object, fcol, legend.cex = 1, all = TRUE, method, ...)
@@ -120,5 +120,15 @@ if (interactive())
 }
 \author{
 Laurent Gatto, Lisa Breckels and Thomas Naake
+
+Lisa Breckels
+
+Thomas Naake
+
+Thomas Naake
+
+Laurent Gatto
+
+Lisa Breckels
 }
 

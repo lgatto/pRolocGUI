@@ -39,12 +39,21 @@
 ##' to be plotted otherwise.
 ##' @param legend.cex Character expansion for the vignette
 ##' labels. Default is 1.
-##' @param method An instance of class \code{matrix} where its 
-##' rownames must match the object's feature names and represent 
-##' a projection of the data in object in two dimensions, as 
-##' produced (and invisibly returned) by \code{plot2D}.
+##' @param method Either a \code{character} of a \code{matrix}. When
+##' the former, one of \code{"PCA"} (default), \code{"MDS"},
+##' \code{"kpca"} or \code{"t-SNE"}, defining if dimensionality
+##' reduction is done using principal component analysis (see
+##' \code{\link{prcomp}}), classical multidimensional scaling (see
+##' \code{\link{cmdscale}}), kernel PCA (see \code{kernlab::kpca}) or
+##' t-SNE (see \code{tsne::tsne}). If a \code{matrix} is passed, its rownames
+##' must match object's feature names and represent a projection of
+##' the data in \code{object} in two dimensions, as produced (and invisibly
+##' returned) by \code{plot2D}. This enables to re-generate the figure without
+##' computing the dimensionality reduction over and over again, which
+##' can be time consuming for certain methods. Available methods are listed
+##' in \code{plot2Dmethods}.
 ##' @param ... Additional parameters.
-##' @author Laurent Gatto, Lisa Breckels and Thomas Naake
+##' @author Lisa Breckels
 ##' @examples
 ##' library("pRoloc")
 ##' library("pRolocdata")
