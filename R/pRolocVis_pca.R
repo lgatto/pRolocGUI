@@ -135,7 +135,7 @@ pRolocVis_pca <- function(object, fcol,
     ui <- fluidPage(
         sidebarLayout(
             sidebarPanel(
-                selectizeInput("markers", "Markers",
+                selectizeInput("markers", "Labels",
                                choices = colnames(pmarkers),
                                multiple = TRUE,
                                selected = colnames(pmarkers)[pmsel]),
@@ -227,7 +227,15 @@ pRolocVis_pca <- function(object, fcol,
             ## Protein profile
             output$profile <- renderPlot({
                 par(mar = c(5.1, 4.1, 1, 1))
-                matplot(t(profs[feats, ]),
+                ylim <- range(profs)
+                n <- nrow(profs)
+                m <- ncol(profs)
+                fracs <- sampleNames(object)
+                plot(0, ylim = ylim, xlim = c(1, m), ylab = "Intensity", 
+                     type = "n", xaxt = "n", xlab = "")
+                axis(1, at = 1:m, labels = fracs, las = 2)
+                title(xlab = "Fractions", line = 5.5)
+                matlines(t(profs[feats, ]),
                         col = getUnknowncol(),
                         lty = 1,
                         type = "l")
