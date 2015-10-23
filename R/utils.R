@@ -4,7 +4,8 @@ narrowFeatureData <- function(object,
     if (length(fcol) > 1)
         fcol <- NULL
     if (is.null(fcol)) {
-        fData(object) <- fData(object)[, selectFvarsGUI(object)]
+        i <- selectFeatureData(object)
+        fData(object) <- fData(object)[, i]
         return(object)
     }
     n <- n1 + n2
