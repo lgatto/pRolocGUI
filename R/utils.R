@@ -25,23 +25,27 @@ narrowFeatureData <- function(object,
 ##'
 ##' @title Select feature variables of interest
 ##' @param object An \code{MSnSet}.
-##' @return Updated \code{MSnSet}.x
+##' @return Updated \code{MSnSet}, containing only selected feature
+##'     variables.
 ##' @author Laurent Gatto
+##' @examples
+##' \dontrun{
+##' library("pRolocdata")
+##' data(hyperLOPIT2015)
+##' x <- selectFeatureData(hyperLOPIT2015) ## select via GUI
+##' head(fData(x))
+##' }
 selectFeatureData <- function(object) {
     k <- .selectFeatureData(object)
     fData(object) <- fData(object)[, k]
     object
 }
 
-.selectFeatureData <- function(object) {
-    sel <- fv <- fvarLabels(object)
-    on.exit(return(sel))
-    ui <- fluidPage(title = 'Examples of DataTables',
-                    sidebarLayout(sidebarPanel(
-                        checkboxGroupInput('vars', 'Feature variables',
-                                           as.list(fv),
-                                           selected = sel)),
-                                  mainPanel(dataTableOutput('fd'))))
+.selectFeatureData <- function(object) { sel <- fv <-
+    fvarLabels(object) on.exit(return(sel)) ui <- fluidPage(title =
+    'Examples of DataTables', sidebarLayout(sidebarPanel(
+    checkboxGroupInput('vars', 'Feature variables', as.list(fv),
+    selected = sel)), mainPanel(dataTableOutput('fd'))))
 
     server <- function(input, output) {
         output$fd <- renderDataTable({
