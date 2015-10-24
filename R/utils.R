@@ -25,6 +25,9 @@ narrowFeatureData <- function(object,
 ##'
 ##' @title Select feature variables of interest
 ##' @param object An \code{MSnSet}.
+##' @param graphics A \code{logical} (default is \code{TRUE})
+##'     indicating whether a shiny application should be used if
+##'     available. Otherwise, a text menu is used.
 ##' @return Updated \code{MSnSet}, containing only selected feature
 ##'     variables.
 ##' @author Laurent Gatto
@@ -35,17 +38,31 @@ narrowFeatureData <- function(object,
 ##' x <- selectFeatureData(hyperLOPIT2015) ## select via GUI
 ##' head(fData(x))
 ##' }
-selectFeatureData <- function(object) {
-    k <- .selectFeatureData(object)
-    fData(object) <- fData(object)[, k]
+selectFeatureData <- function(object, graphics = TRUE) {
+    if (graphics) {
+        if (!require("shiny"))
+            warning("The shiny package is required to use the graphical interface.")
+        k <- .selectShinyFeatureData(object)        
+    } else k <- .selectTextFeatureData(object)
+    fData(object) <- fData(object)[, k, drop = FALSE]
     object
 }
 
-.selectFeatureData <- function(object) { sel <- fv <-
-    fvarLabels(object) on.exit(return(sel)) ui <- fluidPage(title =
-    'Examples of DataTables', sidebarLayout(sidebarPanel(
-    checkboxGroupInput('vars', 'Feature variables', as.list(fv),
-    selected = sel)), mainPanel(dataTableOutput('fd'))))
+
+.selectTextFeatureData <- function(object)
+    select.list(fvarLabels(object), multiple=TRUE)
+
+
+.selectShinyFeatureData <- function(object) {x
+    sel <- fv <- fvarLabels(object)
+    on.exit(return(sel))
+
+    ui <- fluidPage(
+        title = 'Examples of DataTables',
+        sidebarLayout(sidebarPanel(
+            checkboxGroupInput('vars', 'Feature variables',
+                               as.list(fv), selected = sel)),
+                      mainPanel(dataTableOutput('fd'))))
 
     server <- function(input, output) {
         output$fd <- renderDataTable({
