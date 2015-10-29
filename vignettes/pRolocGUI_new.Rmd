@@ -3,7 +3,8 @@ title: "pRolocGUI: Interactive visualisation of spatial proteomics data"
 author: "Lisa Breckels, Thomas Naake and Laurent Gatto" 
 output:
 BiocStyle::html_document vignette: >
-  %\VignetteIndexEntry{pRolocGUI: Interactive visualisation of spatial proteomics data} 
+  %\VignetteIndexEntry{pRolocGUI: Interactive visualisation of spatial 
+                       proteomics data} 
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}  
 ---
@@ -12,8 +13,7 @@ BiocStyle::html_document vignette: >
 ```{r, env, eval=TRUE, echo=FALSE, warning=FALSE, message=FALSE}
 library(knitcitations) 
 library(BiocStyle)
-cite_options(hyperlink = FALSE, style =
-"markdown") 
+cite_options(hyperlink = FALSE, style = "markdown") 
 ```
 
 # Foreword
@@ -62,6 +62,8 @@ for the assignment of sub-cellular location.
 `MSnSet` instances, e.g. this might be of help for the analyses of
 changes in protein localisation in different conditions.
 
+## Getting started
+
 Once R is started, the first step to enable functionality of the
 package is to load it, as shown in the code chunk below.  We also load
 the `r Biocpkg("pRolocdata")` data package, which contains
@@ -74,7 +76,7 @@ library("pRolocdata")
 
 We begin by loading the dataset `hyperLOPIT2015` from the `pRolocdata`
 data package. The data was produced from using the hyperLOPIT
-technology on mouse E14TG2a embryonic stem cells.
+technology on mouse E14TG2a embryonic stem cells [^1].
 
 ```{r loadData, echo = TRUE, message = FALSE, warning = FALSE}
 data(hyperLOPIT2015) 
@@ -114,29 +116,28 @@ To stop the applications from running press `Esc` or `Ctrl-C` in the
 console (or use the "STOP" button when using RStudio) and close the
 browser tab, where `pRolocVis` is running.
 
-## Which app should I use?  There are 4 different applications, each
-one designed to address a different specific user requirement.
+## Which app should I use?  
+
+There are 4 different applications, each one designed to address a 
+different specific user requirement.
 
 * The PCA app is intended for displaying and searching your data,
-* which 
-features a clickable interface and zoomable PCA plot. If you would
+which features a clickable interface and zoomable PCA plot. If you would
 like to search for a particular protein or set of proteins this is the
 application to use.
-* The profiles app is designed for examining the patterns of
-* user-specified
+* The profiles app is designed for examining the patterns of user-specified
 sets of proteins. For example, if one has several overlapping
 sub-cellular clusters in their data, as highlighted by PCA or
 otherwise, one can check for separation in all data dimensions by
 examining the protein profile patterns. Proteins that co-localise are
 known to exhibit similar distributions (De Duve's principale).
-* The classification app can be used for viewing the sub-cellular
-* class 
+* The classification app can be used for viewing the sub-cellular class 
 predictions output from a supervised machine learning analysis and to
-help the user set a classification threshold (see the ) for details on
-spatial proteomics data analysis).
-* The comparison application may be of interest if a user wishes to
-* examine
-two replicate experiments, or two experiments from different
+help the user set a classification threshold (see the `pRoloc`
+tutorial](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-tutorial.pdf)
+for details on spatial proteomics data analysis).
+* The comparison application may be of interest if a user wishes to 
+examine two replicate experiments, or two experiments from different
 conditions etc.  Two PCA plots are loaded side-by-side and one can
 search and identify common proteins between the two data sets.
 
@@ -152,13 +153,7 @@ variability in the data as possible. Each succeeding component in turn
 has the highest variance possible under the constraint that it be
 orthogonal to the preceding components. Thus, PCA is particularly
 useful for visualisation of multidimensional data in 2-dimensions,
-wherein all the proteins can be plotted on the same figure[^1].
-
-To run the `pca` application using `pRolocVis`: 
-
-```{r pca1, eval = FALSE, echo = TRUE} 
-pRolocVis(object = hyperLOPIT2015, what = "pca", fcol = "markers") 
-```
+wherein all the proteins can be plotted on the same figure.
 
 The application is subdivided in to two tabs: (1) PCA, and (2)
 profiles.  A searchable data table containing the experimental feature
@@ -166,7 +161,13 @@ meta-data is permanantly dispalyed at the bottom of the screen for
 ease. You can browse between the two tabs by simply clicking on them
 at the top of the screen.
 
-%% ![The PCA Tab](figures/SS_PCA1.jpg)
+To run the `pca` application using `pRolocVis`: 
+
+```{r pca1, eval = FALSE, echo = TRUE} 
+pRolocVis(object = hyperLOPIT2015, what = "pca", fcol = "markers") 
+```
+
+![The PCA Tab](figures/SS_PCA1.jpg)
 
 **Viewing** The PCA tab is characterised by its main panel which shows
 a PCA plot for the selected `MSnSet`. By default a PCA plot is used to
@@ -179,12 +180,18 @@ delete button on your keyboard, and the PCA plot will  be updated
 accordingly. Below the select box is a 'transparancy' slider bar which
 controls the opacity of the highlighted data classes.
 
+![Selecting sub-cellular classes](figures/SS_PCA2.jpg)
+
 **Searching** Below the PCA plot is a searchable data table containing
 the fetaure meta data (`fData`). For LOPIT experiments, such as the
 one used in this example, this may contain protein accession numbers,
 protein entry names, protein description, the number of quantified
 peptides per protein, and columns containing sub-cellular localisation
-information. One can search for proteins of interest by using the
+information. The data table is limited to displaying 12 columns of
+information, these are automatically selected from the `fData` to be
+the first 6 and last features. To select specific columns in the 
+`fData` to display in the data table use the `fdataInds` argument.
+One can search for proteins of interest by using the
 white search box, above the table to the right. Searching is done by
 partial pattern matching with table elements.  Any matches or partial
 text matches that are found are highlighted in yellow in the data
@@ -196,7 +203,7 @@ grey circles, if the 'Show labels' box is checked in the left sidebar
 panel the protein names for the selected protein(s) will also be shown
 on the PCA plot.
 
-%% ![Selecting and searching for proteins of interest](figures/SS_PCA2.jpg)
+![Selecting and searching for proteins of interest](figures/SS_PCA4.jpg)
 
 **Zooming** If a user wishes to examine a protein(s) in more detail,
 one can zoom in on specific points hovering the mouse over the plot
@@ -204,6 +211,9 @@ and drawing a brush and then double-clicking on the brush. This
 process can be repeated until the desired level of zoom is reached.
 The plot is resetted to the original size by a double click anywhere
 on the white space of plot.
+
+![Brushing plot to zoom](figures/SS_PCA6.jpg)
+![Zooming on proteins of interest](figures/SS_PCA7.jpg)
 
 **Profiles** A user can switch between the PCA and profiles tab by
 clicking the tab at the top of the page. All protein profiles are
@@ -213,13 +223,18 @@ relative abundance of each protein across the fractions employed in
 the experiment. Proteins that co-localise are expected to have similar
 profiles based on De Duve's principle. 
 
-%%![The profiles tab](figures/SS_PCA3.jpg)
+![The profiles tab](figures/SS_PCA5.jpg)
 
 **Features** There is also functionality to use the
 `FeaturesOfInterest`/`FoICollection` infrastructure distributed by the
 `MSnbase` package (for examples on how to create `FeaturesOfInterest`
 see the [`pRoloc`
 tutorial](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-tutorial.pdf))`.
+
+**Note:** Other ordinance methods are available for displaying
+the data, for example, multidimensional scaling (MDS), and kernal-PCA,
+and t-SNE are all supported, and can be specified using the `method`
+argument when caling `pRolocVis`.
 
 # The `profiles` application
 
@@ -232,9 +247,10 @@ the `pca` app).
 To launch the `profiles` application; 
 
 ```{r profiles1, eval = FALSE, echo = TRUE} 
-pRolocVis(object = hyperLOPIT2015, what = "profiles",
-fcol = "markers") 
+pRolocVis(object = hyperLOPIT2015, what = "profiles", fcol = "markers") 
 ```
+
+![The profiles application](figures/SS_Profiles.jpg)
 
 The `profiles` application is characterised by two plots: a small PCA
 plot and a protein profiles plot which shows the quantitation data
@@ -243,18 +259,9 @@ that is stored in the `exprs` data slot of the `MSnSet`. For the
 protein across the 20 fractions (2 x 10-plex replicates). Both the PCA
 and profiles plots are updated according to the input selected in the
 sidebar panel on the left. This menu works the same as the select menu
-in the `pca` application, as detailed above.  Also, as per the `pca`
-application, automatically, all sub-cellular classes that appear in
-the selected `fcol` are highlighted.  
-
-%% ![The profiles application, all classes highlighted](figures/SS_Profiles1.jpg)
-
-Classes can be deleted by clicking on them and re-added by selecting
-them from the drop down menu which appears when you click in the white
-select box.
-
-![The profiles application, single class
-highlighted](figures/SS_Profiles2.jpg)
+in the `pca` application, where data classes can be added/deleted by 
+clicking on them in the drop down menu which appears when you click 
+in the white select box.
 
 Although both of the `pca` and `profiles` applications contain both a
 PCA plot and a protein profiles plots they have been designed for
@@ -277,37 +284,37 @@ distribution patterns, as per the `profiles` app.
 
 Machine learning classification forms a large part of spatial
 proteomics data analysis. Protein localisation prediction can be cast
-as a supervised machine learning problem, wherein one has a set of a
+as a supervised machine learning problem (learning from labelled instances), wherein one has a set of a
 few well-known examples (labelled data), that is sub-cellular protein
-markers which are known to belong to a set of finite sub-cellular
-niches, which can used to learn a classifier to associate unlabelled
+markers (proteins that are known to belong to a set of finite sub-cellular
+niches), which can used to learn a classifier to associate unlabelled
 proteins to one of the sub-cellular classes that appear in the
-labelled training data. The `r Biocpkg("pRoloc")` package provides a
-wide range of pattern recognition techniques for quantitiative mass
-spectrometry data to infer protein sub-cellular localisation.
+labelled training data.
 
-In the example below, using functions from `r Biocpkg("pRoloc")`
-package and train a Support Vector Machine (SVM) classifier for
+In the example below, we use one of the classification algorithms from the `r Biocpkg("pRoloc")`
+package; a Support Vector Machine (SVM) classifier, and train a model for
 protein localisation prediction of unassigned proteins in the
 `hyperLOPIT2015` dataset. We first use the `svmOptimisation` function
 to find the best model parameters using the labelled training data
 found in `fcol = "markers"` and then apply these parameters using the
 `svmClassification` function. (Note, here we perform a reduced search
 using `times = 3` in the interest of time. In practise we recommend at
-least to use `times = 100` as described in detail in the [`pRoloc`
-tutorial](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-tutorial.pdf).
-which also contains more information on machine learning, the practise
+least to use `times = 100` as described in the [`pRoloc`
+tutorial](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-tutorial.pdf). This tutorial also 
+contains more information on machine learning, the practise
 of training and testing, and some extensive examples of machine
-learning classification in spatial proteomics.
+learning classification in spatial proteomics.)
 
-```{r classify, eval = FALSE, echo = TRUE} 
-opt <- svmOptimisation(object = hyperLOPIT2015, fcol = "markers", times = 3)
+```{r classify, eval = TRUE, echo = TRUE} 
+opt <- svmOptimisation(object = hyperLOPIT2015, 
+                       fcol = "markers", 
+                       times = 1, verbose = FALSE)
 res <- svmClassification(object = hyperLOPIT2015, assessRes = opt) 
 ```
 
-By default, new feature variables containing the new sub-cellular
-assignments made by the SVM classifier and assignment probabilities,
-called scores, are automatically added to the `featureData` slot of
+By default, the classification function adds new feature variables containing the new sub-cellular
+assignments made by the SVM classifier and the associated assignment probabilities,
+called scores, to the `featureData` slot of
 the `MSnSet`, in this case, they are labelled `svm` and `svm.scores`,
 and can be accessed using the `fData` accessor method, e.g.
 `fData(res)$svm` or `fData(res)$svm.scores`.
@@ -327,20 +334,89 @@ To launch the `classify` application:
 pRolocVis(object = res, what = "classify", fcol = "svm") 
 ```
 
-Describe app....
+![The classification application, setting a "quantile" cutoff score](figures/SS_Classify1.jpg)
 
+The data is loaded and displayed on a PCA plot and a boxplot is used to
+display the classifier scores by data class. On the left there is
+a sidebar panel with sliders to control the thresholds upon which classifications 
+are made. There are two types of cut-off that the user can choose from: (1)
+"Quantile" and (2) "User-defined". By default, when the application is launched
+quatile scoring is selected and set to 0.5, the median. The 
+class-specific score thresholds that correspond to selecting the desired
+quantile are shown on as red dots on the boxplot. The assignments on the PCA
+plot are also updated according to the selected threshold. The quantile 
+threshold can be set by moving the corresponding quantile slider. If one
+wished to set their own cut-offs the "User-defined" radio button must be selected
+and then the sliders for defining user-specified scores become active and the
+scores and highlighted on the boxplot by blue dots. 
+
+![The classification application, setting a "user-defined" cutoff score](figures/SS_Classify2.jpg)
+
+By default, when user-specified
+scores are selected all sliders are set to 1 and can be changed by moving 
+the sliders to the desired score. Once the desired score has been found the
+application can be closed and the class-specific scores are displayed in the
+R console. These scores can be used to get protein localisation predictions
+using the `getPredictions` function, as demonstrated below:
+
+```{r score, eval=FALSE}
+mythreshold <- pRolocVis(object = res, what = "classify", fcol = "svm") 
+res <- getPredictions(res, fcol = "svm", 
+                      mcol = "markers", t = mythreshold)
+```
+
+The classification app can also be used as an intercative version of 
+the function `orgQuants` in the `r Biocpkg("pRoloc")` package.
 
 # The `compare` application
 
+The comparison application may be of interest if a user wishes to 
+examine two replicate experiments, or two experiments from different
+conditions etc.  Two PCA plots are loaded side-by-side and one can
+search and identify common proteins between the two data sets.
+
+A `list` of `MSnSet`s of length 2 must be supplied as input, these
+are the two datasets one wishes to compare. In the example below
+we load two replicate datasets of mouse embryonic stem cells 
+produced using the hyperLOPIT technology. 
+
 ```{r compare, eval = FALSE, echo = TRUE} 
 data(hyperLOPIT2015ms3r1)
-data(hyperLOPIT2015ms3r2) pRolocVis(list(hyperLOPIT2015ms3r1,
-hyperLOPIT2015ms3r2), what = "compare") 
+data(hyperLOPIT2015ms3r2) 
+mydata <- list(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r2)
+pRolocVis(mydata, what = "compare") 
 ```
 
+![The compare application](figures/SS_Compare1.jpg)
 
-[^1]: **Note:** Other ordinance methods are available for displaying
-the data, for example, multidimensional scaling (MDS), and kernal-PCA,
-and t-SNE are all supported, and can be specified using the `method`
-argument when caling `pRolocVis`.
+The compare application is divied in to 7 tabs:  
+
+* PCA,    
+* protein profiles,  
+* quantitation,  
+* feature meta-data,  
+* sample meta-data and  
+* search,
+* data. 
+
+You browse through the tabs by simply clicking on them. To get started
+add `fData` information to the plot by selecting a label under the 
+"plot colour" drop down menu. We can select "markers" which highlights
+the data classes found in the feature meta-data label `markers`. To
+select the same annotation for the second dataset one can click the
+radio buttons in the left panel to `object2` and then repeat the process.
+Both datasets now have the same data classes highlighted. One can examine
+where the same proteins lie in each replicate by first clicking `pca` in 
+the display selection tabe and then clicking the protein of interste on 
+one of the PCA plots, the protein will then be highlighted by a blue border
+and the same protein in the other replicate will also be highlighted.
+Full details on how to use this application can be found in XXX vignette.
+
+![The compare application, data classes highlighted](figures/SS_Compare2.jpg)
+
+**References**
+
+[^1]: Christoforou A, Mulvey CM, Breckels LM, Hayward PC, Geladaki E, 
+Hurrell T, et al. A draft map of the mouse pluripotent stem cell 
+spatial proteome. Nat Commun; In Press.
 
