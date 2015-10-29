@@ -26,11 +26,13 @@
 ##' @param legend.width Width of the legend. Default is \code{"100\%"}.
 ##' @param nchar Maximum number of characters of the markers class
 ##' names, before their names are truncated. Default is 10.
-##' @param all If there are more than 10 clusters, only the first
-##' three are discplayed on start-up, unless \code{all} is set to
-##' \code{TRUE}. Default is \code{FALSE}.
+##' @param all If \code{TRUE} all clusters are displayed on startup.
+##' If \code{FALSE} only first cluster in the list is displayed.
 ##' \code{\link{FoICollection}}, that will be available for display.
-##' @author Laurent Gatto
+##' @param fdataInd A \code{numeric} or \code{character} of valid fetaure
+##' variables to be retain for the data table. If not specified, by default
+##' \code{markers} will be kept along with the forst 5 and last 6 feature
+##' variables.
 pRolocVis_pca <- function(object, fcol,
                           foi,
                           fig.height = "600px",
@@ -38,8 +40,9 @@ pRolocVis_pca <- function(object, fcol,
                           legend.width = "200%",
                           legend.cex = 1,
                           nchar = 40,
-                          all = TRUE, 
-                          method) {
+                          all = TRUE,
+                          method,
+                          fdataInd) {
 
     if (!inherits(object, "MSnSet"))
         stop("The input must be of class MSnSet")
@@ -84,10 +87,17 @@ pRolocVis_pca <- function(object, fcol,
     ## Remove fcol from fData(object)    
     fData(object) <- fData(object)[, -grep(fcol, fvarLabels(object))]
     ## There can't be more than 12 columns in the DT table
-    if ((nfd <- length(fvarLabels(object))) > 12) {
+    if (missing(fdataInd)) {
+      if ((nfd <- length(fvarLabels(object))) > 12) {
         message("There can't be more than 12 feature variables. Using 6 first and last.")
-        fData(object) <- fData(object)[, c(1:6, (nfd-5):nfd)]
+        object <- narrowFeatureData(object)
+      }
+    } else {
+      if(length(fdataInd) > 12)
+        stop("There can't be more than 12 feature variables, check fdataInd")
+      object <- selectFeatureData(object, fcol = fdataInd)
     }
+
     ## a hyphen in a pmarkers name breaks the app?!?
     #colnames(pmarkers) <- gsub(" -", "", colnames(pmarkers))
     ## Shorten markers names if too long
@@ -108,7 +118,7 @@ pRolocVis_pca <- function(object, fcol,
     ## to display few and let the user choose
     pmsel <- TRUE
     if (!all & ncol(pmarkers) > 10)
-        pmsel <- 1:3
+        pmsel <- 1
 
     ## data to be displayed
     if (missing(method)) {
