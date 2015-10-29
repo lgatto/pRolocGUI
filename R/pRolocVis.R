@@ -28,12 +28,11 @@
 ##' @aliases pRolocVis_profiles
 ##' @aliases pRolocVis_classify
 ##' @aliases pRolocVis_compare
-##' @aliases pRolocVis_legacy
 ##' @rdname pRolocVis-apps
 ##' @param object An instance of class \code{MSnSet}, or a list of \code{MSnSet}
 ##' objects of length 2 if using "compare" application.
 ##' @param what The type of application requested: "pca", "profiles",
-##' "classify", "compare", "legacy". The default is "pca". See description below.
+##' "classify", "compare". The default is "pca". See description below.
 ##' @param fcol The feature meta-data label (fData column name). This will correspond
 ##' to the prediction column if using "classify", or the markers (labelled data) 
 ##' to be plotted otherwise.
@@ -53,7 +52,7 @@
 ##' can be time consuming for certain methods. Available methods are listed
 ##' in \code{plot2Dmethods}.
 ##' @param ... Additional parameters.
-##' @author Lisa Breckels
+##' @author Laurent Gatto, Lisa Breckels and Thomas Naake
 ##' @examples
 ##' library("pRoloc")
 ##' library("pRolocdata")
