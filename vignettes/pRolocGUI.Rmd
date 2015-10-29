@@ -1,12 +1,13 @@
 --- 
-title: "pRolocGUI: Interactive visualisation of spatial proteomics data" 
+title: "pRolocGUI - Interactive visualisation of spatial proteomics data" 
 author: "Lisa Breckels, Thomas Naake and Laurent Gatto" 
-output:
-BiocStyle::html_document vignette: >
-  %\VignetteIndexEntry{pRolocGUI: Interactive visualisation of spatial 
-                       proteomics data} 
+output:  
+  BiocStyle::html_document
+vignette: >
+  %\VignetteIndexEntry{pRolocGUI - Interactive visualisation of spatial proteomics data} 
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}  
+  %\VignettePackage{pRolocGUI}
 ---
 
 
@@ -18,7 +19,7 @@ cite_options(hyperlink = FALSE, style = "markdown")
 
 # Foreword
 
-`pRolocGUI` is under active development; current functionality is
+`r Biocpkg("pRolocGUI")` is under active development; current functionality is
 evolving and new features will be added. This software is free and
 open-source. You are invited to contact Laurent Gatto
 (lg390@cam.ac.uk) or Lisa Breckels (lms79@cam.ac.uk) in case you have
@@ -308,7 +309,7 @@ learning classification in spatial proteomics.)
 ```{r classify, eval = TRUE, echo = TRUE} 
 opt <- svmOptimisation(object = hyperLOPIT2015, 
                        fcol = "markers", 
-                       times = 1, verbose = FALSE)
+                       times = 3, verbose = FALSE)
 res <- svmClassification(object = hyperLOPIT2015, assessRes = opt) 
 ```
 
@@ -407,10 +408,11 @@ select the same annotation for the second dataset one can click the
 radio buttons in the left panel to `object2` and then repeat the process.
 Both datasets now have the same data classes highlighted. One can examine
 where the same proteins lie in each replicate by first clicking `pca` in 
-the display selection tabe and then clicking the protein of interste on 
+the display selection table and then clicking the protein of interest on 
 one of the PCA plots, the protein will then be highlighted by a blue border
 and the same protein in the other replicate will also be highlighted.
-Full details on how to use this application can be found in XXX vignette.
+See `vignette("pRolocGUI-legacy")` for full details on how to use this 
+application.
 
 ![The compare application, data classes highlighted](figures/SS_Compare2.jpg)
 

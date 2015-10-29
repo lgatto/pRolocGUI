@@ -20,16 +20,16 @@ pRolocVis_legacy(object, method = "PCA")
 
 pRolocVis_pca(object, fcol, foi, fig.height = "600px", fig.width = "100\%",
   legend.width = "200\%", legend.cex = 1, nchar = 40, all = TRUE,
-  method)
+  method, fdataInd)
 
-pRolocVis_profiles(object, fcol, legend.cex = 1, all = TRUE, method, ...)
+pRolocVis_profiles(object, fcol, legend.cex = 1, all = FALSE, method, ...)
 }
 \arguments{
 \item{object}{An instance of class \code{MSnSet}, or a list of \code{MSnSet}
 objects of length 2 if using "compare" application.}
 
 \item{what}{The type of application requested: "pca", "profiles",
-"classify", "compare", "legacy". The default is "pca". See description below.}
+"classify", "compare". The default is "pca". See description below.}
 
 \item{fcol}{The feature meta-data label (fData column name). This will correspond
 to the prediction column if using "classify", or the markers (labelled data)
@@ -46,10 +46,19 @@ classification scores.}
 \item{mcol}{The feature meta data column containing the labelled training
 data, for use with "classify".}
 
-\item{method}{An instance of class \code{matrix} where its
-rownames must match the object's feature names and represent
-a projection of the data in object in two dimensions, as
-produced (and invisibly returned) by \code{plot2D}.}
+\item{method}{Either a \code{character} of a \code{matrix}. When
+the former, one of \code{"PCA"} (default), \code{"MDS"},
+\code{"kpca"} or \code{"t-SNE"}, defining if dimensionality
+reduction is done using principal component analysis (see
+\code{\link{prcomp}}), classical multidimensional scaling (see
+\code{\link{cmdscale}}), kernel PCA (see \code{kernlab::kpca}) or
+t-SNE (see \code{tsne::tsne}). If a \code{matrix} is passed, its rownames
+must match object's feature names and represent a projection of
+the data in \code{object} in two dimensions, as produced (and invisibly
+returned) by \code{plot2D}. This enables to re-generate the figure without
+computing the dimensionality reduction over and over again, which
+can be time consuming for certain methods. Available methods are listed
+in \code{plot2Dmethods}.}
 
 \item{foi}{A \code{\link{FeaturesOfInterest}} or a}
 
@@ -62,10 +71,14 @@ produced (and invisibly returned) by \code{plot2D}.}
 \item{nchar}{Maximum number of characters of the markers class
 names, before their names are truncated. Default is 10.}
 
-\item{all}{If there are more than 10 clusters, only the first
-three are discplayed on start-up, unless \code{all} is set to
-\code{TRUE}. Default is \code{FALSE}.
+\item{all}{If \code{TRUE} all clusters are displayed on startup.
+If \code{FALSE} only first cluster in the list is displayed.
 \code{\link{FoICollection}}, that will be available for display.}
+
+\item{fdataInd}{A \code{numeric} or \code{character} of valid fetaure
+variables to be retain for the data table. If not specified, by default
+\code{markers} will be kept along with the forst 5 and last 6 feature
+variables.}
 }
 \value{
 For \code{classify} a vector of thresholds, one per class, to use with
@@ -120,15 +133,5 @@ if (interactive())
 }
 \author{
 Laurent Gatto, Lisa Breckels and Thomas Naake
-
-Lisa Breckels
-
-Thomas Naake
-
-Thomas Naake
-
-Laurent Gatto
-
-Lisa Breckels
 }
 
