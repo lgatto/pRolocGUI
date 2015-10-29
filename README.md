@@ -114,7 +114,7 @@ example, to start the the `pca` application type:
 pRolocVis(dunkley2006, what = "pca")
 ```
 
-![Screenshot - PCA](https://raw.githubusercontent.com/ComputationalProteomicsUnit/pRolocGUI/master/vignettes/figures/SS_PCA1.jpg)
+![Screenshot - PCA](https://raw.githubusercontent.com/ComputationalProteomicsUnit/pRolocGUI/new_apps/vignettes/figures/SS_PCA1.jpg)
 
 
 The graphical interface is described in details in the package
