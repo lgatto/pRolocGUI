@@ -96,7 +96,7 @@ library("pRolocGUI")
 ```
 
 We first load data from
-Christoforou 2015 (Nat. Comms., In Press)
+Christoforou et al 2015 (Nat. Comms., In Press)
 distributed in the `pRolocdata` package:
 
 ```{r dunkley}
@@ -114,7 +114,7 @@ example, to start the the `pca` application type:
 pRolocVis(dunkley2006, what = "pca")
 ```
 
-![Screenshot - PCA](https://raw.githubusercontent.com/ComputationalProteomicsUnit/pRolocGUI/master/vignettes/figures/SS_PCA1.png)
+![Screenshot - PCA](https://raw.githubusercontent.com/ComputationalProteomicsUnit/pRolocGUI/master/vignettes/figures/SS_PCA1.jpg)
 
 
 The graphical interface is described in details in the package
@@ -132,8 +132,8 @@ the interface is loaded or can be
 2. [Downloading and install `R`](http://youtu.be/qHMUnZnrkdA)
 3. [Using RStudio](http://youtu.be/vlSbKf0OK3g)
 4. [Installing the `pRolocGUI` interface](http://youtu.be/_VmAZF1g_O4)
-5. [Starting `pRolocGUI`](http://youtu.be/24gntTd133w) - This tutorials is for the older legacy applications. New videos will appear shortly for the new applications.
-6. [Using `pRolocGUI` to explore and visualise experimental spatial proteomics data](http://youtu.be/cG3PEQ-uWhM) - This tutorials is for the older legacy applications. New videos will appear shortly for the new applications.
+5. [Starting `pRolocGUI`](http://youtu.be/24gntTd133w) - This tutorial is for the older legacy applications. New videos will appear shortly for the new applications.
+6. [Using `pRolocGUI` to explore and visualise experimental spatial proteomics data](http://youtu.be/cG3PEQ-uWhM) - This tutorial is for the older legacy applications. New videos will appear shortly for the new applications.
 
 Tutorial [playlist](https://www.youtube.com/watch?v=qHMUnZnrkdA&list=PLvIXxpatSLA2loV5Srs2VBpJIYUlVJ4ow).
 
