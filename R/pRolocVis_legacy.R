@@ -21,7 +21,6 @@
 ##' @return For \code{legacy} an object \code{pRolocGUI_SearchResults} of class
 ##' \code{FoICollection} when the object existed already or when a new
 ##' \code{FoICollection} was created during a session.
-##' @author Thomas Naake
 
 pRolocVis_legacy <- function(object, method = "PCA") { 
   

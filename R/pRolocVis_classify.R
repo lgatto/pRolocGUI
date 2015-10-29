@@ -5,7 +5,6 @@
 ##' data, for use with "classify".
 ##' @return For \code{classify} a vector of thresholds, one per class, to use with
 ##' \code{\link{getPredictions}}
-##' @author Lisa Breckels
 
 pRolocVis_classify <- function(object,
                                fcol,

@@ -1,5 +1,4 @@
 ##' @rdname pRolocVis-apps
-##' @author Thomas Naake
 
 pRolocVis_compare <- function(object, method = "PCA") {
     if (!listOf(object, "MSnSet"))

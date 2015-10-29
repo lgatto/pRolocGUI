@@ -1,9 +1,8 @@
 ##' @rdname pRolocVis-apps
-##' @author Lisa Breckels
 
 pRolocVis_profiles <- function(object, fcol,
                                legend.cex = 1,
-                               all = TRUE,
+                               all = FALSE,
                                method,
                                ...) {
   if (!inherits(object, "MSnSet"))
@@ -56,14 +55,14 @@ pRolocVis_profiles <- function(object, fcol,
   ## to display few and let the user choose
   pmsel <- TRUE
   if (!all & ncol(pmarkers) > 10)
-    pmsel <- 1:3
+    pmsel <- 1
   
   ## data to be displayed
   profs <- exprs(object)
 
   ## --------------------Build shiny app--------------------------
   ui <- fluidPage(
-    headerPanel("LOPIT visualisation"),
+    headerPanel("Protein Profile Visualisation"),
     sidebarLayout(
       sidebarPanel(
         selectizeInput("markers", "Markers",
