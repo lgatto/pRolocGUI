@@ -75,9 +75,9 @@ names, before their names are truncated. Default is 10.}
 If \code{FALSE} only first cluster in the list is displayed.
 \code{\link{FoICollection}}, that will be available for display.}
 
-\item{fdataInd}{A \code{numeric} or \code{character} of valid fetaure
-variables to be retain for the data table. If not specified, by default
-\code{markers} will be kept along with the forst 5 and last 6 feature
+\item{fdataInd}{A \code{numeric} or \code{character} of valid feature
+variables to retain for the data table. If not specified, by default
+\code{markers} will be kept along with the first 5 and last 6 feature
 variables.}
 }
 \value{
