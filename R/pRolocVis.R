@@ -66,36 +66,22 @@
 ##' if (interactive())
 ##'   myThreshold <- pRolocVis(res, what = "classify", fcol = "knn")
 ##'   newPredictions <- getPredictions(res, fcol = "knn", t = myThreshold) 
-  
 pRolocVis <- function(object, what, fcol, legend.cex = 1, ...) {
-
-  if (missing(what)) 
-    what = "pca"
-  
-  if (missing(fcol) && what != "classify") 
-    fcol = "markers"
-
-  if (what == "pca") {
-    pRolocVis_pca(object, fcol = fcol, ...)
-  }
-  
-  if (what == "profiles") {
-    pRolocVis_profiles(object, fcol = fcol, legend.cex = legend.cex, ...)
-    
-  }
-  
-  if (what == "classify") {
-    weights <- pRolocVis_classify(object, fcol = fcol,  
-                       legend.cex = legend.cex, ...)
-    
-  }
-  
-  if (what == "compare") {
-    pRolocVis_compare(object, ...)
-  }
- 
-  if (what == "legacy") {
-    pRolocVis_legacy(object, ...)
-  }
-return(weights)
+    res <- NULL
+    if (missing(what))
+        what <- "pca"
+    if (missing(fcol) && what != "classify")
+        fcol <- "markers"
+    if (what == "pca")
+        pRolocVis_pca(object, fcol = fcol, ...)
+    if (what == "profiles")
+        pRolocVis_profiles(object, fcol = fcol, legend.cex = legend.cex, ...)
+    if (what == "classify")
+        res <- pRolocVis_classify(object, fcol = fcol,
+                                  legend.cex = legend.cex, ...)
+    if (what == "compare")
+        pRolocVis_compare(object, ...)
+    if (what == "legacy")
+        pRolocVis_legacy(object, ...)
+    return(res)
 }
