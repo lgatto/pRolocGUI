@@ -121,15 +121,17 @@ between two conditions, or two different experiments, replicates etc.
 library("pRoloc")
 library("pRolocdata")
 data(hyperLOPIT2015)
-if (interactive())
+if (interactive()) {
   pRolocVis(hyperLOPIT2015, what = "pca")
   pRolocVis(hyperLOPIT2015, what = "profiles")
+}
 ## Classification
 opt <- knnOptimisation(hyperLOPIT2015, times = 10)
 res <- knnClassification(hyperLOPIT2015, opt)
-if (interactive())
+if (interactive()) {
   myThreshold <- pRolocVis(res, what = "classify", fcol = "knn")
   newPredictions <- getPredictions(res, fcol = "knn", t = myThreshold)
+}
 }
 \author{
 Laurent Gatto, Lisa Breckels and Thomas Naake
