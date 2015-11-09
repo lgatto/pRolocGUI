@@ -61,12 +61,13 @@
 ##'   pRolocVis(hyperLOPIT2015, what = "pca")
 ##'   pRolocVis(hyperLOPIT2015, what = "profiles")
 ##' }
-##' ## Classification  
-##' opt <- knnOptimisation(hyperLOPIT2015, times = 10)
-##' res <- knnClassification(hyperLOPIT2015, opt)
+##' ## Load classification results from hyperLOPIT stored in fData
 ##' if (interactive()) {
-##'   myThreshold <- pRolocVis(res, what = "classify", fcol = "knn")
-##'   newPredictions <- getPredictions(res, fcol = "knn", t = myThreshold)
+##'   myThreshold <- pRolocVis(hyperLOPIT2015, what = "classify", 
+##'                            fcol = "svm.classification", 
+##'                            scol = "svm.score")
+##'   newPredictions <- getPredictions(hyperLOPIT2015, fcol = "svm.classification", 
+##'                                    scol = "svm.score", t = myThreshold)
 ##' }
 pRolocVis <- function(object, what, fcol, legend.cex = 1, ...) {
     res <- NULL
