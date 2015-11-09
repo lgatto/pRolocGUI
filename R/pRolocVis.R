@@ -1,723 +1,87 @@
-##' \code{pRolocVis} and \code{pRolocComp} launch shiny sessions 
-##' to interactively analyse and visualise proteomics data. 
+##' These functions allow one to explore spatial proteomics data interactively. 
 ##' 
-##' \code{pRolocVis} is a function to start a shiny session with 
-##' one MSnSet data set or a list of \code{MSnSet}s. \code{pRolocComp} launches
-##' with a list of two \code{MSnSet}s. 
+##' The function \code{pRolocVis} is a wrapper for \code{pRolocVis_pca}, 
+##' \code{pRolocVis_profiles}, \code{pRolocVis_classification}, 
+##' \code{pRolocVis_compare} and \code{pRolocVis_legacy}.These Shiny apps 
+##' allow to explore and analyse interactively spatial proteomics data.
+##'  
+##' The \code{pca} Shiny app allows exploration of quantitatuve data (1) visually 
+##' through Principle Component Analysis (PCA), (2) protein profiles, and (3)
+##' a searchable feature data table, allowing visualisation of particualr proteins
+##' of interest. 
 ##' 
-##' The functions allow to explore and analyse interactively spatial proteomics 
-##' data, especially LOPIT and PCP experiments. Both functions offer high 
-##' interactivity for exploring Principle Component Analysis (PCA) plots, 
-##' protein profile plots and quantatative and qualitative meta-data. 
-##' Additionally, \code{pRolocVis} and \code{pRolocComp} support import/export 
-##' abilities for past and new search results using the 
-##' \code{FeaturesOfInterest}/\code{FoICollection} infrastructure defined in the 
-##' \code{MSnbase} package. 
+##' The \code{profiles} Shiny app allows one to simultaneously view protein
+##' profiles and PCA locations of sub-cellular annotated sets of proteins.
 ##' 
-##' \code{pRolocVis} enables to analyse one \code{MSnSet} at a time, while
-##' \code{pRolocComp} analyses and compares two \code{MSnSet}s. 
-##' \code{pRolocComp} is especially meant for analyses of data which looks 
-##' at the change of proteins in protein localisation.
+##' The \code{classify} Shiny app is used to visualise classification results
+##' and set user-specified thresholds for sub-cellular location predictions. 
 ##' 
-##' To load the vignette for the functions \code{pRolocVis} and \code{pRolocGUI}
-##' enter \code{vignette("pRolocGUI")} in the console. The vignette will give more 
-##' information on how to use the shiny applications.
-##' @aliases pRolocVis
-##' @aliases pRolocComp
-##' @rdname pRolocVis-pRolocComp
-##' @title pRolocVis/pRolocComp
-##' @author Thomas Naake <naake@@stud.uni-heidelberg.de>
-##' @param object an object of class \code{MSnSet} or a list of \code{MSnSet}s 
-##' (pRolocVis), a list of length 2 of \code{MSnSet}s (pRolocComp).
-##' @param method The method to be used for dimenstionality
-##' reduction. Default is \code{"PCA"}. See \code{plot2D} for details.
-##' @examples 
-##' ## load MSnSet data sets from the pRolocdata package
-##' data(andy2011, package = "pRolocdata")
-##' data(tan2009r1, package = "pRolocdata")
-##' data(tan2009r2, package = "pRolocdata")
-##' data(dunkley2006, package = "pRolocdata")
+##' The \code{legacy} Shiny app is the original (legacy) \code{pRolocVis} app
+##' that appears in older versions of \code{pRolocGUI}, the \code{pca} app has
+##' been designed to replace this app. 
 ##' 
-##' ## create lists with unnamed and named objects
-##' unnamedVis <- list(andy2011, tan2009r1, dunkley2006)
-##' namedVis <- list(andy2011 = andy2011,
-##'                  tan2009r1 = tan2009r1,
-##'                  dunkley2006 = dunkley2006)
-##' unnamedComp <- list(tan2009r1, tan2009r2)
-##' namedComp <- list(tan2009r1 = tan2009r1,
-##'                   tan2009r2 = tan2009r2)
+##' The \code{compare} Shiny app is meant for comparing protein localisation 
+##' between two conditions, or two different experiments, replicates etc. 
 ##' 
-##' ## launch application by either assigning a MSnSet, 
-##' ## an unnamed or a named list to the argument object
-##' if (interactive()) {
-##'    pRolocVis(object = andy2011)
-##'    pRolocVis(object = unnamedVis)
-##'    pRolocVis(object = namedVis)
-##'    pRolocComp(object = unnamedComp)
-##'    pRolocComp(object = namedComp)
-##' }
-##' @return An object \code{pRolocGUI_SearchResults} of class
-##' \code{FoICollection} when the object existed already or when a new
-##' \code{FoICollection} was created during a session.
-pRolocVis <- function(object, method = "PCA") {    
-    ## global
-    if (is.list(object)) {
-        if (!listOf(object, "MSnSet"))
-            stop("The input must be list of MSnSet instances.")
-        if (any(sapply(X = object, FUN = function(x) anyNA(exprs(x))))) {
-            warning("Removing features with missing values.", immediate. = TRUE)
-            object <- lapply(object, filterNA)
-        }
-    } else {
-        if (!inherits(object, "MSnSet"))
-            stop("The input must be an instance of class MSnSet")
-        if (anyNA(exprs(object))) {
-            warning("Removing features with missing values.", immediate. = TRUE)
-            object <- filterNA(object)
-        }
-        name <- MSnbase:::getVariableName(match.call(), "object")
-    }
-    ## increase upload limit to 20 MB
-    options(shiny.maxRequestSize = 20*1024^2)
-    ## pRolocGUI_SearchResults
-    sr <- .createSR()
-    app <- list(  
-        ui = 
-            bootstrapPage( 
-                fluidRow(
-                                        #responsive = TRUE,
-                    ## Application title
-                    .pRn1_setTitlePanel(),
-                    ## Sidebar Panel
-                    sidebarPanel(
-                        .pR_tags(), 
-                        .pR_condDisplaySelection(),
-                        .pR_condTabData(),
-                        .pRn1_condTabPCA(),
-                        .pR_condTabProteinProfiles(),
-                        .pR_condTabQuantitation(),
-                        .pR_condTabfData(),
-                        .pR_condTabpData(),
-                        .pR_condTabSearch(),
-                        width = 2
-                        ),
-                        ## Main Panel
-                        mainPanel(
-                            tabsetPanel(
-                                .pRn1_tabPanelPCA(),
-                                .pRn1_tabPanelProteinProfiles(),
-                                .pR_tabPanelQuantitation(),
-                                .pR_tabPanelfData(),
-                                .pR_tabPanelpData(),
-                                .pR_tabPanelSearch(),
-                                .pRn1_tabPanelData(),
-                                id = "tab1"
-                            )#,
-                            #width = 10
-                        )
-                    )
-                ),
-            
-            server = function(input, output) {   
-                ## START: links to vignette ## 
-                vignette <- system.file("doc/pRolocGUI.html", package="pRolocGUI")  
-                    
-                if (nchar(vignette))
-                    addResourcePath(prefix = "doc", 
-                        directoryPath = system.file("doc", package = "pRolocGUI"))
-                    
-                ## Links to vignette ##
-                output$linkDisplayUI <- renderUI({
-                    if (nchar(vignette))
-                        a(href="/doc/pRolocGUI.html#display",
-                          "?", target="_blank")
-                        ##class = c("btn", "action-button"))
-                })
-                    
-                output$linkDataUI <- renderUI({
-                    if (nchar(vignette))
-                        a(href="/doc/pRolocGUI.html#tabspRolocGUIDataVis",
-                            "?", target="_blank")
-                    ##class = c("btn", "action-button"))
-                })
-                
-                output$linkPCAUI <- renderUI({
-                    if (nchar(vignette))
-                        a(href="/doc/pRolocGUI.html#tabspRolocGUIPCA",
-                            "?", target="_blank")
-                    ##class = c("btn", "action-button"))
-                })
-                
-                output$linkPPUI <- renderUI({
-                    if (nchar(vignette))
-                        a(href="/doc/pRolocGUI.html#tabspRolocGUIPP",
-                            "?", target="_blank")
-                    ##class = c("btn", "action-button"))
-                })
-                    
-                output$linkExprsUI <- renderUI({
-                    if (nchar(vignette))
-                        a(href="/doc/pRolocGUI.html#tabspRolocGUIExprs",
-                            "?", target="_blank")
-                        ##class = c("btn", "action-button"))
-                })
-                
-                output$linkfDataUI <- renderUI({
-                    if (nchar(vignette))
-                        a(href="/doc/pRolocGUI.html#tabspRolocGUIfData",
-                            "?", target="_blank")
-                    ##class = c("btn", "action-button"))
-                })
-                    
-                output$linkpDataUI <- renderUI({
-                    if (nchar(vignette))
-                        a(href="/doc/pRolocGUI.html#tabspRolocGUIpData",
-                            "?", target="_blank")
-                    ##class = c("btn", "action-button"))
-                })
-                    
-                output$linkSearchUI <- renderUI({
-                    if (nchar(vignette))
-                        a(href="/doc/pRolocGUI.html#tabspRolocGUISearch",
-                            "?", target="_blank")
-                        ##class = c("btn", "action-button"))
-                })
-            
-                ## END: Links to vignette ## 
-                
-                ## TAB: DATA/UPLOAD ##
-                
-                ## choose Data source
-                output$Data1UI <- renderUI(
-                    selectInput("data", "Choose MSnSet data source:",
-                                        choices = .namesObj(object, name, upload = TRUE))     
-                )
-    
-                .dIownData <- reactive({
-                    if (length(as.character(input$upload["datapath"]))) {
-                        ## check if MSnSet has ending .rda or .RData and if 
-                        ## it is MSnSet
-                        if (file_ext(input$upload["name"]) %in% c("rda","RData") 
-                            && inherits(
-                                get(load(as.character(input$upload["datapath"]))), 
-                                    "MSnSet"))
-                            od <- get(load(as.character(input$upload["datapath"])))
-                     }
-                })
-                
-                ## .dI (data Input)
-                .dI <- reactive({
-                    ## initially when tab data was not loaded
-                    if (is.null(input$data)) {
-                        if (is.list(object))
-                            .dI <- list(object[[1]])
-                        else
-                            .dI <- list(object)
-                    } else { ## after tab data was loaded
-                        .lenObject <- length(.namesObj(object, name, upload = TRUE))
-                        .indObject <- which(input$data == .namesObj(object, name, upload=TRUE))
-                        ## upload
-                        if (.lenObject == .indObject) {
-                            if (inherits(.dIownData(), "MSnSet"))
-                                .dI <- list(.dIownData())
-                            else {
-                                if (is.list(object))
-                                    .dI <- list(object[[1]])
-                                else
-                                    .dI <- list(object)
-                            }
-                        } else {## object          
-                            if (is.list(object))
-                                .dI <- list(object[[.indObject]])
-                            else
-                                .dI <- list(object)
-                        }
-                        .dI
-                    } 
-                })
-    
-                output$warningUploadUI <- renderUI({
-                    if (!is.null(input$data)) {
-                        if (input$data == "upload" 
-                            && !length(as.character(input$upload["datapath"])))
-                            strong(span("no file selected", style = "color:red"),
-                                ", first element of object will be used")
-                        else
-                            if (input$data == "upload" && 
-                                !inherits(.dIownData(), "MSnSet"))
-                                strong(span("no valid MSnSet selected", 
-                                                            style = "color:red"), 
-                                    ", first element of object will be used")
-                    }
-                })  
-                
-                ## reset reactiveValues when the .dI() changes
-                observe({
-                    .dI()
-                    .prot$text <- .prot$PCA <- .prot$plotDist <- NULL
-                    .newfoi$ind <- NULL
-                    .prot$search <- NULL
-                    selected$SaSe <- NULL
-                    dSelect$PCA <- dSelect$plotDist <- dSelect$text <- NULL
-                })
-                ## END: UPLOAD ##
-                
-                
-                
-                ## START OF SEARCH IMPLEMENTATION ##
-                
-                ## check boxes by clicking on plots PCA and plotDist
-                dSelect <- reactiveValues(PCA = NULL, plotDist = NULL, SaSe = NULL, 
-                                          text = NULL)
-                
-                 observe({
-                    dSelect$PCA <- .selClick(
-                        dSelect$PCA, input$PCAclick, .prot$PCA, TRUE
-                    )
-                    dSelect$plotDist <- .selClick(
-                        dSelect$plotDist, input$plotDistclick, 
-                        .prot$plotDist, FALSE
-                    )
-                    dSelect$SaSe <- ifelse(input$selCB > 0, "savedSearches", NULL)
-                    dSelect$text <- .selButton(
-                        dSelect$text, input$saveText, input$resetMult, 
-                        .prot$text
-                    )  
-                })
-         
-                output$checkBoxUI <- renderUI(
-                    .checkBoxdSelect(dSelect$PCA, dSelect$plotDist, dSelect$SaSe, dSelect$text)
-                )
-                        
-                ## reactive expression to forward indices to plot2D, plotDist and 
-                ## tabs quantitation and feature meta-data
-                observe({
-                    .prot$search <- .sI(input$chooseIdenSearch, 
-                                           input$tagSelectList, .prot$text, 
-                                           .prot$PCA, .prot$plotDist, 
-                                           .SavedSearch())
-                })
-
-                ## reset button
-                output$resetMultUI <- renderUI(.reset(.prot$search))
-                
-                ## Clear multiple points on click
-                observe({
-                    if (!is.null(input$resetMult))
-                        if (input$resetMult > 0) {
-                            .prot$PCA <- .prot$plotDist <- .prot$text <- NULL
-                            dSelect$PCA <- dSelect$plotDist <- dSelect$text <- NULL
-                        }
-                })
-                
-                ## text-based search: protein und fvarLabels
-                output$searchUI <- renderUI(.selVarText(.dI()))
-                            
-                output$searchResultsUI <- renderUI(
-                    .selResText(input$search, .searchResultsText())
-                )
-                
-                ## reactive expressions for text based search
-                ## levels to search
-                .searchResultsText <- reactive(
-                        .sRsubset(.dI(), input$search, input$levelSearch)
-                )
-                            
-                ## action button to submit features (query)
-                output$saveTextUI <- renderUI(
-                    if (!is.null(.dI()) 
-                        && !is.null(input$search) 
-                            && length(.searchResultsText()) >= 1)
-                        if (!.checkFeatText(.dI(), 
-                                .prot$text, input$sRTextInput, input$search))
-                            actionButton("saveText", "Submit selection")
-                )
-                
-                ## action button to remove (query)
-                output$removeTextUI <- renderUI(
-                    if (!is.null(input$search))
-                        if (.checkFeatText(
-                                .dI(), .prot$text, input$sRTextInput, input$search))
-                            actionButton("removeText", "Undo selection")
-                )
-                
-                
-                ## vector with reactive values
-                .prot <- reactiveValues(PCA = NULL, plotDist = NULL, text = NULL,
-                                        search = NULL)
-                
-                ## observe indices and concatenate to .prot$PCA, .prot$plotDist
-                ## and .prot$text
-                observe({
-                        .prot$PCA <- .obsProtClick(
-                            .prot$PCA, .minDist2dProtPCA(), input$PCAclick)
-                })
-                
-                observe({
-                    .prot$plotDist <- .obsProtClick(.prot$plotDist, 
-                            .minDistProtPlotDist(), input$plotDistclick)
-                })
-                
-                observe({ 
-                    .prot$text <- .obsProtText(.dI(), .prot$text, input$saveText, 
-                            isolate(input$sRTextInput), input$search, names=TRUE)
-                })
-                
-                observe({
-                    if (!is.null(input$removeText))
-                        isolate(.prot$text <- .removeFeat(
-                            .prot$text, .obsProtText(
-                                .dI(), .prot$text, input$saveText, 
-                                isolate(input$sRTextInput), input$search, 
-                                add = FALSE), 
-                            input$removeText))
-                })
-    
-                ## END OF SEARCHING IMPLEMENTATION ##  
-                            
-    
-                
-                ## TAB: PCA PLOT ##  
-                
-                ## values of PCA, dims is dependent on user input,
-                ## so is xlim and ylim
-                .valuesPCA <- reactive(.vPCA(.dI(), input$PCAn1, input$PCAn2,
-                                             method = method))
-                
-                ## render colour selectInput accordingly to fvarLabels()
-                output$fcoloursUI <- renderUI(.colourPCA(.dI())) 
-                    
-                ## render symboltype selectInput accordingly to fvarLabels
-                output$fsymboltypeUI <- renderUI(.symbolPCA(.dI(), input$fcolours))
-                
-                ## render point size selectInput accordingly to .fcex
-                output$fcexUI <- renderUI(.fcexPCA(.dI(), input$fcolours))
-                
-                ## zoom function: parameters for x- and y-range for PCA plot
-                output$xrangeUI <- renderUI(.rangePCA(.valuesPCA(), 1, "xrange"))
-                        
-                output$yrangeUI <- renderUI(.rangePCA(.valuesPCA(), 2, "yrange"))
-                
-                ## compute number of principal components to look for 
-                ## and change UI accordingly
-                output$PCAn1UI <- renderUI(.PC(.dI(), "x", 1))
-            
-                output$PCAn2UI <- renderUI(.PC(.dI(), "y", 2))
-                
-                ## legend 
-                output$PCALegendUI <- renderUI(.legendPCA(.dI(), input$fcolours))
-                
-                output$PCALegendposUI <- renderUI(
-                    .legendPosPCA(.dI(), input$fcolours)
-                    )
-                
-                .searchInd <- reactive({
-                    .computeInd(.dI(), .prot$search)    
-                })
-                
-                .listSaSeInd <- reactive({
-                    sase <- lapply(.SavedSearchList(), match, featureNames(.dI()))
-                    sase <- lapply(sase, na.omit)
-                    lapply(sase, as.vector)
-                })
-                
-                ## Generate PCA plot, use fcolours for colours and add legend
-                ## function (appearance and position dependent of user input)
-                output$PCAUI <- renderPlot(
-                    .plotPCA(obj = .dI(), 
-                             fcolours = input$fcolours, 
-                             fcex = input$fcex,
-                             xrange = input$xrange,
-                             yrange = input$yrange,
-                             sb = input$fsymboltype,
-                             PCAn1 = input$PCAn1,
-                             PCAn2 = input$PCAn2,
-                             legend = input$legendyes, 
-                             legendpos = input$legendpos,
-                             sI = .searchInd(),
-                             cIS = input$chooseIdenSearch,
-                             ind = "object1",
-                             listSaSe = .listSaSeInd(),
-                             method = method)
-                    )
-                
-                
-                ## for Plot/Download button (needs a reactive expression)
-                .PCAPlotReac <- reactive(
-                    .plotPCA(obj = .dI(), 
-                             fcolours = input$fcolours, 
-                             fcex = input$fcex,
-                             xrange = input$xrange,
-                             yrange = input$yrange,
-                             sb = input$fsymboltype,
-                             PCAn1 = input$PCAn1,
-                             PCAn2 = input$PCAn2,
-                             legend = input$legendyes, 
-                             legendpos = input$legendpos,
-                             sI = .searchInd(),
-                             cIS = input$chooseIdenSearch,
-                             ind = "object1",
-                             listSaSe = .listSaseInd(),
-                             method = method)
-                    )
-                
-                ## Download Handler for PCA plot
-                output$plotPCADownload <- downloadHandler(
-                    filename = function() {
-                        paste(input$data, "-PCA-", Sys.Date(), ".jpg", sep="")
-                    },
-                    content = function(file) {
-                        jpeg(file, quality = 100, width = 800, height = 800)
-                        .PCAPlotReac()
-                        dev.off()}
-                    )
-                    
-                ## reactive expressions for search based on cursor input for PCA
-                .minDist2dProtPCA <- reactive(
-                    ## will be empty initially
-                    if (!is.null(input$PCAclick) && !is.null(.valuesPCA())) {
-                        ## compute 2D distances from click input to each component 
-                        ## of the PCA plot, input$PCAclick$x and input$PCAclick$y
-                        ## is user input (index will be returned)
-                        .minDistPCA(inputx = input$PCAclick$x, 
-                                    inputy = input$PCAclick$y,
-                                    valuesx = .valuesPCA()[,1],
-                                    valuesy = .valuesPCA()[,2])
-                    }
-                    )
-                
-                .minDist2dProtPCAHover <- reactive(
-                    if (!is.null(input$PCAhover) && !is.null(.valuesPCA())) {
-                        .minDistPCA(inputx = input$PCAhover$x, 
-                                    inputy = input$PCAhover$y,
-                                    valuesx = .valuesPCA()[,1], 
-                                    valuesy = .valuesPCA()[,2])
-                    }
-                    )
-                
-                ## display name of 2D-nearest protein in PCA plot
-                output$hoverProtPCAUI <- renderTable(
-                    if (!is.null(.minDist2dProtPCAHover()))
-                        fData(.dI()[[1]])[.minDist2dProtPCAHover(), ]
-                    )
-                ## END: PCA PLOT ##
-    
-                ## TAB: PLOTDIST ##            
-                ## Index of element in list where parameters are stored
-                .nCol <- reactive(.nC(input$numberPlotDist, input$quantityPlotDist))
-                    
-                ## list where parameters for plot are stored
-                ## create a list with reactive values
-                .listParams <- reactiveValues(
-                    levPlotDist = NULL, 
-                    levPlotDistOrg = NULL
-                    )
-                
-                ## write paramters to list for plotDist at index of .nCol()
-                observe({
-                    if (!is.null(input$organelleAll) &&
-                        !is.null(input$fNamesplDist)) {
-                        .listParams$levPlotDist[.nCol()] <- 
-                            input$fNamesplDist
-                        .listParams$levPlotDistOrg[.nCol()] <- 
-                            input$organelleAll
-                    }
-                })
-                
-                ## calculate protein nearest to user input
-                .minDistProtPlotDist <- reactive(
-                    if (length(.dI()) != 0 && !is.null(input$plotDistclick)) {
-                        if (!is.null(input$quantityPlotDist) && 
-                            input$quantityPlotDist == "1")
-                            .minDistPlotDist(obj = .dI(), 
-                                             marker = .listParams$levPlotDist[1],
-                                             org = .listParams$levPlotDistOrg[1],
-                                             inputx = input$plotDistclick$x,
-                                             inputy = input$plotDistclick$y)
-                    }
-                    )
-                            
-                .minDistProtPlotDistHover <- reactive({
-                    if (length(.dI()) != 0 && !is.null(input$plotDisthover$x)) {
-                        if (!is.null(input$quantityPlotDist) && 
-                            input$quantityPlotDist == "1") 
-                            .minDistPlotDist(obj = .dI(),
-                                             marker = .listParams$levPlotDist[1],
-                                             org = .listParams$levPlotDistOrg[1],
-                                             inputx = input$plotDisthover$x,
-                                             inputy = input$plotDisthover$y)
-                    }
-                })
-                
-                ## display name of 2D-nearest protein in plotDist plot
-                output$hoverProtPlotDistUI <- renderTable(
-                    if (!is.null(.minDistProtPlotDistHover()))
-                        fData(.dI()[[1]])[.minDistProtPlotDistHover(),]
-                    )
-                
-                ## levels for plotDist to choose to plot
-                .organelleAllName <- reactive(
-                    .orgName(.dI(), input$fNamesplDist))             
-                
-                ## select fvarLabels or "all" for all features UI    
-                output$allOrganellesUI <- renderUI(
-                    .featuresPlotDist(.dI()))
-                
-                ## UI for feature levels in fvarLabels or "all"
-                output$organelleAllUI <- renderUI(
-                    .flevelPlotDist(.organelleAllName(), input$fNamesplDist)
-                    )
-                
-                ## UI for quanity of plots to plot
-                output$quantityPlotDistUI <- renderUI(.quantPlotDist(1:8, 1))
-                
-                ## UI for number of plots to plot            
-                output$numberPlotDistUI <- renderUI(
-                    if (!is.null(input$quantityPlotDist))
-                        .numPlotDist(input$quantityPlotDist)
-                    )
-                
-                ## for Plot/Download button (needs a reactive expression)
-                .plotDistReac <- reactive(
-                    .plotPlotDist(obj = .dI(), 
-                                  levPlotDist = .listParams$levPlotDist,
-                                  levPlotDistOrg = .listParams$levPlotDistOrg,
-                                  quantity = input$quantityPlotDist,
-                                  sI = .searchInd()
-                                  )
-                    )
-                
-                ## renderPlot plotDist and assign parameters
-                output$plotDistUI <- renderPlot(
-                    .plotPlotDist(obj = .dI(), 
-                                  levPlotDist = .listParams$levPlotDist,
-                                  levPlotDistOrg = .listParams$levPlotDistOrg,
-                                  quantity = input$quantityPlotDist,
-                                  sI = .searchInd()
-                                  )
-                    )
-                
-                output$plotDistDownload <- downloadHandler(
-                    filename = function() {
-                        paste(input$data, "-plotDist-", Sys.Date(), ".jpg", sep="")
-                    },
-                    content = function(file) {
-                        jpeg(file, quality = 100, width = 800, height = 800)
-                        .plotDistReac()
-                        dev.off()}
-                        
-                    )
-                ## END: PLOTDIST ##
-                
-                
-                
-                ## TAB: QUANTITATION DATA ##
-                ## Generate the quantitation data
-                output$exprsRadioUI <- renderUI(.radioButton(.searchInd(), TRUE))
-    
-                output$MSnExprsUI <- DT::renderDataTable(
-                    .dTable(.dI(), "quant", input$exprsRadio, .searchInd())
-                    )
-                ## END: QUANTITATION DATA ##
-                
-                
-                
-                ## TAB: FEATURE META-DATA ##
-                ## Generate the feature meta-data
-                output$fDataRadioUI <- renderUI(.radioButton(.searchInd(), FALSE))
-                
-                output$MSnfDataUI <- DT::renderDataTable(
-                    .dTable(.dI(), "fD", input$fDataRadio, .searchInd())
-                    )
-                ## END: FEATURE META-DATA ##
-                
-                
-                
-                ## TAB: SAMPLE META-DATA ##
-                ## Generate the sample meta-data
-                output$MSnpDataUI <- DT::renderDataTable(
-                    .dTable(.dI(), "pD"))
-                ## END: SAMPLE META-DATA ##
-                
-                
-                
-                ## TAB: SEARCH ##
-                ## create object pRolocGUI_SearchResults in .GlobalEnv on exit
-                observe({
-                    if (length(.pR_SR$foi) > 0)
-                        on.exit(assign("pRolocGUI_SearchResults",
-                                       .pR_SR$foi, .GlobalEnv)
-                                )
-                })
-                
-                ## create reactiveValues for FoIColection
-                .pR_SR <- reactiveValues(foi = sr)
-                
-                if ((is.null(sr))) {
-                    .pR_SR$foi <- FoICollection()
-                }
-                
-                ## create reactiveValues for new features of Interest
-                .newfoi <- reactiveValues(ind = NULL)
-                
-                observe({
-                    .newfoi$ind <- .obsNewFoI(
-                        .dI(), .prot$search, 
-                        input$savedSearchText, input$saveLists2SR, "object1", FALSE
-                        )
-                    .pR_SR$foi <- .obsSavedSearch(
-                        .pR_SR$foi, .newfoi$ind, .prot$search, 
-                        input$saveLists2SR, input$savedSearchText
-                        )
-                }) 
-                
-                ## text field to assign name to search results
-                ## display information about selected FoI
-                .whichN <- reactive(.whichTag(input$tagSelectList, .pR_SR$foi))
-                
-                selected <- reactiveValues(SaSe = NULL)
-                observe(selected$SaSe <- input$selCB)
-                
-                output$multSaSe <- renderUI({
-                    if (length(.pR_SR$foi) > 0) 
-                        selectInput(inputId = "selCB", label = "display", 
-                                    choices = description(.pR_SR$foi), multiple = TRUE,
-                                    selected = selected$SaSe) ##selected$SaSe)
-                })
-                
-                .SavedSearchList <- reactive({
-                    .indSR <- na.omit(match(input$selCB, description(.pR_SR$foi)))
-                    lapply(foi(.pR_SR$foi)[.indSR], foi)
-                })
-               
-                
-                .SavedSearch <- reactive({
-                    .protInd <- unique(unlist(.SavedSearchList()))
-                    
-                })
-                
-                output$infoSavedSearchUI <- renderText({
-                    if (length(.dI()) != 0 && !is.null(.pR_SR$foi) && 
-                        length(.pR_SR$foi) != 0 && !is.null(.whichN())) {
-                        showFOI <- .showFOI(.pR_SR$foi, .dI(), .whichN(), FALSE)
-                        paste0(showFOI, sep = "\n", collapse = "")
-                    } else
-                        return("pRolocGUI_SearchResults not found in workspace")
-                })
-                
-                ## select Input for the tag names of the list
-                output$tagsListSearchUI <- renderUI(.tagListSearch(.pR_SR$foi))
-                
-                ## text input to enter description 
-                output$savedSearchTextUI <- renderUI(.textDescription())
-                    
-                ## action button to save new FoIs
-                output$saveLists2SRUI <- renderUI(
-                    .buttonSearch(.pR_SR$foi, .prot$search, input$savedSearchText)
-                    )
-                ## END: SEARCH ###                
-            } ## end server function        
-        ) ## end list 
-    runApp(app)
-} ## end function
-    
+##' @title Interactive visualisation of spatial proteomics data 
+##' @aliases pRolocVis_pca
+##' @aliases pRolocVis_profiles
+##' @aliases pRolocVis_classify
+##' @aliases pRolocVis_compare
+##' @rdname pRolocVis-apps
+##' @param object An instance of class \code{MSnSet}, or a list of \code{MSnSet}
+##' objects of length 2 if using "compare" application.
+##' @param what The type of application requested: "pca", "profiles",
+##' "classify", "compare". The default is "pca". See description below.
+##' @param fcol The feature meta-data label (fData column name). This will correspond
+##' to the prediction column if using "classify", or the markers (labelled data) 
+##' to be plotted otherwise.
+##' @param legend.cex Character expansion for the vignette
+##' labels. Default is 1.
+##' @param method Either a \code{character} of a \code{matrix}. When
+##' the former, one of \code{"PCA"} (default), \code{"MDS"},
+##' \code{"kpca"} or \code{"t-SNE"}, defining if dimensionality
+##' reduction is done using principal component analysis (see
+##' \code{\link{prcomp}}), classical multidimensional scaling (see
+##' \code{\link{cmdscale}}), kernel PCA (see \code{kernlab::kpca}) or
+##' t-SNE (see \code{tsne::tsne}). If a \code{matrix} is passed, its rownames
+##' must match object's feature names and represent a projection of
+##' the data in \code{object} in two dimensions, as produced (and invisibly
+##' returned) by \code{plot2D}. This enables to re-generate the figure without
+##' computing the dimensionality reduction over and over again, which
+##' can be time consuming for certain methods. Available methods are listed
+##' in \code{plot2Dmethods}.
+##' @param ... Additional parameters.
+##' @author Laurent Gatto, Lisa Breckels and Thomas Naake
+##' @examples
+##' library("pRoloc")
+##' library("pRolocdata")
+##' data(hyperLOPIT2015)
+##' if (interactive())
+##'   pRolocVis(hyperLOPIT2015, what = "pca")
+##'   pRolocVis(hyperLOPIT2015, what = "profiles")
+##' ## Classification  
+##' opt <- knnOptimisation(hyperLOPIT2015, times = 10)
+##' res <- knnClassification(hyperLOPIT2015, opt)
+##' if (interactive())
+##'   myThreshold <- pRolocVis(res, what = "classify", fcol = "knn")
+##'   newPredictions <- getPredictions(res, fcol = "knn", t = myThreshold) 
+pRolocVis <- function(object, what, fcol, legend.cex = 1, ...) {
+    res <- NULL
+    if (missing(what))
+        what <- "pca"
+    if (missing(fcol) && what != "classify")
+        fcol <- "markers"
+    if (what == "pca")
+        pRolocVis_pca(object, fcol = fcol, ...)
+    if (what == "profiles")
+        pRolocVis_profiles(object, fcol = fcol, legend.cex = legend.cex, ...)
+    if (what == "classify")
+        res <- pRolocVis_classify(object, fcol = fcol,
+                                  legend.cex = legend.cex, ...)
+    if (what == "compare")
+        pRolocVis_compare(object, ...)
+    if (what == "legacy")
+        pRolocVis_legacy(object, ...)
+    return(res)
+}

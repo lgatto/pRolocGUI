@@ -16,60 +16,46 @@
 ## https://gallery.shinyapps.io/106-plot-interaction-exclude/
 ## https://github.com/rstudio/shiny-examples
 
-
 ## http://shiny.rstudio.com/articles/selecting-rows-of-data.html
 ## http://shiny.rstudio.com/articles/plot-interaction-advanced.html
 
-##' pRoloc interactive visualisation
-##' 
-##' @title Visualise your pRoloc data
-##' @param object An instance of class \code{MSnSet}.
-##' @param fcol The name of the markers matrix (default is
-##' \code{"Markers"}). Can be missing if \code{foi} is available.
+##' @rdname pRolocVis-apps
 ##' @param foi A \code{\link{FeaturesOfInterest}} or a
-##' \code{\link{FoICollection}}, that will be available for display.
 ##' @param fig.height Height of the figure. Default is \code{"600px"}.
 ##' @param fig.width Width of the figure. Default is \code{"600px"}.
 ##' @param legend.width Width of the legend. Default is \code{"100\%"}.
-##' @param legend.cex Character expansion for the vignette
-##' labels. Default is 1.
-##' @param nchar Maximum number of characters if the markers class
+##' @param nchar Maximum number of characters of the markers class
 ##' names, before their names are truncated. Default is 10.
-##' @param all If there are more than 10 clusters, only the first
-##' three are discplayed on start-up, unless \code{all} is set to
-##' \code{TRUE}. Default is \code{FALSE}.
-##' @param ... Additional parameters that can be used to choose the
-##' dimentionality reduction method, as defined in
-##' \code{\link{plot2D}}.
-##' @author Laurent Gatto
-##' @examples
-##' library("pRoloc")
-##' library("pRolocdata")
-##' data(dunkley2006)
-##' ## markers matrix ecoding
-##' dunkley2006 <- mrkVecToMat(dunkley2006)
-##' ## order the fractions 
-##' dunkley2006 <- dunkley2006[, order(dunkley2006$fraction)]
-##' if (interactive())
-##'   pRolocGUI:::pRolocVis2(dunkley2006)
-pRolocVis2 <- function(object, fcol,
-                       foi,
-                       fig.height = "600px",
-                       fig.width = "100%",
-                       legend.width = "100%",
-                       legend.cex = 1,
-                       nchar = 15,
-                       all = FALSE,
-                       ...) {
+##' @param all If \code{TRUE} all clusters are displayed on startup.
+##' If \code{FALSE} only first cluster in the list is displayed.
+##' \code{\link{FoICollection}}, that will be available for display.
+##' @param fdataInd A \code{numeric} or \code{character} of valid feature
+##' variables to retain for the data table. If not specified, by default
+##' \code{markers} will be kept along with the first 5 and last 6 feature
+##' variables.
+pRolocVis_pca <- function(object, fcol,
+                          foi,
+                          fig.height = "600px",
+                          fig.width = "100%",
+                          legend.width = "200%",
+                          legend.cex = 1,
+                          nchar = 40,
+                          all = TRUE,
+                          method,
+                          fdataInd) {
+
     if (!inherits(object, "MSnSet"))
         stop("The input must be of class MSnSet")
     if (missing(foi) & missing(fcol)) 
-        fcol <- "Markers"
-    if (!missing(fcol)) {
+        fcol <- "markers"
+    if (!missing(fcol)) {  
         if (!fcol %in% fvarLabels(object))
             stop("fcol missing in fData")
-        if (!isMrkMat(object, fcol))
-            stop("Markers must be encoded as a matrix. See ?markers for details.")
+        if (!isMrkMat(object, fcol)) {
+          mName <- paste0("Markers", format(Sys.time(), "%a%b%d%H%M%S%Y"))
+          object <- mrkVecToMat(object, fcol, mfcol = mName)
+          fcol <- mName
+        }  
         pmarkers <- fData(object)[, fcol]
     }
     ## Setting features to be displayed
@@ -101,12 +87,19 @@ pRolocVis2 <- function(object, fcol,
     ## Remove fcol from fData(object)    
     fData(object) <- fData(object)[, -grep(fcol, fvarLabels(object))]
     ## There can't be more than 12 columns in the DT table
-    if ((nfd <- length(fvarLabels(object))) > 12) {
+    if (missing(fdataInd)) {
+      if ((nfd <- length(fvarLabels(object))) > 12) {
         message("There can't be more than 12 feature variables. Using 6 first and last.")
-        fData(object) <- fData(object)[, c(1:6, (nfd-5):nfd)]
+        object <- narrowFeatureData(object)
+      }
+    } else {
+      if(length(fdataInd) > 12)
+        stop("There can't be more than 12 feature variables, check fdataInd")
+      object <- selectFeatureData(object, fcol = fdataInd)
     }
+
     ## a hyphen in a pmarkers name breaks the app?!?
-    colnames(pmarkers) <- gsub("-", "", colnames(pmarkers))
+    #colnames(pmarkers) <- gsub(" -", "", colnames(pmarkers))
     ## Shorten markers names if too long
     cn <- sapply(colnames(pmarkers),
                  function(x) {
@@ -125,10 +118,24 @@ pRolocVis2 <- function(object, fcol,
     ## to display few and let the user choose
     pmsel <- TRUE
     if (!all & ncol(pmarkers) > 10)
-        pmsel <- 1:3
+        pmsel <- 1
 
     ## data to be displayed
-    pcas <- pRoloc::plot2D(object, fcol = NULL, plot = FALSE, ...)
+    if (missing(method)) {
+      pcas <- plot2D(object, fcol = NULL, plot = FALSE)
+    } else {
+      if (pRoloc:::.validpRolocVisMethod(method)) {
+        if (class(method) == "matrix") {
+          if (nrow(method) != nrow(object))
+            stop("nrow(method) matrix is not equal to nrow(object)")
+          pcas <- method
+        } else {
+          pcas <- plot2D(object, fcol = NULL, plot = FALSE, method = method)
+        }
+      } else {
+        stop("Invalid visualisation method")
+      }
+    }
     profs <- exprs(object)
 
     ## all feautres are displayed on start
@@ -138,7 +145,7 @@ pRolocVis2 <- function(object, fcol,
     ui <- fluidPage(
         sidebarLayout(
             sidebarPanel(
-                selectizeInput("markers", "Markers",
+                selectizeInput("markers", "Labels",
                                choices = colnames(pmarkers),
                                multiple = TRUE,
                                selected = colnames(pmarkers)[pmsel]),
@@ -150,7 +157,7 @@ pRolocVis2 <- function(object, fcol,
                 tabsetPanel(type = "tabs",
                             tabPanel("PCA",
                                      fluidRow(
-                                         column(10, 
+                                         column(9, 
                                                 plotOutput("pca",
                                                            height = fig.height,
                                                            width = fig.width,
@@ -163,7 +170,7 @@ pRolocVis2 <- function(object, fcol,
                                                                id = "pcaBrush",
                                                                resetOnNew = TRUE)),
                                                 offset = 0),
-                                         column(2, 
+                                         column(3, 
                                                 plotOutput("legend",
                                                            height = fig.height,
                                                            width = legend.width))
@@ -230,7 +237,15 @@ pRolocVis2 <- function(object, fcol,
             ## Protein profile
             output$profile <- renderPlot({
                 par(mar = c(5.1, 4.1, 1, 1))
-                matplot(t(profs[feats, ]),
+                ylim <- range(profs)
+                n <- nrow(profs)
+                m <- ncol(profs)
+                fracs <- sampleNames(object)
+                plot(0, ylim = ylim, xlim = c(1, m), ylab = "Intensity", 
+                     type = "n", xaxt = "n", xlab = "")
+                axis(1, at = 1:m, labels = fracs, las = 2)
+                title(xlab = "Fractions", line = 5.5)
+                matlines(t(profs[feats, ]),
                         col = getUnknowncol(),
                         lty = 1,
                         type = "l")
@@ -275,8 +290,8 @@ pRolocVis2 <- function(object, fcol,
                          })
             ## Output legend
             output$legend <- renderPlot({
-                par(mar = rep(1, 4))
-                par(oma = c(1, 0, 0, 0))
+                par(mar = c(0, 0, 0, 0))
+                par(oma = c(0, 0, 0, 0))
                 plot(0, type = "n",
                      xaxt = "n", yaxt = "n",
                      xlab = "", ylab = "",

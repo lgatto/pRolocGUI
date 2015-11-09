@@ -1,6 +1,15 @@
-CHANGES IN VERSION 1.3.3
+CHANGES IN VERSION 1.5.1
 ------------------------
- o
+ o New shiny apps
+ o New vignette
+ 
+CHANGES IN VERSION 1.5.0
+------------------------
+ o Bioc devel 3.3
+ 
+CHANGES IN VERSION 1.4.0
+------------------------
+ o Bioc release 3.2
  
 CHANGES IN VERSION 1.3.2
 ------------------------
