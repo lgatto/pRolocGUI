@@ -138,7 +138,7 @@ pRolocVis_classify <- function(object,
           us <<- orgQuants(object, fcol = fcol, scol = scol, mcol = mcol,
                            t = input$quantile, verbose = FALSE)
           pred <- getPredictions(object, fcol = fcol, mcol = mcol,
-                                 t = us, verbose = FALSE)
+                                 scol = scol, t = us, verbose = FALSE)
           pred <- fData(pred)[, paste0(fcol, ".pred")]
           sapply(orgs, function(z) pcas[which(pred == z), ], USE.NAMES = TRUE)
           ## update user.sliders with the values **RETURNED** 
@@ -146,7 +146,7 @@ pRolocVis_classify <- function(object,
         } else {
           for (ii in 1:nk) us[ii] <<- input[[k[ii]]]
           pred <- getPredictions(object, fcol = fcol, mcol = mcol,
-                                 t = us, verbose = FALSE)
+                                 scol = scol, t = us, verbose = FALSE)
           pred <- fData(pred)[, paste0(fcol, ".pred")]
           sapply(orgs, function(z) pcas[which(pred == z), ], USE.NAMES = TRUE)
         }
