@@ -14,7 +14,7 @@ narrowFeatureData <- function(object,
     if (ln <= n) return(object)
     i <- c(1:n1, (ln-n2+1):ln)
     if (any(fcol %in% fv) & !any(fcol %in% fv[i]))
-        i <- c(1:n1, (ln-n2+2):ln, grep(fcol, fv))
+        i <- c(1:n1, (ln-n2+2):ln, match(fcol, fv))
     fData(object) <- fData(object)[, i]
     if (validObject(object))
         return(object)
