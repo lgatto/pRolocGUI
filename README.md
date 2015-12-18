@@ -56,7 +56,8 @@ If you use these open-source software for your research, please cite:
 programming language. Before installing the software you need to
 download `R` and (optionally) `RStudio`.
 
-1) Download `R` version `>= 3.1.1` for your operating system from the [R website](http://www.r-project.org/) and install it.
+1) Download the latest `R` release for your operating system from the
+[R website](http://www.r-project.org/) and install it.
 
 2) Optional, but
 recommended. [Download](http://www.rstudio.com/products/rstudio/download/)
@@ -124,6 +125,13 @@ the interface is loaded or can be
 [consulted online](http://bioconductor.org/packages/devel/bioc/vignettes/pRolocGUI/inst/doc/pRolocGUI.html).
 
 ## More resources
+
+### Support
+
+* The Bioconductor [support forum](https://support.bioconductor.org/)
+* Open a `pRolocGUI` GitHub
+  [issue](https://github.com/ComputationalProteomicsUnit/pRolocGUI/issues)
+  (requires a free GitHub account).
 
 ### Videos
 
