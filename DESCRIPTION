@@ -1,6 +1,6 @@
 Package: pRolocGUI
 Title: Interactive visualisation of spatial proteomics data
-Version: 1.5.0
+Version: 1.5.1
 Author: Thomas Naake and Laurent Gatto, with contributions from
 	Lisa M Breckels
 Maintainer: Laurent Gatto <lg390@cam.ac.uk>, 
@@ -11,7 +11,7 @@ Description: The package pRolocGUI comprises functions to
 Depends: R (>= 3.1.0), pRoloc (>= 1.5.12), MSnbase (>= 1.13.11),
 	 methods
 Imports: pRolocdata, shiny (>= 0.9.1), tools (>= 3.1.0), scales, DT
-Suggests: RUnit, BiocGenerics, knitr, knitrBootstrap, bibtex,
+Suggests: RUnit, BiocGenerics, knitr, knitrBootstrap, rmarkdown, bibtex,
 	  knitcitations (>= 1.0-1)
 License: GPL-2
 URL: http://ComputationalProteomicsUnit.github.io/pRolocGUI/

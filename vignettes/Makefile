@@ -1,6 +1,6 @@
 
 all:
-	"$(R_HOME)/bin/Rscript" -e "library(methods);library(knitrBootstrap); knit_bootstrap('pRolocGUI.Rmd', show_code=TRUE, boot_style='Flatly')"
+	"$(R_HOME)/bin/Rscript" -e "library(methods);library(knitrBootstrap); library(rmarkdown);render('pRolocGUI.Rmd', bootstrap_document(theme='Flatly'))"
 
 clean:
 	rm -f *.md
