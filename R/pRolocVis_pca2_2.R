@@ -1,5 +1,8 @@
 ## DOUBLE CLICKING TO HIGHLIGHT on/off on PCA plot and in table works but NOT
-## in zoomed mode
+## in zoomed mode, have added a zoom/reset button
+
+## I think the key here is to work with names and track names of proteins
+## clicked and unlciked, not the indices, as indices change when we zoom
 
 ## TODO:
 ## - profiles selection and highlighting
@@ -125,9 +128,11 @@ plotpca <- function(object, fcol,
   profs <- exprs(object)
   
   ## all feautres are displayed on start
-  feats <- 1:nrow(object)
+  feats <- toSel <- 1:nrow(object)
   
   idxTable <- numeric()
+  namIdxTable <- character()
+  #dynObject <- object
   
   ## Build shiny app
   ui <- fluidPage(
@@ -141,6 +146,7 @@ plotpca <- function(object, fcol,
                     min = 0,  max = 1, value = 0.5),
         checkboxInput("checkbox", label = "Show labels", value = TRUE),
         actionButton("resetButton", "Zoom/reset plot"),
+        # actionButton("clearSelection", "Clear protein selection"),
         width = 2),
       mainPanel(
         tabsetPanel(type = "tabs",
@@ -201,30 +207,29 @@ plotpca <- function(object, fcol,
       
       ## PCA plot
       output$pca <- renderPlot({
-        idxTable <<- input$fDataTable_rows_selected
+        #idxTable <<- input$fDataTable_rows_selected
         par(mar = c(4, 4, 0, 0))
         par(oma = c(1, 0, 0, 0))
         # plot(pcas, 
         plot2D(object,
-               col = getUnknowncol(),
+               col = rep(getUnknowncol(), nrow(object)),
                pch = 21, cex = 1,
                xlim = ranges$x,
                ylim = ranges$y)
-        usr <<- par("usr")
+        usr <<- par("usr")   # get the user coordinates of the plotting region
         for (i in 1:length(input$markers)) 
           points(pcaMrkSel()[[i]], pch = 16, cex = 1.4, col = myCols()[i])
         
         ## highlight point on plot by selecting item in table
-        idxTable <<- input$fDataTable_rows_selected
+        idxTable <<- feats[input$fDataTable_rows_selected]
+        namIdxTable <<- names(idxTable)
         if (length(idxTable)) {
-          selfoi <- featureNames(object)[idxTable]
           if (input$checkbox) {
-            # posLabs <- ifelse(pcas[selfoi, 1] > 0, yes = 2, no = 4)
             pos = 3
-            highlightOnPlot(object, selfoi, cex = 1.3)
-            highlightOnPlot(object, selfoi, labels = TRUE, pos = 3)
+            highlightOnPlot(object, namIdxTable, cex = 1.3)
+            highlightOnPlot(object, namIdxTable, labels = TRUE, pos = 3)
           } else {
-            highlightOnPlot(object, selfoi, pos = 3, cex = 1.3)
+            highlightOnPlot(object, namIdxTable, pos = 3, cex = 1.3)
           }
         }
       })
@@ -244,7 +249,7 @@ plotpca <- function(object, fcol,
                  col = getUnknowncol(),
                  lty = 1,
                  type = "l")
-        idxTable <- feats[input$fDataTable_rows_selected]
+        idxTable <<- feats[input$fDataTable_rows_selected]
         if (length(idxTable))
           matlines(t(profs[idxTable, , drop = FALSE]),
                    col = "black",
@@ -252,34 +257,46 @@ plotpca <- function(object, fcol,
                    lwd = 2)
       })             
       
+      
       ## Feature data table
       output$fDataTable <- DT::renderDataTable({
         if (is.null(input$pcaBrush)) {
-          i <- try(pcas[, 1] >= usr[1] & pcas[, 1] <= usr[2])
-          j <- try(pcas[, 2] >= usr[3] & pcas[, 2] <= usr[4])
+          i <<- try(pcas[, 1] >= usr[1] & pcas[, 1] <= usr[2])
+          j <<- try(pcas[, 2] >= usr[3] & pcas[, 2] <= usr[4])
         } else {
-          i <- pcas[, 1] >= input$pcaBrush$xmin & pcas[, 1] <= input$pcaBrush$xmax
-          j <- pcas[, 2] >= input$pcaBrush$ymin & pcas[, 2] <= input$pcaBrush$ymax
+          i <<- pcas[, 1] >= input$pcaBrush$xmin & pcas[, 1] <= input$pcaBrush$xmax
+          j <<- pcas[, 2] >= input$pcaBrush$ymin & pcas[, 2] <= input$pcaBrush$ymax
         }
         feats <<- which(i & j)
-        
-        if (!is.null(input$dblClick)) {         
+
+        if (!is.null(input$dblClick)) {
           dist <- apply(pcas, 1, function(z) sqrt((input$dblClick$x - z[1])^2 
                                                   + (input$dblClick$y - z[2])^2))
           idxPlot <- which(dist == min(dist))
-          if (idxPlot %in% idxTable)                     ## 1--is it already clicked?
-            idxTable <<- setdiff(idxTable, idxPlot)           ## Yes, remove it from table
-          else                                           ## 2--new click?
-            idxTable <<- c(idxTable, idxPlot)                 ## Yes, add it to table
+          if (idxPlot %in% idxTable) {                              ## 1--is it already clicked?
+            setsel <- setdiff(names(idxTable), names(idxPlot))      ## Yes, remove it from table
+            idxTable <<- idxTable[setsel]
+          } else {                                           ## 2--new click?
+            idxTable <<- c(idxTable, idxPlot)                ## Yes, highlight it to table
+          }
+          
         }
-        idxTable <<- as.numeric(idxTable)
+        print(idxTable)
+        namIdxTable <<- names(idxTable)
+        toSel <- match(namIdxTable, featureNames(object)[i & j])
+#         if (input$resetButton)
+#           updatedData <- fData(object)
+#         else
+#           updatedData <- 
+          
+
         DT::datatable(data = fData(object)[i & j, ], 
                       rownames = TRUE,
-                      selection = list(mode = 'multiple', selected = idxTable))
+                      selection = list(mode = 'multiple', selected = toSel))
       })
       
-      ## When a double-click happens, check if there'idxTable a brush on the plot.
-      ## If so, zoom to the brush bounds; if not, reset the zoom.
+      ## When a the reset button is clicked check to see is there is a brush on
+      ## the plot, if yes zoom, if not reset the plot.
       observeEvent(input$resetButton, {
         brush <- input$pcaBrush
         if (!is.null(brush)) {
@@ -288,28 +305,15 @@ plotpca <- function(object, fcol,
         } else {
           ranges$x <- NULL
           ranges$y <- NULL
-        }                                         
+        }
       })
       
-      ## When an area is clicked on the pca plot, a protein is then
-      ## highlighted with label (see output$pca), now select row in
-      ## datatable to highlight
+#       observeEvent(input$clearSelection, {
+#         idxTable <<- idxPlot <<- numeric()
+#         namIdxTable <<- character()
+# 
+#       })
       
-      #             
-      #             observeEvent(input$pcaClick, {
-      #               if (!is.null(input$pcaClick$x)) {
-      #               highlightRow <- 
-      #               select
-      #               
-      #               
-      #               
-      #                 dist <- apply(pcas, 1, function(z) 
-      #                   sqrt((input$pcaClick$x - z[1])^2 + (input$pcaClick$y - z[2])^2))
-      #                 idxTable <- which(dist == min(dist))
-      #               
-      #               
-      #               
-      #            })
       
       ## Output legend
       output$legend <- renderPlot({
@@ -327,13 +331,6 @@ plotpca <- function(object, fcol,
                cex = legend.cex)
       })
       
-      
-      
-      #             ## Print out protein name
-      #             output$pcaHoverInfo <- {
-      #               if (!is.null(.minHelper()))
-      #                 rownames(pcas)[.minHelper()]
-      #             }
     }
   app <- list(ui = ui, server = server)
   runApp(app)
