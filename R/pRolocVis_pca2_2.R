@@ -1,11 +1,8 @@
-## DOUBLE CLICKING TO HIGHLIGHT on/off on PCA plot and in table works but NOT
-## in zoomed mode, have added a zoom/reset button
-
-## I think the key here is to work with names and track names of proteins
-## clicked and unlciked, not the indices, as indices change when we zoom
+## DOUBLE CLICKING TO HIGHLIGHT on/off on PCA plot, or selection via table
 
 ## TODO:
-## - profiles selection and highlighting
+## - fix resetting of table after zooming
+## - brushing does not work when a point is selected, worked in previous version
 
 ## Shiny: spinning loading wheel on top of plot while plot is recalculating
 ## https://gist.github.com/daattali/edd7c20cd09f484b7f32
@@ -127,12 +124,12 @@ plotpca <- function(object, fcol,
   pcas <- plot2D(object, fcol = NULL, plot = FALSE)
   profs <- exprs(object)
   
+  
   ## all feautres are displayed on start
   feats <- toSel <- 1:nrow(object)
-  
   idxTable <- numeric()
   namIdxTable <- character()
-  #dynObject <- object
+
   
   ## Build shiny app
   ui <- fluidPage(
@@ -146,7 +143,7 @@ plotpca <- function(object, fcol,
                     min = 0,  max = 1, value = 0.5),
         checkboxInput("checkbox", label = "Show labels", value = TRUE),
         actionButton("resetButton", "Zoom/reset plot"),
-        # actionButton("clearSelection", "Clear protein selection"),
+        #actionButton("clearSelection", "Clear protein selection"),
         width = 2),
       mainPanel(
         tabsetPanel(type = "tabs",
@@ -156,7 +153,6 @@ plotpca <- function(object, fcol,
                                       plotOutput("pca",
                                                  height = fig.height,
                                                  width = fig.width,
-                                                 #click = "pcaClick",
                                                  dblclick = "dblClick",
                                                  brush = brushOpts(
                                                    id = "pcaBrush",
@@ -184,9 +180,13 @@ plotpca <- function(object, fcol,
       )
     ))
   
+  
+  
   server <-
     function(input, output, session) {
       ranges <- reactiveValues(x = NULL, y = NULL)
+      brushBounds <- reactiveValues(i =  try(pcas[, 1] >= usr[1] & pcas[, 1] <= usr[2]),
+                                    j = try(pcas[, 2] >= usr[3] & pcas[, 2] <= usr[4]))
       
       ## Get coords for proteins according to selectized marker class(es)
       pcaMrkSel <- reactive({
@@ -204,6 +204,7 @@ plotpca <- function(object, fcol,
                       input$trans)[sapply(input$markers, function(z) 
                         which(colnames(pmarkers) == z))]
       })
+      
       
       ## PCA plot
       output$pca <- renderPlot({
@@ -224,15 +225,12 @@ plotpca <- function(object, fcol,
         idxTable <<- feats[input$fDataTable_rows_selected]
         namIdxTable <<- names(idxTable)
         if (length(idxTable)) {
-          if (input$checkbox) {
-            pos = 3
-            highlightOnPlot(object, namIdxTable, cex = 1.3)
+          highlightOnPlot(object, namIdxTable, cex = 1.3)
+          if (input$checkbox) 
             highlightOnPlot(object, namIdxTable, labels = TRUE, pos = 3)
-          } else {
-            highlightOnPlot(object, namIdxTable, pos = 3, cex = 1.3)
-          }
         }
       })
+      
       
       ## Protein profile
       output$profile <- renderPlot({
@@ -260,14 +258,14 @@ plotpca <- function(object, fcol,
       
       ## Feature data table
       output$fDataTable <- DT::renderDataTable({
-        if (is.null(input$pcaBrush)) {
-          i <<- try(pcas[, 1] >= usr[1] & pcas[, 1] <= usr[2])
-          j <<- try(pcas[, 2] >= usr[3] & pcas[, 2] <= usr[4])
-        } else {
-          i <<- pcas[, 1] >= input$pcaBrush$xmin & pcas[, 1] <= input$pcaBrush$xmax
-          j <<- pcas[, 2] >= input$pcaBrush$ymin & pcas[, 2] <= input$pcaBrush$ymax
-        }
-        feats <<- which(i & j)
+#         if (is.null(input$pcaBrush)) {
+#           i <- try(pcas[, 1] >= usr[1] & pcas[, 1] <= usr[2])
+#           j <- try(pcas[, 2] >= usr[3] & pcas[, 2] <= usr[4])
+#         } else {
+#           i <- pcas[, 1] >= input$pcaBrush$xmin & pcas[, 1] <= input$pcaBrush$xmax
+#           j <- pcas[, 2] >= input$pcaBrush$ymin & pcas[, 2] <= input$pcaBrush$ymax
+#         }
+        feats <<- which(brushBounds$i & brushBounds$j)
 
         if (!is.null(input$dblClick)) {
           dist <- apply(pcas, 1, function(z) sqrt((input$dblClick$x - z[1])^2 
@@ -279,21 +277,17 @@ plotpca <- function(object, fcol,
           } else {                                           ## 2--new click?
             idxTable <<- c(idxTable, idxPlot)                ## Yes, highlight it to table
           }
-          
+#           print(paste("idxPlot =", idxPlot))
+#           print(paste("idxTable =", idxTable))
         }
-        print(idxTable)
+#         print(idxTable)
         namIdxTable <<- names(idxTable)
-        toSel <- match(namIdxTable, featureNames(object)[i & j])
-#         if (input$resetButton)
-#           updatedData <- fData(object)
-#         else
-#           updatedData <- 
-          
-
-        DT::datatable(data = fData(object)[i & j, ], 
+        toSel <- match(namIdxTable, featureNames(object)[brushBounds$i & brushBounds$j])
+        DT::datatable(data = fData(object)[brushBounds$i & brushBounds$j, ], 
                       rownames = TRUE,
                       selection = list(mode = 'multiple', selected = toSel))
       })
+      
       
       ## When a the reset button is clicked check to see is there is a brush on
       ## the plot, if yes zoom, if not reset the plot.
@@ -302,19 +296,23 @@ plotpca <- function(object, fcol,
         if (!is.null(brush)) {
           ranges$x <- c(brush$xmin, brush$xmax)
           ranges$y <- c(brush$ymin, brush$ymax)
+          brushBounds$i <- pcas[, 1] >= brush$xmin & pcas[, 1] <= brush$xmax
+          brushBounds$j <- pcas[, 2] >= brush$ymin & pcas[, 2] <= brush$ymax
         } else {
           ranges$x <- NULL
           ranges$y <- NULL
+          usr <<- par("usr")  
+          brushBounds$i <- try(pcas[, 1] >= usr[1] & pcas[, 1] <= usr[2])
+          brushBounds$j <- try(pcas[, 2] >= usr[3] & pcas[, 2] <= usr[4])
         }
       })
       
 #       observeEvent(input$clearSelection, {
 #         idxTable <<- idxPlot <<- numeric()
 #         namIdxTable <<- character()
-# 
+#         toSel <- NULL
 #       })
-      
-      
+
       ## Output legend
       output$legend <- renderPlot({
         par(mar = c(0, 0, 0, 0))
