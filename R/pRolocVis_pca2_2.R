@@ -185,8 +185,8 @@ plotpca <- function(object, fcol,
   server <-
     function(input, output, session) {
       ranges <- reactiveValues(x = NULL, y = NULL)
-      brushBounds <- reactiveValues(i =  try(pcas[, 1] >= usr[1] & pcas[, 1] <= usr[2]),
-                                    j = try(pcas[, 2] >= usr[3] & pcas[, 2] <= usr[4]))
+      brushBounds <- reactiveValues(i =  try(pcas[, 1] >= min(pcas[, 1]) & pcas[, 1] <= max(pcas[, 1])),
+                                    j = try(pcas[, 2] >= min(pcas[, 2]) & pcas[, 2] <= max(pcas[, 2])))
       
       ## Get coords for proteins according to selectized marker class(es)
       pcaMrkSel <- reactive({
@@ -301,9 +301,9 @@ plotpca <- function(object, fcol,
         } else {
           ranges$x <- NULL
           ranges$y <- NULL
-          usr <<- par("usr")  
-          brushBounds$i <- try(pcas[, 1] >= usr[1] & pcas[, 1] <= usr[2])
-          brushBounds$j <- try(pcas[, 2] >= usr[3] & pcas[, 2] <= usr[4])
+          # usr <- par("usr")  
+          brushBounds$i <- try(pcas[, 1] >= min(pcas[, 1]) & pcas[, 1] <= max(pcas[, 1]))
+          brushBounds$j <- try(pcas[, 2] >= min(pcas[, 2]) & pcas[, 2] <= max(pcas[, 2]))
         }
       })
       
