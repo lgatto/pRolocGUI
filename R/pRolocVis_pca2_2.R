@@ -143,7 +143,7 @@ plotpca <- function(object, fcol,
                     min = 0,  max = 1, value = 0.5),
         checkboxInput("checkbox", label = "Show labels", value = TRUE),
         actionButton("resetButton", "Zoom/reset plot"),
-        #actionButton("clearSelection", "Clear protein selection"),
+        actionButton("clear", "Clear protein selection"),
         width = 2),
       mainPanel(
         tabsetPanel(type = "tabs",
@@ -187,7 +187,7 @@ plotpca <- function(object, fcol,
       ranges <- reactiveValues(x = NULL, y = NULL)
       brushBounds <- reactiveValues(i =  try(pcas[, 1] >= min(pcas[, 1]) & pcas[, 1] <= max(pcas[, 1])),
                                     j = try(pcas[, 2] >= min(pcas[, 2]) & pcas[, 2] <= max(pcas[, 2])))
-      
+      resetLabels <- reactiveValues(logical = FALSE)
       ## Get coords for proteins according to selectized marker class(es)
       pcaMrkSel <- reactive({
         lapply(input$markers,
@@ -208,27 +208,30 @@ plotpca <- function(object, fcol,
       
       ## PCA plot
       output$pca <- renderPlot({
-        #idxTable <<- input$fDataTable_rows_selected
         par(mar = c(4, 4, 0, 0))
         par(oma = c(1, 0, 0, 0))
         # plot(pcas, 
+        
         plot2D(object,
                col = rep(getUnknowncol(), nrow(object)),
                pch = 21, cex = 1,
                xlim = ranges$x,
                ylim = ranges$y)
-        usr <<- par("usr")   # get the user coordinates of the plotting region
         for (i in 1:length(input$markers)) 
           points(pcaMrkSel()[[i]], pch = 16, cex = 1.4, col = myCols()[i])
         
         ## highlight point on plot by selecting item in table
         idxTable <<- feats[input$fDataTable_rows_selected]
+        
+        if (resetLabels$logical) idxTable <<- numeric()  ## If TRUE labels are cleared
+        
         namIdxTable <<- names(idxTable)
         if (length(idxTable)) {
           highlightOnPlot(object, namIdxTable, cex = 1.3)
           if (input$checkbox) 
             highlightOnPlot(object, namIdxTable, labels = TRUE, pos = 3)
         }
+        resetLabels$logical <- FALSE
       })
       
       
@@ -258,13 +261,7 @@ plotpca <- function(object, fcol,
       
       ## Feature data table
       output$fDataTable <- DT::renderDataTable({
-#         if (is.null(input$pcaBrush)) {
-#           i <- try(pcas[, 1] >= usr[1] & pcas[, 1] <= usr[2])
-#           j <- try(pcas[, 2] >= usr[3] & pcas[, 2] <= usr[4])
-#         } else {
-#           i <- pcas[, 1] >= input$pcaBrush$xmin & pcas[, 1] <= input$pcaBrush$xmax
-#           j <- pcas[, 2] >= input$pcaBrush$ymin & pcas[, 2] <= input$pcaBrush$ymax
-#         }
+        
         feats <<- which(brushBounds$i & brushBounds$j)
 
         if (!is.null(input$dblClick)) {
@@ -277,12 +274,12 @@ plotpca <- function(object, fcol,
           } else {                                           ## 2--new click?
             idxTable <<- c(idxTable, idxPlot)                ## Yes, highlight it to table
           }
-#           print(paste("idxPlot =", idxPlot))
-#           print(paste("idxTable =", idxTable))
         }
-#         print(idxTable)
+
         namIdxTable <<- names(idxTable)
         toSel <- match(namIdxTable, featureNames(object)[brushBounds$i & brushBounds$j])
+        if (resetLabels$logical) toSel <- numeric()
+
         DT::datatable(data = fData(object)[brushBounds$i & brushBounds$j, ], 
                       rownames = TRUE,
                       selection = list(mode = 'multiple', selected = toSel))
@@ -301,17 +298,16 @@ plotpca <- function(object, fcol,
         } else {
           ranges$x <- NULL
           ranges$y <- NULL
-          # usr <- par("usr")  
           brushBounds$i <- try(pcas[, 1] >= min(pcas[, 1]) & pcas[, 1] <= max(pcas[, 1]))
           brushBounds$j <- try(pcas[, 2] >= min(pcas[, 2]) & pcas[, 2] <= max(pcas[, 2]))
         }
       })
       
-#       observeEvent(input$clearSelection, {
-#         idxTable <<- idxPlot <<- numeric()
-#         namIdxTable <<- character()
-#         toSel <- NULL
-#       })
+      ## When clear selection is pressed update clear idxTable above and reset selection 
+      observeEvent(input$clear, {
+         resetLabels$logical <- TRUE
+      })
+  
 
       ## Output legend
       output$legend <- renderPlot({
