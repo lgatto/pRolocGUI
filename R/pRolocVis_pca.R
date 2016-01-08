@@ -1,16 +1,10 @@
 ## DOUBLE CLICKING TO HIGHLIGHT on/off on PCA plot, or selection via table
 
-## TODO:
-## - fix resetting of table after zooming
-## - brushing does not work when a point is selected, worked in previous version
-
 ## Shiny: spinning loading wheel on top of plot while plot is recalculating
 ## https://gist.github.com/daattali/edd7c20cd09f484b7f32
 
 ## Very slow with bigger data (fusion data), server side table flaky
 ## and warnings about size
-
-## Possibly automate mrkVecToMat?
 
 ## References
 ## http://shiny.rstudio.com/articles/plot-interaction-advanced.html
@@ -23,7 +17,7 @@
 ## http://shiny.rstudio.com/articles/plot-interaction-advanced.html
 
 ##' @rdname pRolocVis-apps
-##' @param foi A \code{\link{FeaturesOfInterest}} or a
+##' @param foi A \code{\link{FeaturesOfInterest}} object.
 ##' @param fig.height Height of the figure. Default is \code{"600px"}.
 ##' @param fig.width Width of the figure. Default is \code{"100px"}.
 ##' @param legend.width Width of the legend. Default is \code{"200\%"}.
@@ -38,8 +32,10 @@
 ##' the feature variables one wishes to retains for the data table. 
 ##' If not specified, by default \code{markers} will be kept along with 
 ##' the first 5 and last 6 feature variables.
+##' @return For \code{pca} a \code{character} of protein names, of the 
+##' proteins selected upon application closure.
 pRolocVis_pca <- function(object, 
-                          fcol = "markers",
+                          fcol,
                           foi,
                           fig.height = "600px",
                           fig.width = "100%",
@@ -48,6 +44,9 @@ pRolocVis_pca <- function(object,
                           nchar = 40,
                           all = TRUE,
                           fdataInd) {
+  
+  ## Return featureNames of proteins selected
+  on.exit(return(names(idxDT)))
   
   if (!inherits(object, "MSnSet"))
     stop("The input must be of class MSnSet")
@@ -128,8 +127,8 @@ pRolocVis_pca <- function(object,
   
   ## all feautres are displayed on start
   feats <- toSel <- 1:nrow(object)
-  idxTable <- numeric()
-  namIdxTable <- character()
+  idxDT <- numeric()
+  namesIdxDT <- character()
 
   
   ## Build shiny app
@@ -143,8 +142,10 @@ pRolocVis_pca <- function(object,
         sliderInput("trans", "Transparancy",
                     min = 0,  max = 1, value = 0.5),
         checkboxInput("checkbox", label = "Show labels", value = TRUE),
+        br(),
         actionButton("resetButton", "Zoom/reset plot"),
-        actionButton("clear", "Clear protein selection"),
+        br(),
+        actionButton("clear", "Clear selection"),
         width = 2),
       mainPanel(
         tabsetPanel(type = "tabs",
@@ -222,15 +223,15 @@ pRolocVis_pca <- function(object,
           points(pcaMrkSel()[[i]], pch = 16, cex = 1.4, col = myCols()[i])
         
         ## highlight point on plot by selecting item in table
-        idxTable <<- feats[input$fDataTable_rows_selected]
+        idxDT <<- feats[input$fDataTable_rows_selected]
         
-        if (resetLabels$logical) idxTable <<- numeric()  ## If TRUE labels are cleared
+        if (resetLabels$logical) idxDT <<- numeric()  ## If TRUE labels are cleared
         
-        namIdxTable <<- names(idxTable)
-        if (length(idxTable)) {
-          highlightOnPlot(object, namIdxTable, cex = 1.3)
+        namesIdxDT <<- names(idxDT)
+        if (length(idxDT)) {
+          highlightOnPlot(object, namesIdxDT, cex = 1.3)
           if (input$checkbox) 
-            highlightOnPlot(object, namIdxTable, labels = TRUE, pos = 3)
+            highlightOnPlot(object, namesIdxDT, labels = TRUE, pos = 3)
         }
         resetLabels$logical <- FALSE
       })
@@ -252,9 +253,9 @@ pRolocVis_pca <- function(object,
                  col = getUnknowncol(),
                  lty = 1,
                  type = "l")
-        idxTable <<- feats[input$fDataTable_rows_selected]
-        if (length(idxTable))
-          matlines(t(profs[idxTable, , drop = FALSE]),
+        idxDT <<- feats[input$fDataTable_rows_selected]
+        if (length(idxDT))
+          matlines(t(profs[idxDT, , drop = FALSE]),
                    col = "black",
                    lty = 1,
                    lwd = 2)
@@ -270,16 +271,16 @@ pRolocVis_pca <- function(object,
           dist <- apply(pcas, 1, function(z) sqrt((input$dblClick$x - z[1])^2 
                                                   + (input$dblClick$y - z[2])^2))
           idxPlot <- which(dist == min(dist))
-          if (idxPlot %in% idxTable) {                              ## 1--is it already clicked?
-            setsel <- setdiff(names(idxTable), names(idxPlot))      ## Yes, remove it from table
-            idxTable <<- idxTable[setsel]
+          if (idxPlot %in% idxDT) {                              ## 1--is it already clicked?
+            setsel <- setdiff(names(idxDT), names(idxPlot))      ## Yes, remove it from table
+            idxDT <<- idxDT[setsel]
           } else {                                           ## 2--new click?
-            idxTable <<- c(idxTable, idxPlot)                ## Yes, highlight it to table
+            idxDT <<- c(idxDT, idxPlot)                ## Yes, highlight it to table
           }
         }
 
-        namIdxTable <<- names(idxTable)
-        toSel <- match(namIdxTable, featureNames(object)[brushBounds$i & brushBounds$j])
+        namesIdxDT <<- names(idxDT)
+        toSel <- match(namesIdxDT, featureNames(object)[brushBounds$i & brushBounds$j])
         if (resetLabels$logical) toSel <- numeric()
 
         DT::datatable(data = fData(object)[brushBounds$i & brushBounds$j, ], 
@@ -305,7 +306,7 @@ pRolocVis_pca <- function(object,
         }
       })
       
-      ## When clear selection is pressed update clear idxTable above and reset selection 
+      ## When clear selection is pressed update clear idxDT above and reset selection 
       observeEvent(input$clear, {
          resetLabels$logical <- TRUE
       })
