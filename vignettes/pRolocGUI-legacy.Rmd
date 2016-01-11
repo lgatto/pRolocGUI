@@ -667,8 +667,3 @@ align="center"> Fig. 16: Query for proteins in `pRolocVis_legacy` which contain 
 string "AC". This narrows the features in the drop-down list accordingly
 (`andy2011`) </p>
 
-
-
-```{r, results="asis", message=FALSE, echo=FALSE}
-bibliography()
-```
