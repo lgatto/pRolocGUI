@@ -1,29 +1,9 @@
 
-## The functions allow to explore and analyse interactively spatial proteomics 
-## data, especially LOPIT and PCP experiments. Both functions offer high 
-## interactivity for exploring Principle Component Analysis (PCA) plots, 
-## protein profile plots and quantatative and qualitative meta-data. 
-## Additionally, \code{pRolocVis} and \code{pRolocComp} support import/export 
-## abilities for past and new search results using the 
-## \code{FeaturesOfInterest}/\code{FoICollection} infrastructure defined in the 
-## \code{MSnbase} package. 
-##' 
-## \code{pRolocVis} enables to analyse one \code{MSnSet} at a time, while
-## \code{pRolocComp} analyses and compares two \code{MSnSet}s. 
-## \code{pRolocComp} is especially meant for analyses of data which looks 
-## at the change of proteins in protein localisation.
-## 
-## To load the vignette for the functions \code{pRolocVis} and \code{pRolocGUI}
-## enter \code{vignette("pRolocGUI")} in the console. The vignette will give more 
-## information on how to use the shiny applications.
-
-##' @rdname pRolocVis-apps
 ##' @return For \code{legacy} an object \code{pRolocGUI_SearchResults} of class
 ##' \code{FoICollection} when the object existed already or when a new
 ##' \code{FoICollection} was created during a session.
-
-pRolocVis_legacy <- function(object, method = "PCA") { 
-  
+pRolocVis_legacy <- function(object, method = "PCA") {
+    .Deprecated(msg = "The 'pRolocVis' legacy function is deprecated. Please use the new 'PCA' app.")
     ## global
     if (is.list(object)) {
         if (!listOf(object, "MSnSet"))
