@@ -24,10 +24,6 @@
 ##' between two conditions, or two different experiments, replicates etc. 
 ##' 
 ##' @title Interactive visualisation of spatial proteomics data 
-##' @aliases pRolocVis_pca
-##' @aliases pRolocVis_profiles
-##' @aliases pRolocVis_classify
-##' @aliases pRolocVis_compare
 ##' @rdname pRolocVis-apps
 ##' @param object An instance of class \code{MSnSet}, or a list of \code{MSnSet}
 ##' objects of length 2 if using "compare" application.

@@ -1,5 +1,4 @@
 ##' @rdname pRolocVis-apps
-
 pRolocVis_profiles <- function(object, fcol,
                                legend.cex = 1,
                                all = FALSE,

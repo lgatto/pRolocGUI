@@ -1,5 +1,3 @@
-##' @rdname pRolocVis-apps
-
 pRolocVis_compare <- function(object, method = "PCA") {
     if (!listOf(object, "MSnSet"))
         stop("The input must be list of MSnSet instances.")
