@@ -35,8 +35,8 @@ objects of length 2 if using "compare" application.}
 to the prediction column if using "classify", or the markers (labelled data) 
 to be plotted otherwise.}
 
-\item{legend.cex}{Character expansion for the vignette
-labels. Default is 1.}
+\item{legend.cex}{Point character expansion for the the legend.
+Default is 1.}
 
 \item{...}{Additional parameters.}
 
@@ -79,9 +79,6 @@ If \code{FALSE} only first cluster in the list is displayed.
 the feature variables one wishes to retains for the data table. 
 If not specified, by default \code{markers} will be kept along with 
 the first 5 and last 6 feature variables.}
-
-\item{legend.cex}{Point character expansion for the the legend.
-Default is 1.}
 }
 \value{
 For \code{classify} a \code{numeric} vector of thresholds, 

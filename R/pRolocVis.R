@@ -36,8 +36,8 @@
 ##' @param fcol The feature meta-data label (fData column name). This will correspond
 ##' to the prediction column if using "classify", or the markers (labelled data) 
 ##' to be plotted otherwise.
-##' @param legend.cex Character expansion for the vignette
-##' labels. Default is 1.
+##' @param legend.cex Point character expansion for the the legend.
+##' Default is 1.
 ##' @param method Either a \code{character} of a \code{matrix}. When
 ##' the former, one of \code{"PCA"} (default), \code{"MDS"},
 ##' \code{"kpca"} or \code{"t-SNE"}, defining if dimensionality

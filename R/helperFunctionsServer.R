@@ -329,7 +329,7 @@
         if (!is.null(PCAn1) && !is.null(PCAn2)) {
             ans <- plot2D(obj, fcol=NULL,
                           dims=c(as.numeric(PCAn1), as.numeric(PCAn2)), 
-                          mirrorX = mX, mirrorY = mY, plot=FALSE,
+                          plot=FALSE,
                           method = method)
             if (mX) ans[, 1] <- -ans[, 1]
             if (mY) ans[, 2] <- -ans[, 2]

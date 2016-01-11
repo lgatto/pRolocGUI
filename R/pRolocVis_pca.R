@@ -21,8 +21,6 @@
 ##' @param fig.height Height of the figure. Default is \code{"600px"}.
 ##' @param fig.width Width of the figure. Default is \code{"100px"}.
 ##' @param legend.width Width of the legend. Default is \code{"200\%"}.
-##' @param legend.cex Point character expansion for the the legend.
-##' Default is 1.
 ##' @param nchar Maximum number of characters of the markers class
 ##' names, before their names are truncated. Default is 10.
 ##' @param all If \code{TRUE} all clusters are displayed on startup.
