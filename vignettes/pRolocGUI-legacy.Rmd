@@ -10,48 +10,40 @@ vignette: >
   %\VignettePackage{pRolocGUI}
 ---
 
-```{r, env, eval=TRUE, echo=FALSE, warning=FALSE, message=FALSE}
-library(knitcitations) 
-library(BiocStyle)
-cite_options(hyperlink = FALSE, style = "markdown")
-library(bibtex)
-extbib <- read.bib("pRolocGUI-legacy.bib")
-```
 
 # Foreword
 
-This vignette describes the functionality of the 
-`r Biocpkg("pRolocGUI")` legacy applications: `pRolocVis_legacy` 
-and `pRolocVis_compare`. A suite of newer applications 
-are now available in the `r Biocpkg("pRolocGUI")` package, please
-see `vignette("pRolocGUI")` for details.
+This vignette describes the functionality of the `r
+Biocpkg("pRolocGUI")` legacy applications: `pRolocVis_legacy` and
+`pRolocVis_compare`. A suite of newer applications are now available
+in the `r Biocpkg("pRolocGUI")` package, please see
+`vignette("pRolocGUI")` for details.
 
-Key features of `pRolocVis_legacy` and `pRolocVis_compare` 
-are the identification of 
-features in plots, a 'reverse search' based on querying meta-data which 
-allows for highlighting the features on plots and an import/export 
-functionality by using the `FeaturesOfInterest`/ `FoICollection` infrastructure 
-distributed by the `MSnbase` package. Additionally, `pRolocVis_compare` allows for 
-comparison of two comparable `MSnSet` instances, e.g. this might be of great 
-help for analyses of changes in protein localisation in different `MSnSet`s.
+Key features of `pRolocVis_legacy` and `pRolocVis_compare` are the
+identification of features in plots, a 'reverse search' based on
+querying meta-data which allows for highlighting the features on plots
+and an import/export functionality by using the `FeaturesOfInterest`/
+`FoICollection` infrastructure distributed by the `MSnbase`
+package. Additionally, `pRolocVis_compare` allows for comparison of
+two comparable `MSnSet` instances, e.g. this might be of great help
+for analyses of changes in protein localisation in different
+`MSnSet`s.
 
 We recommend some familiarity with the `MSnSet` class (see `?MSnSet`
-for details) and the `pRoloc` vignette (available with 
+for details) and the `pRoloc` vignette (available with
 `vignette("pRoloc-tutorial")`).
 
 # Introduction
 
-The function `pRolocVis_legacy` needs an object of class `MSnSet` or 
-a list of `MSnSet` objects as an argument, while `pRolocVis_compare` needs a list 
-containing two instances of class `MSnSet`. 
-To prepare the environment to run a `pRolocVis_legacy`/`pRolocVis_compare` session, 
-the `pRolocGUI` package and for demonstration purposes four example `MSnSet`s 
-are loaded to the environment. The example data sets are available from the 
-`pRolocdata` [`r citep(extbib["GattoPRolocdata"])`](#references) experiment
-package and are derived from experiments `andy2011` from 
-[`r citet(extbib["Breckels2013"])`](#references), `tan2009r1` and `tan2009r2`, 
-the first and second replicate from [`r citet(extbib["Tan2009"])`](#references)
-and `dunkley2006` from [`r citet(extbib["Dunkley2006"])`](#references).  
+The function `pRolocVis_legacy` needs an object of class `MSnSet` or a
+list of `MSnSet` objects as an argument, while `pRolocVis_compare`
+needs a list containing two instances of class `MSnSet`.  To prepare
+the environment to run a `pRolocVis_legacy`/`pRolocVis_compare`
+session, the `pRolocGUI` package and for demonstration purposes four
+example `MSnSet`s are loaded to the environment. The example data sets
+are available from the `pRolocdata` experiment package and are derived
+from experiments `andy2011`, `tan2009r1` and `tan2009r2`, the first
+and second replicate from and `dunkley2006`.
 
 ```{r, echo = TRUE, message = FALSE, warning = FALSE}
 library("pRolocGUI")
@@ -135,8 +127,6 @@ two `MSnSet`s used) as well as to submit features for selection. See
 <img src="figures/Screenshot_Help1.png" width="100%" alt="" /> <p 
 align="center"> Fig. 1: Vignette of `pRolocVis_legacy` and `pRolocVis_compare` </p>
 
-<a id="tabspRolocGUIPCA"></a>
-
 ## PCA
 
 The tab **_PCA_** is characterised by its main panel which shows a
@@ -213,9 +203,6 @@ plot will open a dialog window with an interface on showing or saving
 the PCA plot as it is displayed in the main panel.
 
 
-
-<a id="tabspRolocGUIPP"></a>
-
 ## Protein profiles
 
 For `pRolocVis_legacy` the tab **_protein profiles_** shows the protein profiles in 
@@ -261,8 +248,6 @@ Endoplasmic reticulum, Golgi apparatus, Mitochondrion and plasma
 membrane of markers (`andy2011`) </p>
 
 
-<a id="tabspRolocGUIExprs"></a>
-
 ## Quantitation   
 
 The tab **_quantitation_** displays the quantitation data for the proteins 
@@ -286,8 +271,6 @@ align="center"> Fig. 6: Appearance of **_quantitation_** tab
 the PCA and protein profiles plots </p>
 
 
-<a id="tabspRolocGUIfData"></a>
-
 ## Feature meta-data  
 
 The tab **_feature meta-data_** displays the feature meta-data for 
@@ -309,9 +292,6 @@ align="center"> Fig. 7: Appearance of **_feature meta-data_** tab
 (`andy2011`) in `pRolocVis_legacy`. Features shown originate from selection made in 
 protein profiles plot </p>
 
-
-<a id="tabspRolocGUIpData"></a>
-
 ## Sample meta-data   
 
 The tab **_sample meta-data_** displays the sample meta-data for the 
@@ -324,8 +304,6 @@ the object name in sidebar panel to display the corresponding sample meta-data.
 <img src="figures/Screenshot_pData1.png" width="100%" alt="" /> <p
 align="center"> Fig. 8: Appearance of **_sample meta-data_** tab
 (`andy2011`) in `pRolocVis_legacy`</p>
-
-<a id="tabspRolocGUISearch"></a>
 
 ## Search  
 
@@ -547,9 +525,6 @@ align="center"> Fig. 14: Display of selected features in protein
 profiles plot for `pRolocVis_legacy`.  The features selected originate from 
 selection in PCA plot (`andy2011`) </p>
 
-
-<a id="displayPP"></a>
-
 ## Protein profiles
 
 In principle the search for features in protein profiles is in
@@ -577,8 +552,6 @@ align="center"> Fig. 15: Display of selected features in protein
 profiles plot for `pRolocVis_legacy`.  The features selected originate from selection 
 in protein profiles plot (`andy2011`) </p>
 
-<a id="displaySaSe"></a>
-
 ## Saved searches
 
 Clicking on the check box to the left of **_saved searches_** will
@@ -598,7 +571,6 @@ The authors decided that it is not the task of a GUI to fulfil the requirements
 of this kind of data manipulation in a GUI, hence, the execution of removing
 features of interests belongs to the field of the users responsibility.
 
-<a id="displayData"></a>
 ## Summary matrix (`pRolocVis_compare` only)
 
 In `pRolocVis_compare` another way of selecting and displaying features is possible
@@ -641,7 +613,6 @@ the column `markers` of the feature meta-data. Going to the tab
 The stored features will only displayed when the check box next to 
 `summary matrix` in the *Display selection*(#display) widget is selected. 
 
-<a id="displayQuery"></a>
 
 ## Query feature-meta data
 
@@ -696,10 +667,6 @@ align="center"> Fig. 16: Query for proteins in `pRolocVis_legacy` which contain 
 string "AC". This narrows the features in the drop-down list accordingly
 (`andy2011`) </p>
 
-
-<a id="references"></a>
-
-<h2>4. References</h2>
 
 
 ```{r, results="asis", message=FALSE, echo=FALSE}
