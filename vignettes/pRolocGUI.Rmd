@@ -13,17 +13,15 @@ vignette: >
 
 # Foreword
 
-`r Biocpkg("pRolocGUI")` is under active development; current functionality is
-evolving and new features will be added. This software is free and
-open-source. You are invited to contact Laurent Gatto
-(lg390@cam.ac.uk) or Lisa Breckels (lms79@cam.ac.uk) in case you have
-any questions, suggestions or have found any bugs or typos. To reach a
-broader audience for more general questions about proteomics analyses
-using R consider of writing to the Bioconductor list.
+`r Biocpkg("pRolocGUI")` is under active development; current 
+functionality is evolving and new features will be added. This 
+software is free and open-source. You are invited to open issues 
+in the [Github `pRolocGUI` repository](https://github.com/ComputationalProteomicsUnit/pRolocGUI/issues) 
+in case you have any questions, suggestions or have found any bugs or typos. 
+To reach a broader audience for more general questions about 
+proteomics analyses using R consider of writing to the 
+[Bioconductor Support Forum](https://support.bioconductor.org).
 
-For background on spatial proteomics ...
-
-Questions, feedback, feature/app requests.
 
 # Introduction
 
@@ -71,7 +69,11 @@ library("pRolocdata")
 
 We begin by loading the dataset `hyperLOPIT2015` from the `pRolocdata`
 data package. The data was produced from using the hyperLOPIT
-technology on mouse E14TG2a embryonic stem cells [^1].
+technology on mouse E14TG2a embryonic stem cells ([Christoforou et al 2016](http://www.nature.com/ncomms/2016/160112/ncomms9992/full/ncomms9992.html)). 
+For more background spatial proteomics data anlayses please see 
+[Gatto et al 2010](http://www.ncbi.nlm.nih.gov/pubmed/21080489), 
+[Gatto et al 2014](http://www.ncbi.nlm.nih.gov/pubmed/24846987) and also the 
+[`pRoloc` tutorial vignette](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-tutorial.pdf). 
 
 ```{r loadData, echo = TRUE, message = FALSE, warning = FALSE}
 data(hyperLOPIT2015) 
@@ -170,10 +172,11 @@ display the data and the first two principal components are plotted.
 The sidebar panel controls what features to highlight on the PCA plot.
 Under the 'Labels' tab, input can be selected by clicking on and off
 the data class names, or by typing and  searching in the white input
-box. Selected items can then be deleted, by clicking and pressing the
-delete button on your keyboard, and the PCA plot will  be updated
-accordingly. Below the select box is a 'transparancy' slider bar which
-controls the opacity of the highlighted data classes.
+box. Selected items can then be deleted, by clicking on the name of the
+class and pressing the delete button on your keyboard. The PCA plot will
+then be updated accordingly. Below the select box is a 'transparancy' slider 
+bar which controls the opacity of the highlighted data classes and two action
+buttons 'Zoom/reset plot' and 'Clear selection', which are described below. 
 
 ![Selecting sub-cellular classes](figures/SS_PCA2.jpg)
 
@@ -185,30 +188,34 @@ peptides per protein, and columns containing sub-cellular localisation
 information. The data table is limited to displaying 12 columns of
 information, these are automatically selected from the `fData` to be
 the first 6 and last features. To select specific columns in the 
-`fData` to display in the data table use the `fdataInds` argument.
-One can search for proteins of interest by using the
-white search box, above the table to the right. Searching is done by
-partial pattern matching with table elements.  Any matches or partial
-text matches that are found are highlighted in yellow in the data
+`fData` to display in the data table use the `fdataInds` argument, see
+`?pRolocVis` for more details.One can search for proteins of interest by 
+using the white search box, above the table to the right. Searching is 
+done by partial pattern matching with table elements. Any matches or 
+partial text matches that are found are highlighted in the data
 table. To select/unselect a protein of interest one can simply
-click/unclick on the corresponding entry in the table. If a protein(s)
+click/unclick on the corresponding entry in the table or on the 
+correspinding highlighted point on the interactive PCA plot. If a protein(s)
 in the table is clicked and selected the row in the table will turn
-grey and the protein(s) will be highlighted on the PCA plot by dark
-grey circles, if the 'Show labels' box is checked in the left sidebar
+grey and the protein(s) will be highlighted on the PCA plot by a dark
+grey circle(s), if the 'Show labels' box is checked in the left sidebar
 panel the protein names for the selected protein(s) will also be shown
-on the PCA plot.
+on the PCA plot. Any selected proteins on the PCA plot or in the table
+can be cleared at any time by clicking the 'Clear selection' button on
+the left hand side panel.
 
-![Selecting and searching for proteins of interest](figures/SS_PCA4.jpg)
+![Searching for proteins of interest](figures/SS_PCA3.jpg)
 
 **Zooming** If a user wishes to examine a protein(s) in more detail,
-one can zoom in on specific points hovering the mouse over the plot
-and drawing a brush and then double-clicking on the brush. This
-process can be repeated until the desired level of zoom is reached.
-The plot is resetted to the original size by a double click anywhere
-on the white space of plot.
+one can zoom in on specific points by hovering the mouse over the plot, 
+then clicking and drawing a (square) brush and then clicking the 
+'Zoom/reset button' in the left side panel to zoom to the brushed area. 
+This process can be repeated until the desired level of zoom is reached. 
+The plot can be resetted to the original size by clicking the 
+'Zoom/reset button' once again.
 
-![Brushing plot to zoom](figures/SS_PCA6.jpg)
-![Zooming on proteins of interest](figures/SS_PCA7.jpg)
+![Brushing on the plot](figures/SS_PCA4.jpg)
+![Zooming proteins of interest](figures/SS_PCA5.jpg)
 
 **Profiles** A user can switch between the PCA and profiles tab by
 clicking the tab at the top of the page. All protein profiles are
@@ -218,7 +225,7 @@ relative abundance of each protein across the fractions employed in
 the experiment. Proteins that co-localise are expected to have similar
 profiles based on De Duve's principle. 
 
-![The profiles tab](figures/SS_PCA5.jpg)
+![The profiles tab](figures/SS_PCA6.jpg)
 
 **Features** There is also functionality to use the
 `FeaturesOfInterest`/`FoICollection` infrastructure distributed by the
@@ -368,7 +375,9 @@ the function `orgQuants` in the `r Biocpkg("pRoloc")` package.
 The comparison application may be of interest if a user wishes to 
 examine two replicate experiments, or two experiments from different
 conditions etc.  Two PCA plots are loaded side-by-side and one can
-search and identify common proteins between the two data sets.
+search and identify common proteins between the two data sets. *Note:
+This application is currently being re-developed and a newer version
+will appear shortly.*
 
 A `list` of `MSnSet`s of length 2 must be supplied as input, these
 are the two datasets one wishes to compare. In the example below
@@ -410,9 +419,17 @@ application.
 
 ![The compare application, data classes highlighted](figures/SS_Compare2.jpg)
 
-**References**
+## References
+Gatto L., Vizcaíno J.A., Hermjakob H., Huber W. and Lilley K.S. 
+Organelle proteomics experimental designs and analysis Proteomics, 
+10:22, 3957-3969, 2010.
 
-[^1]: Christoforou A, Mulvey CM, Breckels LM, Hayward PC, Geladaki E, 
-Hurrell T, et al. A draft map of the mouse pluripotent stem cell 
+Gatto L., Breckels L.M., Burger T., Nightingale D., Groen A.J., 
+Campbell C., Nikolovski N., Mulvey C.M., Christoforou A., Ferro M., 
+Lilley K.S. A foundation for reliable spatial proteomics 
+data analysis, Mol Cell Proteomics. 2014 Aug;13(8):1937-52
+
+Christoforou A., Mulvey C.M., Breckels L.M., Hayward P.C., Geladaki E., 
+Hurrell T., et al. A draft map of the mouse pluripotent stem cell 
 spatial proteome. Nat Commun; In Press.
 
