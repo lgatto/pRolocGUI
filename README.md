@@ -100,7 +100,7 @@ We first load data from
 [Christoforou et al 2016](http://www.nature.com/ncomms/2016/160112/ncomms9992/full/ncomms9992.html)
 distributed in the `pRolocdata` package:
 
-```{r dunkley}
+```{r hyperLOP}
 library("pRolocdata")
 data(hyperLOPIT2015)
 ```
@@ -112,7 +112,7 @@ passing the application choice to the argument `what`. For
 example, to start the the `pca` application type:
 
 ```{r gui}
-pRolocVis(dunkley2006, what = "pca")
+pRolocVis(hyperLOPIT2015, what = "pca")
 ```
 
 ![Screenshot - PCA](https://github.com/ComputationalProteomicsUnit/pRolocGUI/blob/master/vignettes/figures/SS_PCA1.jpg)
