@@ -97,7 +97,7 @@ library("pRolocGUI")
 ```
 
 We first load data from
-Christoforou et al 2015 (Nat. Comms., In Press)
+[Christoforou et al 2016](http://www.nature.com/ncomms/2016/160112/ncomms9992/full/ncomms9992.html)
 distributed in the `pRolocdata` package:
 
 ```{r dunkley}
@@ -115,7 +115,7 @@ example, to start the the `pca` application type:
 pRolocVis(dunkley2006, what = "pca")
 ```
 
-![Screenshot - PCA](https://raw.githubusercontent.com/ComputationalProteomicsUnit/pRolocGUI/new_apps/vignettes/figures/SS_PCA1.jpg)
+![Screenshot - PCA](https://github.com/ComputationalProteomicsUnit/pRolocGUI/blob/master/vignettes/figures/SS_PCA1.jpg)
 
 
 The graphical interface is described in details in the package
