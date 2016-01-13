@@ -44,7 +44,7 @@ pRolocVis_pca <- function(object,
                           fdataInd) {
   
   ## Return featureNames of proteins selected
-  on.exit(return(names(idxDT)))
+  on.exit(return(invisible(names(idxDT))))
   
   if (!inherits(object, "MSnSet"))
     stop("The input must be of class MSnSet")
@@ -152,7 +152,7 @@ pRolocVis_pca <- function(object,
         width = 2),
       mainPanel(
         tabsetPanel(type = "tabs",
-                    tabPanel("PCA",
+                    tabPanel("PCA", id = "pcaPanel",
                              fluidRow(
                                column(9, 
                                       plotOutput("pca",
@@ -164,17 +164,24 @@ pRolocVis_pca <- function(object,
                                                    resetOnNew = TRUE)),
                                       offset = 0),
                                column(3, 
-                                      plotOutput("legend",
+                                      plotOutput("legend1",
                                                  height = fig.height,
                                                  width = legend.width))
                              )
                     ),
-                    tabPanel("Profiles",
+                    tabPanel("Profiles", id = "profilesPanel",
                              fluidRow(
-                               column(9, offset = 1,
+                               column(8,
                                       plotOutput("profile",
                                                  height = "400px",
-                                                 width = "150%")))
+                                                 width = "120%"),
+                                      offset = 0),
+                               
+                               column(3, 
+                                      plotOutput("legend2",
+                                                 width = "80%"),
+                                      offset = 1)
+                               )
                     ),
                     ## feature data table is always visible
                     fluidRow(
@@ -246,8 +253,8 @@ pRolocVis_pca <- function(object,
       
       ## Protein profile
       output$profile <- renderPlot({
-        par(mar = c(5.1, 8.1, 1, 1))
-        par(oma = c(1, 1, 0, 0))
+        par(mar = c(8, 3, 1, 1))
+        par(oma = c(0, 0, 0, 0))
         ylim <- range(profs)
         n <- nrow(profs)
         m <- ncol(profs)
@@ -286,7 +293,9 @@ pRolocVis_pca <- function(object,
       output$fDataTable <- DT::renderDataTable({
         
         feats <<- which(brushBounds$i & brushBounds$j)
-
+        
+        ## Double clicking to identify protein
+        
         if (!is.null(input$dblClick)) {
           dist <- apply(pcas, 1, function(z) sqrt((input$dblClick$x - z[1])^2 
                                                   + (input$dblClick$y - z[2])^2))
@@ -335,7 +344,7 @@ pRolocVis_pca <- function(object,
   
 
       ## Output legend
-      output$legend <- renderPlot({
+      output$legend1 <- renderPlot({
         par(mar = c(0, 0, 0, 0))
         par(oma = c(0, 0, 0, 0))
         plot(0, type = "n",
@@ -358,6 +367,31 @@ pRolocVis_pca <- function(object,
                  cex = legend.cex)
         }
       })
+      ## Output legend
+      output$legend2 <- renderPlot({
+        par(mar = c(0, 0, 0, 0))
+        par(oma = c(0, 0, 0, 0))
+        plot(0, type = "n",
+             xaxt = "n", yaxt = "n",
+             xlab = "", ylab = "",
+             bty = "n")
+        if (!is.null(input$markers)) {
+          legend("topleft",
+                 c(input$markers, "unlabelled"),
+                 col = c(myCols(), getUnknowncol()),
+                 ncol = 1, bty = "n",
+                 pch = c(rep(16, length(myCols())), 21),
+                 cex = legend.cex*.8)
+        } else {
+          legend("topleft",
+                 "unlabelled",
+                 col = getUnknowncol(),
+                 ncol = 1, bty = "n",
+                 pch = 21,
+                 cex = legend.cex*8)
+        }
+      })
+      
     }
   app <- list(ui = ui, server = server)
   runApp(app)
