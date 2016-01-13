@@ -190,8 +190,10 @@ pRolocVis_pca <- function(object,
   server <-
     function(input, output, session) {
       ranges <- reactiveValues(x = NULL, y = NULL)
-      brushBounds <- reactiveValues(i =  try(pcas[, 1] >= min(pcas[, 1]) & pcas[, 1] <= max(pcas[, 1])),
-                                    j = try(pcas[, 2] >= min(pcas[, 2]) & pcas[, 2] <= max(pcas[, 2])))
+      brushBounds <- reactiveValues(i =  try(pcas[, 1] >= min(pcas[, 1]) & 
+                                               pcas[, 1] <= max(pcas[, 1])),
+                                    j = try(pcas[, 2] >= min(pcas[, 2]) & 
+                                              pcas[, 2] <= max(pcas[, 2])))
       resetLabels <- reactiveValues(logical = FALSE)
       ## Get coords for proteins according to selectized marker class(es)
       pcaMrkSel <- reactive({
@@ -202,6 +204,10 @@ pRolocVis_pca <- function(object,
         lapply(input$markers,
                function(z) profs[which(pmarkers[, z] == 1), ])
       })
+#       featsSel <- reactive({
+#         lapply(input$markers,
+#                function(z) which(pmarkers[, z] == 1))
+#       })
       
       ## Update colour transparacy according to slider input
       myCols <- reactive({
@@ -260,6 +266,15 @@ pRolocVis_pca <- function(object,
                  col = getUnknowncol(),
                  lty = 1,
                  type = "l")
+        if (!is.null(input$markers)) {
+          for (i in 1:length(input$markers)) { 
+            matlines(t(profMrkSel()[[i]]),
+                     col = myCols()[i],
+                     lty = 1,
+                     lwd = 1.5) 
+          }
+        }
+        
         idxDT <<- feats[input$fDataTable_rows_selected]
         if (length(idxDT))
           matlines(t(profs[idxDT, , drop = FALSE]),
@@ -278,11 +293,11 @@ pRolocVis_pca <- function(object,
           dist <- apply(pcas, 1, function(z) sqrt((input$dblClick$x - z[1])^2 
                                                   + (input$dblClick$y - z[2])^2))
           idxPlot <- which(dist == min(dist))
-          if (idxPlot %in% idxDT) {                              ## 1--is it already clicked?
-            setsel <- setdiff(names(idxDT), names(idxPlot))      ## Yes, remove it from table
+          if (idxPlot %in% idxDT) {                          ## 1--is it already clicked?
+            setsel <- setdiff(names(idxDT), names(idxPlot))  ## Yes, remove it from table
             idxDT <<- idxDT[setsel]
           } else {                                           ## 2--new click?
-            idxDT <<- c(idxDT, idxPlot)                ## Yes, highlight it to table
+            idxDT <<- c(idxDT, idxPlot)                      ## Yes, highlight it to table
           }
         }
 
@@ -308,8 +323,10 @@ pRolocVis_pca <- function(object,
         } else {
           ranges$x <- NULL
           ranges$y <- NULL
-          brushBounds$i <- try(pcas[, 1] >= min(pcas[, 1]) & pcas[, 1] <= max(pcas[, 1]))
-          brushBounds$j <- try(pcas[, 2] >= min(pcas[, 2]) & pcas[, 2] <= max(pcas[, 2]))
+          brushBounds$i <- try(pcas[, 1] >= min(pcas[, 1]) 
+                               & pcas[, 1] <= max(pcas[, 1]))
+          brushBounds$j <- try(pcas[, 2] >= min(pcas[, 2]) 
+                               & pcas[, 2] <= max(pcas[, 2]))
         }
       })
       
@@ -343,7 +360,6 @@ pRolocVis_pca <- function(object,
                  cex = legend.cex)
         }
       })
-      
     }
   app <- list(ui = ui, server = server)
   runApp(app)
