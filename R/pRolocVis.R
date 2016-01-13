@@ -5,13 +5,10 @@
 ##' \code{pRolocVis_compare} and \code{pRolocVis_legacy}.These Shiny apps 
 ##' allow to explore and analyse interactively spatial proteomics data.
 ##'  
-##' The \code{pca} Shiny app allows exploration of quantitatuve data (1) visually 
+##' The \code{main} Shiny app allows exploration of quantitative data (1) visually 
 ##' through Principle Component Analysis (PCA), (2) protein profiles, and (3)
-##' a searchable feature data table, allowing visualisation of particualr proteins
+##' a searchable feature data table, allowing visualisation of particular proteins
 ##' of interest. 
-##' 
-##' The \code{profiles} Shiny app allows one to simultaneously view protein
-##' profiles and PCA locations of sub-cellular annotated sets of proteins.
 ##' 
 ##' The \code{classify} Shiny app is used to visualise classification results
 ##' and set user-specified thresholds for sub-cellular location predictions. 
@@ -27,8 +24,8 @@
 ##' @rdname pRolocVis-apps
 ##' @param object An instance of class \code{MSnSet}, or a list of \code{MSnSet}
 ##' objects of length 2 if using "compare" application.
-##' @param app The type of application requested: "pca", "profiles",
-##' "classify", "compare". The default is "pca". See description below.
+##' @param app The type of application requested: "main",
+##' "classify", "compare". The default is "main". See description below.
 ##' @param fcol The feature meta-data label (fData column name). This will correspond
 ##' to the prediction column if using "classify", or the markers (labelled data) 
 ##' to be plotted otherwise.
@@ -54,8 +51,7 @@
 ##' library("pRolocdata")
 ##' data(hyperLOPIT2015)
 ##' if (interactive()) {
-##'   pRolocVis(hyperLOPIT2015, app = "pca")
-##'   pRolocVis(hyperLOPIT2015, app = "profiles")
+##'   pRolocVis(hyperLOPIT2015)
 ##' }
 ##' ## Load classification results from hyperLOPIT stored in fData
 ##' if (interactive()) {
@@ -68,13 +64,11 @@
 pRolocVis <- function(object, app, fcol, legend.cex = 1, ...) {
     res <- NULL
     if (missing(app))
-        app <- "pca"
+        app <- "main"
     if (missing(fcol) && app != "classify")
         fcol <- "markers"
-    if (app == "pca")
+    if (app == "main")
         pRolocVis_pca(object, fcol = fcol, ...)
-    if (app == "profiles")
-        pRolocVis_profiles(object, fcol = fcol, legend.cex = legend.cex, ...)
     if (app == "classify")
         res <- pRolocVis_classify(object, fcol = fcol,
                                   legend.cex = legend.cex, ...)
