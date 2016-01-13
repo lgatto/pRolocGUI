@@ -195,19 +195,12 @@ pRolocVis_pca <- function(object,
                                     j = try(pcas[, 2] >= min(pcas[, 2]) & 
                                               pcas[, 2] <= max(pcas[, 2])))
       resetLabels <- reactiveValues(logical = FALSE)
+      
       ## Get coords for proteins according to selectized marker class(es)
-      pcaMrkSel <- reactive({
+      mrkSel <- reactive({
         lapply(input$markers,
-               function(z) pcas[which(pmarkers[, z] == 1), ])
+               function(z) which(pmarkers[, z] == 1))
       })
-      profMrkSel <- reactive({
-        lapply(input$markers,
-               function(z) profs[which(pmarkers[, z] == 1), ])
-      })
-#       featsSel <- reactive({
-#         lapply(input$markers,
-#                function(z) which(pmarkers[, z] == 1))
-#       })
       
       ## Update colour transparacy according to slider input
       myCols <- reactive({
@@ -231,7 +224,8 @@ pRolocVis_pca <- function(object,
                fcol = newName)
         if (!is.null(input$markers)) {
           for (i in 1:length(input$markers)) 
-            points(pcaMrkSel()[[i]], pch = 16, cex = 1.4, col = myCols()[i])
+            points(pcas[mrkSel()[[i]], ], pch = 16, 
+                   cex = 1.4, col = myCols()[i])
         } 
           
         
@@ -268,19 +262,23 @@ pRolocVis_pca <- function(object,
                  type = "l")
         if (!is.null(input$markers)) {
           for (i in 1:length(input$markers)) { 
-            matlines(t(profMrkSel()[[i]]),
+            matlines(t(profs[mrkSel()[[i]], ]),
                      col = myCols()[i],
                      lty = 1,
                      lwd = 1.5) 
           }
         }
         
+        ## If an item is clicked in the table highlight profile
         idxDT <<- feats[input$fDataTable_rows_selected]
-        if (length(idxDT))
-          matlines(t(profs[idxDT, , drop = FALSE]),
+        
+        namesIdxDT <<- names(idxDT)
+        if (length(idxDT)) {
+          matlines(t(profs[namesIdxDT, , drop = FALSE]),
                    col = "black",
                    lty = 1,
                    lwd = 2)
+        }
       })             
       
       
