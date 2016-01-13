@@ -27,7 +27,7 @@
 ##' @rdname pRolocVis-apps
 ##' @param object An instance of class \code{MSnSet}, or a list of \code{MSnSet}
 ##' objects of length 2 if using "compare" application.
-##' @param what The type of application requested: "pca", "profiles",
+##' @param app The type of application requested: "pca", "profiles",
 ##' "classify", "compare". The default is "pca". See description below.
 ##' @param fcol The feature meta-data label (fData column name). This will correspond
 ##' to the prediction column if using "classify", or the markers (labelled data) 
@@ -54,33 +54,33 @@
 ##' library("pRolocdata")
 ##' data(hyperLOPIT2015)
 ##' if (interactive()) {
-##'   pRolocVis(hyperLOPIT2015, what = "pca")
-##'   pRolocVis(hyperLOPIT2015, what = "profiles")
+##'   pRolocVis(hyperLOPIT2015, app = "pca")
+##'   pRolocVis(hyperLOPIT2015, app = "profiles")
 ##' }
 ##' ## Load classification results from hyperLOPIT stored in fData
 ##' if (interactive()) {
-##'   myThreshold <- pRolocVis(hyperLOPIT2015, what = "classify", 
+##'   myThreshold <- pRolocVis(hyperLOPIT2015, app = "classify", 
 ##'                            fcol = "svm.classification", 
 ##'                            scol = "svm.score")
 ##'   newPredictions <- getPredictions(hyperLOPIT2015, fcol = "svm.classification", 
 ##'                                    scol = "svm.score", t = myThreshold)
 ##' }
-pRolocVis <- function(object, what, fcol, legend.cex = 1, ...) {
+pRolocVis <- function(object, app, fcol, legend.cex = 1, ...) {
     res <- NULL
-    if (missing(what))
-        what <- "pca"
-    if (missing(fcol) && what != "classify")
+    if (missing(app))
+        app <- "pca"
+    if (missing(fcol) && app != "classify")
         fcol <- "markers"
-    if (what == "pca")
+    if (app == "pca")
         pRolocVis_pca(object, fcol = fcol, ...)
-    if (what == "profiles")
+    if (app == "profiles")
         pRolocVis_profiles(object, fcol = fcol, legend.cex = legend.cex, ...)
-    if (what == "classify")
+    if (app == "classify")
         res <- pRolocVis_classify(object, fcol = fcol,
                                   legend.cex = legend.cex, ...)
-    if (what == "compare")
+    if (app == "compare")
         pRolocVis_compare(object, ...)
-    if (what == "legacy")
+    if (app == "legacy")
         pRolocVis_legacy(object, ...)
     return(res)
 }
