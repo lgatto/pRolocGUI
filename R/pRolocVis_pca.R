@@ -59,6 +59,11 @@ pRolocVis_pca <- function(object,
     }  
     pmarkers <- fData(object)[, fcol]
   }
+  
+  ## Create column of unknowns (needed later for plot2D in server)
+  newName <- paste0(format(Sys.time(), "%a%b%d%H%M%S%Y"), "markers")
+  fData(object)[, newName] <- "unknown"
+  
   ## Setting features to be displayed
   if (!missing(foi)) {
     if (inherits(foi, "FeaturesOfInterest"))
@@ -216,9 +221,13 @@ pRolocVis_pca <- function(object,
                col = rep(getUnknowncol(), nrow(object)),
                pch = 21, cex = 1,
                xlim = ranges$x,
-               ylim = ranges$y)
-        for (i in 1:length(input$markers)) 
-          points(pcaMrkSel()[[i]], pch = 16, cex = 1.4, col = myCols()[i])
+               ylim = ranges$y,
+               fcol = newName)
+        if (!is.null(input$markers)) {
+          for (i in 1:length(input$markers)) 
+            points(pcaMrkSel()[[i]], pch = 16, cex = 1.4, col = myCols()[i])
+        } 
+          
         
         ## highlight point on plot by selecting item in table
         idxDT <<- feats[input$fDataTable_rows_selected]
@@ -318,12 +327,21 @@ pRolocVis_pca <- function(object,
              xaxt = "n", yaxt = "n",
              xlab = "", ylab = "",
              bty = "n")
-        legend("topleft",
-               input$markers,
-               col = myCols(),
-               ncol = 1, bty = "n",
-               pch = 16,
-               cex = legend.cex)
+        if (!is.null(input$markers)) {
+          legend("topleft",
+                 c(input$markers, "unlabelled"),
+                 col = c(myCols(), getUnknowncol()),
+                 ncol = 1, bty = "n",
+                 pch = c(rep(16, length(myCols())), 21),
+                 cex = legend.cex)
+        } else {
+          legend("topleft",
+                 "unlabelled",
+                 col = getUnknowncol(),
+                 ncol = 1, bty = "n",
+                 pch = 21,
+                 cex = legend.cex)
+        }
       })
       
     }
