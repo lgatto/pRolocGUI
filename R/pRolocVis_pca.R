@@ -381,14 +381,15 @@ pRolocVis_pca <- function(object,
                  col = c(myCols(), getUnknowncol()),
                  ncol = 1, bty = "n",
                  pch = c(rep(16, length(myCols())), 21),
-                 cex = legend.cex*.8)
+                 cex = legend.cex
+          )
         } else {
           legend("topleft",
                  "unlabelled",
                  col = getUnknowncol(),
                  ncol = 1, bty = "n",
                  pch = 21,
-                 cex = legend.cex*8)
+                 cex = legend.cex)
         }
       })
       
