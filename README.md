@@ -105,14 +105,17 @@ library("pRolocdata")
 data(hyperLOPIT2015)
 ```
 
-There are 4 different visualisation applications currently
-available: `pca`, `profiles`, `classification` and `compare`.
+There are 3 different visualisation applications currently
+available: `main`, `classification` and `compare`.
 These apps are launched using the `pRolocVis` function and
-passing the application choice to the argument `what`. For
-example, to start the the `pca` application type:
+passing `object`, which is an `MSnSet` containing the data 
+one wishes to interrogate. One may also specify which app
+they wish to use by using the `app` argument, see `?pRolocVis`
+for more details. The default app that is loaded if 
+`app` is not specified is the `main` application:
 
 ```{r gui}
-pRolocVis(hyperLOPIT2015, what = "pca")
+pRolocVis(hyperLOPIT2015)
 ```
 
 ![Screenshot - PCA](https://github.com/ComputationalProteomicsUnit/pRolocGUI/blob/master/vignettes/figures/SS_PCA1.jpg)
