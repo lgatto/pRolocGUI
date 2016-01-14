@@ -82,9 +82,8 @@ proteins selected upon application closure.
 These functions allow one to explore spatial proteomics data interactively.
 }
 \details{
-The function \code{pRolocVis} is a wrapper for \code{pRolocVis_pca}, 
-\code{pRolocVis_profiles}, \code{pRolocVis_classification}, 
-\code{pRolocVis_compare} and \code{pRolocVis_legacy}.These Shiny apps 
+The function \code{pRolocVis} is a wrapper for \code{pRolocVis_main}, 
+\code{pRolocVis_classify} and \code{pRolocVis_compare}.These Shiny apps 
 allow to explore and analyse interactively spatial proteomics data.
  
 The \code{main} Shiny app allows exploration of quantitative data (1) visually 
@@ -94,10 +93,6 @@ of interest.
 
 The \code{classify} Shiny app is used to visualise classification results
 and set user-specified thresholds for sub-cellular location predictions.
-
-The \code{legacy} Shiny app is the original (legacy) \code{pRolocVis} app
-that appears in older versions of \code{pRolocGUI}, the \code{pca} app has
-been designed to replace this app.
 
 The \code{compare} Shiny app is meant for comparing protein localisation 
 between two conditions, or two different experiments, replicates etc.
