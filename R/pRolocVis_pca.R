@@ -308,11 +308,14 @@ pRolocVis_pca <- function(object,
           }
         }
 
-        namesIdxDT <<- names(idxDT)
-        toSel <- match(namesIdxDT, featureNames(object)[brushBounds$i & brushBounds$j])
-        if (resetLabels$logical) toSel <- numeric()
+        namesIdxDT <<- names(idxDT)                         ## update idx of names to track clicking
+        toSel <- match(namesIdxDT,                          ## selection to highlight in DT
+                       featureNames(object)[brushBounds$i & brushBounds$j])
+        if (resetLabels$logical) toSel <- numeric()         ## reset labels
+        indtorm <- which(fvarLabels(object) == newName)     ## remove tmp column of unknowns
 
-        DT::datatable(data = fData(object)[brushBounds$i & brushBounds$j, ], 
+        ## Display data table (with clicked proteins highlighted)
+        DT::datatable(data = fData(object)[brushBounds$i & brushBounds$j, -indtorm], 
                       rownames = TRUE,
                       selection = list(mode = 'multiple', selected = toSel))
       })
