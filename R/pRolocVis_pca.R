@@ -26,7 +26,7 @@
 ##' @param all If \code{TRUE} all clusters are displayed on startup.
 ##' If \code{FALSE} only first cluster in the list is displayed.
 ##' \code{\link{FoICollection}}, that will be available for display.
-##' @param fdataInd A \code{numeric} or \code{character} corresponding to
+##' @param fDataInd A \code{numeric} or \code{character} corresponding to
 ##' the feature variables one wishes to retains for the data table. 
 ##' If not specified, by default \code{markers} will be kept along with 
 ##' the first 5 and last 6 feature variables.
@@ -41,15 +41,39 @@ pRolocVis_pca <- function(object,
                           legend.cex = 1,
                           nchar = 40,
                           all = TRUE,
-                          fdataInd) {
+                          fDataInd) {
   
   ## Return featureNames of proteins selected
   on.exit(return(invisible(names(idxDT))))
   
+  ## Specify fDataInd first. 
+  ## There can't be more than 12 columns in the DT table
+  
+  if (missing(fDataInd)) {
+    if (length(fvarLabels(object)) > 12) {
+      message("There can't be more than 12 feature variables. Using 6 first and last.")
+      xx <- pRolocGUI:::narrowFeatureData(object, )
+      fDataInd <- fvarLabels(xx)
+    } else {
+      fDataInd <- fvarLabels(object)
+    }
+  } else {
+    if (is.numeric(fDataInd))
+      fDataInd <- fvarLabels(object)[fDataInd]
+    
+    if (length(fDataInd) > 12) {
+      stop("There can't be more than 12 feature variables, check fDataInd")
+    } else {
+      if (!all(fDataInd %in% fvarLabels(object)))
+        stop("Check fDataInd, not all features found in fData")
+    }  
+  }
+
+  ## Usual checks
   if (!inherits(object, "MSnSet"))
     stop("The input must be of class MSnSet")
   if (missing(fcol)) fcol = "markers"
-  if (!missing(fcol)) {  
+  if (!missing(fcol)) {
     if (!fcol %in% fvarLabels(object))
       stop("fcol missing in fData")
     if (!isMrkMat(object, fcol)) {
@@ -61,7 +85,7 @@ pRolocVis_pca <- function(object,
   }
   
   ## Create column of unknowns (needed later for plot2D in server)
-  newName <- paste0(format(Sys.time(), "%a%b%d%H%M%S%Y"), "markers")
+  newName <- paste0(format(Sys.time(), "%a%b%d%H%M%S%Y"), "unknowns")
   fData(object)[, newName] <- "unknown"
   
   ## Setting features to be displayed
@@ -83,6 +107,7 @@ pRolocVis_pca <- function(object,
       colnames(pmarkers) <- cn
     }
   }
+  
   ## Marker colours
   cols <- getStockcol()
   if (length(cols) < ncol(pmarkers)) {
@@ -90,20 +115,7 @@ pRolocVis_pca <- function(object,
     n <- ncol(pmarkers) %/% length(cols)
     cols <- rep(cols, n + 1)
   }
-  ## Remove fcol from fData(object)    
-  fData(object) <- fData(object)[, -grep(fcol, fvarLabels(object))]
-  ## There can't be more than 12 columns in the DT table
-  if (missing(fdataInd)) {
-    if ((nfd <- length(fvarLabels(object))) > 12) {
-      message("There can't be more than 12 feature variables. Using 6 first and last.")
-      object <- pRolocGUI:::narrowFeatureData(object)
-    }
-  } else {
-    if(length(fdataInd) > 12)
-      stop("There can't be more than 12 feature variables, check fdataInd")
-    object <- selectFeatureData(object, fcol = fdataInd)
-  }
-  
+
   ## Shorten markers names if too long
   cn <- sapply(colnames(pmarkers),
                function(x) {
@@ -186,7 +198,7 @@ pRolocVis_pca <- function(object,
                     ## feature data table is always visible
                     fluidRow(
                       column(12,
-                             column(ncol(fData(object)), 
+                             column(length(fDataInd), 
                                     DT::dataTableOutput("fDataTable"))))
         )
       )
@@ -312,10 +324,9 @@ pRolocVis_pca <- function(object,
         toSel <- match(namesIdxDT,                          ## selection to highlight in DT
                        featureNames(object)[brushBounds$i & brushBounds$j])
         if (resetLabels$logical) toSel <- numeric()         ## reset labels
-        indtorm <- which(fvarLabels(object) == newName)     ## remove tmp column of unknowns
 
         ## Display data table (with clicked proteins highlighted)
-        DT::datatable(data = fData(object)[brushBounds$i & brushBounds$j, -indtorm], 
+        DT::datatable(data = fData(object)[brushBounds$i & brushBounds$j, fDataInd], 
                       rownames = TRUE,
                       selection = list(mode = 'multiple', selected = toSel))
       })
