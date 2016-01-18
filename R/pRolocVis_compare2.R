@@ -115,73 +115,88 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
     }
   }   
   pmarkers <- lapply(x, function(z) fData(z)[, fcol.tmp])
-  
+
   ## Setting features to be displayed
-#   if (!missing(foi)) {
-#     if (inherits(foi, "FeaturesOfInterest"))
-#       foi <- FoICollection(list(foi))
-#     foimarkers <- as(foi, "matrix")
-#     if (exists("pmarkers", inherits = FALSE)) {
-#       pmarkers <- merge(pmarkers, foimarkers,
-#                         by = 0, all.x = TRUE)
-#       rownames(pmarkers) <- pmarkers[, "Row.names"]
-#       pmarkers <- pmarkers[featureNames(object), -1]            
-#     } else pmarkers <- foimarkers
-#   }
-#   if (length(grep("GO:", colnames(pmarkers))) > 0) {
-#     cn <- pRoloc::flipGoTermId(colnames(pmarkers))
-#     if (all(!is.na(cn))) {
-#       names(cn) <- NULL
-#       colnames(pmarkers) <- cn
-#     }
-#   }  
-#     
-#     ## Marker colours
-#     cols <- getStockcol()
-#     if (length(cols) < ncol(pmarkers[[1]])) {
-#         message("Too many features for available colours. Some colours will be duplicated.")
-#         n <- ncol(pmarkers[[1]]) %/% length(cols)
-#         cols <- rep(cols, n + 1)
-#     }
-#     
-# 
-#     ## Shorten markers names if too long
-#     cn <- sapply(colnames(pmarkers[[1]]),
-#                  function(x) {
-#                      if (nchar(x) > nchar) {
-#                          x <- strsplit(x, "")[[1]]
-#                          x <- paste(x[1:nchar], collapse = "")
-#                          x <- sub(" +$", "", x)
-#                          x <- paste0(x, "...")
-#                      }
-#                      return(x)
-#                  })    
-#     names(cn) <- NULL
-#     colnames(pmarkers[[1]]) <- cn
-# 
-#     ## Display all classes unless user specifies not to
-#     pmsel <- TRUE
-#     if (!all & ncol(pmarkers[[1]]) > 10)
-#         pmsel <- 1
-# 
-#     ## data to be displayed
-# #     if (missing(method)) {
-# #       pcas <- plot2D(object, fcol = NULL, plot = FALSE)
-# #     } else {
-# #       if (pRoloc:::.validpRolocVisMethod(method)) {
-# #         if (class(method) == "matrix") {
-# #           if (nrow(method) != nrow(object))
-# #             stop("nrow(method) matrix is not equal to nrow(object)")
-# #           pcas <- method
-# #         } else {
-# #           pcas <- plot2D(object, fcol = NULL, plot = FALSE, method = method)
-# #         }
-# #       } else {
-# #         stop("Invalid visualisation method")
-# #       }
-# #     }
-#     
-# 
+  if (!missing(foi)) {
+    if (inherits(foi, "FeaturesOfInterest"))
+      foi <- FoICollection(list(foi))
+    foimarkers <- as(foi, "matrix")
+    if (exists("pmarkers", inherits = FALSE)) {
+      pmarkers <- lapply(pmarkers, function(z) 
+        merge(z, foimarkers, by = 0, all.x = TRUE))
+      for (i in 1:length(pmarkers)) {
+        rownames(pmarkers[[i]]) <- pmarkers[[i]][, "Row.names"]
+        pmarkers[[i]] <- pmarkers[[i]][featureNames(object[[i]]), -1]     
+      }
+               
+    } else pmarkers <- foimarkers
+  }
+  
+  ## Convert GO names to CC names
+  if (length(grep("GO:", colnames(pmarkers[[1]]))) > 0) {
+    for (i in 1:length(pmarkers)) {
+      cn <- pRoloc::flipGoTermId(colnames(pmarkers[[i]]))
+      if (all(!is.na(cn))) {
+        names(cn) <- NULL
+        colnames(pmarkers[[i]]) <- cn
+      } 
+    }
+  }  
+  
+  ## Marker colours
+  cols <- getStockcol()
+  if (length(cols) < max(sapply(pmarkers, ncol))) {
+    message("Too many features for available colours. Some colours will be duplicated.")
+    ind <- which.max(sapply(pmarkers, ncol))
+    n <- ncol(pmarkers[[ind]]) %/% length(cols)
+    cols <- rep(cols, n + 1)
+  }
+  
+  ## Shorten markers names if too long
+  for (i in 1:length(object)) {
+    cn <- sapply(colnames(pmarkers[[i]]),
+                 function(x) {
+                   if (nchar(x) > nchar) {
+                     x <- strsplit(x, "")[[i]]
+                     x <- paste(x[1:nchar], collapse = "")
+                     x <- sub(" +$", "", x)
+                     x <- paste0(x, "...")
+                   }
+                   return(x)
+                 })    
+    names(cn) <- NULL
+    colnames(pmarkers[[i]]) <- cn
+  }
+  
+  
+  ## Display all classes unless user specifies not to
+  pmsel <- TRUE
+  if (!all & max(sapply(pmarkers, ncol)) > 10)
+    pmsel <- 1    
+  
+  
+  # data to be displayed
+  if (missing(method)) {
+    pcas <- lapply(object, function(z) plot2D(z, fcol = NULL, plot = FALSE))
+  } else {
+    if (pRoloc:::.validpRolocVisMethod(method)) {
+      if (class(method) == "matrix") {
+        if (nrow(method) != nrow(object))
+          stop("nrow(method) matrix is not equal to nrow(object)")
+        pcas <- method
+      } else {
+        pcas <- plot2D(object, fcol = NULL, plot = FALSE, method = method)
+      }
+    } else {
+      stop("Invalid visualisation method")
+    }
+  }   
+
+    
+
+    
+    
+
 #     ## get data to display
 #     if (remap) {
 #       pcas <- remap(object, ref = ref)
