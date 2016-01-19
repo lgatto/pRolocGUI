@@ -8,7 +8,8 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
                                nchar = 40,
                                all = TRUE,
                                method,
-                               fDataInd1, fDataInd2) {
+                               fDataInd1, fDataInd2, 
+                               ...) {
   
   
   ## Return featureNames of proteins selected
@@ -55,16 +56,11 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
     }  
   }
   
-  ## Class checks
+  
+  ## Check MSnSetList and take intersection
   if (!inherits(object, "MSnSetList"))
     stop("The input must be of class MSnSetList")
-  if (!all.equal(featureNames(object[[1]]), featureNames(object[[2]]))) {
-    message("Subsetting MSnSetList to their common feature names")
-    object <- commonFeatureNames(object)
-  }
-  
-  
-  ## Take intersection of datasets
+  message("Subsetting MSnSetList to their common feature names")
   object <- commonFeatureNames(object)
   
   
@@ -104,13 +100,14 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
   } 
   
   ## Make fcol matrix of markers if it's not already
-  tf <- !unlist(lapply(object, isMrkMat, fcol))
+  fcol <- c(fcol1, fcol2)
+  tf <- !sapply(1:length(fcol), function(x) isMrkMat(object[[x]], fcol[x]))
   if (any(tf)) {
     ind <- which(tf)
     x <- vector("list", 2)
     for (i in 1:length(ind)) {
       mName <- paste0("Markers", format(Sys.time(), "%a%b%d%H%M%S%Y"))
-      x[[i]] <- mrkVecToMat(object[[i]], fcol, mfcol = mName)
+      x[[i]] <- mrkVecToMat(object[[i]], fcol[i], mfcol = mName)
       fcol.tmp <- mName 
     }
   }   
@@ -163,7 +160,7 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
                      x <- paste0(x, "...")
                    }
                    return(x)
-                 })    
+                 })
     names(cn) <- NULL
     colnames(pmarkers[[i]]) <- cn
   }
@@ -175,278 +172,321 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
     pmsel <- 1    
   
   
-  # data to be displayed
+  ## Data to be displayed (allow other methods than PCA, matrix not supported as
+  ## would need a list of matrices, we can add later if needed)
   if (missing(method)) {
-    pcas <- lapply(object, function(z) plot2D(z, fcol = NULL, plot = FALSE))
+    pcas <- lapply(object, plot2D, fcol = NULL, plot = FALSE)
   } else {
     if (pRoloc:::.validpRolocVisMethod(method)) {
-      if (class(method) == "matrix") {
-        if (nrow(method) != nrow(object))
-          stop("nrow(method) matrix is not equal to nrow(object)")
-        pcas <- method
-      } else {
-        pcas <- plot2D(object, fcol = NULL, plot = FALSE, method = method)
-      }
+      if (class(method) == "matrix") 
+        stop("Visualisation method 'matrix' is not supported for the compare app")
+      else
+        pcas <- lapply(object, plot2D, fcol = NULL, plot = FALSE, method = method)
     } else {
       stop("Invalid visualisation method")
     }
-  }   
-
-    
-
-    
-    
-
-#     ## get data to display
-#     if (remap) {
-#       pcas <- remap(object, ref = ref)
-#       pcas <- lapply(pcas, plot2D, method = "none", plot = FALSE)
-#     } else {
-#       pcas <- lapply(object, plot2D, plot = FALSE)
-#     }
-#     profs <- lapply(object, exprs)
-#     
-# 
-#     ## all feautres are displayed on start
-#     feats <- 1:nrow(object[[1]])
-#     
-#     ## Build shiny app
-#     ui <- fluidPage(
-#         sidebarLayout(
-#             sidebarPanel(
-#                 selectizeInput("markers", "Labels",
-#                                choices = colnames(pmarkers[[1]]),
-#                                multiple = TRUE,
-#                                selected = colnames(pmarkers[[1]])[pmsel]),
-#                 sliderInput("trans", "Transparancy",
-#                             min = 0,  max = 1, value = 0.5),
-#                 checkboxInput("checkbox", label = "Show labels", value = TRUE),
-#                 width = 2),
-#             mainPanel(
-#                 tabsetPanel(type = "tabs",
-#                             tabPanel("PCA",
-#                                      fluidRow(
-#                                          column(4, 
-#                                                 plotOutput("pca1",
-#                                                            height = fig.height,
-#                                                            width = fig.width,
-#                                                            click = "pcaClick",
-#                                                            dblclick = "pcaDblclick",
-#                                                            hover = hoverOpts(
-#                                                                id = "pcaHover"
-#                                                                ),
-#                                                            brush = brushOpts(
-#                                                                id = "pcaBrush",
-#                                                                resetOnNew = TRUE)),
-#                                                 offset = 0),
-#                                          column(4, 
-#                                                 plotOutput("pca2",
-#                                                            height = fig.height,
-#                                                            width = fig.width,
-#                                                            click = "pcaClick",
-#                                                            dblclick = "pcaDblclick",
-#                                                            hover = hoverOpts(
-#                                                              id = "pcaHover"
-#                                                            ),
-#                                                            brush = brushOpts(
-#                                                              id = "pcaBrush",
-#                                                              resetOnNew = TRUE)),
-#                                                 offset = 0),
-#                                          column(4, 
-#                                                 plotOutput("legend",
-#                                                            height = fig.height,
-#                                                            width = legend.width))
-#                                          )
-#                                      ),
-#                             tabPanel("Profiles",
-#                                      fluidRow(
-#                                          column(4, offset = 0,
-#                                                 plotOutput("profile1",
-#                                                            height = fig.height,
-#                                                            width = fig.width)),
-#                                          column(4, offset = 0,
-#                                                 plotOutput("profile2",
-#                                                            height = fig.height,
-#                                                            width = fig.width)))
-#                                      
-#                                      ),
-#                             ## feature data table is always visible
-#                             fluidRow(
-#                                 column(12,
-#                                        column(ncol(fData(object[[1]])), 
-#                                               DT::dataTableOutput("fDataTable"))))
-#                             )
-#                 )
-#             ))
-#     
-#     server <-
-#         function(input, output, session) {
-#             ranges <- reactiveValues(x = NULL, y = NULL)
-#             ## Get coords for proteins according to selectized marker class(es)
-#             ## Can I change hard coded 1 and 2 to lapply???
-#             pcaMrkSel1 <- reactive({
-#                 lapply(input$markers,
-#                        function(z) pcas[[1]][which(pmarkers[[1]][, z] == 1), ])
-#             })
-#             pcaMrkSel2 <- reactive({
-#               lapply(input$markers,
-#                      function(z) pcas[[2]][which(pmarkers[[2]][, z] == 1), ])
-#             })
-#             profMrkSel1 <- reactive({
-#                 lapply(input$markers,
-#                        function(z) profs[[1]][which(pmarkers[[1]][, z] == 1), ])
-#             })
-#             profMrkSel2 <- reactive({
-#               lapply(input$markers,
-#                      function(z) profs[[2]][which(pmarkers[[2]][, z] == 1), ])
-#             })
-# 
-#             ## Update colour transparacy according to slider input
-#             myCols <- reactive({
-#                 scales::alpha(cols,
-#                               input$trans)[sapply(input$markers, function(z) 
-#                                   which(colnames(pmarkers[[1]]) == z))]
-#             })
-#             ## PCA plot
-#             output$pca1 <- renderPlot({
-#                 par(mar = c(4, 4, 0, 0))
-#                 par(oma = c(1, 0, 0, 0))
-#                 plot(pcas[[1]],
-#                      col = getUnknowncol(),
-#                      pch = 21, cex = 1,
-#                      xlim = ranges$x,
-#                      ylim = ranges$y)
-#                 usr <<- par("usr")
-#                 for (i in 1:length(input$markers)) 
-#                     points(pcaMrkSel1()[[i]], pch = 16, cex = 1.4, col = myCols()[i])
-#                 ## FIXME this does not work when brushed/subset of points selected
-#                 s <- feats[input$fDataTable_rows_selected]
-#                 if (length(s)) {
-#                     points(pcas[[1]][s, , drop = FALSE],
-#                            pch = 19, cex = 2, col = "#00000060")
-#                     if (input$checkbox)
-#                         text(pcas[[1]][s, 1], pcas[[1]][s, 2],
-#                              rownames(pcas[[1]])[s],
-#                              pos = 1)
-#                 }
-#             })
-#             output$pca2 <- renderPlot({
-#               par(mar = c(4, 4, 0, 0))
-#               par(oma = c(1, 0, 0, 0))
-#               plot(pcas[[2]],
-#                    col = getUnknowncol(),
-#                    pch = 21, cex = 1,
-#                    xlim = ranges$x,
-#                    ylim = ranges$y)
-#               usr <<- par("usr")
-#               for (i in 1:length(input$markers)) 
-#                 points(pcaMrkSel2()[[i]], pch = 16, cex = 1.4, col = myCols()[i])
-#               ## FIXME this does not work when brushed/subset of points selected
-#               s <- feats[input$fDataTable_rows_selected]
-#               if (length(s)) {
-#                 points(pcas[[2]][s, , drop = FALSE],
-#                        pch = 19, cex = 2, col = "#00000060")
-#                 if (input$checkbox)
-#                   text(pcas[[2]][s, 1], pcas[[2]][s, 2],
-#                        rownames(pcas[[2]])[s],
-#                        pos = 1)
-#               }
-#             })
-#             ## Protein profile
-#             output$profile1 <- renderPlot({
-#                 par(mar = c(5.1, 4.1, 1, 1))
-#                 ylim <- range(profs[[1]])
-#                 n <- nrow(profs[[1]])
-#                 m <- ncol(profs[[1]])
-#                 fracs <- sampleNames(object[[1]])
-#                 plot(0, ylim = ylim, xlim = c(1, m), ylab = "Intensity", 
-#                      type = "n", xaxt = "n", xlab = "")
-#                 axis(1, at = 1:m, labels = fracs, las = 2)
-#                 title(xlab = "Fractions", line = 5.5)
-#                 matlines(t(profs[[1]][feats, ]),
-#                         col = getUnknowncol(),
-#                         lty = 1,
-#                         type = "l")
-#                 ## for (i in 1:length(input$markers)) 
-#                 ##     matlines(t(profMrkSel()[[i]]),
-#                 ##              col = myCols()[i],
-#                 ##              lty = 1,
-#                 ##              lwd = 1.5)
-#                 s <- feats[input$fDataTable_rows_selected]
-#                 if (length(s))
-#                     matlines(t(profs[[1]][s, , drop = FALSE]),
-#                              col = "black",
-#                              lty = 1,
-#                              lwd = 2)
-#             })
-#             output$profile2 <- renderPlot({
-#               par(mar = c(5.1, 4.1, 1, 1))
-#               ylim <- range(profs[[2]])
-#               n <- nrow(profs[[2]])
-#               m <- ncol(profs[[2]])
-#               fracs <- sampleNames(object[[2]])
-#               plot(0, ylim = ylim, xlim = c(1, m), ylab = "Intensity", 
-#                    type = "n", xaxt = "n", xlab = "")
-#               axis(1, at = 1:m, labels = fracs, las = 2)
-#               title(xlab = "Fractions", line = 5.5)
-#               matlines(t(profs[[2]][feats, ]),
-#                        col = getUnknowncol(),
-#                        lty = 1,
-#                        type = "l")
-#               s <- feats[input$fDataTable_rows_selected]
-#               if (length(s))
-#                 matlines(t(profs[[2]][s, , drop = FALSE]),
-#                          col = "black",
-#                          lty = 1,
-#                          lwd = 2)
-#             })
-#             
-#             ## Feature data table
-#             output$fDataTable <- DT::renderDataTable({
-#                 if (is.null(input$pcaBrush)) {
-#                     i <- try(pcas[[1]][, 1] >= usr[1] & pcas[[1]][, 1] <= usr[2])
-#                     j <- try(pcas[[1]][, 2] >= usr[3] & pcas[[1]][, 2] <= usr[4])
-#                 } else {
-#                     i <- pcas[[1]][, 1] >= input$pcaBrush$xmin & pcas[[1]][, 1] <= input$pcaBrush$xmax
-#                     j <- pcas[[1]][, 2] >= input$pcaBrush$ymin & pcas[[1]][, 2] <= input$pcaBrush$ymax
-#                 }
-#                 feats <<- which(i & j)
-#                 DT::datatable(fData(object[[1]])[i & j, ],
-#                               rownames = TRUE,
-#                               options = list(searchHighlight = TRUE))
-#                               ## filter = 'top')
-#             })
-#             
-#             ## When a double-click happens, check if there's a brush on the plot.
-#             ## If so, zoom to the brush bounds; if not, reset the zoom.
-#             observeEvent(input$pcaDblclick, {
-#                              brush <- input$pcaBrush
-#                              if (!is.null(brush)) {
-#                                  ranges$x <- c(brush$xmin, brush$xmax)
-#                                  ranges$y <- c(brush$ymin, brush$ymax)
-#                              } else {
-#                                  ranges$x <- NULL
-#                                  ranges$y <- NULL
-#                              }                                         
-#                          })
-#             ## Output legend
-#             output$legend <- renderPlot({
-#                 par(mar = c(0, 0, 0, 0))
-#                 par(oma = c(0, 0, 0, 0))
-#                 plot(0, type = "n",
-#                      xaxt = "n", yaxt = "n",
-#                      xlab = "", ylab = "",
-#                      bty = "n")
-#                 legend("topleft",
-#                        input$markers,
-#                        col = myCols(),
-#                        ncol = 1, bty = "n",
-#                        pch = 16,
-#                        cex = legend.cex)
-#             })
+  }
+  profs <- lapply(object, exprs)
+  
+  
+  ## Remap data to same PC space
+  if (remap) {
+    if (method != "PCA")
+      stop("Data re-mapping is only supported for PCA at present")
+    message("Remapping data to the same PC space")
+    pcas <- remap(object, ...)
+    pcas <- lapply(pcas, plot2D, method = "none", plot = FALSE)
+  } 
+  
+  
+  ## all features are displayed on start
+  feats <- toSel <- 1:nrow(object[[1]])
+  idxDT <- numeric()
+  namesIdxDT <- character()
+  
+  
+  ## Build shiny app
+  ui <- fluidPage(
+    sidebarLayout(
+      sidebarPanel(
+        selectizeInput("markers", "Labels",
+                       choices = colnames(pmarkers),
+                       multiple = TRUE,
+                       selected = colnames(pmarkers)[pmsel]),
+        sliderInput("trans", "Transparancy",
+                    min = 0,  max = 1, value = 0.5),
+        checkboxInput("checkbox", label = "Show labels", value = TRUE),
+        br(),
+        actionButton("resetButton", "Zoom/reset plot"),
+        br(),
+        actionButton("clear", "Clear selection"),
+        br(),
+        radioButtons("switchDT", "Datatable view:",
+                     c("Object 1" = "dt1",
+                       "Object 2" = "dt2")),
+        width = 2),
+      mainPanel(
+        tabsetPanel(type = "tabs",
+                    tabPanel("PCA", id = "pcaPanel",
+                             fluidRow(
+                               column(4, 
+                                      plotOutput("pca1",
+                                                 height = fig.height,
+                                                 width = fig.width,
+                                                 dblclick = "dblClick",
+                                                 brush = brushOpts(
+                                                   id = "pcaBrush",
+                                                   resetOnNew = TRUE)),
+                                      offset = 0),
+                               column(4, 
+                                      plotOutput("pca2",
+                                                 height = fig.height,
+                                                 width = fig.width,
+                                                 dblclick = "dblClick",
+                                                 brush = brushOpts(
+                                                   id = "pcaBrush",
+                                                   resetOnNew = TRUE)),
+                                      offset = 0),
+                               column(3, 
+                                      plotOutput("legend1",
+                                                 height = fig.height,
+                                                 width = legend.width))
+                             )
+                    ),
+                    tabPanel("Profiles", id = "profilesPanel",
+                             fluidRow(
+                               column(4,
+                                      plotOutput("profile1",
+                                                 height = "400px",
+                                                 width = "120%"),
+                                      offset = 0),
+                               column(4,
+                                      plotOutput("profile2",
+                                                 height = "400px",
+                                                 width = "120%"),
+                                      offset = 0),
+                               
+                               column(3, 
+                                      plotOutput("legend2",
+                                                 width = "80%"),
+                                      offset = 1)
+                             )
+                    ),
+                    ## feature data table is always visible
+                    fluidRow(
+                      column(12,
+                             column(length(fDataInd), 
+                                    DT::dataTableOutput("fDataTable"))))
+        )
+      )
+    ))
+#   
+#   
+#   
+#   server <-
+#     function(input, output, session) {
+#       ranges <- reactiveValues(x = NULL, y = NULL)
+#       brushBounds <- reactiveValues(i =  try(pcas[, 1] >= min(pcas[, 1]) & 
+#                                                pcas[, 1] <= max(pcas[, 1])),
+#                                     j = try(pcas[, 2] >= min(pcas[, 2]) & 
+#                                               pcas[, 2] <= max(pcas[, 2])))
+#       resetLabels <- reactiveValues(logical = FALSE)
+#       
+#       ## Get coords for proteins according to selectized marker class(es)
+#       mrkSel <- reactive({
+#         lapply(input$markers,
+#                function(z) which(pmarkers[, z] == 1))
+#       })
+#       
+#       ## Update colour transparacy according to slider input
+#       myCols <- reactive({
+#         scales::alpha(cols,
+#                       input$trans)[sapply(input$markers, function(z) 
+#                         which(colnames(pmarkers) == z))]
+#       })
+#       
+#       
+#       ## PCA plot
+#       output$pca <- renderPlot({
+#         par(mar = c(4, 4, 0, 0))
+#         par(oma = c(1, 0, 0, 0))
+#         # plot(pcas, 
+#         
+#         plot2D(object,
+#                col = rep(getUnknowncol(), nrow(object)),
+#                pch = 21, cex = 1,
+#                xlim = ranges$x,
+#                ylim = ranges$y,
+#                fcol = newName)
+#         if (!is.null(input$markers)) {
+#           for (i in 1:length(input$markers)) 
+#             points(pcas[mrkSel()[[i]], ], pch = 16, 
+#                    cex = 1.4, col = myCols()[i])
+#         } 
+#         
+#         
+#         ## highlight point on plot by selecting item in table
+#         idxDT <<- feats[input$fDataTable_rows_selected]
+#         
+#         if (resetLabels$logical) idxDT <<- numeric()  ## If TRUE labels are cleared
+#         
+#         namesIdxDT <<- names(idxDT)
+#         if (length(idxDT)) {
+#           highlightOnPlot(object, namesIdxDT, cex = 1.3)
+#           if (input$checkbox) 
+#             highlightOnPlot(object, namesIdxDT, labels = TRUE, pos = 3)
 #         }
-#     app <- list(ui = ui, server = server)
-#     runApp(app)
+#         resetLabels$logical <- FALSE
+#       })
+#       
+#       
+#       ## Protein profile
+#       output$profile <- renderPlot({
+#         par(mar = c(8, 3, 1, 1))
+#         par(oma = c(0, 0, 0, 0))
+#         ylim <- range(profs)
+#         n <- nrow(profs)
+#         m <- ncol(profs)
+#         fracs <- sampleNames(object)
+#         plot(0, ylim = ylim, xlim = c(1, m), ylab = "Intensity", 
+#              type = "n", xaxt = "n", xlab = "")
+#         axis(1, at = 1:m, labels = fracs, las = 2)
+#         title(xlab = "Fractions", line = 5.5)
+#         matlines(t(profs[feats, ]),
+#                  col = getUnknowncol(),
+#                  lty = 1,
+#                  type = "l")
+#         if (!is.null(input$markers)) {
+#           for (i in 1:length(input$markers)) { 
+#             matlines(t(profs[mrkSel()[[i]], ]),
+#                      col = myCols()[i],
+#                      lty = 1,
+#                      lwd = 1.5) 
+#           }
+#         }
+#         
+#         ## If an item is clicked in the table highlight profile
+#         idxDT <<- feats[input$fDataTable_rows_selected]
+#         
+#         namesIdxDT <<- names(idxDT)
+#         if (length(idxDT)) {
+#           matlines(t(profs[namesIdxDT, , drop = FALSE]),
+#                    col = "black",
+#                    lty = 1,
+#                    lwd = 2)
+#         }
+#       })             
+#       
+#       
+#       ## Feature data table
+#       output$fDataTable <- DT::renderDataTable({
+#         
+#         feats <<- which(brushBounds$i & brushBounds$j)
+#         
+#         ## Double clicking to identify protein
+#         
+#         if (!is.null(input$dblClick)) {
+#           dist <- apply(pcas, 1, function(z) sqrt((input$dblClick$x - z[1])^2 
+#                                                   + (input$dblClick$y - z[2])^2))
+#           idxPlot <- which(dist == min(dist))
+#           if (idxPlot %in% idxDT) {                          ## 1--is it already clicked?
+#             setsel <- setdiff(names(idxDT), names(idxPlot))  ## Yes, remove it from table
+#             idxDT <<- idxDT[setsel]
+#           } else {                                           ## 2--new click?
+#             idxDT <<- c(idxDT, idxPlot)                      ## Yes, highlight it to table
+#           }
+#         }
+#         
+#         namesIdxDT <<- names(idxDT)                         ## update idx of names to track clicking
+#         toSel <- match(namesIdxDT,                          ## selection to highlight in DT
+#                        featureNames(object)[brushBounds$i & brushBounds$j])
+#         if (resetLabels$logical) toSel <- numeric()         ## reset labels
+#         
+#         ## Display data table (with clicked proteins highlighted)
+#         DT::datatable(data = fData(object)[brushBounds$i & brushBounds$j, fDataInd], 
+#                       rownames = TRUE,
+#                       selection = list(mode = 'multiple', selected = toSel))
+#       })
+#       
+#       
+#       ## When a the reset button is clicked check to see is there is a brush on
+#       ## the plot, if yes zoom, if not reset the plot.
+#       observeEvent(input$resetButton, {
+#         brush <- input$pcaBrush
+#         if (!is.null(brush)) {
+#           ranges$x <- c(brush$xmin, brush$xmax)
+#           ranges$y <- c(brush$ymin, brush$ymax)
+#           brushBounds$i <- pcas[, 1] >= brush$xmin & pcas[, 1] <= brush$xmax
+#           brushBounds$j <- pcas[, 2] >= brush$ymin & pcas[, 2] <= brush$ymax
+#         } else {
+#           ranges$x <- NULL
+#           ranges$y <- NULL
+#           brushBounds$i <- try(pcas[, 1] >= min(pcas[, 1]) 
+#                                & pcas[, 1] <= max(pcas[, 1]))
+#           brushBounds$j <- try(pcas[, 2] >= min(pcas[, 2]) 
+#                                & pcas[, 2] <= max(pcas[, 2]))
+#         }
+#       })
+#       
+#       ## When clear selection is pressed update clear idxDT above and reset selection 
+#       observeEvent(input$clear, {
+#         resetLabels$logical <- TRUE
+#       })
+#       
+#       
+#       ## Output legend
+#       output$legend1 <- renderPlot({
+#         par(mar = c(0, 0, 0, 0))
+#         par(oma = c(0, 0, 0, 0))
+#         plot(0, type = "n",
+#              xaxt = "n", yaxt = "n",
+#              xlab = "", ylab = "",
+#              bty = "n")
+#         if (!is.null(input$markers)) {
+#           legend("topleft",
+#                  c(input$markers, "unlabelled"),
+#                  col = c(myCols(), getUnknowncol()),
+#                  ncol = 1, bty = "n",
+#                  pch = c(rep(16, length(myCols())), 21),
+#                  cex = legend.cex)
+#         } else {
+#           legend("topleft",
+#                  "unlabelled",
+#                  col = getUnknowncol(),
+#                  ncol = 1, bty = "n",
+#                  pch = 21,
+#                  cex = legend.cex)
+#         }
+#       })
+#       ## Output legend
+#       output$legend2 <- renderPlot({
+#         par(mar = c(0, 0, 0, 0))
+#         par(oma = c(0, 0, 0, 0))
+#         plot(0, type = "n",
+#              xaxt = "n", yaxt = "n",
+#              xlab = "", ylab = "",
+#              bty = "n")
+#         if (!is.null(input$markers)) {
+#           legend("topleft",
+#                  c(input$markers, "unlabelled"),
+#                  col = c(myCols(), getUnknowncol()),
+#                  ncol = 1, bty = "n",
+#                  pch = c(rep(16, length(myCols())), 21),
+#                  cex = legend.cex
+#           )
+#         } else {
+#           legend("topleft",
+#                  "unlabelled",
+#                  col = getUnknowncol(),
+#                  ncol = 1, bty = "n",
+#                  pch = 21,
+#                  cex = legend.cex)
+#         }
+#       })
+#       
+#     }
+#   app <- list(ui = ui, server = server)
+#   runApp(app)
 # }
 # 
 # 
@@ -458,3 +498,5 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
 # ## feats[input$fDataTable_rows_selected]
 # ##  features to highlight
 # ##  feature selected in DT::datatable
+
+  
