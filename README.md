@@ -153,7 +153,7 @@ the interface is loaded or can be
   [issue](https://github.com/ComputationalProteomicsUnit/pRolocGUI/issues)
   (requires a free GitHub account).
 
-### Videos
+### Videos (new videos will appear shortly for the new apps)
 
 0. [An introduction to Bioconductor](https://www.youtube.com/watch?v=dg6NvmMVQ3I)
 1. [A brief introduction to `pRolocGUI`](http://youtu.be/zXtiiAoB_vM)
