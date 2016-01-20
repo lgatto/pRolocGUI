@@ -13,7 +13,7 @@ pRolocVis_classify(object, fcol, scol, mcol = "markers", legend.cex = 1,
 
 pRolocVis_pca(object, fcol, foi, fig.height = "600px", fig.width = "100\%",
   legend.width = "200\%", legend.cex = 1, nchar = 40, all = TRUE,
-  fdataInd)
+  fDataInd)
 }
 \arguments{
 \item{object}{An instance of class \code{MSnSet}, or a list of \code{MSnSet}
@@ -66,7 +66,7 @@ names, before their names are truncated. Default is 10.}
 If \code{FALSE} only first cluster in the list is displayed.
 \code{\link{FoICollection}}, that will be available for display.}
 
-\item{fdataInd}{A \code{numeric} or \code{character} corresponding to
+\item{fDataInd}{A \code{numeric} or \code{character} corresponding to
 the feature variables one wishes to retains for the data table. 
 If not specified, by default \code{markers} will be kept along with 
 the first 5 and last 6 feature variables.}
