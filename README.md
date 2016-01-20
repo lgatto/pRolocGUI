@@ -88,6 +88,20 @@ See the Bioconductor
 [installation page](http://bioconductor.org/install/) for more
 details.
 
+
+The pre-release/development code on github can be installed using
+`biocLite`.  Note that this requires a working R build environment
+(i.e `Rtools` on Windows - see
+[here](https://github.com/lgatto/teachingmaterial/wiki/R-package)).
+
+
+```c
+## install from github
+biocLite("lgatto/pRoloc")
+biocLite("lgatto/pRolocdata")
+biocLite("ComputationalProteomicsUnit/pRolocGUI")
+```
+
 ## Getting started
 
 Before using a package's functionality, it needs to be loaded:
