@@ -148,7 +148,8 @@ pRolocVis_pca <- function(object,
   
   
   ## all feautres are displayed on start
-  feats <- toSel <- 1:nrow(object)
+  toSel <- 1:nrow(object)
+  feats <- featureNames(object)
   idDT <- character()
 
   
