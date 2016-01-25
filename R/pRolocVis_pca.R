@@ -308,7 +308,7 @@ pRolocVis_pca <- function(object,
                                                   + (input$dblClick$y - z[2])^2))
           idPlot <- names(which(dist == min(dist)))
           if (idPlot %in% idDT) {                       ## 1--is it already clicked?
-            idDT <- setdiff(idDT, idPlot)             ## Yes, remove it from table
+            idDT <<- setdiff(idDT, idPlot)             ## Yes, remove it from table
           } else {                                      ## 2--new click?
             idDT <<- c(idDT, idPlot)                    ## Yes, highlight it to table
           }
