@@ -305,7 +305,7 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
                                      max(c(pcas[[1]][, 2], pcas[[2]][, 2]))))
       
       
-      ## Get brush bounds for zoom
+      ## Capture brushed proteins for zoom
       brushedProts1 <- reactiveValues(i =  try(pcas[[1]][, 1] >= min(pcas[[1]][, 1]) & 
                                                  pcas[[1]][, 1] <= max(pcas[[1]][, 1])),
                                       j = try(pcas[[1]][, 2] >= min(pcas[[1]][, 2]) & 
@@ -521,8 +521,9 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
         .brush1 <- input$pcaBrush1
         .brush2 <- input$pcaBrush2
         brush <- list(.brush1, .brush2)
-        if (!is.null(brush)) {
-          tf <- which(!is.null(brush))
+        tf <- !sapply(brush, is.null)
+        if (any(tf)) {
+          tf <- which(tf)
           brush <- brush[[tf]] 
           ranges$x <- c(brush$xmin, brush$xmax)
           ranges$y <- c(brush$ymin, brush$ymax)
