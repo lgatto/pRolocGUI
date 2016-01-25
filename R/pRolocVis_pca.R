@@ -43,12 +43,13 @@ pRolocVis_pca <- function(object,
                           all = TRUE,
                           fDataInd) {
   
+  
   ## Return featureNames of proteins selected
-  on.exit(return(invisible(names(idxDT))))
+  on.exit(return(invisible(idDT)))
+  
   
   ## Specify fDataInd first. 
   ## There can't be more than 12 columns in the DT table
-  
   if (missing(fDataInd)) {
     if (length(fvarLabels(object)) > 12) {
       message("There can't be more than 12 feature variables. Using 6 first and last.")
@@ -69,6 +70,7 @@ pRolocVis_pca <- function(object,
     }  
   }
 
+  
   ## Usual checks
   if (!inherits(object, "MSnSet"))
     stop("The input must be of class MSnSet")
@@ -84,9 +86,11 @@ pRolocVis_pca <- function(object,
     pmarkers <- fData(object)[, fcol]
   }
   
+  
   ## Create column of unknowns (needed later for plot2D in server)
   newName <- paste0(format(Sys.time(), "%a%b%d%H%M%S%Y"), "unknowns")
   fData(object)[, newName] <- "unknown"
+  
   
   ## Setting features to be displayed
   if (!missing(foi)) {
@@ -108,6 +112,7 @@ pRolocVis_pca <- function(object,
     }
   }
   
+  
   ## Marker colours
   cols <- getStockcol()
   if (length(cols) < ncol(pmarkers)) {
@@ -116,6 +121,7 @@ pRolocVis_pca <- function(object,
     cols <- rep(cols, n + 1)
   }
 
+  
   ## Shorten markers names if too long
   cn <- sapply(colnames(pmarkers),
                function(x) {
@@ -130,6 +136,7 @@ pRolocVis_pca <- function(object,
   names(cn) <- NULL
   colnames(pmarkers) <- cn
   
+  
   ## If there are too many marker sets, better
   ## to display few and let the user choose
   pmsel <- TRUE
@@ -142,8 +149,7 @@ pRolocVis_pca <- function(object,
   
   ## all feautres are displayed on start
   feats <- toSel <- 1:nrow(object)
-  idxDT <- numeric()
-  namesIdxDT <- character()
+  idDT <- character()
 
   
   ## Build shiny app
@@ -215,11 +221,13 @@ pRolocVis_pca <- function(object,
                                               pcas[, 2] <= max(pcas[, 2])))
       resetLabels <- reactiveValues(logical = FALSE)
       
+      
       ## Get coords for proteins according to selectized marker class(es)
       mrkSel <- reactive({
         lapply(input$markers,
                function(z) which(pmarkers[, z] == 1))
       })
+      
       
       ## Update colour transparacy according to slider input
       myCols <- reactive({
@@ -233,8 +241,6 @@ pRolocVis_pca <- function(object,
       output$pca <- renderPlot({
         par(mar = c(4, 4, 0, 0))
         par(oma = c(1, 0, 0, 0))
-        # plot(pcas, 
-        
         plot2D(object,
                col = rep(getUnknowncol(), nrow(object)),
                pch = 21, cex = 1,
@@ -246,18 +252,13 @@ pRolocVis_pca <- function(object,
             points(pcas[mrkSel()[[i]], ], pch = 16, 
                    cex = 1.4, col = myCols()[i])
         } 
-          
-        
         ## highlight point on plot by selecting item in table
-        idxDT <<- feats[input$fDataTable_rows_selected]
-        
-        if (resetLabels$logical) idxDT <<- numeric()  ## If TRUE labels are cleared
-        
-        namesIdxDT <<- names(idxDT)
-        if (length(idxDT)) {
-          highlightOnPlot(object, namesIdxDT, cex = 1.3)
+        idDT <<- feats[input$fDataTable_rows_selected]
+        if (resetLabels$logical) idDT <<- character()  ## If TRUE labels are cleared
+        if (length(idDT)) {
+          highlightOnPlot(object, idDT, cex = 1.3)
           if (input$checkbox) 
-            highlightOnPlot(object, namesIdxDT, labels = TRUE, pos = 3)
+            highlightOnPlot(object, idDT, labels = TRUE, pos = 3)
         }
         resetLabels$logical <- FALSE
       })
@@ -287,13 +288,10 @@ pRolocVis_pca <- function(object,
                      lwd = 1.5) 
           }
         }
-        
         ## If an item is clicked in the table highlight profile
-        idxDT <<- feats[input$fDataTable_rows_selected]
-        
-        namesIdxDT <<- names(idxDT)
-        if (length(idxDT)) {
-          matlines(t(profs[namesIdxDT, , drop = FALSE]),
+        idDT <<- feats[input$fDataTable_rows_selected]
+        if (length(idDT)) {
+          matlines(t(profs[idDT, , drop = FALSE]),
                    col = "black",
                    lty = 1,
                    lwd = 2)
@@ -303,30 +301,23 @@ pRolocVis_pca <- function(object,
       
       ## Feature data table
       output$fDataTable <- DT::renderDataTable({
-        
-        feats <<- which(brushBounds$i & brushBounds$j)
-        
-        ## Double clicking to identify protein
-        
+        feats <<- names(which(brushBounds$i & brushBounds$j))
+        ## Double click to identify protein
         if (!is.null(input$dblClick)) {
           dist <- apply(pcas, 1, function(z) sqrt((input$dblClick$x - z[1])^2 
                                                   + (input$dblClick$y - z[2])^2))
-          idxPlot <- which(dist == min(dist))
-          if (idxPlot %in% idxDT) {                          ## 1--is it already clicked?
-            setsel <- setdiff(names(idxDT), names(idxPlot))  ## Yes, remove it from table
-            idxDT <<- idxDT[setsel]
-          } else {                                           ## 2--new click?
-            idxDT <<- c(idxDT, idxPlot)                      ## Yes, highlight it to table
+          idPlot <- names(which(dist == min(dist)))
+          if (idPlot %in% idDT) {                       ## 1--is it already clicked?
+            setsel <- setdiff(idDT, idPlot)             ## Yes, remove it from table
+            idDT <<- setsel
+          } else {                                      ## 2--new click?
+            idDT <<- c(idDT, idPlot)                    ## Yes, highlight it to table
           }
         }
-
-        namesIdxDT <<- names(idxDT)                         ## update idx of names to track clicking
-        toSel <- match(namesIdxDT,                          ## selection to highlight in DT
-                       featureNames(object)[brushBounds$i & brushBounds$j])
-        if (resetLabels$logical) toSel <- numeric()         ## reset labels
-
+        toSel <- match(idDT, feats)                     ## selection to highlight in DT 
+        if (resetLabels$logical) toSel <- numeric()     ## reset labels
         ## Display data table (with clicked proteins highlighted)
-        DT::datatable(data = fData(object)[brushBounds$i & brushBounds$j, fDataInd], 
+        DT::datatable(data = fData(object)[feats, fDataInd], 
                       rownames = TRUE,
                       selection = list(mode = 'multiple', selected = toSel))
       })
@@ -351,13 +342,14 @@ pRolocVis_pca <- function(object,
         }
       })
       
+      
       ## When clear selection is pressed update clear idxDT above and reset selection 
       observeEvent(input$clear, {
          resetLabels$logical <- TRUE
       })
   
 
-      ## Output legend
+      ## PCA plot legend
       output$legend1 <- renderPlot({
         par(mar = c(0, 0, 0, 0))
         par(oma = c(0, 0, 0, 0))
@@ -381,7 +373,9 @@ pRolocVis_pca <- function(object,
                  cex = legend.cex)
         }
       })
-      ## Output legend
+      
+      
+      ## Profiles plot legend
       output$legend2 <- renderPlot({
         par(mar = c(0, 0, 0, 0))
         par(oma = c(0, 0, 0, 0))
