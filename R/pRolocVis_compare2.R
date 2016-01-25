@@ -13,7 +13,7 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
   
   
   ## Return featureNames of proteins selected
-  on.exit(return(invisible(names(idxDT))))
+  on.exit(return(invisible(idDT)))
   
   ## Specify fDataInd first
   ## There can't be more than 12 columns in the DT table
@@ -115,20 +115,20 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
   }
   
   ## Setting features to be displayed
-#   if (!missing(foi)) {
-#     if (inherits(foi, "FeaturesOfInterest"))
-#       foi <- FoICollection(list(foi))
-#     foimarkers <- as(foi, "matrix")
-#     if (exists("pmarkers", inherits = FALSE)) {
-#       pmarkers <- lapply(pmarkers, function(z) 
-#         merge(z, foimarkers, by = 0, all.x = TRUE))
-#       for (i in 1:length(pmarkers)) {
-#         rownames(pmarkers[[i]]) <- pmarkers[[i]][, "Row.names"]
-#         pmarkers[[i]] <- pmarkers[[i]][featureNames(object[[i]]), -1]     
-#       } 
-#     } else pmarkers <- foimarkers
-#   }
-#   
+  #   if (!missing(foi)) {
+  #     if (inherits(foi, "FeaturesOfInterest"))
+  #       foi <- FoICollection(list(foi))
+  #     foimarkers <- as(foi, "matrix")
+  #     if (exists("pmarkers", inherits = FALSE)) {
+  #       pmarkers <- lapply(pmarkers, function(z) 
+  #         merge(z, foimarkers, by = 0, all.x = TRUE))
+  #       for (i in 1:length(pmarkers)) {
+  #         rownames(pmarkers[[i]]) <- pmarkers[[i]][, "Row.names"]
+  #         pmarkers[[i]] <- pmarkers[[i]][featureNames(object[[i]]), -1]     
+  #       } 
+  #     } else pmarkers <- foimarkers
+  #   }
+  #   
   
   ## Convert GO names to CC names
   if (length(grep("GO:", colnames(pmarkers[[1]]))) > 0) {
@@ -177,18 +177,18 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
   
   ## Data to be displayed (allow other methods than PCA, matrix not supported as
   ## would need a list of matrices, we can add later if needed)
-#   if (missing(method)) {
-#     pcas <- lapply(object, plot2D, fcol = NULL, plot = FALSE)
-#   } else {
-#     if (pRoloc:::.validpRolocVisMethod(method)) {
-#       if (class(method) == "matrix") 
-#         stop("Visualisation method 'matrix' is not supported for the compare app")
-#       else
-#         pcas <- lapply(object, plot2D, fcol = NULL, plot = FALSE, method = method)
-#     } else {
-#       stop("Invalid visualisation method")
-#     }
-#   }
+  #   if (missing(method)) {
+  #     pcas <- lapply(object, plot2D, fcol = NULL, plot = FALSE)
+  #   } else {
+  #     if (pRoloc:::.validpRolocVisMethod(method)) {
+  #       if (class(method) == "matrix") 
+  #         stop("Visualisation method 'matrix' is not supported for the compare app")
+  #       else
+  #         pcas <- lapply(object, plot2D, fcol = NULL, plot = FALSE, method = method)
+  #     } else {
+  #       stop("Invalid visualisation method")
+  #     }
+  #   }
   
   ## Get data for profiles (need to do this here before changing MSnSet with remap
   ## as exprs data gets lost with remap)
@@ -206,17 +206,17 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
     pcas <- lapply(object, plot2D, fcol = NULL, plot = FALSE)
     plotmeth <- "PCA"
   }
-
+  
   ## Create column of unknowns (needed later for plot2D in server)
   newName <- paste0(format(Sys.time(), "%a%b%d%H%M%S%Y"), "unknowns")
   object <- lapply(object, function(x) {fData(x)[, newName] = "unknown"; x})
-
+  
   
   ## all features are displayed on start
-  feats <- toSel <- 1:nrow(object[[1]])
-  names(feats) <- featureNames(object[[1]])
-  idxDT <- numeric()
-  namesIdxDT <- character()
+  toSel <- 1:nrow(object[[1]])
+  feats <- featureNames(object[[1]])
+  idDT <- character()
+
   
   ## Build shiny app
   ui <- fluidPage(
@@ -230,8 +230,8 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
                     min = 0,  max = 1, value = 0.5),
         checkboxInput("checkbox", label = "Show labels", value = TRUE),
         br(),
-        # actionButton("resetButton", "Zoom/reset plot"),
-        # br(),
+        actionButton("resetButton", "Zoom/reset plot"),
+        br(),
         actionButton("clear", "Clear selection"),
         br(),
         # radioButtons("switchDT", "Datatable view:",
@@ -246,19 +246,19 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
                                       plotOutput("pca1",
                                                  height = fig.height,
                                                  width = fig.width,
-                                                 dblclick = "dblClick1"),
-                                      # brush = brushOpts(
-                                      # id = "pcaBrush",
-                                      # resetOnNew = TRUE)),
+                                                 dblclick = "dblClick1",
+                                                 brush = brushOpts(
+                                                   id = "pcaBrush1",
+                                                   resetOnNew = TRUE)),
                                       offset = 0),
                                column(4, 
                                       plotOutput("pca2",
                                                  height = fig.height,
                                                  width = fig.width,
-                                                 dblclick = "dblClick2"),
-                                      # brush = brushOpts(
-                                      # id = "pcaBrush",
-                                      # resetOnNew = TRUE)),
+                                                 dblclick = "dblClick2",
+                                                 brush = brushOpts(
+                                                   id = "pcaBrush2",
+                                                   resetOnNew = TRUE)),
                                       offset = 0),
                                column(3, 
                                       plotOutput("legend1",
@@ -291,26 +291,30 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
                              column(length(fDataInd1), 
                                     DT::dataTableOutput("fDataTable"))))
         ))
-      )
     )
+  )
   
   
   
   
   server <-
     function(input, output, session) {
-      ranges1 <- reactiveValues(x = NULL, y = NULL)
-      ranges2 <- reactiveValues(x = NULL, y = NULL)
+      ranges <- reactiveValues(x = c(min(c(pcas[[1]][, 1], pcas[[2]][, 1])), 
+                                     max(c(pcas[[1]][, 1], pcas[[2]][, 1]))),
+                               y = c(min(c(pcas[[1]][, 2], pcas[[2]][, 2])), 
+                                     max(c(pcas[[1]][, 2], pcas[[2]][, 2]))))
+      
       
       ## Get brush bounds for zoom
-#       brushBounds1 <- reactiveValues(i =  try(pcas[[1]][, 1] >= min(pcas[[1]][, 1]) & 
-#                                                pcas[[1]][, 1] <= max(pcas[[1]][, 1])),
-#                                     j = try(pcas[[1]][, 2] >= min(pcas[[1]][, 2]) & 
-#                                               pcas[[1]][, 2] <= max(pcas[[1]][, 2])))
-#       brushBounds2 <- reactiveValues(i =  try(pcas[[2]][, 1] >= min(pcas[[2]][, 1]) & 
-#                                                 pcas[[2]][, 1] <= max(pcas[[2]][, 1])),
-#                                      j = try(pcas[[2]][, 2] >= min(pcas[[2]][, 2]) & 
-#                                                pcas[[2]][, 2] <= max(pcas[[2]][, 2])))
+      brushedProts1 <- reactiveValues(i =  try(pcas[[1]][, 1] >= min(pcas[[1]][, 1]) & 
+                                                 pcas[[1]][, 1] <= max(pcas[[1]][, 1])),
+                                      j = try(pcas[[1]][, 2] >= min(pcas[[1]][, 2]) & 
+                                                pcas[[1]][, 2] <= max(pcas[[1]][, 2])))
+      brushedProts2 <- reactiveValues(i =  try(pcas[[2]][, 1] >= min(pcas[[2]][, 1]) & 
+                                                 pcas[[2]][, 1] <= max(pcas[[2]][, 1])),
+                                      j = try(pcas[[2]][, 2] >= min(pcas[[2]][, 2]) & 
+                                                pcas[[2]][, 2] <= max(pcas[[2]][, 2])))
+      
       resetLabels <- reactiveValues(logical = FALSE)
       
       
@@ -347,12 +351,11 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
       output$pca1 <- renderPlot({
         par(mar = c(4, 4, 0, 0))
         par(oma = c(1, 0, 0, 0))
-
         plot2D(object[[1]], method = plotmeth,
                col = rep(getUnknowncol(), nrow(object[[1]])),
                pch = 21, cex = 1,
-               xlim = ranges1$x,
-               ylim = ranges1$y,
+               xlim = ranges$x,
+               ylim = ranges$y,
                fcol = newName)
         if (!is.null(input$markers)) {
           for (i in 1:length(input$markers)) {
@@ -362,15 +365,12 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
           }
         } 
         ## highlight point on plot by selecting item in table
-        idxDT <<- feats[input$fDataTable_rows_selected]
-        
-        if (resetLabels$logical) idxDT <<- numeric()  ## If TRUE labels are cleared
-        
-        namesIdxDT <<- names(idxDT)
-        if (length(idxDT)) {
-          highlightOnPlot(pcas[[1]], namesIdxDT, cex = 1.3)
+        idDT <<- feats[input$fDataTable_rows_selected]
+        if (resetLabels$logical) idDT <<- character()  ## If TRUE clear labels
+        if (length(idDT)) {
+          highlightOnPlot(pcas[[1]], idDT, cex = 1.3)
           if (input$checkbox) 
-            highlightOnPlot(pcas[[1]], namesIdxDT, labels = TRUE, pos = 3)
+            highlightOnPlot(pcas[[1]], idDT, labels = TRUE, pos = 3)
         }
         resetLabels$logical <- FALSE
       })
@@ -381,12 +381,11 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
       output$pca2 <- renderPlot({
         par(mar = c(4, 4, 0, 0))
         par(oma = c(1, 0, 0, 0))
-        
         plot2D(object[[2]], method = plotmeth,
                col = rep(getUnknowncol(), nrow(object[[2]])),
                pch = 21, cex = 1,
-               xlim = ranges2$x,
-               ylim = ranges2$y,
+               xlim = ranges$x,
+               ylim = ranges$y,
                fcol = newName)
         if (!is.null(input$markers)) {
           for (i in 1:length(input$markers)) {
@@ -396,15 +395,12 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
           }
         } 
         ## highlight point on plot by selecting item in table
-        idxDT <<- feats[input$fDataTable_rows_selected]
-        
-        if (resetLabels$logical) idxDT <<- numeric()  ## If TRUE labels are cleared
-        
-        namesIdxDT <<- names(idxDT)
-        if (length(idxDT)) {
-          highlightOnPlot(pcas[[2]], namesIdxDT, cex = 1.3)
+        idDT <<- feats[input$fDataTable_rows_selected]
+        if (resetLabels$logical) idDT <<- character()  ## If TRUE labels are cleared
+        if (length(idDT)) {
+          highlightOnPlot(pcas[[2]], idDT, cex = 1.3)
           if (input$checkbox) 
-            highlightOnPlot(pcas[[2]], namesIdxDT, labels = TRUE, pos = 3)
+            highlightOnPlot(pcas[[2]], idDT, labels = TRUE, pos = 3)
         }
         resetLabels$logical <- FALSE
       })
@@ -437,47 +433,45 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
           }
         }
         ## If an item is clicked in the table highlight profile
-        idxDT <<- feats[input$fDataTable_rows_selected]
-        namesIdxDT <<- names(idxDT)
-        if (length(idxDT)) {
-          matlines(t(profs[[1]][namesIdxDT, , drop = FALSE]),
+        idDT <<- feats[input$fDataTable_rows_selected]
+        if (length(idDT)) {
+          matlines(t(profs[[1]][idDT, , drop = FALSE]),
                    col = "black",
                    lty = 1,
                    lwd = 2)
         }
-      }) 
-        
-        
-        ## Protein profile
-        output$profile2 <- renderPlot({
-          par(mar = c(8, 3, 1, 1))
-          par(oma = c(0, 0, 0, 0))
-          ylim <- range(profs[[2]])
-          n <- nrow(profs[[2]])
-          m <- ncol(profs[[2]])
-          fracs <- sampleNames(object[[2]])
-          plot(0, ylim = ylim, xlim = c(1, m), ylab = "Intensity", 
-               type = "n", xaxt = "n", xlab = "")
-          axis(1, at = 1:m, labels = fracs, las = 2)
-          title(xlab = "Fractions", line = 5.5)
-          matlines(t(profs[[2]][feats, ]),
-                   col = getUnknowncol(),
-                   lty = 1,
-                   type = "l")
-          if (!is.null(input$markers)) {
-            for (i in 1:length(input$markers)) { 
-              if (length(mrkSel2()[[i]]) > 0)
-                matlines(t(profs[[2]][mrkSel2()[[i]], ]),
-                         col = myCols()[i],
-                         lty = 1,
-                         lwd = 1.5)
-            }
+      })
+      
+      
+      ## Protein profile
+      output$profile2 <- renderPlot({
+        par(mar = c(8, 3, 1, 1))
+        par(oma = c(0, 0, 0, 0))
+        ylim <- range(profs[[2]])
+        n <- nrow(profs[[2]])
+        m <- ncol(profs[[2]])
+        fracs <- sampleNames(object[[2]])
+        plot(0, ylim = ylim, xlim = c(1, m), ylab = "Intensity", 
+             type = "n", xaxt = "n", xlab = "")
+        axis(1, at = 1:m, labels = fracs, las = 2)
+        title(xlab = "Fractions", line = 5.5)
+        matlines(t(profs[[2]][feats, ]),
+                 col = getUnknowncol(),
+                 lty = 1,
+                 type = "l")
+        if (!is.null(input$markers)) {
+          for (i in 1:length(input$markers)) { 
+            if (length(mrkSel2()[[i]]) > 0)
+              matlines(t(profs[[2]][mrkSel2()[[i]], ]),
+                       col = myCols()[i],
+                       lty = 1,
+                       lwd = 1.5)
           }
+        }
         ## If an item is clicked in the table highlight profile
-        idxDT <<- feats[input$fDataTable_rows_selected]
-        namesIdxDT <<- names(idxDT)
-        if (length(idxDT)) {
-          matlines(t(profs[[2]][namesIdxDT, , drop = FALSE]),
+        idDT <<- feats[input$fDataTable_rows_selected]
+        if (length(idDT)) {
+          matlines(t(profs[[2]][idDT, , drop = FALSE]),
                    col = "black",
                    lty = 1,
                    lwd = 2)
@@ -485,70 +479,74 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
       })             
       
       
-        
+      
       ## Feature data table
       output$fDataTable <- DT::renderDataTable({
-        
-#         feats <<- which(brushBounds$i & brushBounds$j)
+        feats <<- unique(c(names(which(brushedProts1$i & brushedProts1$j)),
+                           names(which(brushedProts2$i & brushedProts2$j))))
         ## Double clicking to identify protein
         if (!is.null(input$dblClick1)) {
           dist <- apply(pcas[[1]], 1, function(z) sqrt((input$dblClick1$x - z[1])^2 
-                                                  + (input$dblClick1$y - z[2])^2))
-          idxPlot <- which(dist == min(dist))
-          if (idxPlot %in% idxDT) {                          ## 1--is it already clicked?
-            setsel <- setdiff(names(idxDT), names(idxPlot))  ## Yes, remove it from table
-            idxDT <<- idxDT[setsel]
-          } else {                                           ## 2--new click?
-            idxDT <<- c(idxDT, idxPlot)                      ## Yes, highlight it to table
+                                                       + (input$dblClick1$y - z[2])^2))
+          idPlot <- names(which(dist == min(dist)))
+          if (idPlot %in% idDT) {                          ## 1--is it already clicked?
+            idDT <<- setdiff(idDT, idPlot)                 ## Yes, remove it from table
+          } else {                                         ## 2--new click?
+            idDT <<- c(idDT, idPlot)                       ## Yes, highlight it to table
           }
         }
         if (!is.null(input$dblClick2)) {
           dist <- apply(pcas[[2]], 1, function(z) sqrt((input$dblClick2$x - z[1])^2 
                                                        + (input$dblClick2$y - z[2])^2))
-          idxPlot <- which(dist == min(dist))
-          if (idxPlot %in% idxDT) {                          ## 1--is it already clicked?
-            setsel <- setdiff(names(idxDT), names(idxPlot))  ## Yes, remove it from table
-            idxDT <<- idxDT[setsel]
-          } else {                                           ## 2--new click?
-            idxDT <<- c(idxDT, idxPlot)                      ## Yes, highlight it to table
+          idPlot <- names(which(dist == min(dist)))
+          if (idPlot %in% idDT) {                          ## 1--is it already clicked?
+            idDT <<- setdiff(idDT, idPlot)                 ## Yes, remove it from table
+          } else {                                         ## 2--new click?
+            idDT <<- c(idDT, idPlot)                       ## Yes, highlight it to table
           }
         } 
-
-        
-        namesIdxDT <<- names(idxDT)                         ## update idx of names to track clicking
-        toSel <- match(namesIdxDT,                          ## selection to highlight in DT
-                         featureNames(object[[1]]))
-#                        featureNames(object)[brushBounds$i & brushBounds$j])
+        toSel <- match(idDT, feats)                  ## selection to highlight in DT
         if (resetLabels$logical) toSel <- numeric()         ## reset labels
         
         ## Display data table (with clicked proteins highlighted)
-#         DT::datatable(data = fData(object)[brushBounds$i & brushBounds$j, fDataInd], 
-        DT::datatable(data = fData(object[[1]])[, fDataInd1], 
+        DT::datatable(data = fData(object[[1]])[feats, fDataInd1], 
                       rownames = TRUE,
                       selection = list(mode = 'multiple', selected = toSel))
       })
       
       
-#       ## When a the reset button is clicked check to see is there is a brush on
-#       ## the plot, if yes zoom, if not reset the plot.
-#       observeEvent(input$resetButton, {
-#         brush <- input$pcaBrush
-#         if (!is.null(brush)) {
-#           ranges$x <- c(brush$xmin, brush$xmax)
-#           ranges$y <- c(brush$ymin, brush$ymax)
-#           brushBounds$i <- pcas[[1]][, 1] >= brush$xmin & pcas[[1]][, 1] <= brush$xmax
-#           brushBounds$j <- pcas[[1]][, 2] >= brush$ymin & pcas[[1]][, 2] <= brush$ymax
-#         } else {
-#           ranges$x <- NULL
-#           ranges$y <- NULL
-#           brushBounds$i <- try(pcas[[1]][, 1] >= min(pcas[[1]][, 1]) 
-#                                & pcas[[1]][, 1] <= max(pcas[[1]][, 1]))
-#           brushBounds$j <- try(pcas[[1]][, 2] >= min(pcas[[1]][, 2]) 
-#                                & pcas[[1]][, 2] <= max(pcas[[1]][, 2]))
-#         }
-#       })
+      ## When a the reset button is clicked check to see is there is a brush on
+      ## the plot, if yes zoom, if not reset the plot.
+      observeEvent(input$resetButton, {
+        .brush1 <- input$pcaBrush1
+        .brush2 <- input$pcaBrush2
+        brush <- list(.brush1, .brush2)
+        if (!is.null(brush)) {
+          tf <- which(!is.null(brush))
+          brush <- brush[[tf]] 
+          ranges$x <- c(brush$xmin, brush$xmax)
+          ranges$y <- c(brush$ymin, brush$ymax)
+          brushedProts1$i <- pcas[[1]][, 1] >= brush$xmin & pcas[[1]][, 1] <= brush$xmax
+          brushedProts1$j <- pcas[[1]][, 2] >= brush$ymin & pcas[[1]][, 2] <= brush$ymax
+          brushedProts2$i <- pcas[[2]][, 1] >= brush$xmin & pcas[[2]][, 1] <= brush$xmax
+          brushedProts2$j <- pcas[[2]][, 2] >= brush$ymin & pcas[[2]][, 2] <= brush$ymax
+        } else {
+          ranges$x <- c(min(c(pcas[[1]][, 1], pcas[[2]][, 1])), 
+                        max(c(pcas[[1]][, 1], pcas[[2]][, 1])))
+          ranges$y <- c(min(c(pcas[[1]][, 2], pcas[[2]][, 2])), 
+                        max(c(pcas[[1]][, 2], pcas[[2]][, 2])))          
+          brushedProts1$i <- try(pcas[[1]][, 1] >= min(pcas[[1]][, 1]) 
+                                 & pcas[[1]][, 1] <= max(pcas[[1]][, 1]))
+          brushedProts1$j <- try(pcas[[1]][, 2] >= min(pcas[[1]][, 2]) 
+                                 & pcas[[1]][, 2] <= max(pcas[[1]][, 2]))
+          brushedProts2$i <- try(pcas[[2]][, 1] >= min(pcas[[2]][, 1]) 
+                                 & pcas[[2]][, 1] <= max(pcas[[2]][, 1]))
+          brushedProts2$j <- try(pcas[[2]][, 2] >= min(pcas[[2]][, 2]) 
+                                 & pcas[[2]][, 2] <= max(pcas[[2]][, 2]))
+        }
+      })
       
-      ## When clear selection is pressed update clear idxDT above and reset selection 
+      ## When clear selection is pressed update clear idDT above and reset selection 
       observeEvent(input$clear, {
         resetLabels$logical <- TRUE
       })
@@ -567,6 +565,7 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
                  c(input$markers, "unlabelled"),
                  col = c(myCols(), getUnknowncol()),
                  ncol = 1, bty = "n",
+                 
                  pch = c(rep(16, length(myCols())), 21),
                  cex = legend.cex)
         } else {
@@ -578,6 +577,7 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
                  cex = legend.cex)
         }
       })
+      
       ## Output legend
       output$legend2 <- renderPlot({
         par(mar = c(0, 0, 0, 0))
@@ -618,5 +618,3 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
 ## feats[input$fDataTable_rows_selected]
 ##  features to highlight
 ##  feature selected in DT::datatable
-
-  
