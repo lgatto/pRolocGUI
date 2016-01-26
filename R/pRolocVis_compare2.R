@@ -242,7 +242,7 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
         tabsetPanel(type = "tabs",
                     tabPanel("PCA", id = "pcaPanel",
                              fluidRow(
-                               column(4, 
+                               column(5, 
                                       plotOutput("pca1",
                                                  height = fig.height,
                                                  width = fig.width,
@@ -251,7 +251,7 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
                                                    id = "pcaBrush1",
                                                    resetOnNew = TRUE)),
                                       offset = 0),
-                               column(4, 
+                               column(5, 
                                       plotOutput("pca2",
                                                  height = fig.height,
                                                  width = fig.width,
@@ -260,7 +260,7 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
                                                    id = "pcaBrush2",
                                                    resetOnNew = TRUE)),
                                       offset = 0),
-                               column(3, 
+                               column(2, 
                                       plotOutput("legend1",
                                                  height = fig.height,
                                                  width = legend.width))
@@ -372,7 +372,6 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
           if (input$checkbox) 
             highlightOnPlot(pcas[[1]], idDT, labels = TRUE, pos = 3)
         }
-        resetLabels$logical <- FALSE
       })
       
       
@@ -402,7 +401,7 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
           if (input$checkbox) 
             highlightOnPlot(pcas[[2]], idDT, labels = TRUE, pos = 3)
         }
-        resetLabels$logical <- FALSE
+        resetLabels$logical <<- FALSE
       })
       
       
@@ -507,7 +506,6 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
         } 
         toSel <- match(idDT, feats)                  ## selection to highlight in DT
         if (resetLabels$logical) toSel <- numeric()         ## reset labels
-        
         ## Display data table (with clicked proteins highlighted)
         DT::datatable(data = fData(object[[1]])[feats, fDataInd1], 
                       rownames = TRUE,
@@ -522,34 +520,35 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
         .brush2 <- input$pcaBrush2
         brush <- list(.brush1, .brush2)
         tf <- !sapply(brush, is.null)
-        if (any(tf)) {
+        if (any(tf)) { 
           tf <- which(tf)
           brush <- brush[[tf]] 
-          ranges$x <- c(brush$xmin, brush$xmax)
-          ranges$y <- c(brush$ymin, brush$ymax)
-          brushedProts1$i <- pcas[[1]][, 1] >= brush$xmin & pcas[[1]][, 1] <= brush$xmax
-          brushedProts1$j <- pcas[[1]][, 2] >= brush$ymin & pcas[[1]][, 2] <= brush$ymax
-          brushedProts2$i <- pcas[[2]][, 1] >= brush$xmin & pcas[[2]][, 1] <= brush$xmax
-          brushedProts2$j <- pcas[[2]][, 2] >= brush$ymin & pcas[[2]][, 2] <= brush$ymax
-        } else {
-          ranges$x <- c(min(c(pcas[[1]][, 1], pcas[[2]][, 1])), 
-                        max(c(pcas[[1]][, 1], pcas[[2]][, 1])))
-          ranges$y <- c(min(c(pcas[[1]][, 2], pcas[[2]][, 2])), 
-                        max(c(pcas[[1]][, 2], pcas[[2]][, 2])))          
-          brushedProts1$i <- try(pcas[[1]][, 1] >= min(pcas[[1]][, 1]) 
-                                 & pcas[[1]][, 1] <= max(pcas[[1]][, 1]))
-          brushedProts1$j <- try(pcas[[1]][, 2] >= min(pcas[[1]][, 2]) 
-                                 & pcas[[1]][, 2] <= max(pcas[[1]][, 2]))
-          brushedProts2$i <- try(pcas[[2]][, 1] >= min(pcas[[2]][, 1]) 
-                                 & pcas[[2]][, 1] <= max(pcas[[2]][, 1]))
-          brushedProts2$j <- try(pcas[[2]][, 2] >= min(pcas[[2]][, 2]) 
-                                 & pcas[[2]][, 2] <= max(pcas[[2]][, 2]))
+          bminx <- brush$xmin
+          bmaxx <- brush$xmax
+          bminy <- brush$ymin
+          bmaxy <- brush$ymax
+        } else {   ## reset the plot
+          bminx <- min(c(pcas[[1]][, 1], pcas[[2]][, 1]))
+          bmaxx <- max(c(pcas[[1]][, 1], pcas[[2]][, 1]))
+          bminy <- min(c(pcas[[1]][, 2], pcas[[2]][, 2]))
+          bmaxy <- max(c(pcas[[1]][, 2], pcas[[2]][, 2]))
         }
+        ranges$x <- c(bminx, bmaxx)
+        ranges$y <- c(bminy, bmaxy)
+        brushedProts1$i <- try(pcas[[1]][, 1] >= bminx 
+                               & pcas[[1]][, 1] <= bmaxx)
+        brushedProts1$j <- try(pcas[[1]][, 2] >= bminy 
+                               & pcas[[1]][, 2] <= bmaxy)
+        brushedProts2$i <- try(pcas[[2]][, 1] >= bminx 
+                               & pcas[[2]][, 1] <= bmaxx)
+        brushedProts2$j <- try(pcas[[2]][, 2] >= bminy 
+                               & pcas[[2]][, 2] <= bmaxy)
       })
       
-      ## When clear selection is pressed update clear idDT above and reset selection 
+      
+      ## When clear selection is pressed labels and reset selection 
       observeEvent(input$clear, {
-        resetLabels$logical <- TRUE
+        resetLabels$logical <<- TRUE
       })
       
       
