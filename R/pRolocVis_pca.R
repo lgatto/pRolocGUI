@@ -25,11 +25,6 @@
 ##' names, before their names are truncated. Default is 10.
 ##' @param all If \code{TRUE} all clusters are displayed on startup.
 ##' If \code{FALSE} only first cluster in the list is displayed.
-##' \code{\link{FoICollection}}, that will be available for display.
-##' @param fDataInd A \code{numeric} or \code{character} corresponding to
-##' the feature variables one wishes to retains for the data table. 
-##' If not specified, by default \code{markers} will be kept along with 
-##' the first 5 and last 6 feature variables.
 ##' @return For \code{pca} a \code{character} of protein names, of the 
 ##' proteins selected upon application closure.
 pRolocVis_pca <- function(object, 
@@ -40,36 +35,10 @@ pRolocVis_pca <- function(object,
                           legend.width = "200%",
                           legend.cex = 1,
                           nchar = 40,
-                          all = TRUE,
-                          fDataInd) {
-  
+                          all = TRUE) {
   
   ## Return featureNames of proteins selected
   on.exit(return(invisible(idDT)))
-  
-  
-  ## Specify fDataInd first. 
-  ## There can't be more than 12 columns in the DT table
-  if (missing(fDataInd)) {
-    if (length(fvarLabels(object)) > 12) {
-      message("There can't be more than 12 feature variables. Using 6 first and last.")
-      xx <- pRolocGUI:::narrowFeatureData(object, )
-      fDataInd <- fvarLabels(xx)
-    } else {
-      fDataInd <- fvarLabels(object)
-    }
-  } else {
-    if (is.numeric(fDataInd))
-      fDataInd <- fvarLabels(object)[fDataInd]
-    
-    if (length(fDataInd) > 12) {
-      stop("There can't be more than 12 feature variables, check fDataInd")
-    } else {
-      if (!all(fDataInd %in% fvarLabels(object)))
-        stop("Check fDataInd, not all features found in fData")
-    }  
-  }
-
   
   ## Usual checks
   if (!inherits(object, "MSnSet"))
@@ -78,14 +47,25 @@ pRolocVis_pca <- function(object,
   if (!missing(fcol)) {
     if (!fcol %in% fvarLabels(object))
       stop("fcol missing in fData")
-    if (!isMrkMat(object, fcol)) {
-      mName <- paste0("Markers", format(Sys.time(), "%a%b%d%H%M%S%Y"))
-      object <- mrkVecToMat(object, fcol, mfcol = mName)
-      fcol <- mName
-    }  
-    pmarkers <- fData(object)[, fcol]
   }
-  
+    
+  ## Define DT columns
+  origFvarLab <- fvarLabels(object)
+  if (length(origFvarLab) > 6) {
+    .ind <- which(origFvarLab == fcol)
+    .fvarL <- origFvarLab[-.ind]
+    selDT <- c(.fvarL[1:5], fcol)
+  } else {
+    selDT <- origFvarLab[1:length(origFvarLab)]
+  }
+    
+  ## Make fcol a matrix of markers if not already  
+  if (!isMrkMat(object, fcol)) {
+    mName <- paste0("Markers", format(Sys.time(), "%a%b%d%H%M%S%Y"))
+    object <- mrkVecToMat(object, fcol, mfcol = mName)
+    fcol <- mName
+  }
+  pmarkers <- fData(object)[, fcol]
   
   ## Create column of unknowns (needed later for plot2D in server)
   newName <- paste0(format(Sys.time(), "%a%b%d%H%M%S%Y"), "unknowns")
@@ -94,15 +74,19 @@ pRolocVis_pca <- function(object,
   
   ## Setting features to be displayed
   if (!missing(foi)) {
-    if (inherits(foi, "FeaturesOfInterest"))
-      foi <- FoICollection(list(foi))
-    foimarkers <- as(foi, "matrix")
-    if (exists("pmarkers", inherits = FALSE)) {
-      pmarkers <- merge(pmarkers, foimarkers,
-                        by = 0, all.x = TRUE)
-      rownames(pmarkers) <- pmarkers[, "Row.names"]
-      pmarkers <- pmarkers[featureNames(object), -1]            
-    } else pmarkers <- foimarkers
+    if (inherits(foi, "FeaturesOfInterest") | inherits(foi, "FoICollection")) {
+      if (inherits(foi, "FeaturesOfInterest"))
+        foi <- FoICollection(list(foi))
+      foimarkers <- as(foi, "matrix")
+      if (exists("pmarkers", inherits = FALSE)) {
+        pmarkers <- merge(pmarkers, foimarkers,
+                          by = 0, all.x = TRUE)
+        rownames(pmarkers) <- pmarkers[, "Row.names"]
+        pmarkers <- pmarkers[featureNames(object), -1]            
+      } else pmarkers <- foimarkers
+    } else {
+      message("foi is not a valid FeaturesOfInterest or FoICollection object")
+      }
   }
   if (length(grep("GO:", colnames(pmarkers))) > 0) {
     cn <- pRoloc::flipGoTermId(colnames(pmarkers))
@@ -202,10 +186,20 @@ pRolocVis_pca <- function(object,
                                       offset = 1)
                                )
                     ),
+                    tabPanel("Table Selection", id = "tableSelPanel",
+                             fluidRow(
+                               column(4,
+                                      checkboxGroupInput("selTab", 
+                                                         "Data columns to display for data 1",
+                                                         choices = origFvarLab,
+                                                         selected = selDT)
+                               )
+                             )
+                    ),
                     ## feature data table is always visible
                     fluidRow(
                       column(12,
-                             column(length(fDataInd), 
+                             column(length(selDT), 
                                     DT::dataTableOutput("fDataTable"))))
         )
       )
@@ -317,7 +311,7 @@ pRolocVis_pca <- function(object,
         toSel <- match(idDT, feats)                     ## selection to highlight in DT 
         if (resetLabels$logical) toSel <- numeric()     ## reset labels
         ## Display data table (with clicked proteins highlighted)
-        DT::datatable(data = fData(object)[feats, fDataInd], 
+        DT::datatable(data = fData(object)[feats, input$selTab], 
                       rownames = TRUE,
                       selection = list(mode = 'multiple', selected = toSel))
       })
