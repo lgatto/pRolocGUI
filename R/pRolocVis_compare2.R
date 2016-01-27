@@ -7,54 +7,67 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
                                remap = TRUE,
                                nchar = 40,
                                all = TRUE,
+                               dims = c(1, 2),
                                # method,
-                               fDataInd1, fDataInd2, 
                                ...) {
   
   
   ## Return featureNames of proteins selected
   on.exit(return(invisible(idDT)))
   
+  ## Define data columns
+  origFvarLab1 <- fvarLabels(object[[1]])
+  origFvarLab2 <- fvarLabels(object[[2]])
+  if (length(origFvarLab1) > 6) 
+    selDT1 <- origFvarLab1[1:6]
+  else 
+    selDT1 <- origFvarLab1[1:length(origFvarLab1)]
+  if (length(origFvarLab2) > 6) 
+    selDT2 <- origFvarLab2[1:6]
+  else 
+    selDT2 <- origFvarLab2[1:length(origFvarLab2)]
+  
+  
   ## Specify fDataInd first
   ## There can't be more than 12 columns in the DT table
-  if (missing(fDataInd1)) {
-    if (length(fvarLabels(object[[1]])) > 12) {
-      message("There can't be more than 12 feature variables. Using 6 first and last.")
-      xx <- pRolocGUI:::narrowFeatureData(object[[1]])
-      fDataInd1 <- fvarLabels(xx)
-    } else {
-      fDataInd1 <- fvarLabels(object[[1]])
-    }
-  } else {
-    if (is.numeric(fDataInd1))
-      fDataInd1 <- fvarLabels(object[[1]])[fDataInd1]
-    
-    if (length(fDataInd1) > 12) {
-      stop("There can't be more than 12 feature variables, check fDataInd1")
-    } else {
-      if (!all(fDataInd1 %in% fvarLabels(object[[1]])))
-        stop("Check fDataInd1, not all features found in fData")
-    }  
-  }
-  if (missing(fDataInd2)) {
-    if (length(fvarLabels(object[[2]])) > 12) {
-      message("There can't be more than 12 feature variables. Using 6 first and last.")
-      xx <- pRolocGUI:::narrowFeatureData(object[[2]])
-      fDataInd2 <- fvarLabels(xx)
-    } else {
-      fDataInd2 <- fvarLabels(object[[2]])
-    }
-  } else {
-    if (is.numeric(fDataInd2))
-      fDataInd2 <- fvarLabels(object[[2]])[fDataInd2]
-    
-    if (length(fDataInd2) > 12) {
-      stop("There can't be more than 12 feature variables, check fDataInd2")
-    } else {
-      if (!all(fDataInd2 %in% fvarLabels(object[[2]])))
-        stop("Check fDataInd2, not all features found in fData")
-    }  
-  }
+#   if (missing(fDataInd1)) {
+#     if (length(fvarLabels(object[[1]])) > 12) {
+#       message("There can't be more than 12 feature variables. Using 6 first and last.")
+#       xx <- pRolocGUI:::narrowFeatureData(object[[1]])
+#       fDataInd1 <- fvarLabels(xx)
+#     } else {
+#       fDataInd1 <- fvarLabels(object[[1]])
+#     }
+#   } else {
+#     if (is.numeric(fDataInd1))
+#       fDataInd1 <- fvarLabels(object[[1]])[fDataInd1]
+#     
+#     if (length(fDataInd1) > 12) {
+#       stop("There can't be more than 12 feature variables, check fDataInd1")
+#     } else {
+#       if (!all(fDataInd1 %in% fvarLabels(object[[1]])))
+#         stop("Check fDataInd1, not all features found in fData")
+#     }  
+#   }
+#   if (missing(fDataInd2)) {
+#     if (length(fvarLabels(object[[2]])) > 12) {
+#       message("There can't be more than 12 feature variables. Using 6 first and last.")
+#       xx <- pRolocGUI:::narrowFeatureData(object[[2]])
+#       fDataInd2 <- fvarLabels(xx)
+#     } else {
+#       fDataInd2 <- fvarLabels(object[[2]])
+#     }
+#   } else {
+#     if (is.numeric(fDataInd2))
+#       fDataInd2 <- fvarLabels(object[[2]])[fDataInd2]
+#     
+#     if (length(fDataInd2) > 12) {
+#       stop("There can't be more than 12 feature variables, check fDataInd2")
+#     } else {
+#       if (!all(fDataInd2 %in% fvarLabels(object[[2]])))
+#         stop("Check fDataInd2, not all features found in fData")
+#     }  
+#   }
   
   
   ## Check MSnSetList and take intersection
@@ -285,11 +298,30 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
                                       offset = 1)
                              )
                     ),
+                    tabPanel("Table Selection", id = "tableSelPanel",
+                             fluidRow(
+                               column(4,
+                                      checkboxGroupInput("selTab1", 
+                                                         "Feature data columns to display for data 1 (max 6)",
+                                                         choices = origFvarLab1,
+                                                         selected = selDT1)
+                                      ),
+                               column(4,
+                                      checkboxGroupInput("selTab2",
+                                                         "Feature data columns to display for data 2 (max 6)",
+                                                         choices = origFvarLab2,
+                                                         selected = selDT2)
+                                      
+                                      )
+                             )
+                    ),
                     ## feature data table is always visible
                     fluidRow(
                       column(12,
-                             column(length(fDataInd1), 
-                                    DT::dataTableOutput("fDataTable"))))
+                             column(length(c(selDT1, selDT2)),
+                                    DT::dataTableOutput("fDataTable")))),
+#                     tags$head(tags$style("#fDataTable{color: red;
+#                          font-size: 10px;}"))
         ))
     )
   )
@@ -316,7 +348,7 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
                                                 pcas[[2]][, 2] <= max(pcas[[2]][, 2])))
       
       resetLabels <- reactiveValues(logical = FALSE)
-      
+    
       
       
       ## Get coords for proteins according to selectized marker class(es)
@@ -507,7 +539,8 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
         toSel <- match(idDT, feats)                  ## selection to highlight in DT
         if (resetLabels$logical) toSel <- numeric()         ## reset labels
         ## Display data table (with clicked proteins highlighted)
-        DT::datatable(data = fData(object[[1]])[feats, fDataInd1], 
+        DT::datatable(data = cbind(fData(object[[1]])[feats, c(input$selTab1)],
+                                   fData(object[[2]])[feats, c(input$selTab2)]), 
                       rownames = TRUE,
                       selection = list(mode = 'multiple', selected = toSel))
       })
