@@ -17,7 +17,8 @@
 ## http://shiny.rstudio.com/articles/plot-interaction-advanced.html
 
 ##' @rdname pRolocVis-apps
-##' @param foi A \code{\link{FeaturesOfInterest}} object.
+##' @param foi A \code{\link{FeaturesOfInterest}} or 
+##' \code{\link{FoICollection}}object.
 ##' @param fig.height Height of the figure. Default is \code{"600px"}.
 ##' @param fig.width Width of the figure. Default is \code{"100px"}.
 ##' @param legend.width Width of the legend. Default is \code{"200\%"}.
@@ -88,6 +89,11 @@ pRolocVis_pca <- function(object,
       message("foi is not a valid FeaturesOfInterest or FoICollection object")
       }
   }
+  sumpm <- apply(pmarkers, 2, sum, na.rm = TRUE)
+  if (any(sumpm == 0)) {
+    message(paste("foi object", names(which(sumpm == 0)), "does not match any featuresNames in the data, removing foi"))
+    pmarkers <- pmarkers[, -which(sumpm == 0)]
+  }
   if (length(grep("GO:", colnames(pmarkers))) > 0) {
     cn <- pRoloc::flipGoTermId(colnames(pmarkers))
     if (all(!is.na(cn))) {
@@ -131,7 +137,7 @@ pRolocVis_pca <- function(object,
   profs <- exprs(object)
   
   
-  ## all feautres are displayed on start
+  ## all proteins are displayed on start
   toSel <- 1:nrow(object)
   feats <- featureNames(object)
   idDT <- character()
@@ -190,7 +196,7 @@ pRolocVis_pca <- function(object,
                              fluidRow(
                                column(4,
                                       checkboxGroupInput("selTab", 
-                                                         "Data columns to display for data 1",
+                                                         "Data columns to display",
                                                          choices = origFvarLab,
                                                          selected = selDT)
                                )
@@ -302,15 +308,14 @@ pRolocVis_pca <- function(object,
           dist <- apply(pcas, 1, function(z) sqrt((input$dblClick$x - z[1])^2 
                                                   + (input$dblClick$y - z[2])^2))
           idPlot <- names(which(dist == min(dist)))
-          if (idPlot %in% idDT) {                       ## 1--is it already clicked?
-            idDT <<- setdiff(idDT, idPlot)             ## Yes, remove it from table
-          } else {                                      ## 2--new click?
-            idDT <<- c(idDT, idPlot)                    ## Yes, highlight it to table
+          if (idPlot %in% idDT) {    ## 1. Is it already clicked? Yes, remove it from table
+            idDT <<- setdiff(idDT, idPlot) 
+          } else {                   ## 2. New click? Yes, highlight it to table
+            idDT <<- c(idDT, idPlot)
           }
         }
         toSel <- match(idDT, feats)                     ## selection to highlight in DT 
         if (resetLabels$logical) toSel <- numeric()     ## reset labels
-        ## Display data table (with clicked proteins highlighted)
         DT::datatable(data = fData(object)[feats, input$selTab], 
                       rownames = TRUE,
                       selection = list(mode = 'multiple', selected = toSel))
