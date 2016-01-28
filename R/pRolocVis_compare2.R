@@ -1,5 +1,5 @@
 pRolocVis_compare2 <- function(object, fcol1, fcol2,
-                               #foi,
+                               foi,
                                fig.height = "600px",
                                fig.width = "100%",
                                legend.width = "200%",
@@ -8,74 +8,11 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
                                nchar = 40,
                                all = TRUE,
                                dims = c(1, 2),
-                               # method,
                                ...) {
   
   
   ## Return featureNames of proteins selected
   on.exit(return(invisible(idDT)))
-  
-  ## Define data columns
-  origFvarLab1 <- fvarLabels(object[[1]])
-  origFvarLab2 <- fvarLabels(object[[2]])
-  if (length(origFvarLab1) > 6) 
-    selDT1 <- origFvarLab1[1:6]
-  else 
-    selDT1 <- origFvarLab1[1:length(origFvarLab1)]
-  if (length(origFvarLab2) > 6) 
-    selDT2 <- origFvarLab2[1:6]
-  else 
-    selDT2 <- origFvarLab2[1:length(origFvarLab2)]
-  
-  
-  ## Specify fDataInd first
-  ## There can't be more than 12 columns in the DT table
-#   if (missing(fDataInd1)) {
-#     if (length(fvarLabels(object[[1]])) > 12) {
-#       message("There can't be more than 12 feature variables. Using 6 first and last.")
-#       xx <- pRolocGUI:::narrowFeatureData(object[[1]])
-#       fDataInd1 <- fvarLabels(xx)
-#     } else {
-#       fDataInd1 <- fvarLabels(object[[1]])
-#     }
-#   } else {
-#     if (is.numeric(fDataInd1))
-#       fDataInd1 <- fvarLabels(object[[1]])[fDataInd1]
-#     
-#     if (length(fDataInd1) > 12) {
-#       stop("There can't be more than 12 feature variables, check fDataInd1")
-#     } else {
-#       if (!all(fDataInd1 %in% fvarLabels(object[[1]])))
-#         stop("Check fDataInd1, not all features found in fData")
-#     }  
-#   }
-#   if (missing(fDataInd2)) {
-#     if (length(fvarLabels(object[[2]])) > 12) {
-#       message("There can't be more than 12 feature variables. Using 6 first and last.")
-#       xx <- pRolocGUI:::narrowFeatureData(object[[2]])
-#       fDataInd2 <- fvarLabels(xx)
-#     } else {
-#       fDataInd2 <- fvarLabels(object[[2]])
-#     }
-#   } else {
-#     if (is.numeric(fDataInd2))
-#       fDataInd2 <- fvarLabels(object[[2]])[fDataInd2]
-#     
-#     if (length(fDataInd2) > 12) {
-#       stop("There can't be more than 12 feature variables, check fDataInd2")
-#     } else {
-#       if (!all(fDataInd2 %in% fvarLabels(object[[2]])))
-#         stop("Check fDataInd2, not all features found in fData")
-#     }  
-#   }
-  
-  
-  ## Check MSnSetList and take intersection
-  if (!inherits(object, "MSnSetList"))
-    stop("The input must be of class MSnSetList")
-  message("Subsetting MSnSetList to their common feature names")
-  object <- commonFeatureNames(object)
-  
   
   ## fcol checks
   if (missing(fcol1) | missing(fcol2)) {
@@ -112,6 +49,32 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
       stop("fcol2 is not found in fvarLabels")  
   } 
   
+  ## Define data columns
+  origFvarLab1 <- fvarLabels(object[[1]])
+  origFvarLab2 <- fvarLabels(object[[2]])
+  if (length(origFvarLab1) > 4) {
+    .ind <- which(origFvarLab1 == fcol1)
+    .fvarL <- origFvarLab1[-.ind]
+    selDT1 <- c(.fvarL[1:3], fcol1)
+  } else {
+    selDT1 <- origFvarLab1[1:length(origFvarLab1)]
+  }
+  if (length(origFvarLab2) > 4) {
+    .ind <- which(origFvarLab2 == fcol2)
+    .fvarL <- origFvarLab2[-.ind]
+    selDT2 <- c(.fvarL[1:3], fcol2)
+  } else {
+    selDT2 <- origFvarLab2[1:length(origFvarLab2)]
+  }  
+
+
+  ## Check MSnSetList and take intersection
+  if (!inherits(object, "MSnSetList"))
+    stop("The input must be of class MSnSetList")
+  message("Subsetting MSnSetList to their common feature names")
+  object <- commonFeatureNames(object)
+  
+  
   ## Make fcol matrix of markers if it's not already
   fcol <- c(fcol1, fcol2)
   tf <- !sapply(1:length(fcol), function(x) isMrkMat(object[[x]], fcol[x]))
@@ -127,21 +90,23 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
     }
   }
   
-  ## Setting features to be displayed
-  #   if (!missing(foi)) {
-  #     if (inherits(foi, "FeaturesOfInterest"))
-  #       foi <- FoICollection(list(foi))
-  #     foimarkers <- as(foi, "matrix")
-  #     if (exists("pmarkers", inherits = FALSE)) {
-  #       pmarkers <- lapply(pmarkers, function(z) 
-  #         merge(z, foimarkers, by = 0, all.x = TRUE))
-  #       for (i in 1:length(pmarkers)) {
-  #         rownames(pmarkers[[i]]) <- pmarkers[[i]][, "Row.names"]
-  #         pmarkers[[i]] <- pmarkers[[i]][featureNames(object[[i]]), -1]     
-  #       } 
-  #     } else pmarkers <- foimarkers
-  #   }
-  #   
+#   ## Setting features to be displayed
+#   if (!missing(foi)) {
+#     if (inherits(foi, "FeaturesOfInterest") | inherits(foi, "FoICollection")) {
+#       if (inherits(foi, "FeaturesOfInterest"))
+#         foi <- FoICollection(list(foi))
+#     foimarkers <- as(foi, "matrix")
+#     if (exists("pmarkers", inherits = FALSE)) {
+#       pmarkers <- merge(pmarkers, foimarkers,
+#                         by = 0, all.x = TRUE)
+#       rownames(pmarkers) <- pmarkers[, "Row.names"]
+#       pmarkers <- pmarkers[featureNames(object), -1]            
+#     } else pmarkers <- foimarkers
+#     } else {
+#       warning("foi is not a valid FeaturesOfInterest or FoICollection object")
+#     }
+#   } 
+    
   
   ## Convert GO names to CC names
   if (length(grep("GO:", colnames(pmarkers[[1]]))) > 0) {
@@ -247,9 +212,6 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
         br(),
         actionButton("clear", "Clear selection"),
         br(),
-        # radioButtons("switchDT", "Datatable view:",
-        #                        c("Object 1" = "dt1",
-        #                          "Object 2" = "dt2")),
         width = 2),
       mainPanel(
         tabsetPanel(type = "tabs",
@@ -302,13 +264,13 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
                              fluidRow(
                                column(4,
                                       checkboxGroupInput("selTab1", 
-                                                         "Feature data columns to display for data 1 (max 6)",
+                                                         "Data columns to display for data 1",
                                                          choices = origFvarLab1,
                                                          selected = selDT1)
                                       ),
                                column(4,
                                       checkboxGroupInput("selTab2",
-                                                         "Feature data columns to display for data 2 (max 6)",
+                                                         "Data columns to display for data 2",
                                                          choices = origFvarLab2,
                                                          selected = selDT2)
                                       
@@ -319,9 +281,8 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
                     fluidRow(
                       column(12,
                              column(length(c(selDT1, selDT2)),
-                                    DT::dataTableOutput("fDataTable")))),
-#                     tags$head(tags$style("#fDataTable{color: red;
-#                          font-size: 10px;}"))
+                                    DT::dataTableOutput("fDataTable"))))
+                     # tags$head(tags$style("#fDataTable{color: steelblue;}"))
         ))
     )
   )
@@ -369,8 +330,6 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
       
       
       ## Update colour transparacy according to slider input
-      ## Note: will this break if markers *classes* are not common 
-      ## between datasets
       myCols <- reactive({
         scales::alpha(cols,
                       input$trans)[sapply(input$markers, function(z) 
@@ -438,7 +397,7 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
       
       
       
-      ## Protein profile
+      ## Protein profile plot 1
       output$profile1 <- renderPlot({
         par(mar = c(8, 3, 1, 1))
         par(oma = c(0, 0, 0, 0))
@@ -474,7 +433,7 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
       })
       
       
-      ## Protein profile
+      ## Protein profile plot 2
       output$profile2 <- renderPlot({
         par(mar = c(8, 3, 1, 1))
         par(oma = c(0, 0, 0, 0))
@@ -536,13 +495,19 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
             idDT <<- c(idDT, idPlot)                       ## Yes, highlight it to table
           }
         } 
-        toSel <- match(idDT, feats)                  ## selection to highlight in DT
-        if (resetLabels$logical) toSel <- numeric()         ## reset labels
-        ## Display data table (with clicked proteins highlighted)
-        DT::datatable(data = cbind(fData(object[[1]])[feats, c(input$selTab1)],
-                                   fData(object[[2]])[feats, c(input$selTab2)]), 
+        toSel <- match(idDT, feats)                        ## selection to highlight in DT
+        if (resetLabels$logical) toSel <- numeric()        ## reset labels
+        .dt1 <- fData(object[[1]])[feats, input$selTab1, drop = FALSE]
+        .dt2 <- fData(object[[2]])[feats, input$selTab2, drop = FALSE]
+        colnames(.dt1) <- paste0('<span style="color:',   
+                                 rep("steelblue", ncol(.dt1)), '">', 
+                                 colnames(.dt1), '</span>')
+        dataDT <- cbind(.dt1, .dt2)
+        DT::datatable(data = dataDT, 
                       rownames = TRUE,
-                      selection = list(mode = 'multiple', selected = toSel))
+                      selection = list(mode = 'multiple', selected = toSel),
+                      escape = FALSE) %>%     ## NB: `escape = FALSE` required for colname coloring
+          formatStyle(columns = colnames(.dt1), color = c("steelblue")) 
       })
       
       
