@@ -91,7 +91,7 @@ pRolocVis_pca <- function(object,
   }
   sumpm <- apply(pmarkers, 2, sum, na.rm = TRUE)
   if (any(sumpm == 0)) {
-    message(paste("foi object", names(which(sumpm == 0)), "does not match any featuresNames in the data, removing foi"))
+    message(paste("foi object", names(which(sumpm == 0)), "does not match any featuresNames in the data, removing this foi"))
     pmarkers <- pmarkers[, -which(sumpm == 0)]
   }
   if (length(grep("GO:", colnames(pmarkers))) > 0) {

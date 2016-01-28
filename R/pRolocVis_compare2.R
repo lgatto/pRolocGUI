@@ -89,24 +89,34 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
       pmarkers[[i]] <- fData(object[[i]])[, fcol[i]]
     }
   }
+
   
-#   ## Setting features to be displayed
-#   if (!missing(foi)) {
-#     if (inherits(foi, "FeaturesOfInterest") | inherits(foi, "FoICollection")) {
-#       if (inherits(foi, "FeaturesOfInterest"))
-#         foi <- FoICollection(list(foi))
-#     foimarkers <- as(foi, "matrix")
-#     if (exists("pmarkers", inherits = FALSE)) {
-#       pmarkers <- merge(pmarkers, foimarkers,
-#                         by = 0, all.x = TRUE)
-#       rownames(pmarkers) <- pmarkers[, "Row.names"]
-#       pmarkers <- pmarkers[featureNames(object), -1]            
-#     } else pmarkers <- foimarkers
-#     } else {
-#       warning("foi is not a valid FeaturesOfInterest or FoICollection object")
-#     }
-#   } 
-    
+  ## Setting features to be displayed
+  if (!missing(foi)) {
+    if (inherits(foi, "FeaturesOfInterest") | inherits(foi, "FoICollection")) {
+      if (inherits(foi, "FeaturesOfInterest"))
+        foi <- FoICollection(list(foi))
+      foimarkers <- as(foi, "matrix")
+      if (exists("pmarkers", inherits = FALSE)) {
+        pmarkers <- lapply(pmarkers, function(z) merge(z, foimarkers,
+                                                       by = 0, all.x = TRUE))
+        rownames(pmarkers[[1]]) <- pmarkers[[1]][, "Row.names"]
+        rownames(pmarkers[[2]]) <- pmarkers[[1]][, "Row.names"]
+        pmarkers[[1]] <- pmarkers[[1]][featureNames(object[[1]]), -1]
+        pmarkers[[2]] <- pmarkers[[2]][featureNames(object[[2]]), -1]            
+      } else pmarkers <- list(foimarkers, foimarkers)
+    } else {
+      message("foi is not a valid FeaturesOfInterest or FoICollection object")
+    }
+  }     ## NB: pmarkers[[1]] and pmarkers[[2]] contains the same num of rows/proteins
+  sumpm <- lapply(pmarkers, function(z) apply(z, 2, sum, na.rm = TRUE))
+  if (any(sumpm[[1]] == 0)) {
+    message(paste("foi object", names(which(sumpm[[1]] == 0)), "does not match any featuresNames that are common in both datasets, removing foi"))
+    pmarkers[[1]] <- pmarkers[[1]][, -which(sumpm[[1]] == 0)]
+    pmarkers[[2]] <- pmarkers[[2]][, -which(sumpm[[2]] == 0)]
+  }
+
+  
   
   ## Convert GO names to CC names
   if (length(grep("GO:", colnames(pmarkers[[1]]))) > 0) {
@@ -119,6 +129,7 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
     }
   }  
   
+  
   ## Marker colours
   cols <- getStockcol()
   if (length(cols) < max(sapply(pmarkers, ncol))) {
@@ -127,7 +138,7 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
     n <- ncol(pmarkers[[ind]]) %/% length(cols)
     cols <- rep(cols, n + 1)
   }
-  myclasses <- unique(unlist(sapply(pmarkers, colnames)))
+  myclasses <- unique(unlist(lapply(pmarkers, colnames)))
   names(cols) <- myclasses
   
   ## Shorten markers names if too long
@@ -152,21 +163,6 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
   if (!all & max(sapply(pmarkers, ncol)) > 15)
     pmsel <- 1    
   
-  
-  ## Data to be displayed (allow other methods than PCA, matrix not supported as
-  ## would need a list of matrices, we can add later if needed)
-  #   if (missing(method)) {
-  #     pcas <- lapply(object, plot2D, fcol = NULL, plot = FALSE)
-  #   } else {
-  #     if (pRoloc:::.validpRolocVisMethod(method)) {
-  #       if (class(method) == "matrix") 
-  #         stop("Visualisation method 'matrix' is not supported for the compare app")
-  #       else
-  #         pcas <- lapply(object, plot2D, fcol = NULL, plot = FALSE, method = method)
-  #     } else {
-  #       stop("Invalid visualisation method")
-  #     }
-  #   }
   
   ## Get data for profiles (need to do this here before changing MSnSet with remap
   ## as exprs data gets lost with remap)
@@ -317,16 +313,33 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
       ## necessarily have the same indices as markers in object[[2]] (would like
       ## to allow different markers between different datasets)
       mrkSel1 <- reactive({
+        # browser()
         ind <- match(input$markers, colnames(pmarkers[[1]]))
-        lapply(ind,
-               function(z) which(pmarkers[[1]][, z] == 1))
+        .mrkSel1 <- vector("list", length(input$markers))
+        for (i in seq(length(input$markers))) {
+          if (is.na(ind[i])) {
+            .mrkSel1[[i]] <- NA
+          } else {
+            .mrkSel1[[i]] <- which(pmarkers[[1]][, ind[i]] == 1)
+          }
+        }
+        .mrkSel1
       })
+#         lapply(ind,
+#                function(z) which(pmarkers[[1]][, z] == 1))
+      
       mrkSel2 <- reactive({
         ind <- match(input$markers, colnames(pmarkers[[2]]))
-        lapply(ind,
-               function(z) which(pmarkers[[2]][, z] == 1))
+        .mrkSel2 <- vector("list", length(input$markers))
+        for (i in seq(length(input$markers))) {
+          if (is.na(ind[i])) {
+            .mrkSel2[[i]] <- NA
+          } else {
+            .mrkSel2[[i]] <- which(pmarkers[[2]][, ind[i]] == 1)
+          }
+        }
+        .mrkSel2
       })
-      
       
       
       ## Update colour transparacy according to slider input
@@ -350,7 +363,7 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
                fcol = newName)
         if (!is.null(input$markers)) {
           for (i in 1:length(input$markers)) {
-            if (length(mrkSel1()[[i]]) > 0)
+            if (!is.na(mrkSel1()[[i]][1]))
               points(pcas[[1]][mrkSel1()[[i]], ], pch = 16, 
                      cex = 1.4, col = myCols()[i])
           }
@@ -379,7 +392,7 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
                fcol = newName)
         if (!is.null(input$markers)) {
           for (i in 1:length(input$markers)) {
-            if (length(mrkSel2()[[i]]) > 0)
+            if (!is.na(mrkSel2()[[i]][1]))
               points(pcas[[2]][mrkSel2()[[i]], ], pch = 16, 
                      cex = 1.4, col = myCols()[i])
           }
@@ -415,7 +428,7 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
                  type = "l")
         if (!is.null(input$markers)) {
           for (i in 1:length(input$markers)) { 
-            if (length(mrkSel1()[[i]]) > 0)
+            if (!is.na(mrkSel1()[[i]][1]))
               matlines(t(profs[[1]][mrkSel1()[[i]], ]),
                        col = myCols()[i],
                        lty = 1,
@@ -451,7 +464,7 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
                  type = "l")
         if (!is.null(input$markers)) {
           for (i in 1:length(input$markers)) { 
-            if (length(mrkSel2()[[i]]) > 0)
+            if (!is.na(mrkSel2()[[i]][1]))
               matlines(t(profs[[2]][mrkSel2()[[i]], ]),
                        col = myCols()[i],
                        lty = 1,
