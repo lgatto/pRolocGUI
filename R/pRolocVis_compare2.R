@@ -14,6 +14,14 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
   ## Return featureNames of proteins selected
   on.exit(return(invisible(idDT)))
   
+  
+  ## Check MSnSetList and take intersection
+  if (!inherits(object, "MSnSetList"))
+    stop("The input must be of class MSnSetList")
+  message("Subsetting MSnSetList to their common feature names")
+  object <- commonFeatureNames(object)
+  
+  
   ## fcol checks
   if (missing(fcol1) | missing(fcol2)) {
     if (missing(fcol1) & missing(fcol2)) {
@@ -66,13 +74,6 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
   } else {
     selDT2 <- origFvarLab2[1:length(origFvarLab2)]
   }  
-
-
-  ## Check MSnSetList and take intersection
-  if (!inherits(object, "MSnSetList"))
-    stop("The input must be of class MSnSetList")
-  message("Subsetting MSnSetList to their common feature names")
-  object <- commonFeatureNames(object)
   
   
   ## Make fcol matrix of markers if it's not already
@@ -170,7 +171,6 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
   
   
   ## Remap data to same PC space
-  
   if (remap) {
     message("Remapping data to the same PC space")
     object <- pRoloc:::remap(object)
@@ -239,46 +239,46 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
                     ),
                     tabPanel("Profiles", id = "profilesPanel",
                              fluidRow(
-                               column(4,
+                               column(5,
                                       plotOutput("profile1",
                                                  height = "400px",
-                                                 width = "120%"),
+                                                 width = "110%"),
                                       offset = 0),
-                               column(4,
+                               column(5,
                                       plotOutput("profile2",
                                                  height = "400px",
-                                                 width = "120%"),
+                                                 width = "110%"),
                                       offset = 0),
                                
-                               column(3, 
+                               column(2, 
                                       plotOutput("legend2",
-                                                 width = "80%"),
-                                      offset = 1)
+                                                 width = "100%"),
+                                      offset = 0)
                              )
                     ),
                     tabPanel("Table Selection", id = "tableSelPanel",
                              fluidRow(
-                               column(4,
+                               column(5,
                                       checkboxGroupInput("selTab1", 
-                                                         "Data columns to display for data 1",
+                                                         "Columns to display for data 1",
                                                          choices = origFvarLab1,
                                                          selected = selDT1)
                                       ),
-                               column(4,
+                               column(5,
                                       checkboxGroupInput("selTab2",
-                                                         "Data columns to display for data 2",
+                                                         "Columns to display for data 2",
                                                          choices = origFvarLab2,
                                                          selected = selDT2)
                                       
                                       )
-                             )
+                             ),
+                             tags$head(tags$style("#selTab1{color: darkblue;}"))
                     ),
                     ## feature data table is always visible
                     fluidRow(
                       column(12,
                              column(length(c(selDT1, selDT2)),
                                     DT::dataTableOutput("fDataTable"))))
-                     # tags$head(tags$style("#fDataTable{color: steelblue;}"))
         ))
     )
   )
@@ -325,9 +325,8 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
         }
         .mrkSel1
       })
-#         lapply(ind,
-#                function(z) which(pmarkers[[1]][, z] == 1))
-      
+
+        
       mrkSel2 <- reactive({
         ind <- match(input$markers, colnames(pmarkers[[2]]))
         .mrkSel2 <- vector("list", length(input$markers))
@@ -360,7 +359,8 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
                pch = 21, cex = 1,
                xlim = ranges$x,
                ylim = ranges$y,
-               fcol = newName)
+               fcol = newName, 
+               dims = dims)
         if (!is.null(input$markers)) {
           for (i in 1:length(input$markers)) {
             if (!is.na(mrkSel1()[[i]][1]))
@@ -389,7 +389,8 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
                pch = 21, cex = 1,
                xlim = ranges$x,
                ylim = ranges$y,
-               fcol = newName)
+               fcol = newName,
+               dims = dims)
         if (!is.null(input$markers)) {
           for (i in 1:length(input$markers)) {
             if (!is.na(mrkSel2()[[i]][1]))
@@ -412,12 +413,12 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
       
       ## Protein profile plot 1
       output$profile1 <- renderPlot({
-        par(mar = c(8, 3, 1, 1))
-        par(oma = c(0, 0, 0, 0))
+        par(mar = c(8, 2, 1, 1))
+        par(oma = c(1, 0, 0, 1))
         ylim <- range(profs[[1]])
         n <- nrow(profs[[1]])
         m <- ncol(profs[[1]])
-        fracs <- sampleNames(object[[1]])
+        fracs <- colnames(profs[[1]])
         plot(0, ylim = ylim, xlim = c(1, m), ylab = "Intensity", 
              type = "n", xaxt = "n", xlab = "")
         axis(1, at = 1:m, labels = fracs, las = 2)
@@ -449,11 +450,11 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
       ## Protein profile plot 2
       output$profile2 <- renderPlot({
         par(mar = c(8, 3, 1, 1))
-        par(oma = c(0, 0, 0, 0))
+        par(oma = c(1, 0, 0, 0))
         ylim <- range(profs[[2]])
         n <- nrow(profs[[2]])
         m <- ncol(profs[[2]])
-        fracs <- sampleNames(object[[2]])
+        fracs <- colnames(profs[[2]])
         plot(0, ylim = ylim, xlim = c(1, m), ylab = "Intensity", 
              type = "n", xaxt = "n", xlab = "")
         axis(1, at = 1:m, labels = fracs, las = 2)
@@ -513,14 +514,14 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
         .dt1 <- fData(object[[1]])[feats, input$selTab1, drop = FALSE]
         .dt2 <- fData(object[[2]])[feats, input$selTab2, drop = FALSE]
         colnames(.dt1) <- paste0('<span style="color:',   
-                                 rep("steelblue", ncol(.dt1)), '">', 
+                                 rep("darkblue", ncol(.dt1)), '">', 
                                  colnames(.dt1), '</span>')
         dataDT <- cbind(.dt1, .dt2)
         DT::datatable(data = dataDT, 
                       rownames = TRUE,
                       selection = list(mode = 'multiple', selected = toSel),
                       escape = FALSE) %>%     ## NB: `escape = FALSE` required for colname coloring
-          formatStyle(columns = colnames(.dt1), color = c("steelblue")) 
+          formatStyle(columns = colnames(.dt1), color = c("darkblue")) 
       })
       
       
@@ -563,7 +564,7 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
       })
       
       
-      ## Output legend
+      ## Output legend for pca
       output$legend1 <- renderPlot({
         par(mar = c(0, 0, 0, 0))
         par(oma = c(0, 0, 0, 0))
@@ -589,7 +590,7 @@ pRolocVis_compare2 <- function(object, fcol1, fcol2,
         }
       })
       
-      ## Output legend
+      ## Output legend for profiles
       output$legend2 <- renderPlot({
         par(mar = c(0, 0, 0, 0))
         par(oma = c(0, 0, 0, 0))
