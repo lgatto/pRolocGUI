@@ -1,14 +1,26 @@
+##' @rdname pRolocVis-apps
+##' @param fcol1 The feature meta-data label (fData column name) for the first
+##' dataset in the \code{MSnSetList}. Default is \code{markers}.
+##' @param fcol2 The feature meta-data label (fData column name) for the second
+##' dataset in the \code{MSnSetList}. Default is \code{markers}. 
+##' @param remap A \code{logical} indicating whether the second dataset in the
+##' \code{MSnSetList} should be remapped to the first dataset
+##' @param dims A \code{numeric} of length 2 defining the dimensions to be plotted.
+##' @return For \code{compare} and \code{main} a \code{character} vector of the 
+##' \code{featureNames} of the proteins selected is invisibly returned.
+
 pRolocVis_compare <- function(object, fcol1, fcol2,
-                               foi,
-                               fig.height = "600px",
-                               fig.width = "100%",
-                               legend.width = "200%",
-                               legend.cex = 1,
-                               remap = TRUE,
-                               nchar = 40,
-                               all = TRUE,
-                               dims = c(1, 2),
-                               ...) {
+                              foi,
+                              fig.height = "600px",
+                              fig.width = "100%",
+                              legend.width = "200%",
+                              legend.cex = 1,
+                              remap = TRUE,
+                              nchar = 40,
+                              all = TRUE,
+                              dims = c(1, 2),
+                              ...) {
+                               
   
   
   ## Return featureNames of proteins selected
