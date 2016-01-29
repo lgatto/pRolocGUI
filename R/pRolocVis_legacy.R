@@ -2,6 +2,7 @@
 ##' @return For \code{legacy} an object \code{pRolocGUI_SearchResults} of class
 ##' \code{FoICollection} when the object existed already or when a new
 ##' \code{FoICollection} was created during a session.
+##' @rdname pRolocVis-apps
 pRolocVis_legacy <- function(object, method = "PCA") {
     .Deprecated(msg = "The 'pRolocVis' legacy function is deprecated. Please use the new 'PCA' app.")
     ## global
