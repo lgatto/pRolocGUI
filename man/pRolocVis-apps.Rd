@@ -12,8 +12,7 @@ pRolocVis_classify(object, fcol, scol, mcol = "markers", legend.cex = 1,
   method, ...)
 
 pRolocVis_pca(object, fcol, foi, fig.height = "600px", fig.width = "100\%",
-  legend.width = "200\%", legend.cex = 1, nchar = 40, all = TRUE,
-  fdataInd)
+  legend.width = "200\%", legend.cex = 1, nchar = 40, all = TRUE)
 }
 \arguments{
 \item{object}{An instance of class \code{MSnSet}, or a list of \code{MSnSet}
@@ -51,7 +50,8 @@ computing the dimensionality reduction over and over again, which
 can be time consuming for certain methods. Available methods are listed
 in \code{plot2Dmethods}.}
 
-\item{foi}{A \code{\link{FeaturesOfInterest}} object.}
+\item{foi}{A \code{\link{FeaturesOfInterest}} or 
+\code{\link{FoICollection}}object.}
 
 \item{fig.height}{Height of the figure. Default is \code{"600px"}.}
 
@@ -63,13 +63,7 @@ in \code{plot2Dmethods}.}
 names, before their names are truncated. Default is 10.}
 
 \item{all}{If \code{TRUE} all clusters are displayed on startup.
-If \code{FALSE} only first cluster in the list is displayed.
-\code{\link{FoICollection}}, that will be available for display.}
-
-\item{fdataInd}{A \code{numeric} or \code{character} corresponding to
-the feature variables one wishes to retains for the data table. 
-If not specified, by default \code{markers} will be kept along with 
-the first 5 and last 6 feature variables.}
+If \code{FALSE} only first cluster in the list is displayed.}
 }
 \value{
 For \code{classify} a \code{numeric} vector of thresholds, 

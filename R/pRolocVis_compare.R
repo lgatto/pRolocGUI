@@ -1,1007 +1,632 @@
-pRolocVis_compare <- function(object, method = "PCA") {
-    if (!listOf(object, "MSnSet"))
-        stop("The input must be list of MSnSet instances.")
-    if (length(object) != 2)
-        stop("The input list must be of length 2.")
-    if (any(sapply(X = object, FUN = function(x) anyNA(exprs(x))))) {
-        warning("Removing features with missing values.", immediate. = TRUE)
-        object <- lapply(object, filterNA)
-    }
-    if (any(sapply(X = object, FUN = function(x) anyNA(exprs(x)))))
-        warning("list item contains NA", immediate. = TRUE)
-    
-    ## increase upload limit to 20 MB
-    options(shiny.maxRequestSize = 20*1024^2)
-    
-    ## pRolocGUI_SearchResults
-    sr <- .createSR()
-    app <- list(
-        ui = bootstrapPage(
-                fluidRow( 
-                    ## Application title
-                    .pRn2_setTitlePanel(),
-                    ## Sidebar Panel
-                    sidebarPanel(
-                        .pR_tags(),
-                        .pRn2_tags(),
-                        .pR_condDisplaySelection(),
-                        .pRn2_selObj(),
-                        .pRn2_condTabPCA(),
-                        .pR_condTabProteinProfiles(),
-                        .pR_condTabQuantitation(),
-                        .pR_condTabfData(),
-                        .pR_condTabpData(),
-                        .pR_condTabSearch(),
-                        .pR_condTabComp(),
-                        width = 2
-                        ),
-                    ## Main Panel
-                    mainPanel(
-                        tabsetPanel(
-                            .pRn2_tabPanelPCA(),
-                            .pRn2_tabPanelProteinProfiles(),
-                            .pR_tabPanelQuantitation(),
-                            .pR_tabPanelfData(),
-                            .pR_tabPanelpData(),
-                            .pR_tabPanelSearch(),
-                            .pR_tabPanelComp(),
-                            id = "tab1" 
-                        )
-                    )
-                )        
-            ),
-        
-        server = function(input, output) {
-            
-            ## START: links to vignette ## 
-            vignette <- system.file("doc/pRolocGUI.html", package="pRolocGUI")  
-            
-            if (nchar(vignette))
-                addResourcePath(prefix = "doc", 
-                    directoryPath = system.file("doc", package = "pRolocGUI"))
-            
-            ## Links to vignette ##
-            output$linkDisplayUI <- renderUI({
-                if (nchar(vignette))
-                    a(href="/doc/pRolocGUI.html#display",
-                      "?", target="_blank")
-                ##class = c("btn", "action-button"))
-            })
-            
-            output$linkDataUI <- renderUI({
-                if (nchar(vignette))
-                    a(href="/doc/pRolocGUI.html#tabspRolocGUIDataComp",
-                      "?", target="_blank")
-                ##class = c("btn", "action-button"))
-            })
-            
-            output$linkPCAUI <- renderUI({
-                if (nchar(vignette))
-                    a(href="/doc/pRolocGUI.html#tabspRolocGUIPCA",
-                      "?", target="_blank")
-                ##class = c("btn", "action-button"))
-            })
-            
-            output$linkPPUI <- renderUI({
-                if (nchar(vignette))
-                    a(href="/doc/pRolocGUI.html#tabspRolocGUIPP",
-                      "?", target="_blank")
-                ##class = c("btn", "action-button"))
-            })
-            
-            output$linkExprsUI <- renderUI({
-                if (nchar(vignette))
-                    a(href="/doc/pRolocGUI.html#tabspRolocGUIExprs",
-                      "?", target="_blank")
-                ##class = c("btn", "action-button"))
-            })
-            
-            output$linkfDataUI <- renderUI({
-                if (nchar(vignette))
-                    a(href="/doc/pRolocGUI.html#tabspRolocGUIfData",
-                      "?", target="_blank")
-                ##class = c("btn", "action-button"))
-            })
-            
-            output$linkpDataUI <- renderUI({
-                if (nchar(vignette))
-                    a(href="/doc/pRolocGUI.html#tabspRolocGUIpData",
-                      "?", target="_blank")
-                ##class = c("btn", "action-button"))
-            })
-            
-            output$linkSearchUI <- renderUI({
-                if (nchar(vignette))
-                    a(href="/doc/pRolocGUI.html#tabspRolocGUISearch",
-                      "?", target="_blank")
-                ##class = c("btn", "action-button"))
-            })
-            
-            ## END: Links to vignette ## 
-            
-            
-            
-            ## create reactive Values to store object1 and object2 or a subset
-            ## of these two objects with common features    
-            data <- reactiveValues(obj = object)
-            observe({
-                data$obj <- .dataSub(object, input$commonFeat)
-            })
-            ## START OF SEARCH IMPLEMENTATION ##
-            
-            ## check boxes by clicking on plots PCA and plotDist
-            dSelect <- reactiveValues(PCA = NULL, plotDist = NULL, text = NULL, 
-                                      summat = NULL)
-            
-            observe({
-                dSelect$PCA <- .selClick(dSelect$PCA, input$PCA1click, 
-                        .prot$PCA, TRUE, input$PCA2click)
-            })
-
-            
-            observe({
-                dSelect$plotDist <- .selClick(dSelect$plotDist, 
-                    input$plotDist1click, .prot$plotDist, FALSE, 
-                    input$plotDist2click)
-            })
-            
-            observe({
-                dSelect$text <- .selButton(dSelect$text, input$saveText, 
-                    input$resetMult, .prot$text, "text")  
-            })
-            
-            observe({
-                dSelect$SaSe <- ifelse(input$selCB > 0, "savedSearches", NULL)    
-            })
-            
-            observe({
-                dSelect$summat <- .selButton(
-                    dSelect$summat, input$saveSumMat, input$resetMult, 
-                    c(.prot$summat, .prot$summatu1, .prot$summatu2), "summat")
-            })
-            
-            ## input$chooseIdenSelect
-            output$checkBoxUI <- renderUI(
-                .checkBoxdSelect(dSelect$PCA, dSelect$plotDist, dSelect$SaSe, 
-                    dSelect$text, dSelect$summat, TRUE)
-            )
-            
-            ## reactive expression which contains all feature names for the 
-            ## checkbox is selected
-            .unionFeat <- reactive(
-                .sI(cIS = input$chooseIdenSearch, 
-                    tagSelectList = input$tagSelectList, 
-                    protText = .prot$text, protPCA = .prot$PCA, 
-                    protPlotDist = .prot$plotDist,  
-                    protSearch = unlist(.indSavedSearchReac()),
-                    protData = .prot$summat
-                )
-            )
-            
-            .unique1 <- reactive(.sIUni(.prot$summatu1, input$chooseIdenSearch))
- 
-            .unique2 <- reactive(.sIUni(.prot$summatu2, input$chooseIdenSearch))
-            
-            ## reactive expressions for general search indices are computed to 
-            ## forward to plot2D, plotDist and tabs quantitation and feature 
-            ## meta-data
-            .searchInd1 <- reactive(
-                .computeInd(data$obj, c(.unionFeat(), .unique1()), "object1"))
-            .searchInd2 <- reactive(
-                .computeInd(data$obj, c(.unionFeat(), .unique2()), "object2"))
-
-            ## Clear multiple points on click
-            observe({
-                if (!is.null(input$resetMult))
-                    if (input$resetMult > 0) {
-                        .prot$PCA1 <- .prot$PCA2 <- .prot$PCA <- NULL
-                        .prot$plotDist1 <- .prot$plotDist2 <- NULL
-                        .prot$plotDist <- NULL
-                        .prot$text <- NULL
-                        .prot$summat <- .prot$summatu1 <- .prot$summatu2 <- NULL
-                        dSelect$PCA <- dSelect$plotDist <- NULL
-                        dSelect$text <- dSelect$summat <- NULL
-                    }
-            })
-            
-            ## action button to submit (query)
-            output$saveTextUI <- renderUI(
-                if (!is.null(input$search) && length(.searchResultsText()) >= 1)
-                    if (!.checkFeatText(data$obj, .prot$text, input$sRTextInput, 
-                                input$search, sel$Obj, name = TRUE))
-                        actionButton("saveText", "Submit selection")
-            )
-            
-            ## action button to remove (query)
-            output$removeTextUI <- renderUI(
-                if (!is.null(input$search))
-                    if (.checkFeatText(data$obj, .prot$text, input$sRTextInput,
-                                input$search, sel$Obj, name = TRUE))
-                        actionButton("removeText", "Undo selection")
-            )
-            
-            ## reset button
-            output$resetMultUI <- renderUI(.reset(.searchInd1(), .searchInd2()))
-            
-            ## text-based search: protein und fvarLabels
-            output$searchUI <- renderUI(.selVarText(data$obj, sel$Obj))
-            
-            output$searchResultsUI <- renderUI(
-                    .selResText(input$search, .searchResultsText())
-            )
-            
-            ## reactive expressions for text based search
-            ## levels to search
-            .searchResultsText <- reactive(
-                .sRsubset(data$obj, input$search, input$levelSearch, sel$Obj)
-            )
-            
-            ## vector with reactive values
-            .prot <- reactiveValues(PCA1 = NULL, PCA2 = NULL, PCA = NULL, 
-                        plotDist1 = NULL, plotDist2 = NULL, plotDist = NULL, 
-                        text = NULL, summat = NULL, summatu1 = NULL, summatu2 = NULL)
-            
-            ## observe indices and concatenate to .prot$PCA, .prot$plotDist
-            ## and .prot$text
-            observe(.prot$PCA1 <- .obsProtClick(
-                        .prot$PCA1, minDist2dProt1PCA(), input$PCA1click))
-            
-            observe(.prot$PCA2 <- .obsProtClick(
-                        .prot$PCA2, minDist2dProt2PCA(), input$PCA2click))
-            
-            observe(.prot$PCA <- c(.prot$PCA1, .prot$PCA2))
-            
-            observe(.prot$plotDist1 <- .obsProtClick(
-                        .prot$plotDist1, .minPlotDist1(), input$plotDist1click))
-            
-            observe(.prot$plotDist2 <- .obsProtClick(
-                        .prot$plotDist2, .minPlotDist2(), input$plotDist2click))
-            
-            observe(.prot$plotDist <- c(.prot$plotDist1, .prot$plotDist2))
-            
-            ## add features (query)
-            observe({
-                if (!is.null(input$saveText)) {
-                    .prot$text <- .obsProtText(
-                        data$obj, .prot$text, input$saveText, 
-                        isolate(input$sRTextInput), isolate(input$search), 
-                        isolate(sel$Obj), names = TRUE)
-                }
-            })
-            
-            ## remove features (query)
-            observe({
-                if (!is.null(input$removeText))
-                    isolate(.prot$text <- .removeFeat(
-                        .prot$text, .obsProtText(
-                            data$obj, .prot$text, input$saveText, 
-                            isolate(input$sRTextInput), isolate(input$search), 
-                            isolate(sel$Obj), names = TRUE, add = FALSE), 
-                        input$removeText))
-            })
-            
-            ## new features written to reactive value (data)
-            cfn <- reactiveValues()
-            observe({
-                if (!is.null(input$saveSumMat))
-                    isolate({
-                        input$saveSumMat
-                        cfn$newfeat <- .cfnnewfeat()
-                    })
-            })
-            
-            ## add features (common, data)
-            observe({
-                if (!is.null(input$saveSumMat) && !is.null(cfn$newfeat)) { 
-                    if (input$compRadio == "common")
-                        if (input$saveSumMat > 0) {
-                            .prot$summat <- unique(c(.prot$summat, cfn$newfeat))
-                            cfn$newfeat <- NULL
-                    }    
-                }
-            })
-            
-            ## add features (unique1, data)
-            observe({
-                if (!is.null(input$saveSumMat) && !is.null(cfn$newfeat)) { 
-                    if (input$compRadio == "unique1")
-                        if (input$saveSumMat > 0) {
-                            .prot$summatu1 <- unique(c(.prot$summatu1, cfn$newfeat))
-                            cfn$newfeat <- NULL
-                        }    
-                }
-            })
-            
-            ## add features (unique2, data)
-            observe({
-                if (!is.null(input$saveSumMat) && !is.null(cfn$newfeat)) { 
-                    if (input$compRadio == "unique2")
-                        if (input$saveSumMat > 0) {
-                            .prot$summatu2 <- unique(c(.prot$summatu2, cfn$newfeat))
-                            cfn$newfeat <- NULL
-                        }    
-                }
-            })
-                     
-            ## remove features (data tab)
-            observe({
-                if (!is.null(input$removeSumMat)) 
-                    isolate(.prot$summat <- .removeFeat(.prot$summat, 
-                                            .cfnnewfeat(), input$removeSumMat))
-            })
-            
-            observe({
-                if (!is.null(input$removeSumMat))
-                    isolate(.prot$summatu1 <- .removeFeat(.prot$summatu1, 
-                                            .cfnnewfeat(), input$removeSumMat))
-            })
-            
-            observe({
-                if (!is.null(input$removeSumMat))
-                    isolate(.prot$summatu2 <- .removeFeat(.prot$summatu2, 
-                                            .cfnnewfeat(), input$removeSumMat))
-            })
-            ## END OF SEARCHING IMPLEMENTATION ##  
-            
-            
-            
-            ## START: TAB PCA ##    
-            .params <- reactiveValues(
-                colours = c("none", "none"), fcex = c(1, 1), 
-                symbol = c("none", "none"), 
-                PCAn1 = c(1, 1), PCAn2 = c(2, 2),
-                xrange1 = c(min(.vPCA(isolate(data$obj), 1, 2, "object1", method = method)[, 1]),
-                        max(.vPCA(isolate(data$obj), 1, 2, "object1", method = method)[, 1])),
-                xrange2 = c(min(.vPCA(isolate(data$obj), 1, 2, "object2", method = method)[, 1]), 
-                        max(.vPCA(isolate(data$obj), 1, 2, "object2", method = method)[, 1])),
-                yrange1 = c(min(.vPCA(isolate(data$obj), 1, 2, "object1", method = method)[, 2]), 
-                        max(.vPCA(isolate(data$obj), 1, 2, "object1", method = method)[, 2])),
-                yrange2 = c(min(.vPCA(isolate(data$obj), 1, 2, "object2", method = method)[, 2]), 
-                        max(.vPCA(isolate(data$obj), 1, 2, "object2", method = method)[, 2])),
-                legend = FALSE
-            )
-        
-            observe({
-                if (!is.null(input$fcolours)) {
-                    .params$colours[.ind$params] <- input$fcolours}
-                if (!is.null(input$fcex)) {
-                    .params$fcex[.ind$params] <- input$fcex}
-                if (!is.null(input$PCAn1) && !is.null(input$PCAn2)) {
-                    .params$PCAn1[.ind$params] <- input$PCAn1
-                    .params$PCAn2[.ind$params] <- input$PCAn2}
-                if (!is.null(input$fsymboltype)) {
-                    .params$symbol[.ind$params] <- input$fsymboltype}
-                if (!is.null(input$legendyes)) {
-                    .params$legend <- input$legendyes}
-                if (!is.null(input$xrange1) && !is.null(input$yrange1)) {
-                    .params$xrange1 <- input$xrange1
-                    .params$yrange1 <- input$yrange1}
-                if (!is.null(input$xrange2) && !is.null(input$yrange2)) {
-                    .params$xrange2 <- input$xrange2
-                    .params$yrange2 <- input$yrange2}
-            })
-        
-            ## reactive Values for object selected
-            .ind <- reactiveValues(params = 1)
-            observe({
-                if (sel$Obj == "object1")
-                    isolate(.ind$params <- 1)
-                else
-                    isolate(.ind$params <- 2)
-            })
-            
-            ## values of PCA, dims is dependent on user input,
-            ## so is xlim and ylim
-            .valuesPCA1 <- reactive(.vPCA(data$obj, .params$PCAn1[1], 
-                                          .params$PCAn2[1], "object1",
-                                          method = method))
-       
-            .valuesPCA2 <- reactive(.vPCA(data$obj, .params$PCAn1[2], 
-                                          .params$PCAn2[2], "object2",
-                                          mirror$x, mirror$y,
-                                          method = method))         
-            
-            ## selectInput for colours
-            output$fcoloursOutput <- renderUI({ 
-                .colourPCA(data$obj,
-                    isolate(.params$colours[.ind$params]), sel$Obj)
-            })
-        
-            ## compute number of principal components to look for 
-            ## and change UI accordingly
-            output$PCAn1UI <- renderUI(
-                .PC(data$obj, "x", isolate(.params$PCAn1)[.ind$params], sel$Obj)
-            )
-        
-            output$PCAn2UI <- renderUI(
-                .PC(data$obj, "y", isolate(.params$PCAn2)[.ind$params], sel$Obj)
-            )
-        
-            ## selectInput for point size
-            output$fcexOutput <- renderUI(
-                .fcexPCA(data$obj, input$fcolours,
-                    isolate(.params$fcex)[.ind$params], sel$Obj)
-            )
-            
-            ## selectInput for symboltype
-            output$fsymboltypeOutput <- renderUI(
-                .symbolPCA(data$obj, input$fcolours, 
-                           isolate(.params$symbol)[.ind$params], sel$Obj)
-            )
-            
-            ## zoom function: parameters for x- and y-range for PCA plot
-            output$xrange1UI <- renderUI(if (sel$Obj == "object1")
-                .rangePCA(.valuesPCA1(), 1, "xrange1"))  
-            output$xrange2UI <- renderUI(if (sel$Obj == "object2")
-                .rangePCA(.valuesPCA2(), 1, "xrange2"))
-            output$yrange1UI <- renderUI(if (sel$Obj == "object1")
-                .rangePCA(.valuesPCA1(), 2, "yrange1"))
-            output$yrange2UI <- renderUI(if (sel$Obj == "object2")
-                .rangePCA(.valuesPCA2(), 2, "yrange2"))
-            
-            ## legend
-            output$PCALegendUI <- renderUI(
-                .legendPCA(data$obj, .params$colours[.ind$params], 
-                    .params$legend, sel$Obj)
-            )
-            
-            output$PCALegendposUI <- renderUI(
-                .legendPosPCA(data$obj, .params$colours[.ind$params], sel$Obj)
-            )
-            
-            ## mirror 2nd PCA plot when checkBoxes are respectively selected
-            mirror <- reactiveValues(x = FALSE, y = FALSE)
-            observe({
-                if ("x" %in% input$mirrorObj)
-                    mirror$x <- TRUE
-                else 
-                    mirror$x <- FALSE
-            })
-            
-            observe({
-                if ("y" %in% input$mirrorObj)
-                    mirror$y <- TRUE
-                else 
-                    mirror$y <- FALSE
-            })
-            
-            
-            ## Plots and reactive expressions for download
-            .PCA1 <- reactive(
-                .plotPCA(obj = data$obj, 
-                    fcolours = .params$colours[1], 
-                    fcex = .params$fcex[1],
-                    xrange = .params$xrange1, yrange = .params$yrange1,
-                    sb = .params$symbol[1],
-                    PCAn1 = .params$PCAn1[1], PCAn2 = .params$PCAn2[1],
-                    legend = input$legendyes, legendpos = input$legendpos,
-                    sI = .searchInd1(),
-                    cIS = input$chooseIdenSearch,
-                    ind = "object1",
-                    listSaSe = .indSavedSearchlist1(),
-                    method = method)
-            )
-            
-            output$PCA1 <- renderPlot(
-                .plotPCA(obj = data$obj, 
-                    fcolours = .params$colours[1], 
-                    fcex = .params$fcex[1],
-                    xrange = .params$xrange1, yrange = .params$yrange1,
-                    sb = .params$symbol[1],
-                    PCAn1 = .params$PCAn1[1], PCAn2 = .params$PCAn2[1],
-                    legend = input$legendyes, legendpos = input$legendpos,
-                    sI = .searchInd1(),
-                    cIS = input$chooseIdenSearch,
-                    ind = "object1",
-                    listSaSe = .indSavedSearchlist1(),
-                    method = method)
-            )            
-            
-            ## display 2D-nearest protein for obj1 in PCA plot
-            output$hoverProt1PCA <- renderTable(
-                if (!is.null(minDist2dProt1PCAHover()))
-                    fData(data$obj[[1]])[minDist2dProt1PCAHover(), ]
-    
-            )
-        
-            
-            .PCA2 <- reactive(
-                .plotPCA(obj = data$obj, 
-                    fcolours = .params$colours[2], 
-                    fcex = .params$fcex[2],
-                    xrange = .params$xrange2, yrange = .params$yrange2,
-                    sb = .params$symbol[2],
-                    PCAn1 = .params$PCAn1[2], PCAn2 = .params$PCAn2[2],
-                    legend = input$legendyes, legendpos = input$legendpos,
-                    sI = .searchInd2(),
-                    cIS = input$chooseIdenSearch,
-                    ind = "object2", mX = mirror$x, mY = mirror$y,
-                    listSaSe = .indSavedSearchlist2(),
-                    method = method)
-            )
-            
-            ## display 2D-nearest protein for obj2 in PCA plot
-            output$hoverProt2PCA <- renderTable(
-                if (!is.null(minDist2dProt2PCAHover()))
-                    fData(data$obj[[2]])[minDist2dProt2PCAHover(),]
-            )
-            
-            output$PCA2 <- renderPlot(                
-                .plotPCA(obj = data$obj, 
-                    fcolours = .params$colours[2], 
-                    fcex = .params$fcex[2],
-                    xrange = .params$xrange2, yrange = .params$yrange2,
-                    sb = .params$symbol[2],
-                    PCAn1 = .params$PCAn1[2], PCAn2 = .params$PCAn2[2],
-                    legend = input$legendyes, legendpos = input$legendpos,
-                    sI = .searchInd2(),
-                    cIS = input$chooseIdenSearch,
-                    ind = "object2", mX = mirror$x, mY = mirror$y,
-                    listSaSe = .indSavedSearchlist2(),
-                    method = method)
-            )
-            
-            ## Download Handler for PCA plot
-            output$plotPCA1Download <- downloadHandler(
-                filename = function() {
-                    paste('object1-PCA-', Sys.Date(), '.jpg', sep='')
-                }, 
-                content = function(file) {
-                    jpeg(file, quality = 100, width = 800, height = 800)
-                    .PCA1()
-                    dev.off()
-                }
-            )
-            
-            output$plotPCA2Download <- downloadHandler(
-                filename = function() {
-                    paste('object2-PCA-', Sys.Date(), '.jpg', sep='')
-                }, 
-                content = function(file) {
-                    jpeg(file, quality = 100, width = 800, height = 800)
-                    .PCA2()
-                    dev.off()
-                }
-            )
-            
-            ## compute name of 2D-nearest protein for obj1 in PCA plot (click)
-            minDist2dProt1PCA <- reactive(
-                ## will be empty initially
-                if (!is.null(input$PCA1click) && !is.null(.valuesPCA1()))
-                    ## compute 2D distances from click input to each component 
-                    ## of the PCA plot, input$PCAclick1$x and input$PCAclick1$y
-                    ## is user input (name will be returned)
-                    .minDistPCA(inputx = input$PCA1click$x, 
-                        inputy = input$PCA1click$y, valuesx = .valuesPCA1()[,1],
-                        valuesy = .valuesPCA1()[,2])
-            )
-            
-            ## compute name of 2D-nearest protein for obj1 in PCA plot (hover)
-            minDist2dProt1PCAHover <- reactive(
-                if (!is.null(input$PCA1hover) && !is.null(.valuesPCA1())) 
-                    .minDistPCA(inputx = input$PCA1hover$x, 
-                        inputy = input$PCA1hover$y, valuesx = .valuesPCA1()[,1], 
-                        valuesy = .valuesPCA1()[,2])
-            )
-                
-            ## compute name of 2D-nearest protein for obj2 in PCA plot (click)
-            minDist2dProt2PCA <- reactive(
-            ## will be empty initially
-                if (!is.null(input$PCA2click) && !is.null(.valuesPCA2()))
-                ## compute 2D distances from click input to each component 
-                ## of the PCA plot, input$PCAclick2$x and input$PCAclick2$y
-                ## is user input (name will be returned)
-                    .minDistPCA(inputx = input$PCA2click$x, 
-                        inputy = input$PCA2click$y, valuesx = .valuesPCA2()[,1],
-                        valuesy = .valuesPCA2()[,2])
-            )
-            
-            ## compute name of 2D-nearest protein for obj2 in PCA plot (hover)
-            minDist2dProt2PCAHover <- reactive(
-                if (!is.null(input$PCA2hover) && !is.null(.valuesPCA2())) {
-                    .minDistPCA(inputx = input$PCA2hover$x, 
-                        inputy = input$PCA2hover$y, valuesx = .valuesPCA2()[,1], 
-                        valuesy = .valuesPCA2()[,2])
-                }
-            )
-            ## END: TAB PCA ## 
-
-
-
-            ## START: TAB PLOTDIST ##
-            
-            ## Index of element in list where parameters are stored
-            .nCol <- reactive(.nC(input$numberPlotDist, input$quantityPlotDist))
-
-            ## list where parameters for plot are stored
-            ## create a list with reactive values
-            .listParams <- reactiveValues(
-                                levPlotDist1 = "all", levPlotDist2 = "all",
-                                levPlotDistOrg1 = "all", levPlotDistOrg2 = "all"
-            )
-
-            ## write paramters to list for plotDist at index of .nCol()
-            observe({
-                if (!is.null(sel$Obj) && !is.null(input$organelleAll) &&
-                        !is.null(input$fNamesplDist)) {
-                    if (sel$Obj == "object1") {
-                        .listParams$levPlotDist1[.nCol()] <- 
-                                input$fNamesplDist
-                        .listParams$levPlotDistOrg1[.nCol()] <- 
-                                input$organelleAll
-                    } else {
-                        .listParams$levPlotDist2[.nCol()] <- 
-                                input$fNamesplDist
-                        .listParams$levPlotDistOrg2[.nCol()] <- 
-                                input$organelleAll
-                    }
-                }
-            })
-
-            ## calculate protein nearest to user input (click)
-            .minPlotDist1 <- reactive(
-                if (length(data$obj) != 0 && !is.null(input$plotDist1click)) { 
-                    if (!is.null(input$quantityPlotDist) && 
-                            input$quantityPlotDist == "1")
-                        .minDistPlotDist(obj = data$obj, 
-                            marker = .listParams$levPlotDist1[1],
-                            org = .listParams$levPlotDistOrg1[1],
-                            inputx = input$plotDist1click$x,
-                            inputy = input$plotDist1click$y,
-                            ind = "object1")
-                }
-            )
-
-            .minPlotDist2 <- reactive(
-                if (length(data$obj) != 0 && !is.null(input$plotDist2click)) { 
-                    if (!is.null(input$quantityPlotDist) && 
-                            input$quantityPlotDist == "1")
-                        .minDistPlotDist(obj = data$obj, 
-                            marker = .listParams$levPlotDist2[1],
-                            org = .listParams$levPlotDistOrg2[1],
-                            inputx = input$plotDist2click$x,
-                            inputy = input$plotDist2click$y,
-                            ind = "object2")
-                }
-            )
-            
-            ## calculate protein nearest to user input (hover) and display name 
-            ## in tabPanel
-            .minPlotDist1Hover <- reactive({
-                if (length(data$obj) != 0 && !is.null(input$plotDist1hover$x)) {
-                    if (!is.null(input$quantityPlotDist) && 
-                            input$quantityPlotDist == "1") 
-                        .minDistPlotDist(obj = data$obj,
-                            marker = .listParams$levPlotDist1[1],
-                            org = .listParams$levPlotDistOrg1[1],
-                            inputx = input$plotDist1hover$x,
-                            inputy = input$plotDist1hover$y,
-                            ind = "object1")
-                }
-            })
-
-            ## display 2D-nearest protein for obj1 in plotDist plot
-            output$hoverPlotDist1 <- renderTable(
-                if (!is.null(.minPlotDist1Hover()))
-                    fData(data$obj[[1]])[.minPlotDist1Hover(), ]
-            )
-
-            .minPlotDist2Hover <- reactive({
-                if (length(data$obj) != 0 && !is.null(input$plotDist2hover$x)) {
-                    if(!is.null(input$quantityPlotDist) && 
-                            input$quantityPlotDist == "1") 
-                        .minDistPlotDist(obj = data$obj,
-                            marker = .listParams$levPlotDist2[1],
-                            org = .listParams$levPlotDistOrg2[1],
-                            inputx = input$plotDist2hover$x,
-                            inputy = input$plotDist2hover$y,
-                            ind = "object1")
-                }
-            })
-
-            ## display 2D-nearest protein for obj2 in plotDist plot
-            output$hoverPlotDist2 <- renderTable(
-                if (!is.null(.minPlotDist2Hover()))
-                    fData(data$obj[[2]])[.minPlotDist2Hover(), ]
-            )
-            
-            ## select fvarLabels or "all" for all features UI    
-            output$allOrganellesUI <- renderUI(
-                .featuresPlotDist(data$obj, sel$Obj))
-
-            ## UI for feature levels in fvarLabels or "all"
-            output$organelleAllUI <- renderUI(
-                .flevelPlotDist(
-                    .orgName(data$obj, input$fNamesplDist, sel$Obj),
-                    input$fNamesplDist)
-            )
-
-            ## UI for quantity of plots to plot
-            output$quantityPlotDistUI <- renderUI(.quantPlotDist(c(1:2), 1))
-
-            ## UI for number of plots to plot            
-            output$numberPlotDistUI <- renderUI(
-                if (!is.null(input$quantityPlotDist))
-                    .numPlotDist(input$quantityPlotDist)
-            )
-
-            ## plots and reactive expressions for download button
-            .plotDist1 <- reactive(
-                .plotPlotDist(obj = data$obj, 
-                    levPlotDist = .listParams$levPlotDist1,
-                    levPlotDistOrg = .listParams$levPlotDistOrg1,
-                    quantity = input$quantityPlotDist,
-                    sI = .searchInd1(), ind = "object1")
-            )
-            
-            output$plotDist1UI <- renderPlot(
-                .plotPlotDist(obj = data$obj, 
-                    levPlotDist = .listParams$levPlotDist1,
-                    levPlotDistOrg = .listParams$levPlotDistOrg1,
-                    quantity = input$quantityPlotDist,
-                    sI = .searchInd1(), ind = "object1")
-            )
-
-            .plotDist2 <- reactive(
-                .plotPlotDist(obj = data$obj, 
-                    levPlotDist = .listParams$levPlotDist2,
-                    levPlotDistOrg = .listParams$levPlotDistOrg2,
-                    quantity = input$quantityPlotDist,
-                    sI = .searchInd2(), ind = "object2")    
-            )
-
-            output$plotDist2UI <- renderPlot(
-                .plotPlotDist(obj = data$obj, 
-                    levPlotDist = .listParams$levPlotDist2,
-                    levPlotDistOrg = .listParams$levPlotDistOrg2,
-                    quantity = input$quantityPlotDist,
-                    sI = .searchInd2(), ind = "object2") 
-            )
-
-            ## Download Handler for PCA plot
-            output$plotDist1Download <- downloadHandler(
-                filename = function() {
-                    paste("object1-plotDist-", Sys.Date(), ".jpg", sep="")
-                },
-                content = function(file) {
-                    jpeg(file, quality = 100, width = 800, height = 800)
-                    .plotDist1()
-                    dev.off()}
-            )
-            
-            output$plotDist2Download <- downloadHandler(
-                filename = function() {
-                    paste('object2-plotDist-', Sys.Date(), '.jpg', sep='')
-                },
-                content = function(file) {
-                    jpeg(file, quality = 100, width = 800, height = 800)
-                    .plotDist2()
-                    dev.off()}
-            )
-            
-            ## END: TAB PLOTDIST ## 
-
-            
-            ## START: TAB QUANTITATION ##
-            output$exprsRadioUI <- renderUI(
-                if (sel$Obj == "object1")
-                    .radioButton(.searchInd1(), TRUE)
-                else
-                    .radioButton(.searchInd2(), TRUE)
-            )
-            
-            output$MSnExprsUI <- DT::renderDataTable(
-                if (sel$Obj == "object1")
-                    .dTable(data$obj, "quant", input$exprsRadio, 
-                                .searchInd1(), "object1")
-                else 
-                    .dTable(data$obj, "quant", input$exprsRadio, 
-                            .searchInd2(), "object2")                    
-            )
-            ## END: TAB QUANTITATION ##
-            
-
-            ## TAB: FEATURE META-DATA ##
-            ## Generate the feature meta-data
-            output$fDataRadioUI <- renderUI(
-                if (sel$Obj == "object1")
-                    .radioButton(.searchInd1(), FALSE)
-                else
-                    .radioButton(.searchInd2(), FALSE)
-            )
-
-            output$MSnfDataUI <- DT::renderDataTable(
-                if (sel$Obj == "object1")
-                    .dTable(data$obj, "fD", input$fDataRadio, 
-                                .searchInd1(), "object1")
-                else 
-                    .dTable(data$obj, "fD", input$fDataRadio, 
-                                .searchInd2(), "object2")
-            )
-            ## END: FEATURE META-DATA ##
-
-            
-
-            ## TAB: SAMPLE META-DATA ##
-            ## Generate the sample meta-data
-            output$MSnpDataUI <- DT::renderDataTable(
-                .dTable(data$obj, "pD", ind = sel$Obj))
-            ## END: SAMPLE META-DATA ##
-
-
-            
-            ## TAB: SEARCH ##
-            ## create object pRolocGUI_SearchResults in .GlobalEnv on exit
-            observe({
-                if (length(.pR_SR$foi) > 0)
-                    on.exit(assign("pRolocGUI_SearchResults",
-                                                    .pR_SR$foi, .GlobalEnv))
-            })
-
-            ## create reactiveValues for FoIColection
-            .pR_SR <- reactiveValues(foi = sr)
-
-            if ((is.null(sr))) {
-                .pR_SR$foi <- FoICollection()
-            }
-
-            ## create reactiveValues for new features of Interest
-            .newfoi <- reactiveValues(ind = NULL)
-        
-            observe({
-                .newfoi$ind <- .obsNewFoI(data$obj, .unionFeat(),            
-                    input$savedSearchText, input$saveLists2SR, "object1", FALSE)
-                .pR_SR$foi <- .obsSavedSearch(.pR_SR$foi, .newfoi$ind, 
-                    .unionFeat(), input$saveLists2SR, input$savedSearchText)
-            }) 
-
-            selected <- reactiveValues(SaSe = NULL)
-            observe(selected$SaSe <- input$selCB)
-            
-            output$multSaSe <- renderUI({
-                if (length(.pR_SR$foi) > 0) 
-                    selectInput(inputId = "selCB", label = "display", 
-                            choices = description(.pR_SR$foi), multiple = TRUE,
-                            selected = selected$SaSe)
-            })
-            
-            .indSavedSearchReac <- reactive({
-                .indSR <- na.omit(match(input$selCB, description(.pR_SR$foi)))
-                lapply(foi(.pR_SR$foi)[.indSR], foi)
-                
-            })
-            
-            .indSavedSearchlist1 <- reactive({
-                lapply(.indSavedSearchReac(), match, rownames(data$obj[[1]]))
-                
-            })
-            
-            .indSavedSearch1 <- reactive({unique(unlist(.indSavedSearchlist1()))})
-            
-            .indSavedSearchlist2 <- reactive({
-                lapply(.indSavedSearchReac(), match, rownames(data$obj[[2]]))
-            })
-            
-            .indSavedSearch2 <- reactive({unique(unlist(.indSavedSearchlist2()))})
-            
-            ## text field to assign name to search results
-            ## display information about selected FoI
-            .whichN <- reactive(.whichTag(input$tagSelectList, .pR_SR$foi))
-
-            output$infoSavedSearchUI <- renderText({
-                if (length(data$obj) != 0 
-                    && !is.null(.pR_SR$foi) 
-                        && length(.pR_SR$foi) != 0) {
-                    showFOI <- .showFOI(.pR_SR$foi, data$obj, .whichN(), TRUE)
-                    paste0(showFOI, sep = "\n", collapse = "")
-                } else
-                    return("pRolocGUI_SearchResults not found in workspace")
-            })
-
-            ## select Input for the tag names of the list
-            output$tagsListSearchUI <- renderUI(.tagListSearch(.pR_SR$foi))
-
-            ## text input to enter description 
-            output$savedSearchTextUI <- renderUI(.textDescription())
-
-            ## action button to save new FoIs
-            output$saveLists2SRUI <- renderUI(
-                .buttonSearch(.pR_SR$foi, .unionFeat(), input$savedSearchText)
-            )
-            ### END: SEARCH ###
-            
-        
-            
-            ### TAB: DATA ###     
-            output$selObjUI <- renderUI(
-                radioButtons("selObj", "", 
-                    choices = .namesObj(object))
-            )
-            
-            sel <- reactiveValues(Obj = "object1")
-            observe({
-                if (!is.null(input$selObj)) {
-                    if (input$selObj == .namesObj(object)[1])
-                        sel$Obj <- "object1"
-                    else 
-                        sel$Obj <- "object2"
-                }
-            })
-            
-            output$markerLevel1Output <- renderUI( 
-                .colourPCA(data$obj, "none", "object1", "markerL1", 
-                                                            "marker object 1")
-            )
-            
-            output$markerLevel2Output <- renderUI(
-                .colourPCA(data$obj, "none", "object2", "markerL2", 
-                                                            "marker object 2")
-            )
-            
-            output$selectMarker <- renderUI(
-                if (!is.null(input$markerL1) && 
-                            !is.null(input$markerL2)) {
-                    if (input$markerL1 != "none"&& input$markerL2 != "none") {
-                        selectInput("selectMarker", "select marker", 
-                            choices = c("all",
-                                .mC(data$obj, input$markerL1, input$markerL2)),
-                            selected = "all")
-                    } else
-                        selectInput("selectMarker", "select marker",
-                            choices = c("all"))
-                }
-            )
-            
-            ## reactive object of class FeatComp
-            .cfn <- reactive({
-                if(!is.null(input$markerL1) && !is.null(input$markerL2)) {
-                    
-                    if (input$markerL1 != "none" && input$markerL2 != "none")
-                        cfn <- compfnames(data$obj[[1]], data$obj[[2]], 
-                            input$markerL1, input$markerL2, verbose=FALSE)
-                    else 
-                        cfn <- list(compfnames(data$obj[[1]], data$obj[[2]],
-                                        NULL, NULL, verbose=FALSE)) 
-                }
-            })
-            ## reactive object with names of new features
-            .cfnnewfeat <- reactive({
-                if (!is.null(input$selectMarker) && !is.null(.cfn()[[1]])) {
-                    ind <- which(input$selectMarker == 
-                                                lapply(.cfn(), slot, "name")) 
-                    slot(.cfn()[[ind]], input$compRadio)
-                }
-            })
-
-            ## HTML table (overview matrix)
-            .overview <- reactive({
-                if (!is.null(.cfn())) {
-                    .ov <- .calcCompNumbers(.cfn())
-                    .tableHTML(.ov, input$compRadio, input$selectMarker)}
-            })
-    
-            output$dataComp <- renderText(.overview())
-            
-            output$saveSumMatUI <- renderUI(
-                if (!.checkFeatData(.prot$summat, .prot$summatu1, 
-                        .prot$summatu2, .cfnnewfeat(), input$compRadio) 
-                            && length(.cfnnewfeat()) > 0)
-                    actionButton("saveSumMat", "Submit selection")
-            )
-            
-            output$removeSumMatUI <- renderUI(
-                if (.checkFeatData(.prot$summat, .prot$summatu1, .prot$summatu2,
-                        .cfnnewfeat(), input$compRadio) 
-                            && length(.cfnnewfeat()) > 0)
-                    actionButton("removeSumMat", "Undo selection")
-            )           
-            
-            ### END: DATA ###
-
-    
+pRolocVis_compare <- function(object, fcol1, fcol2,
+                               foi,
+                               fig.height = "600px",
+                               fig.width = "100%",
+                               legend.width = "200%",
+                               legend.cex = 1,
+                               remap = TRUE,
+                               nchar = 40,
+                               all = TRUE,
+                               dims = c(1, 2),
+                               ...) {
+  
+  
+  ## Return featureNames of proteins selected
+  on.exit(return(invisible(idDT)))
+  
+  
+  ## Check MSnSetList and take intersection
+  if (!inherits(object, "MSnSetList"))
+    stop("The input must be of class MSnSetList")
+  message("Subsetting MSnSetList to their common feature names")
+  object <- commonFeatureNames(object)
+  
+  
+  ## fcol checks
+  if (missing(fcol1) | missing(fcol2)) {
+    if (missing(fcol1) & missing(fcol2)) {
+      fcol1 <- "markers"
+      if (!fcol1 %in% fvarLabels(object[[1]])) {
+        stop("No fcol1 specificed, default fcol1 = markers can not be found")
+      } else {
+        fcol2 <- "markers"
+        if (!fcol2 %in% fvarLabels(object[[2]]))
+          fData(object[[2]])[, fcol2] <- fData(object[[1]])[, fcol1]
+      }
+    } else {
+      if (missing(fcol1)) {
+        fcol1 <- fcol2
+        if (!fcol1 %in% fvarLabels(object[[1]])) {
+          message("No fcol1 is specified, using the markers from fcol2")
+          fData(object[[1]])[, fcol1] <- fData(object[[2]])[, fcol2]
         }
+      } else {
+        if (missing(fcol2)) {
+          fcol2 <- fcol1
+          if (!fcol2 %in% fvarLabels(object[[2]])) {
+            message("No fcol2 is specified, using the markers from fcol1")
+            fData(object[[2]])[, fcol2] <- fData(object[[1]])[, fcol1]
+          }
+        }
+      }
+    }
+  } else {
+    if (!fcol1 %in% fvarLabels(object[[1]])) 
+      stop("fcol1 is not found in fvarLabels")
+    if (!fcol2 %in% fvarLabels(object[[2]])) 
+      stop("fcol2 is not found in fvarLabels")  
+  } 
+  
+  ## Define data columns
+  origFvarLab1 <- fvarLabels(object[[1]])
+  origFvarLab2 <- fvarLabels(object[[2]])
+  if (length(origFvarLab1) > 4) {
+    .ind <- which(origFvarLab1 == fcol1)
+    .fvarL <- origFvarLab1[-.ind]
+    selDT1 <- c(.fvarL[1:3], fcol1)
+  } else {
+    selDT1 <- origFvarLab1[1:length(origFvarLab1)]
+  }
+  if (length(origFvarLab2) > 4) {
+    .ind <- which(origFvarLab2 == fcol2)
+    .fvarL <- origFvarLab2[-.ind]
+    selDT2 <- c(.fvarL[1:3], fcol2)
+  } else {
+    selDT2 <- origFvarLab2[1:length(origFvarLab2)]
+  }  
+  
+  
+  ## Make fcol matrix of markers if it's not already
+  fcol <- c(fcol1, fcol2)
+  tf <- !sapply(1:length(fcol), function(x) isMrkMat(object[[x]], fcol[x]))
+  pmarkers <- vector("list", length = length(object))
+  for (i in 1:length(tf)) {
+    if (tf[i]) {
+      ## Make a mrk vec mat, then extract mat
+      mName <- paste0("Markers", format(Sys.time(), "%a%b%d%H%M%S%Y"))
+      tmpObj <- mrkVecToMat(object[[i]], fcol[i], mfcol = mName)
+      pmarkers[[i]] <- fData(tmpObj)[, mName]
+    } else {
+      pmarkers[[i]] <- fData(object[[i]])[, fcol[i]]
+    }
+  }
+
+  
+  ## Setting features to be displayed
+  if (!missing(foi)) {
+    if (inherits(foi, "FeaturesOfInterest") | inherits(foi, "FoICollection")) {
+      if (inherits(foi, "FeaturesOfInterest"))
+        foi <- FoICollection(list(foi))
+      foimarkers <- as(foi, "matrix")
+      if (exists("pmarkers", inherits = FALSE)) {
+        pmarkers <- lapply(pmarkers, function(z) merge(z, foimarkers,
+                                                       by = 0, all.x = TRUE))
+        rownames(pmarkers[[1]]) <- pmarkers[[1]][, "Row.names"]
+        rownames(pmarkers[[2]]) <- pmarkers[[1]][, "Row.names"]
+        pmarkers[[1]] <- pmarkers[[1]][featureNames(object[[1]]), -1]
+        pmarkers[[2]] <- pmarkers[[2]][featureNames(object[[2]]), -1]            
+      } else pmarkers <- list(foimarkers, foimarkers)
+    } else {
+      message("foi is not a valid FeaturesOfInterest or FoICollection object")
+    }
+  }     ## NB: pmarkers[[1]] and pmarkers[[2]] contains the same num of rows/proteins
+  sumpm <- lapply(pmarkers, function(z) apply(z, 2, sum, na.rm = TRUE))
+  if (any(sumpm[[1]] == 0)) {
+    message(paste("foi object", names(which(sumpm[[1]] == 0)), "does not match any featuresNames that are common in both datasets, removing foi"))
+    pmarkers[[1]] <- pmarkers[[1]][, -which(sumpm[[1]] == 0)]
+    pmarkers[[2]] <- pmarkers[[2]][, -which(sumpm[[2]] == 0)]
+  }
+
+  
+  
+  ## Convert GO names to CC names
+  if (length(grep("GO:", colnames(pmarkers[[1]]))) > 0) {
+    for (i in 1:length(pmarkers)) {
+      cn <- pRoloc::flipGoTermId(colnames(pmarkers[[i]]))
+      if (all(!is.na(cn))) {
+        names(cn) <- NULL
+        colnames(pmarkers[[i]]) <- cn
+      } 
+    }
+  }  
+  
+  
+  ## Marker colours
+  cols <- getStockcol()
+  if (length(cols) < max(sapply(pmarkers, ncol))) {
+    message("Too many features for available colours. Some colours will be duplicated.")
+    ind <- which.max(sapply(pmarkers, ncol))
+    n <- ncol(pmarkers[[ind]]) %/% length(cols)
+    cols <- rep(cols, n + 1)
+  }
+  myclasses <- unique(unlist(lapply(pmarkers, colnames)))
+  names(cols) <- myclasses
+  
+  ## Shorten markers names if too long
+  for (i in 1:length(object)) {
+    cn <- sapply(colnames(pmarkers[[i]]),
+                 function(x) {
+                   if (nchar(x) > nchar) {
+                     x <- strsplit(x, "")[[i]]
+                     x <- paste(x[1:nchar], collapse = "")
+                     x <- sub(" +$", "", x)
+                     x <- paste0(x, "...")
+                   }
+                   return(x)
+                 })
+    names(cn) <- NULL
+    colnames(pmarkers[[i]]) <- cn
+  }
+  
+  
+  ## Display all classes unless user specifies not to
+  pmsel <- TRUE
+  if (!all & max(sapply(pmarkers, ncol)) > 15)
+    pmsel <- 1    
+  
+  
+  ## Get data for profiles (need to do this here before changing MSnSet with remap
+  ## as exprs data gets lost with remap)
+  profs <- lapply(object, exprs)
+  
+  
+  ## Remap data to same PC space
+  if (remap) {
+    message("Remapping data to the same PC space")
+    object <- pRoloc:::remap(object)
+    pcas <- lapply(object, function(z) exprs(z)[, dims])
+    plotmeth <- "none"
+  } else {
+    pcas <- lapply(object, plot2D, fcol = NULL, plot = FALSE)
+    plotmeth <- "PCA"
+  }
+  
+  ## Create column of unknowns (needed later for plot2D in server)
+  newName <- paste0(format(Sys.time(), "%a%b%d%H%M%S%Y"), "unknowns")
+  object <- lapply(object, function(x) {fData(x)[, newName] = "unknown"; x})
+  
+  
+  ## all features are displayed on start
+  toSel <- 1:nrow(object[[1]])
+  feats <- featureNames(object[[1]])
+  idDT <- character()
+
+  
+  ## Build shiny app
+  ui <- fluidPage(
+    sidebarLayout(
+      sidebarPanel(
+        selectizeInput("markers", "Labels",
+                       choices = myclasses,
+                       multiple = TRUE,
+                       selected = myclasses[pmsel]),
+        sliderInput("trans", "Transparancy",
+                    min = 0,  max = 1, value = 0.5),
+        checkboxInput("checkbox", label = "Show labels", value = TRUE),
+        br(),
+        actionButton("resetButton", "Zoom/reset plot"),
+        br(),
+        actionButton("clear", "Clear selection"),
+        br(),
+        width = 2),
+      mainPanel(
+        tabsetPanel(type = "tabs",
+                    tabPanel("PCA", id = "pcaPanel",
+                             fluidRow(
+                               column(5, 
+                                      plotOutput("pca1",
+                                                 height = fig.height,
+                                                 width = fig.width,
+                                                 dblclick = "dblClick1",
+                                                 brush = brushOpts(
+                                                   id = "pcaBrush1",
+                                                   resetOnNew = TRUE)),
+                                      offset = 0),
+                               column(5, 
+                                      plotOutput("pca2",
+                                                 height = fig.height,
+                                                 width = fig.width,
+                                                 dblclick = "dblClick2",
+                                                 brush = brushOpts(
+                                                   id = "pcaBrush2",
+                                                   resetOnNew = TRUE)),
+                                      offset = 0),
+                               column(2, 
+                                      plotOutput("legend1",
+                                                 height = fig.height,
+                                                 width = legend.width))
+                             )
+                    ),
+                    tabPanel("Profiles", id = "profilesPanel",
+                             fluidRow(
+                               column(5,
+                                      plotOutput("profile1",
+                                                 height = "400px",
+                                                 width = "110%"),
+                                      offset = 0),
+                               column(5,
+                                      plotOutput("profile2",
+                                                 height = "400px",
+                                                 width = "110%"),
+                                      offset = 0),
+                               
+                               column(2, 
+                                      plotOutput("legend2",
+                                                 width = "100%"),
+                                      offset = 0)
+                             )
+                    ),
+                    tabPanel("Table Selection", id = "tableSelPanel",
+                             fluidRow(
+                               column(5,
+                                      checkboxGroupInput("selTab1", 
+                                                         "Columns to display for data 1",
+                                                         choices = origFvarLab1,
+                                                         selected = selDT1)
+                                      ),
+                               column(5,
+                                      checkboxGroupInput("selTab2",
+                                                         "Columns to display for data 2",
+                                                         choices = origFvarLab2,
+                                                         selected = selDT2)
+                                      
+                                      )
+                             ),
+                             tags$head(tags$style("#selTab1{color: darkblue;}"))
+                    ),
+                    ## feature data table is always visible
+                    fluidRow(
+                      column(12,
+                             column(length(c(selDT1, selDT2)),
+                                    DT::dataTableOutput("fDataTable"))))
+        ))
     )
-    runApp(app)
+  )
+  
+  
+  
+  
+  server <-
+    function(input, output, session) {
+      ranges <- reactiveValues(x = c(min(c(pcas[[1]][, 1], pcas[[2]][, 1])), 
+                                     max(c(pcas[[1]][, 1], pcas[[2]][, 1]))),
+                               y = c(min(c(pcas[[1]][, 2], pcas[[2]][, 2])), 
+                                     max(c(pcas[[1]][, 2], pcas[[2]][, 2]))))
+      
+      
+      ## Capture brushed proteins for zoom
+      brushedProts1 <- reactiveValues(i =  try(pcas[[1]][, 1] >= min(pcas[[1]][, 1]) & 
+                                                 pcas[[1]][, 1] <= max(pcas[[1]][, 1])),
+                                      j = try(pcas[[1]][, 2] >= min(pcas[[1]][, 2]) & 
+                                                pcas[[1]][, 2] <= max(pcas[[1]][, 2])))
+      brushedProts2 <- reactiveValues(i =  try(pcas[[2]][, 1] >= min(pcas[[2]][, 1]) & 
+                                                 pcas[[2]][, 1] <= max(pcas[[2]][, 1])),
+                                      j = try(pcas[[2]][, 2] >= min(pcas[[2]][, 2]) & 
+                                                pcas[[2]][, 2] <= max(pcas[[2]][, 2])))
+      
+      resetLabels <- reactiveValues(logical = FALSE)
     
-    
+      
+      
+      ## Get coords for proteins according to selectized marker class(es)
+      ## NB: need two reactive objects here as markers in object[[1]] do not
+      ## necessarily have the same indices as markers in object[[2]] (would like
+      ## to allow different markers between different datasets)
+      mrkSel1 <- reactive({
+        # browser()
+        ind <- match(input$markers, colnames(pmarkers[[1]]))
+        .mrkSel1 <- vector("list", length(input$markers))
+        for (i in seq(length(input$markers))) {
+          if (is.na(ind[i])) {
+            .mrkSel1[[i]] <- NA
+          } else {
+            .mrkSel1[[i]] <- which(pmarkers[[1]][, ind[i]] == 1)
+          }
+        }
+        .mrkSel1
+      })
+
+        
+      mrkSel2 <- reactive({
+        ind <- match(input$markers, colnames(pmarkers[[2]]))
+        .mrkSel2 <- vector("list", length(input$markers))
+        for (i in seq(length(input$markers))) {
+          if (is.na(ind[i])) {
+            .mrkSel2[[i]] <- NA
+          } else {
+            .mrkSel2[[i]] <- which(pmarkers[[2]][, ind[i]] == 1)
+          }
+        }
+        .mrkSel2
+      })
+      
+      
+      ## Update colour transparacy according to slider input
+      myCols <- reactive({
+        scales::alpha(cols,
+                      input$trans)[sapply(input$markers, function(z) 
+                        which(names(cols) == z))]
+      })
+      
+      
+      
+      ## PCA plot 1
+      output$pca1 <- renderPlot({
+        par(mar = c(4, 4, 0, 0))
+        par(oma = c(1, 0, 0, 0))
+        plot2D(object[[1]], method = plotmeth,
+               col = rep(getUnknowncol(), nrow(object[[1]])),
+               pch = 21, cex = 1,
+               xlim = ranges$x,
+               ylim = ranges$y,
+               fcol = newName, 
+               dims = dims)
+        if (!is.null(input$markers)) {
+          for (i in 1:length(input$markers)) {
+            if (!is.na(mrkSel1()[[i]][1]))
+              points(pcas[[1]][mrkSel1()[[i]], ], pch = 16, 
+                     cex = 1.4, col = myCols()[i])
+          }
+        } 
+        ## highlight point on plot by selecting item in table
+        idDT <<- feats[input$fDataTable_rows_selected]
+        if (resetLabels$logical) idDT <<- character()  ## If TRUE clear labels
+        if (length(idDT)) {
+          highlightOnPlot(pcas[[1]], idDT, cex = 1.3)
+          if (input$checkbox) 
+            highlightOnPlot(pcas[[1]], idDT, labels = TRUE, pos = 3)
+        }
+      })
+      
+      
+      
+      ## PCA plot 2
+      output$pca2 <- renderPlot({
+        par(mar = c(4, 4, 0, 0))
+        par(oma = c(1, 0, 0, 0))
+        plot2D(object[[2]], method = plotmeth,
+               col = rep(getUnknowncol(), nrow(object[[2]])),
+               pch = 21, cex = 1,
+               xlim = ranges$x,
+               ylim = ranges$y,
+               fcol = newName,
+               dims = dims)
+        if (!is.null(input$markers)) {
+          for (i in 1:length(input$markers)) {
+            if (!is.na(mrkSel2()[[i]][1]))
+              points(pcas[[2]][mrkSel2()[[i]], ], pch = 16, 
+                     cex = 1.4, col = myCols()[i])
+          }
+        } 
+        ## highlight point on plot by selecting item in table
+        idDT <<- feats[input$fDataTable_rows_selected]
+        if (resetLabels$logical) idDT <<- character()  ## If TRUE labels are cleared
+        if (length(idDT)) {
+          highlightOnPlot(pcas[[2]], idDT, cex = 1.3)
+          if (input$checkbox) 
+            highlightOnPlot(pcas[[2]], idDT, labels = TRUE, pos = 3)
+        }
+        resetLabels$logical <<- FALSE
+      })
+      
+      
+      
+      ## Protein profile plot 1
+      output$profile1 <- renderPlot({
+        par(mar = c(8, 2, 1, 1))
+        par(oma = c(1, 0, 0, 1))
+        ylim <- range(profs[[1]])
+        n <- nrow(profs[[1]])
+        m <- ncol(profs[[1]])
+        fracs <- colnames(profs[[1]])
+        plot(0, ylim = ylim, xlim = c(1, m), ylab = "Intensity", 
+             type = "n", xaxt = "n", xlab = "")
+        axis(1, at = 1:m, labels = fracs, las = 2)
+        title(xlab = "Fractions", line = 5.5)
+        matlines(t(profs[[1]][feats, ]),
+                 col = getUnknowncol(),
+                 lty = 1,
+                 type = "l")
+        if (!is.null(input$markers)) {
+          for (i in 1:length(input$markers)) { 
+            if (!is.na(mrkSel1()[[i]][1]))
+              matlines(t(profs[[1]][mrkSel1()[[i]], ]),
+                       col = myCols()[i],
+                       lty = 1,
+                       lwd = 1.5) 
+          }
+        }
+        ## If an item is clicked in the table highlight profile
+        idDT <<- feats[input$fDataTable_rows_selected]
+        if (length(idDT)) {
+          matlines(t(profs[[1]][idDT, , drop = FALSE]),
+                   col = "black",
+                   lty = 1,
+                   lwd = 2)
+        }
+      })
+      
+      
+      ## Protein profile plot 2
+      output$profile2 <- renderPlot({
+        par(mar = c(8, 3, 1, 1))
+        par(oma = c(1, 0, 0, 0))
+        ylim <- range(profs[[2]])
+        n <- nrow(profs[[2]])
+        m <- ncol(profs[[2]])
+        fracs <- colnames(profs[[2]])
+        plot(0, ylim = ylim, xlim = c(1, m), ylab = "Intensity", 
+             type = "n", xaxt = "n", xlab = "")
+        axis(1, at = 1:m, labels = fracs, las = 2)
+        title(xlab = "Fractions", line = 5.5)
+        matlines(t(profs[[2]][feats, ]),
+                 col = getUnknowncol(),
+                 lty = 1,
+                 type = "l")
+        if (!is.null(input$markers)) {
+          for (i in 1:length(input$markers)) { 
+            if (!is.na(mrkSel2()[[i]][1]))
+              matlines(t(profs[[2]][mrkSel2()[[i]], ]),
+                       col = myCols()[i],
+                       lty = 1,
+                       lwd = 1.5)
+          }
+        }
+        ## If an item is clicked in the table highlight profile
+        idDT <<- feats[input$fDataTable_rows_selected]
+        if (length(idDT)) {
+          matlines(t(profs[[2]][idDT, , drop = FALSE]),
+                   col = "black",
+                   lty = 1,
+                   lwd = 2)
+        }
+      })             
+      
+      
+      
+      ## Feature data table
+      output$fDataTable <- DT::renderDataTable({
+        feats <<- unique(c(names(which(brushedProts1$i & brushedProts1$j)),
+                           names(which(brushedProts2$i & brushedProts2$j))))
+        ## Double clicking to identify protein
+        if (!is.null(input$dblClick1)) {
+          dist <- apply(pcas[[1]], 1, function(z) sqrt((input$dblClick1$x - z[1])^2 
+                                                       + (input$dblClick1$y - z[2])^2))
+          idPlot <- names(which(dist == min(dist)))
+          if (idPlot %in% idDT) {                          ## 1--is it already clicked?
+            idDT <<- setdiff(idDT, idPlot)                 ## Yes, remove it from table
+          } else {                                         ## 2--new click?
+            idDT <<- c(idDT, idPlot)                       ## Yes, highlight it to table
+          }
+        }
+        if (!is.null(input$dblClick2)) {
+          dist <- apply(pcas[[2]], 1, function(z) sqrt((input$dblClick2$x - z[1])^2 
+                                                       + (input$dblClick2$y - z[2])^2))
+          idPlot <- names(which(dist == min(dist)))
+          if (idPlot %in% idDT) {                          ## 1--is it already clicked?
+            idDT <<- setdiff(idDT, idPlot)                 ## Yes, remove it from table
+          } else {                                         ## 2--new click?
+            idDT <<- c(idDT, idPlot)                       ## Yes, highlight it to table
+          }
+        } 
+        toSel <- match(idDT, feats)                        ## selection to highlight in DT
+        if (resetLabels$logical) toSel <- numeric()        ## reset labels
+        .dt1 <- fData(object[[1]])[feats, input$selTab1, drop = FALSE]
+        .dt2 <- fData(object[[2]])[feats, input$selTab2, drop = FALSE]
+        colnames(.dt1) <- paste0('<span style="color:',   
+                                 rep("darkblue", ncol(.dt1)), '">', 
+                                 colnames(.dt1), '</span>')
+        dataDT <- cbind(.dt1, .dt2)
+        DT::datatable(data = dataDT, 
+                      rownames = TRUE,
+                      selection = list(mode = 'multiple', selected = toSel),
+                      escape = FALSE) %>%     ## NB: `escape = FALSE` required for colname coloring
+          formatStyle(columns = colnames(.dt1), color = c("darkblue")) 
+      })
+      
+      
+      ## When a the reset button is clicked check to see is there is a brush on
+      ## the plot, if yes zoom, if not reset the plot.
+      observeEvent(input$resetButton, {
+        .brush1 <- input$pcaBrush1
+        .brush2 <- input$pcaBrush2
+        brush <- list(.brush1, .brush2)
+        tf <- !sapply(brush, is.null)
+        if (any(tf)) { 
+          tf <- which(tf)
+          brush <- brush[[tf]] 
+          bminx <- brush$xmin
+          bmaxx <- brush$xmax
+          bminy <- brush$ymin
+          bmaxy <- brush$ymax
+        } else {   ## reset the plot
+          bminx <- min(c(pcas[[1]][, 1], pcas[[2]][, 1]))
+          bmaxx <- max(c(pcas[[1]][, 1], pcas[[2]][, 1]))
+          bminy <- min(c(pcas[[1]][, 2], pcas[[2]][, 2]))
+          bmaxy <- max(c(pcas[[1]][, 2], pcas[[2]][, 2]))
+        }
+        ranges$x <- c(bminx, bmaxx)
+        ranges$y <- c(bminy, bmaxy)
+        brushedProts1$i <- try(pcas[[1]][, 1] >= bminx 
+                               & pcas[[1]][, 1] <= bmaxx)
+        brushedProts1$j <- try(pcas[[1]][, 2] >= bminy 
+                               & pcas[[1]][, 2] <= bmaxy)
+        brushedProts2$i <- try(pcas[[2]][, 1] >= bminx 
+                               & pcas[[2]][, 1] <= bmaxx)
+        brushedProts2$j <- try(pcas[[2]][, 2] >= bminy 
+                               & pcas[[2]][, 2] <= bmaxy)
+      })
+      
+      
+      ## When clear selection is pressed labels and reset selection 
+      observeEvent(input$clear, {
+        resetLabels$logical <<- TRUE
+      })
+      
+      
+      ## Output legend for pca
+      output$legend1 <- renderPlot({
+        par(mar = c(0, 0, 0, 0))
+        par(oma = c(0, 0, 0, 0))
+        plot(0, type = "n",
+             xaxt = "n", yaxt = "n",
+             xlab = "", ylab = "",
+             bty = "n")
+        if (!is.null(input$markers)) {
+          legend("topleft",
+                 c(input$markers, "unlabelled"),
+                 col = c(myCols(), getUnknowncol()),
+                 ncol = 1, bty = "n",
+                 
+                 pch = c(rep(16, length(myCols())), 21),
+                 cex = legend.cex)
+        } else {
+          legend("topleft",
+                 "unlabelled",
+                 col = getUnknowncol(),
+                 ncol = 1, bty = "n",
+                 pch = 21,
+                 cex = legend.cex)
+        }
+      })
+      
+      ## Output legend for profiles
+      output$legend2 <- renderPlot({
+        par(mar = c(0, 0, 0, 0))
+        par(oma = c(0, 0, 0, 0))
+        plot(0, type = "n",
+             xaxt = "n", yaxt = "n",
+             xlab = "", ylab = "",
+             bty = "n")
+        if (!is.null(input$markers)) {
+          legend("topleft",
+                 c(input$markers, "unlabelled"),
+                 col = c(myCols(), getUnknowncol()),
+                 ncol = 1, bty = "n",
+                 pch = c(rep(16, length(myCols())), 21),
+                 cex = legend.cex
+          )
+        } else {
+          legend("topleft",
+                 "unlabelled",
+                 col = getUnknowncol(),
+                 ncol = 1, bty = "n",
+                 pch = 21,
+                 cex = legend.cex)
+        }
+      })
+      
+    }
+  app <- list(ui = ui, server = server)
+  runApp(app)
 }
+
+
+## feats
+##  features to display on PCA plot
+##  profiles to diplay on matplot
+##  features to show in DT::datatable
+
+## feats[input$fDataTable_rows_selected]
+##  features to highlight
+##  feature selected in DT::datatable
