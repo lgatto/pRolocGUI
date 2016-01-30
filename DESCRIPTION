@@ -7,21 +7,10 @@ Maintainer: Laurent Gatto <lg390@cam.ac.uk>,
 Description: The package pRolocGUI comprises functions to
     interactively visualise organelle (spatial) proteomics
     data on the basis of pRoloc, pRolocdata and shiny.
-Depends:
-    R (>= 3.1.0),
-    pRoloc (>= 1.11.1),
-    MSnbase (>= 1.13.11),
-    methods
-Imports:
-    shiny (>= 0.9.1),
-    scales,
-    dplyr,
-    DT
-Suggests:
-    pRolocdata,
-    knitr,
-    BiocStyle,
-    rmarkdown
+Depends: R (>= 3.1.0), pRoloc (>= 1.11.1), MSnbase (>= 1.13.11),
+	 methods
+Imports: shiny (>= 0.9.1), scales, dplyr, DT
+Suggests: pRolocdata, knitr, BiocStyle, rmarkdown
 License: GPL-2
 URL: http://ComputationalProteomicsUnit.github.io/pRolocGUI/
 BugReports: https://github.com/ComputationalProteomicsUnit/pRolocGUI/issues
