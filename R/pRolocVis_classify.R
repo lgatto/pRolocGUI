@@ -36,7 +36,7 @@ pRolocVis_classify <- function(object,
   if (missing(method)) {
     pcas <- plot2D(object, fcol = NULL, plot = FALSE)
   } else {
-    if (.validpRolocVisMethod(method)) {
+    if (pRoloc:::.validpRolocVisMethod(method)) {
       if (class(method) == "matrix") {
         pcas <- method
       } else {

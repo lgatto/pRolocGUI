@@ -205,7 +205,7 @@ pRolocVis_pca <- function(object,
                     ## feature data table is always visible
                     fluidRow(
                       column(12,
-                             column(length(selDT), 
+                             column(length(selDT),
                                     DT::dataTableOutput("fDataTable"))))
         )
       )
