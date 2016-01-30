@@ -20,11 +20,8 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
                               dims = c(1, 2),
                               ...) {
                                
-  
-  
   ## Return featureNames of proteins selected
   on.exit(return(invisible(idDT)))
-  
   
   ## Check MSnSetList and take intersection
   if (!inherits(object, "MSnSetList"))

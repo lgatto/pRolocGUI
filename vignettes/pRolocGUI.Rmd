@@ -381,8 +381,7 @@ where the same proteins lie in each replicate by first clicking `pca` in
 the display selection table and then clicking the protein of interest on 
 one of the PCA plots, the protein will then be highlighted by a blue border
 and the same protein in the other replicate will also be highlighted.
-See `vignette("pRolocGUI-legacy")` for full details on how to use this 
-application.
+
 
 ![The compare application, data classes highlighted](figures/SS_Compare2.jpg)
 
