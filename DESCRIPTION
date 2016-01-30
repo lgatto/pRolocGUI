@@ -13,18 +13,13 @@ Depends:
     MSnbase (>= 1.13.11),
     methods
 Imports:
-    pRolocdata,
     shiny (>= 0.9.1),
-    tools (>= 3.1.0),
     scales,
+    dplyr,
     DT
 Suggests:
-    RUnit,
-    BiocGenerics,
+    pRolocdata,
     knitr,
-    knitrBootstrap,
-    bibtex,
-    knitcitations (>= 1.0-1),
     BiocStyle,
     rmarkdown
 License: GPL-2

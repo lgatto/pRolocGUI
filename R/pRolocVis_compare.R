@@ -178,23 +178,22 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
   
   ## Get data for profiles (need to do this here before changing MSnSet with remap
   ## as exprs data gets lost with remap)
-  profs <- lapply(object, exprs)
-  
+  profs <- lapply(object@x, exprs)
   
   ## Remap data to same PC space
   if (remap) {
     message("Remapping data to the same PC space")
     object <- pRoloc:::remap(object)
-    pcas <- lapply(object, function(z) exprs(z)[, dims])
+    pcas <- lapply(object@x, function(z) exprs(z)[, dims])
     plotmeth <- "none"
   } else {
-    pcas <- lapply(object, plot2D, fcol = NULL, plot = FALSE)
+    pcas <- lapply(object@x, plot2D, fcol = NULL, plot = FALSE)
     plotmeth <- "PCA"
   }
   
   ## Create column of unknowns (needed later for plot2D in server)
   newName <- paste0(format(Sys.time(), "%a%b%d%H%M%S%Y"), "unknowns")
-  object <- lapply(object, function(x) {fData(x)[, newName] = "unknown"; x})
+  object <- lapply(object@x, function(x) {fData(x)[, newName] = "unknown"; x})
   
   
   ## all features are displayed on start

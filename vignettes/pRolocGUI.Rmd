@@ -6,7 +6,7 @@ output:
 vignette: >
   %\VignetteIndexEntry{pRolocGUI - Interactive visualisation of spatial proteomics data} 
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}  
+  %\VignetteEncoding{UTF-8}
   %\VignettePackage{pRolocGUI}
 ---
 
@@ -64,7 +64,7 @@ quantitative proteomics datasets.
 
 ```{r loadPkgs, message = FALSE, warning = FALSE} 
 library("pRolocGUI")
-library("pRolocdata") 
+library("pRolocdata")
 ```
 
 We begin by loading the dataset `hyperLOPIT2015` from the `pRolocdata`
@@ -387,16 +387,17 @@ application.
 ![The compare application, data classes highlighted](figures/SS_Compare2.jpg)
 
 ## References
+
 Gatto L., Vizcaíno J.A., Hermjakob H., Huber W. and Lilley K.S. 
-Organelle proteomics experimental designs and analysis Proteomics, 
+*Organelle proteomics experimental designs and analysis Proteomics*, 
 10:22, 3957-3969, 2010.
 
-Gatto L., Breckels L.M., Burger T., Nightingale D., Groen A.J., 
-Campbell C., Nikolovski N., Mulvey C.M., Christoforou A., Ferro M., 
-Lilley K.S. A foundation for reliable spatial proteomics 
-data analysis, Mol Cell Proteomics. 2014 Aug;13(8):1937-52
+Gatto L., Breckels L.M., Burger T., Nightingale D., Groen A.J.,
+Campbell C., Nikolovski N., Mulvey C.M., Christoforou A., Ferro M.,
+Lilley K.S. *A foundation for reliable spatial proteomics data
+analysis*, Mol Cell Proteomics. 2014 Aug;13(8):1937-52
 
-Christoforou A., Mulvey C.M., Breckels L.M., Hayward P.C., Geladaki E., 
-Hurrell T., et al. A draft map of the mouse pluripotent stem cell 
-spatial proteome. Nat Commun; In Press.
+Christoforou A., Mulvey C.M., Breckels L.M., Hayward P.C., Geladaki
+E., Hurrell T., et al. *A draft map of the mouse pluripotent stem cell
+spatial proteome*. Nat Commun; In Press.
 
