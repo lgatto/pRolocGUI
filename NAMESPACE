@@ -6,8 +6,13 @@ import(methods)
 ## Imports
 import(shiny)
 import(scales)
-import(DT)
-import(dplyr)
+importFrom(DT,
+           ## see issue 61
+           ## dataTableOutput,
+           ## renderDataTable,
+           formatStyle)
+importFrom(dplyr, "%>%")
+
 
 export(plotMat2D)
 export(pRolocVis)
