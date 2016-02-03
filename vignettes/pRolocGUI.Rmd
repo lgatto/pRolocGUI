@@ -52,8 +52,8 @@ learning classification results according to user-specified thresholds
 for the assignment of sub-cellular location.
 * The `compare` application allows the comparison of two comparable 
 `MSnSet` instances, e.g. this might be of help for the analyses of
-changes in protein localisation in different conditions. *Note: this
-is currently being re-developed and will be updated in the coming months.*
+changes in protein localisation in different conditions. 
+
 
 ## Getting started
 
@@ -82,19 +82,19 @@ data(hyperLOPIT2015)
 To load one of the applications using the `pRolocVis` function and
 view the data you are required to specify a minimum of one key
 argument, `object`, which is the data to display and must be of 
-class `MSnSet` (or a list of `MSnSet` objects of
+class `MSnSet` (or a `MSnSetList` of
 length 2 for the `compare` application). Please see
 `vignette("pRoloc-tutorial")` or `vignette("MSnbase-io")` for
 importing and loading data. The argument `app` tells the `pRolocVis`
-function exactly what type of application to load. One can choose
+function what type of application to load. One can choose
 from: `"main"` (default), `"classify"`, `"compare"`.  The optional 
-argument `fcol` can be used which allows the user to specify the 
-feature meta-data label (`fData` column name) to be plotted. 
-The default is `markers` (i.e. the labelled data) for all 
-applications except the classification app. For
-the classification app one must specify the prediction column i.e. the
-feature meta-data label that correspinds to the column containing the
-classification results, resultant from running a supervised machine
+argument `fcol` (and `fcol1` and `fcol2` for the compare app)
+can be used which allows the user to specify the 
+feature meta-data label(s) (`fData` column name(s)) to be plotted. 
+The default is `markers` (i.e. the labelled data) for the PCA and compare 
+For the classification app one must specify the prediction column i.e. the
+feature meta-data label that corresponds to the column containing the
+classification results, generated from running a supervised machine
 learning analysis (see [below](#the-classify-application)).
 
 For example, to load the main `pRolocVis` application:
@@ -132,11 +132,12 @@ predictions output from a supervised machine learning analysis and to
 help the user set a classification threshold (see the `pRoloc`
 tutorial](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-tutorial.pdf)
 for details on spatial proteomics data analysis).
-* The comparison application (currently being re-implemented) 
-may be of interest if a user wishes to 
+* The comparison application may be of interest if a user wishes to 
 examine two replicate experiments, or two experiments from different
 conditions etc.  Two PCA plots are loaded side-by-side and one can
-search and identify common proteins between the two data sets.
+search and identify common proteins between the two data sets. As per the 
+main application there is also a protein profiles tab to allow one to look
+at the patterns of protein profiles of interest in each dataset. 
 
 # The `main` application
 
@@ -152,11 +153,11 @@ orthogonal to the preceding components. Thus, PCA is particularly
 useful for visualisation of multidimensional data in 2-dimensions,
 wherein all the proteins can be plotted on the same figure.
 
-The application is subdivided in to two tabs: (1) PCA, and (2)
-profiles.  A searchable data table containing the experimental feature
-meta-data is permanantly dispalyed at the bottom of the screen for
-ease. You can browse between the two tabs by simply clicking on them
-at the top of the screen.
+The application is subdivided in to three tabs: (1) PCA, (2) Profiles, 
+and (3) Table Selection.  A searchable data table containing the experimental 
+feature meta-data is permanantly dispalyed at the bottom of the screen for
+ease. You can browse between the tabs by simply clicking on them at the top
+of the screen.
 
 To run the `main` application using `pRolocVis`: 
 
@@ -170,7 +171,7 @@ pRolocVis(object = hyperLOPIT2015, fcol = "markers")
 a PCA plot for the selected `MSnSet`. By default a PCA plot is used to
 display the data and the first two principal components are plotted.
 The sidebar panel controls what features to highlight on the PCA plot.
-Under the 'Labels' tab, input can be selected by clicking on and off
+Under the 'Labels' menu, input can be selected by clicking on and off
 the data class names, or by typing and  searching in the white input
 box. Selected items can then be deleted, by clicking on the name of the
 class and pressing the delete button on your keyboard. The PCA plot will
@@ -217,8 +218,8 @@ The plot can be resetted to the original size by clicking the
 ![Brushing on the plot](figures/SS_PCA4.jpg)
 ![Zooming proteins of interest](figures/SS_PCA5.jpg)
 
-**Profiles** A user can switch between the PCA and profiles tab by
-clicking the tab at the top of the page. The protein profiles plot 
+**Profiles** By clicking the profiles tab at the top of the  
+page a protein profiles plot is displayed that
 shows the quantitation data that is stored in the `exprs` data slot 
 of the `MSnSet`. For the `hyperLOPIT2015` dataset this is the relative 
 abundances of each protein across the 20 fractions (2 x 10-plex replicates). 
@@ -243,6 +244,13 @@ of selected protein(s) are shown by black lines.
 `MSnbase` package (for examples on how to create `FeaturesOfInterest`
 see the [`pRoloc`
 tutorial](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-tutorial.pdf))`.
+
+![Table Selection](figures/SS_PCA8.jpg)
+
+**Table Selection** The Table Selection tab provides an interface 
+for data table column selection. Multiple columns can be selected on and 
+off by clicking/unclicking the checkboxes that correspond to the columns
+in the data table.
 
 **Note:** Other ordinance methods are available for displaying
 the data, for example, multidimensional scaling (MDS), and kernal-PCA,
@@ -342,48 +350,67 @@ the function `orgQuants` in the `r Biocpkg("pRoloc")` package.
 The comparison application may be of interest if a user wishes to 
 examine two replicate experiments, or two experiments from different
 conditions etc.  Two PCA plots are loaded side-by-side and one can
-search and identify common proteins between the two data sets. *Note:
-This application is currently being re-developed and a newer version
-will appear shortly.*
+search and identify common proteins between the two data sets.
 
-A `list` of `MSnSet`s of length 2 must be supplied as input, these
-are the two datasets one wishes to compare. In the example below
+A `MSnSetList` of length 2 must be supplied as input, containing
+the two datasets one wishes to compare. In the example below
 we load two replicate datasets of mouse embryonic stem cells 
 produced using the hyperLOPIT technology. 
 
 ```{r compare, eval = FALSE, echo = TRUE} 
 data(hyperLOPIT2015ms3r1)
 data(hyperLOPIT2015ms3r2) 
-mydata <- list(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r2)
+mydata <- MSnSetList(list(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r2))
 pRolocVis(mydata, what = "compare") 
 ```
 
-![The compare application](figures/SS_Compare1.jpg)
+![The compare application, main panel](figures/SS_Compare1.jpg)
+![The compare application, selecting classes](figures/SS_Compare2.jpg)
 
-The compare application is divied in to 7 tabs:  
+**Viewing, remapping, searching and zooming**
+The compare app has the same functionality as the main application with
+PCA, Profiles and Table Selection tabs. One key feature of the compare
+application is the ability to remap the second dataset on to the PCA data
+space of the first data set (see ?pRolocVis and the argument `remap = TRUE`). 
+Currently, only PCA is supported and remapping is done by default but can 
+be switched off with the `remap` argument. Using the first dataset as the
+reference set, PCA is carried out on the first dataset and the standard 
+deviations of the principal components (i.e. the square roots of the 
+eigenvalues of the covariance/correlation matrix) and the matrix of 
+variable loadings (i.e. a matrix whose columns contain the eigenvectors) are
+stored and then used to calculate the principal components of the second 
+dataset. Both datasets are scaled and centered in the usual way. The
+first dataset appears on the left, and the second appears on the right. 
+The order of the first (reference for remapping) and second datasets 
+can be changed through regeneration of the `MSnSetList` object. As per the 
+main application there is a sidebar as described in detail above with a 
+'Labels' menu, where input can be selected by clicking on and off
+the data class names, or by typing and  searching in the white input
+box and the PCA plot is updated accordingly. Zooming, clicking and searching
+for proteins of interest is supported as per the main app.
 
-* PCA,    
-* protein profiles,  
-* quantitation,  
-* feature meta-data,  
-* sample meta-data and  
-* search,
-* data. 
+![The compare application, searching fpr proteins](figures/SS_Compare3.jpg)
+![The compare application, brushing](figures/SS_Compare4.jpg)
+![The compare application, zooming](figures/SS_Compare5.jpg)
 
-You browse through the tabs by simply clicking on them. To get started
-add `fData` information to the plot by selecting a label under the 
-"plot colour" drop down menu. We can select "markers" which highlights
-the data classes found in the feature meta-data label `markers`. To
-select the same annotation for the second dataset one can click the
-radio buttons in the left panel to `object2` and then repeat the process.
-Both datasets now have the same data classes highlighted. One can examine
-where the same proteins lie in each replicate by first clicking `pca` in 
-the display selection table and then clicking the protein of interest on 
-one of the PCA plots, the protein will then be highlighted by a blue border
-and the same protein in the other replicate will also be highlighted.
+**Profiles**
+As per the main application there is a profiles tab which loads the
+quantitative protein profiles for the first experiment and second
+experiment, on the left- and right-hand sides respectively. One
+can highlight proteins of interest by clicking items in the data 
+table, and selecting classes to display in the side panel under the
+'Labels' menu.
 
+![The compare application, profiles](figures/SS_Compare6.jpg)
 
-![The compare application, data classes highlighted](figures/SS_Compare2.jpg)
+**Table Selection**
+By default 4 columns containing the feature data the first dataset 
+(dark blue) and 4 columns for the second dataset (black) will be displayed 
+in the table, and users can select particular columns they wish to display
+in the Table Selection tab.
+
+![The compare application, table selection](figures/SS_Compare7.jpg)
+
 
 ## References
 
