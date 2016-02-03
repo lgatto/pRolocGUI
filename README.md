@@ -56,7 +56,8 @@ If you use these open-source software for your research, please cite:
 programming language. Before installing the software you need to
 download `R` and (optionally) `RStudio`.
 
-1) Download `R` version `>= 3.1.1` for your operating system from the [R website](http://www.r-project.org/) and install it.
+1) Download the latest `R` release for your operating system from the
+[R website](http://www.r-project.org/) and install it.
 
 2) Optional, but
 recommended. [Download](http://www.rstudio.com/products/rstudio/download/)
@@ -87,6 +88,23 @@ See the Bioconductor
 [installation page](http://bioconductor.org/install/) for more
 details.
 
+### Pre-release/development version
+
+The pre-release/development code on github can be installed using
+`biocLite`. Note that this requires a working R build environment (i.e
+`Rtools` on Windows - see
+[here](https://github.com/lgatto/teachingmaterial/wiki/R-package)). New
+pre-release features might not be documented not thoroughly tested and
+could substantially change prior to release. Use at your own risks.
+
+
+```c
+## install from github
+biocLite("lgatto/pRoloc")
+biocLite("lgatto/pRolocdata")
+biocLite("ComputationalProteomicsUnit/pRolocGUI")
+```
+
 ## Getting started
 
 Before using a package's functionality, it needs to be loaded:
@@ -96,23 +114,28 @@ library("pRolocGUI")
 ```
 
 We first load data from
-[Dunkley et al. (2006)](http://www.pnas.org/content/103/17/6518.abstract)
+[Christoforou et al 2016](http://www.nature.com/ncomms/2016/160112/ncomms9992/full/ncomms9992.html)
 distributed in the `pRolocdata` package:
 
-```{r dunkley}
+```{r hyperLOP}
 library("pRolocdata")
-data(dunkley2006)
+data(hyperLOPIT2015)
 ```
 
-We can now start the graphical interface using the `pRolocVis`
-function and pass the `R` data to be visualised as input:
+There are 3 different visualisation applications currently
+available: `main`, `classification` and `compare`.
+These apps are launched using the `pRolocVis` function and
+passing `object`, which is an `MSnSet` containing the data 
+one wishes to interrogate. One may also specify which app
+they wish to use by using the `app` argument, see `?pRolocVis`
+for more details. The default app that is loaded if 
+`app` is not specified is the `main` application:
 
 ```{r gui}
-pRolocVis(dunkley2006)
+pRolocVis(hyperLOPIT2015)
 ```
 
-![Screenshot - PCA](https://raw.githubusercontent.com/ComputationalProteomicsUnit/pRolocGUI/master/vignettes/figures/Screenshot_PCA2.png)
-![Screenshot - protein profiles](https://raw.githubusercontent.com/ComputationalProteomicsUnit/pRolocGUI/master/vignettes/figures/Screenshot_PP2.png)
+![Screenshot - PCA](https://github.com/ComputationalProteomicsUnit/pRolocGUI/blob/master/vignettes/figures/SS_PCA1.jpg)
 
 
 The graphical interface is described in details in the package
@@ -123,15 +146,22 @@ the interface is loaded or can be
 
 ## More resources
 
-### Videos
+### Support
 
-0. [An introduction to Bioconductor](https://www.youtube.com/watch?v=fofS2o6HzKA)
+* The Bioconductor [support forum](https://support.bioconductor.org/)
+* Open a `pRolocGUI` GitHub
+  [issue](https://github.com/ComputationalProteomicsUnit/pRolocGUI/issues)
+  (requires a free GitHub account).
+
+### Videos (new videos will appear shortly for the new apps)
+
+0. [An introduction to Bioconductor](https://www.youtube.com/watch?v=dg6NvmMVQ3I)
 1. [A brief introduction to `pRolocGUI`](http://youtu.be/zXtiiAoB_vM)
 2. [Downloading and install `R`](http://youtu.be/qHMUnZnrkdA)
 3. [Using RStudio](http://youtu.be/vlSbKf0OK3g)
 4. [Installing the `pRolocGUI` interface](http://youtu.be/_VmAZF1g_O4)
-5. [Starting `pRolocGUI`](http://youtu.be/24gntTd133w)
-6. [Using `pRolocGUI` to explore and visualise experimental spatial proteomics data](http://youtu.be/cG3PEQ-uWhM)
+5. [Starting `pRolocGUI`](http://youtu.be/24gntTd133w) - This tutorial is for the older legacy applications. New videos will appear shortly for the new applications.
+6. [Using `pRolocGUI` to explore and visualise experimental spatial proteomics data](http://youtu.be/cG3PEQ-uWhM) - This tutorial is for the older legacy applications. New videos will appear shortly for the new applications.
 
 Tutorial [playlist](https://www.youtube.com/watch?v=qHMUnZnrkdA&list=PLvIXxpatSLA2loV5Srs2VBpJIYUlVJ4ow).
 

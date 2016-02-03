@@ -1,740 +1,435 @@
-<!--
-%\VignetteEngine{knitr::knitr}
-%\VignetteIndexEntry{pRolocVis and pRolocComp application}
-%\VignetteKeywords{Visualisation, Organelle, Spatial, Proteomics, Shiny}
-%\VignettePackage{pRolocGUI}
--->
+--- 
+title: "pRolocGUI - Interactive visualisation of spatial proteomics data" 
+author: "Lisa Breckels, Thomas Naake and Laurent Gatto" 
+output:  
+  BiocStyle::html_document
+vignette: >
+  %\VignetteIndexEntry{pRolocGUI - Interactive visualisation of spatial proteomics data} 
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+  %\VignettePackage{pRolocGUI}
+---
 
 
-```{r, env, eval=TRUE, echo=FALSE, warning=FALSE, message=FALSE}
-library(knitcitations)
-cite_options(hyperlink = FALSE, style = "markdown")
-library(bibtex)
-extbib <- read.bib("pRolocGUI.bib")
-```
+# Foreword
+
+`r Biocpkg("pRolocGUI")` is under active development; current 
+functionality is evolving and new features will be added. This 
+software is free and open-source. You are invited to open issues 
+in the [Github `pRolocGUI` repository](https://github.com/ComputationalProteomicsUnit/pRolocGUI/issues) 
+in case you have any questions, suggestions or have found any bugs or typos. 
+To reach a broader audience for more general questions about 
+proteomics analyses using R consider of writing to the 
+[Bioconductor Support Forum](https://support.bioconductor.org).
 
 
-<h1>pRolocGUI: Interactive visualisation of organelle (spatial) proteomics data</h1>
+# Introduction
 
-
-#### Thomas Naake and Laurent Gatto*
-
-#### *Computational Proteomics Unit, University of Cambridge
-
-### Foreword
-
-This vignette describes the implemented functionality in the
+This vignette describes the implemented functionality of the
 `pRolocGUI` package. The package is based on the `MSnSet` class
-definitions of `MSnbase` [`r citep(extbib["GattoLilley2012"])`](#references)
-and on the functions defined in the package `pRoloc` 
-[`r citep(list(extbib["Breckels2013"], extbib["Gatto2014"]))`](#references). 
-`pRolocGUI` is intended for the visualisation and analysis of proteomics data,
-especially for the analyses of 
-LOPIT [`r citep(extbib["Dunkley2006"])`](#references)
-or PCP [`r citep(extbib["Foster2006"])`](#references) experiments.  
-To achieve reactivity and interactivity, `pRolocGUI` relies on the
-[`shiny`](http://www.rstudio.com/shiny/) framework.  
+definitions of `r Biocpkg("MSnbase")` and on the functions defined in
+the `r Biocpkg("pRoloc")` package. `r Biocpkg("pRolocGUI")` is
+intended for, but not limited to, the interactive visualisation and
+analysis of quantitative spatial proteomics data. To achieve
+reactivity and interactivity, `pRolocGUI` relies on the
+[`shiny`](http://www.rstudio.com/shiny/) framework. We recommend some
+familiarity with the `MSnSet` class (see `?MSnSet` for details) and
+the `pRoloc` vignette (see `vignette("pRoloc-tutorial")`) before using
+`pRolocGUI`.
 
-The implemented application facilitates a higher degree of interactivity 
-with the underlying spatial proteomics data: The distributed functions 
-`pRolocVis` and `pRolocComp` offer interactive 
-Principal Component Analysis (PCA) plots and 
-protein profile plots, as well as exploration of quantitative and 
-qualitative meta-data. 
-Key features of `pRolocVis` and `pRolocComp` are the identification of 
-features in plots, a 'reverse search' based on querying meta-data which 
-allows for highlighting the features on plots and an import/export 
-functionality by using the `FeaturesOfInterest`/`FoICollection` infrastructure 
-distributed by the `MSnbase` package. Additionally, `pRolocComp` allows for 
-comparison of two comparable `MSnSet` instances, e.g. this might be of great 
-help for analyses of changes in protein localisation in different `MSnSet`s.
+There are 3 applications distributed with `pRolocGUI` which are
+wrapped and launched by the `pRolocVis` function. These 3 applications
+are called according to the argument `app` in the `pRolocVis`
+function which may be one of "main", "classify" or
+"compare". 
 
-We recommend some familiarity with the `MSnSet` class (see `?MSnSet`
-for details) and the `pRoloc` vignette (available with 
-`vignette("pRoloc-tutorial")`).
-
-`pRolocGUI` is under active development; current functionality is
-evolving and new features will be added. This software is free and
-open-source. You are invited to contact Laurent Gatto (lg390@cam.ac.uk) or 
-Thomas Naake (naake@stud.uni-heidelberg.de) in case you have any questions, 
-suggestions or have found any bugs or typos. To reach a broader audience for 
-more general questions about proteomics analyses using R consider of writing 
-to the Bioconductor list.
+* The `main` application launches a Principal Components Analysis (PCA) 
+plot of the data, with an alternate profiles tab for visualisation of 
+protein profiles, it also features a searchable data table for the
+identification of proteins of interest.
+* The `classify` application has been designed to view machine 
+learning classification results according to user-specified thresholds
+for the assignment of sub-cellular location.
+* The `compare` application allows the comparison of two comparable 
+`MSnSet` instances, e.g. this might be of help for the analyses of
+changes in protein localisation in different conditions. 
 
 
--------------------
-<a id="introduction"></a> 
+## Getting started
 
-<h2>1. Introduction</h2>
+Once R is started, the first step to enable functionality of the
+package is to load it, as shown in the code chunk below.  We also load
+the `r Biocpkg("pRolocdata")` data package, which contains
+quantitative proteomics datasets.
 
-
-Currently, `pRolocGUI` distributes the `pRolocVis` and `pRolocComp`application.  
-
-The function `pRolocVis` needs an object of class `MSnSet` or 
-a list of `MSnSet` objects as an argument, while `pRolocComp` needs a list 
-containing two instances of class `MSnSet`. 
-To prepare the environment to run a `pRolocVis`/`pRolocComp` session, 
-the `pRolocGUI` package and for demonstration purposes four example `MSnSet`s 
-are loaded to the environment. The example data sets are available from the 
-`pRolocdata` [`r citep(extbib["GattoPRolocdata"])`](#references) experiment
-package and are derived from experiments `andy2011` from 
-[`r citet(extbib["Breckels2013"])`](#references), `tan2009r1` and `tan2009r2`, 
-the first and second replicate from [`r citet(extbib["Tan2009"])`](#references)
-and `dunkley2006` from [`r citet(extbib["Dunkley2006"])`](#references).  
-
-```{r, echo = TRUE, message = FALSE, warning = FALSE}
+```{r loadPkgs, message = FALSE, warning = FALSE} 
 library("pRolocGUI")
-data(andy2011, package = "pRolocdata")
-data(tan2009r1, package = "pRolocdata")
-data(tan2009r2, package = "pRolocdata")
-data(dunkley2006, package = "pRolocdata")
+library("pRolocdata")
 ```
 
-`pRolocVis` needs an object of class `MSnSet` as an argument. We can launch the
-application with an `MSnSet` by assigning it to the argument `object`:
-```{r, eval = FALSE, echo = TRUE}
-pRolocVis(object = andy2011)
+We begin by loading the dataset `hyperLOPIT2015` from the `pRolocdata`
+data package. The data was produced from using the hyperLOPIT
+technology on mouse E14TG2a embryonic stem cells ([Christoforou et al 2016](http://www.nature.com/ncomms/2016/160112/ncomms9992/full/ncomms9992.html)). 
+For more background spatial proteomics data anlayses please see 
+[Gatto et al 2010](http://www.ncbi.nlm.nih.gov/pubmed/21080489), 
+[Gatto et al 2014](http://www.ncbi.nlm.nih.gov/pubmed/24846987) and also the 
+[`pRoloc` tutorial vignette](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-tutorial.pdf). 
+
+```{r loadData, echo = TRUE, message = FALSE, warning = FALSE}
+data(hyperLOPIT2015) 
 ```
 
-Alternatively, to upload multiple objects of class `MSnSet`, `pRolocVis` 
-accepts both lists with named and unnamed objects. This allows for analysis
-of multiple data sets without stopping the application from running. 
-The names of objects of lists will appear in the drop-down menu in the 
-**_data_** tab, while lists with unnamed objects will have a drop-down menu 
-with automatically named entries as a consequence, i.e. object 1 ... object n, 
-where n is the length of the list. 
-```{r, eval = FALSE, echo = TRUE}
-namedVis <- list(andy2011 = andy2011, tan2009r1 = tan2009r1, dunkley2006 = dunkley2006)
-unnamedVis <- list(andy2011, tan2009r1, dunkley2006)
-pRolocVis(object = namedVis)
-pRolocVis(object = unnamedVis)
+To load one of the applications using the `pRolocVis` function and
+view the data you are required to specify a minimum of one key
+argument, `object`, which is the data to display and must be of 
+class `MSnSet` (or a `MSnSetList` of
+length 2 for the `compare` application). Please see
+`vignette("pRoloc-tutorial")` or `vignette("MSnbase-io")` for
+importing and loading data. The argument `app` tells the `pRolocVis`
+function what type of application to load. One can choose
+from: `"main"` (default), `"classify"`, `"compare"`.  The optional 
+argument `fcol` (and `fcol1` and `fcol2` for the compare app)
+can be used which allows the user to specify the 
+feature meta-data label(s) (`fData` column name(s)) to be plotted. 
+The default is `markers` (i.e. the labelled data) for the PCA and compare 
+For the classification app one must specify the prediction column i.e. the
+feature meta-data label that corresponds to the column containing the
+classification results, generated from running a supervised machine
+learning analysis (see [below](#the-classify-application)).
+
+For example, to load the main `pRolocVis` application:
+
+```{r example, eval = FALSE, echo = TRUE} 
+pRolocVis(object = hyperLOPIT2015, fcol = "markers") 
 ```
 
-`pRolocComp` requires a list of two `MSnSet`s which can be named or unnamed. 
-```{r, eval = FALSE, echo = TRUE}
-namedComp <- list(tan2009r1 = tan2009r1, tan2009r2 = tan2009r2)
-unnamedComp <- list(tan2009r1, tan2009r2)
-pRolocComp(object = namedComp)
-pRolocComp(object = unnamedComp)
-```
-
-N.B.! It is also possible to use a partly named list in `pRolocVis` and 
-`pRolocComp`.
-
-Launching `pRolocVis` or `pRolocComp` will open a new tab in your default 
-Internet browser.  
-
+Launching any of the `pRolocVis` applications will open a new tab in a
+separate pop-up window, and then the application can be opened in your
+default Internet browser if desired, by clicking the 'open in browser'
+button in the top panel of the window.
 
 To stop the applications from running press `Esc` or `Ctrl-C` in the
 console (or use the "STOP" button when using RStudio) and close the
-browser tab, where `pRolocVis`/`pRolocComp` is running.
-
--------------------
-<a id="tabspRolocGUI"></a> 
-
-<h2>2. Tabs of <code>pRolocVis</code> and <code>pRolocComp</code></h2>
-
-To optimise ease of use the interfaces of `pRolocVis` and `pRolocComp` are
-subdivided in seven tabs:  
-
-* PCA,    
-* protein profiles,  
-* quantitation,  
-* feature meta-data,  
-* sample meta-data and  
-* search,
-* data.  
-
-You browse through the tabs by simply clicking on them. Each tab
-selected will have a different kind of appearance while some (PCA,
-protein profiles, quantitation and feature meta-data) share a common
-feature in the sidebar, the *Display selection* widget (see section
-[3. Display selection widget](#display) for further details).  
-
-In case you have a question and want to consult the vignette for a certain
-issue (e.g. regarding **_PCA_** tab or on how to use the *Display selection* 
-widget) click on `?` which will open the vignette in a new browser tab in the
-corresponding section.  
-
-In general, the tabs for `pRolocVis` and `pRolocComp` will look alike. The tab 
-**_data_** however differs for the two applications. While in `pRolocVis` this 
-tab allows for the selection of the used `MSnSet` and the upload of `.Rda` or 
-`.Rdata` files, in `pRolocComp` there is the possibility to subset the used 
-`MSnSet`s (in terms of using common, unique and common & unique features in the
-two `MSnSet`s used) as well as to submit features for selection. See
-[2.7. data](#tabspRolocGUIDataComp) for further details. 
-
-<img src="figures/Screenshot_Help1.png" width="100%" alt="" /> <p 
-align="center"> Fig. 1: Vignette of `pRolocVis` and `pRolocComp` </p>
-
-<a id="tabspRolocGUIPCA"></a>
-
-### 2.1. PCA
-
-The tab **_PCA_** is characterised by its main panel which shows a
-PCA plot for the selected `MSnSet` in the case of `pRolocVis`
-and two PCA plots for `pRolocVis`. The sidebar panel is divided into 
-*Display selection* and *Plot*.
-
-<img src="figures/Screenshot_PCA1.png" width="100%" alt="" /> <p 
-align="center"> Fig. 2: Appearance of **_PCA_** tab for `pRolocVis` (`andy2011`)</p>
-
-For `pRolocComp` the plot whose appearance is going to altered has to be selected
-by selecting the appropriate [radio button](#RadioButtons) left of the name of 
-the `MSnSet` instance in the sidebar panel. 
-
-In addition, `pRolocComp` offers the possibility to mirror the PCA plot of the 
-second object. By clicking on `x-axis` below **_mirror 2nd object_** features
-are mirrored along the x-axis, while clicking on `y-axis` mirrors along the
-y-axis. This may be important when you compare experiments whose PCA analysis 
-have different signs. 
-
-<a id="RadioButtons"></a>
-<center><img src="figures/Screenshot_RadioButtons.png" width="30%" alt="" /> 
-</center> <p align="center">Fig. 3: Radio buttons to select `MSnSet` in 
-`pRolocComp`. Argument `object` is a named list with `MSnSet` instances 
-`tan2009r1` and `tan2009r2`</p>
-
-The manipulation of the plots works the same way for `pRolocVis` and for 
-`pRolocComp`:
-
-The *Display selection* widget is described [below](#display). The
-*Plot* compartment enables to adjust the appearance of the PCA plot
-in the main panel. We are able to colour features (proteins) in
-matters of common properties by changing the drop-down list
-**_colour_**. These properties are the `MSnSet`'s feature
-variables. For example if we upload the `andy2011` data set in `pRolocVis`, 
-and select the colour `markers`, the features in the PCA plot will be coloured
-according to their organelle affiliation. As soon as we select another
-colour than `none`, two (or three) new items will be added to the
-*Plot* widget:  
-
-(1) **_symbol type_**: By selecting one of the feature variables of the
-`MSnSet` in the drop-down list of **_symbol type_** the symbol type of 
-the features in the plot will be changed.  
-
-(2) **_legend_** and **_position of legend_**: By clicking on the
-check box to the left of **_legend_** a legend is added to the plot
-and by choosing one of the items in the drop-down list
-**_position of legend_** below its position will be changed.  
-
-(3) **_point size_**: This drop-down list might appear when
-numeric feature variable have been identified.  The default 1
-allows for an unaltered display of the plot, while selecting other
-items in the list renders the features in the PCA plot according to
-their numerical value in the variable label (for example
-classification scores).
-
-<img src="figures/Screenshot_PCA3.png" width="100%" alt="" /> <p
-align="center"> Fig. 4: Appearance of **_PCA_** tab (`andy2011`). `markers`
-used for colours, legend added. </p>
-
-
-By changing the drop-down lists of the items 
-**_PC along x axis_** and 
-**_PC along y axis_** the x-values and y-values, 
-respectively, the plot will be rendered according to the new principal 
-components.
-
-To zoom in and out drag and drop the little arrows of the slider
-of the items **_zoom x-axis_** and **_zoom y-axis_**. This may be of great 
-help when you want to identify points in dense clusters.
-
-By clicking on **_Download Plot_** in the main panel below the PCA
-plot will open a dialog window with an interface on showing or saving
-the PCA plot as it is displayed in the main panel.
-
-
-
-<a id="tabspRolocGUIPP"></a>
-
-### 2.2. protein profiles
-
-For `pRolocVis` the tab **_protein profiles_** shows the protein profiles in 
-the main panel (with an option of exporting the plot as it is shown in the main
-panel by clicking on the button **_Download Plot_**) - for `pRolocComp` it shows
-the plots for the two `MSnSet` instances (the corresponding plot(s) for the 
-first element in the list will be displayed on the left, 
-for the second element on the right). In the sidebar panel there is the 
-*Display selection* widget and the *Plot* widget. 
-
-Have a look on section [3. *Display selection* widget](#display) if 
-you want to retrieve information about how to use the *Display selection* 
-widget.
-
-The *Plot* widget helps to manipulate the plots shown in the main
-panel (in `pRolocComp` one has first to select the appropriate 
-[radio button](#RadioButtons) next to the `MSnSet` instance in the sidebar 
-panel). Let's assume we want to have a look upon the protein profiles
-for the proteins from which we know that they belong to the organelles
-Endoplasmic reticulum, the Golgi apparatus, Mitochondrion and the
-plasma membrane for the `andy2011` MSnSet. This is done in `pRolocVis`, but 
-works in the same way in `pRolocComp`. We have four organelles to look
-at, so we select `4` (in `pRolocComp` there is either the possibility to 
-select `1` or `2` plots per `MSnSet`) in the drop-down list 
-**_number of plots to display_**.  We will select the feature variable
-`markers` in the drop-down list **_feature(s) in_** and select `ER` 
-(coding for Endoplasmic reticulum)
-in the drop-down list underneath (**_assigned to_**). To
-display the next plot we have to change the slider **_Selected plot_**
-to position 2. Accordingly to our question we will 
-change the second drop-down list to `Golgi` (coding for Golgi apparatus). We
-proceed with the two remaining organelles as described before by
-changing firstly the slider to the next position and by changing the
-drop-down lists accordingly to the organelles we want to
-display. Please be aware that it is possible to "go" back to a plot to
-change its parameter.
-
-
-<img src="figures/Screenshot_PP3.png" width="100%" alt="" /> <p 
-align="center"> Fig. 5: Appearance of **_protein profiles_** tab in `pRolocVis`
-showing protein profiles  of organelles/compartments 
-Endoplasmic reticulum, Golgi apparatus, Mitochondrion and plasma 
-membrane of markers (`andy2011`) </p>
-
-
-<a id="tabspRolocGUIExprs"></a>
-
-### 2.3. quantitation   
-
-The tab **_quantitation_** displays the quantitation data for the proteins 
-as a data table. 
-
-In the main panel you can change the number of proteins shown per page and 
-search both for proteins (or for the quantitation data). 
-Also, you may sort the proteins by name or the quantitation data by clicking 
-on the arrows on the top of the data table.
-
-In the sidebar panel the *Display selection* widget is located as well as 
-radio buttons to display all data or just selected features 
-(see [3. *Display selection*](#display) for further details). In `pRolocComp` 
-there is also another well panel to select the appropriate 
-[radio button](#RadioButtons) next to the name of the `MSnSet` to show the 
-respective quantitation data. 
-
-<img src="figures/Screenshot_Quant1.png" width="100%" alt="" /> <p
-align="center"> Fig. 6: Appearance of **_quantitation_** tab
-(`andy2011`) in `pRolocVis`. Features shown originate from selection made in 
-the PCA and protein profiles plots </p>
-
-
-<a id="tabspRolocGUIfData"></a>
-
-### 2.4. feature meta-data  
-
-The tab **_feature meta-data_** displays the feature meta-data for 
-the proteins as a data table.
-
-The layout of the tab is similar to the **_quantitation_** tab
-and allows for sorting and querying the feature meta-data of the 
-selected `MSnSet`.  
-
-The sidebar comprises the *Display selection* widget and radio buttons to 
-show all or only selected features (see [3. *Display selection*](#display) 
-for further details). In `pRolocComp` there is in addition a set of two 
-[radio buttons](#RadioButtons) which allow to switch the `MSnSet` shown, 
-thus, the feature meta-data will be rendered to the selected `MSnSet`.
-
-
-<img src="figures/Screenshot_fData1.png" width="100%" alt="" /> <p
-align="center"> Fig. 7: Appearance of **_feature meta-data_** tab
-(`andy2011`) in `pRolocVis`. Features shown originate from selection made in 
-protein profiles plot </p>
-
-
-<a id="tabspRolocGUIpData"></a>
-
-### 2.5. sample meta-data   
-
-The tab **_sample meta-data_** displays the sample meta-data for the 
-experiment, the name of the isotopes used for tagging and the associated
-fractions. 
-
-In `pRolocComp` select the appropriate [radio button](#RadioButtons) next to 
-the object name in sidebar panel to display the corresponding sample meta-data. 
-
-<img src="figures/Screenshot_pData1.png" width="100%" alt="" /> <p
-align="center"> Fig. 8: Appearance of **_sample meta-data_** tab
-(`andy2011`) in `pRolocVis`</p>
-
-<a id="tabspRolocGUISearch"></a>
-
-### 2.6. search  
-
-The appearance and operation are identical for `pRolocVis` and `pRolocGUI`.
-
-`pRolocVis` and `pRolocComp` allow to use past search results to display in the 
-PCA plot, protein profiles and in the tabs **_quantitation_** and
-**_feature meta-data_** (see [3. *Display selection*](#display) 
-for further details if this is your intention). 
-This ability requires the object
-`pRolocGUI_SearchResults` in the global environment which is of
-class `FeaturesOfInterest` or `FoICollection` (enter
-`?FeaturesOfInterest` in the console for further details).
-
-In case this objects exists it will automatically be loaded to
-`pRolocVis`/`pRolocComp` and its content is displayed in the tab **_search_**. 
-Use the drop-down list in the main panel to browse through the
-different features of the `FoICollection`. To select features and display them
-in multiple tabs add them to the field in the multiple drow-down list.
-
-If no object called `pRolocGUI_SearchResults` exists in the global
-environment you still have the possibility to assign `FeaturesOfInterest`
-to an `FoICollection` which will be assigned to the global environment when 
-exiting `pRolocVis`/`pRolocComp`. 
-
-To save features of interest to the object internally you need
-to select features and add these to the `FoICollection` by entering an 
-appropriate description in the text field (on the sidebar panel, which will
-be useful to trace back to the underlying features and does not exist yet in 
-the `FoICollection`). Add the selected features to the object 
-`pRolocGUI_SearchResults` in the global environment by clicking on 
-**_Create new features of interest_**. You only have the possibility to
-add selected features to the `FoICollection` when you have entered an 
-appropriate description, i.e. one that doesn't exist yet in the 
-`FoICollection` and if you have selected `FeaturesOfInterest`, otherwise
-the button does not show up in the application.
-
-When exiting `pRolocVis`/`pRolocComp` the `FoICollection` will be assigned to 
-the object `pRolocGUI_SearchResults` in the global environment. 
-
-To create an example object `pRolocGUI_SearchResults` containing the 
-first ten features of `tan2009r1` run the following commands in the console. 
-Both traceable and non-traceable `FeaturesOfInterest`/`FoICollection` are 
-usable by `pRolocVis`/`pRolocComp`.
-
-```{r, eval = TRUE, echo = TRUE}
-data(tan2009r1, package = "pRolocdata")
-pRolocGUI_SearchResults <- FoICollection()
-newFeat <- FeaturesOfInterest(description = "test_01",
-                              fnames = featureNames(tan2009r1)[1:10],
-                              object = tan2009r1)
-pRolocGUI_SearchResults <- addFeaturesOfInterest(newFeat, pRolocGUI_SearchResults)
+browser tab, where `pRolocVis` is running.
+
+## Which app should I use?  
+
+There are 3 different applications, each one designed to address a 
+different specific user requirement.
+
+* The main app is intended for exploratory data analysis, 
+which features a clickable interface and zoomable PCA plot. If you would
+like to search for a particular protein or set of proteins this is the
+application to use. This app also features a protein profiles tab, 
+designed for examining the patterns of user-specified
+sets of proteins. For example, if one has several overlapping
+sub-cellular clusters in their data, as highlighted by the PCA plot or
+otherwise, one can check for separation in all data dimensions by
+examining the protein profile patterns. Proteins that co-localise are
+known to exhibit similar distributions (De Duve's principale).
+* The classification app can be used for viewing the sub-cellular class 
+predictions output from a supervised machine learning analysis and to
+help the user set a classification threshold (see the [`pRoloc`
+tutorial](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-tutorial.pdf)
+for details on spatial proteomics data analysis).
+* The comparison application may be of interest if a user wishes to 
+examine two replicate experiments, or two experiments from different
+conditions etc.  Two PCA plots are loaded side-by-side and one can
+search and identify common proteins between the two data sets. As per the 
+main application there is also a protein profiles tab to allow one to look
+at the patterns of protein profiles of interest in each dataset. 
+
+# The `main` application
+
+The `main`, default, application is characterised by an interactive and
+searchable Principal Components Analysis (PCA) plot. PCA is an
+ordinance method that can be used to transform a high-dimensional
+dataset into a smaller lower-dimenensional set of uncorrelated
+variables (principal components), such that the first principal
+component has the largest possible variance to account for as much
+variability in the data as possible. Each succeeding component in turn
+has the highest variance possible under the constraint that it be
+orthogonal to the preceding components. Thus, PCA is particularly
+useful for visualisation of multidimensional data in 2-dimensions,
+wherein all the proteins can be plotted on the same figure.
+
+The application is subdivided in to three tabs: (1) PCA, (2) Profiles, 
+and (3) Table Selection.  A searchable data table containing the experimental 
+feature meta-data is permanantly dispalyed at the bottom of the screen for
+ease. You can browse between the tabs by simply clicking on them at the top
+of the screen.
+
+To run the `main` application using `pRolocVis`: 
+
+```{r pca1, eval = FALSE, echo = TRUE} 
+pRolocVis(object = hyperLOPIT2015, fcol = "markers") 
 ```
 
-<img src="figures/Screenshot_SaSe1.png" width="100%" alt="" /> <p
-align="center"> Fig. 9: Appearance of **_search_** tab (`andy2011`) in 
-`pRolocVis`. Search result `pRolocVis_Test1` contains one feature of interest 
-(PGAP1_Human)</p>
+![The PCA Tab](figures/SS_PCA1.jpg)
 
-<a id="tabspRolocGUIDataVis"></a>
+**Viewing** The PCA tab is characterised by its main panel which shows
+a PCA plot for the selected `MSnSet`. By default a PCA plot is used to
+display the data and the first two principal components are plotted.
+The sidebar panel controls what features to highlight on the PCA plot.
+Under the 'Labels' menu, input can be selected by clicking on and off
+the data class names, or by typing and  searching in the white input
+box. Selected items can then be deleted, by clicking on the name of the
+class and pressing the delete button on your keyboard. The PCA plot will
+then be updated accordingly. Below the select box is a 'transparancy' slider 
+bar which controls the opacity of the highlighted data classes and two action
+buttons 'Zoom/reset plot' and 'Clear selection', which are described below. 
 
-### 2.7. data
+![Selecting sub-cellular classes](figures/SS_PCA2.jpg)
 
-The tab **_data_** is the last tab for `pRolocVis` and `pRolocComp`.
+**Searching** Below the PCA plot is a searchable data table containing
+the fetaure meta data (`fData`). For LOPIT experiments, such as the
+one used in this example, this may contain protein accession numbers,
+protein entry names, protein description, the number of quantified
+peptides per protein, and columns containing sub-cellular localisation
+information. The data table is limited to displaying 12 columns of
+information, these are automatically selected from the `fData` to be
+the first 6 and last features. To select specific columns in the 
+`fData` to display in the data table use the `fdataInds` argument, see
+`?pRolocVis` for more details.One can search for proteins of interest by 
+using the white search box, above the table to the right. Searching is 
+done by partial pattern matching with table elements. Any matches or 
+partial text matches that are found are highlighted in the data
+table. To select/unselect a protein of interest one can simply
+click/unclick on the corresponding entry in the table or double click
+directly on a protein of interest on the interactive PCA plot. If a protein(s)
+in the table is clicked and selected the row in the table will turn
+grey and the protein(s) will be highlighted on the PCA plot by a dark
+grey circle(s), if the 'Show labels' box is checked in the left sidebar
+panel the protein names for the selected protein(s) will also be shown
+on the PCA plot. Any selected proteins on the PCA plot or in the table
+can be cleared at any time by clicking the 'Clear selection' button on
+the left hand side panel.
 
-<img src="figures/Screenshot_Data1.png" width="100%" alt="" /> <p 
-align="center"> Fig. 10: Appearance of **_data_** tab in `pRolocVis` </p>
+![Searching for proteins of interest](figures/SS_PCA3.jpg)
 
-For `pRolocVis` the drop-down menu lists all the names of assigned
-`MSnSet` objects to the function. Depending if a named list -
-containing `MSnSet` instances - is uploaded or not these names will be
-used or automatic names will be created (object 1 ... object n, where
-n is the length of the list).  In addition, the entry `upload` is
-listed at the bottom of the drop-down menu. Selecting `upload` allows
-to use a `MSnSet` available in a `.Rda` or `.Rdata` file after
-uploading it to the application. Clicking on **_Browse..._** will open
-a dialog window with which you can select a file containing a saved
-`MSnSet` and load it to `pRolocVis`. Make sure if you want to use a
-`MSnSet` from a `.Rda` or `.Rdata` file to select `upload` in the
-drop-down menu.
+**Zooming** If a user wishes to examine a protein(s) in more detail,
+one can zoom in on specific points by hovering the mouse over the plot, 
+then clicking and drawing a (square) brush and then clicking the 
+'Zoom/reset button' in the left side panel to zoom to the brushed area. 
+This process can be repeated until the desired level of zoom is reached. 
+The plot can be resetted to the original size by clicking the 
+'Zoom/reset button' once again.
 
-<img src="figures/Screenshot_Data2.png" width="100%" alt="" /> <p 
-align="center"> Fig. 11: File upload in `pRolocVis` </p>
+![Brushing on the plot](figures/SS_PCA4.jpg)
+![Zooming proteins of interest](figures/SS_PCA5.jpg)
 
-`pRolocVis` will print a message if there are any conflicts with the
-uploaded file. If so, either the assigned object itself or the first
-element in the list will be used instead of the uploaded `.Rda` or
-`.Rdata` file.
+**Profiles** By clicking the profiles tab at the top of the 
+page a protein profiles plot is displayed that shows
+the quantitation data that is stored in the `exprs` data slot 
+of the `MSnSet`. For the `hyperLOPIT2015` dataset this is the relative 
+abundances of each protein across the 20 fractions (2 x 10-plex replicates). 
+As per the PCA tab, the profiles plot can also be updated according 
+to the input selected in the sidebar panel on the left.
 
-When analysing multiple data sets in one `pRolocVis` session the selected 
-features will be (irreversibly) deleted when changing from one 
-`MSnSet` to the other! It is therefore highly recommended if this
-behaviour is not intended to save selected features by using the 
-functionality to save features in a `FoICollection` first before changing the
-`MSnSet` (see [2.6. search](#tabspRolocVisSearch) for further details).
+The profiles tab may be useful to
+specifically look for discrimination between (potentially
+overlappling) sub-cellular niches. It allows one to do
+this in an easy and direct manor where all proteins belonging to the
+same sub-cellular niche/data cluster (as specified by `fcol`) are
+loaded together. The protein distribution patterns can then be
+examined on a group vs group basis. Proteins of interest can be
+searched in the data table and once clicked, the distribution(s) 
+of selected protein(s) are shown by black lines. 
 
-<a id="tabspRolocGUIDataComp"></a>
+![The profiles tab](figures/SS_PCA6.jpg)
+![The profiles tab, selecting proteins of interest](figures/SS_PCA7.jpg)
 
-For `pRolocComp` the main panel shows a summary matrix of common and unique
-feature names consisting of common and unique features
-for all feature names of the two `MSnSet` instances (row `all`) and for 
-distinct subsets which are defined by the feature variable names. The feature
-variable names can be defined by choosing appropriately the drop-down menus
-**_marker object 1_** and **_marker object 2_** which are located in the section
-*Summary matrix* in the sidebar panel (enter `?FeatComp` to retrieve more 
-information about the summary matrix). The matrix in the main panel will show 
-only features for distinct subsets when both drop-down menus do not have `none`
-as their value, otherwise only the row `all` will be printed. Given 
-`tan2009r1` and `tan2009r2` as input for `pRolocComp`, when selecting `markers`
-both for **_marker object 1_** and **_marker object 2_** the matrix will consist 
-of six rows (`all`, `unknown`, `ER`, `mitochondrion`, `Golgi`, `PM`). The table
-can be interpreted as follows: For the row `all` we have `545` common features,
-i.e. there are `545` features in the two `MSnSet`s which have identical feature
-names. In `tan2009r1` however, there are `343` feature names which do not exist
-in `tan2009r1` and `326` feature names are unique for `tan2009r2`. For `markers`
-the matrix tells us that features were assigned to 4 organelles on an 
-experimental evidence (`ER`, `mitochondrion`, `Golgi`, `PM`) for `833` features
-in both `MSnSet`s the affiliation to a certain organelle is `unknown`. In total
-`20` features are assigned to `ER` for `tan2009r1`, therefrom `16` features 
-are also present in `tan2009r2`, however, `4` are unique to `tan2009r1`. The 
-interpretation of the other rows can be deduced in the same way. 
+**Features** There is also functionality to use the
+`FeaturesOfInterest`/`FoICollection` infrastructure distributed by the
+`MSnbase` package (for examples on how to create `FeaturesOfInterest`
+see the [`pRoloc`
+tutorial](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-tutorial.pdf))`.
 
-Features can be selected and [displayed](#display) in the other tabs, e.g. 
-highlighted on the PCA plot. The selection is conducted in the section 
-*Selection*. It is made by selecting a marker via the drop-down menu 
-**_select marker_** and the radio buttons underneath. The selected row, 
-column and the number of features which is comprised in these categories
-will be displayed in bold in the summary matrix. By pressing 
-**_Submit selection_** the features will be saved internally, thus, available 
-for displaying/use in other tabs. The button **_Submit selection_** will be 
-only shown when the features are not already stored internally). If the features
-are selected there will be the button **_Undo selection_** which allows to 
-remove features from the internal selection.
+![Table Selection](figures/SS_PCA8.jpg)
 
-<img src="figures/Screenshot_Data3.png" width="100%" alt=""></img> <p 
-align="center">Fig. 12: Appearance of **_data_** tab in `pRolocComp`. The row 
-`ER` and column `unique1` which comprises `4` features are selected</p>
+**Table Selection** The Table Selection tab provides an interface 
+for data table column selection. Multiple columns can be selected on and 
+off by clicking/unclicking the checkboxes that correspond to the columns
+in the data table.
 
-The tab **_Data_** in `pRolocComp`also allows for subsetting the data sets by 
-choosing accordingly `common`, `unique` and `common & unique` (default) in the 
-section *Submit MSnSets*. The subset is made on the basis of the feature 
-names of the two `MSnSet` instances. Selecting `common` will use only features 
-which occur in both `MSnSet`s, `unique` will use no common features and 
-`common & unique` will use all feature names for each `MSnSet`.  
+**Note:** Other ordinance methods are available for displaying
+the data, for example, multidimensional scaling (MDS), and kernal-PCA,
+and t-SNE are all supported, and can be specified using the `method`
+argument when caling `pRolocVis` (this is not supported in the `compare` or
+`classify` application).
 
+# The `classify` application
 
--------------------
-<a id="display"></a>
+Machine learning classification forms a large part of spatial
+proteomics data analysis. Protein localisation prediction can be cast
+as a supervised machine learning problem (learning from labelled instances), wherein one has a set of a
+few well-known examples (labelled data), that is sub-cellular protein
+markers (proteins that are known to belong to a set of finite sub-cellular
+niches), which can used to learn a classifier to associate unlabelled
+proteins to one of the sub-cellular classes that appear in the
+labelled training data.
 
-<h2>3. <i>Display selection</i> widget</h2>
+In the example below, we use one of the classification algorithms from the `r Biocpkg("pRoloc")`
+package; a Support Vector Machine (SVM) classifier, and train a model for
+protein localisation prediction of unassigned proteins in the
+`hyperLOPIT2015` dataset. We first use the `svmOptimisation` function
+to find the best model parameters using the labelled training data
+found in `fcol = "markers"` and then apply these parameters using the
+`svmClassification` function. (Note, here we perform a reduced search
+using `times = 3` in the interest of time. In practise we recommend at
+least to use `times = 100` as described in the [`pRoloc`
+tutorial](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-tutorial.pdf).
+This tutorial also contains more information on machine learning, the practise
+of training and testing, and some extensive examples of machine learning 
+classification in spatial proteomics.)
 
-
-The *Display selection* widget is probably the most important implementation 
-in `pRolocVis`/`pRolocComp` and allows for identifying features. 
-You can do this by selecting points in the PCA plot, clicking on features 
-in the tab **_protein profiles_**, using past searches and/or querying for 
-features in the `MSnSet` data. In `pRolocComp`there is in addition the 
-possibility to retrieve features from the summary matrix in the tab `data`.
-
-There are four (`pRolocVis`) or five (`pRolocComp`) check boxes in the
-*Display selection* widget which represent the before mentioned ways
-of searching features in the `MSnSet`. To activate the search for one
-specific method click on the check box left of its description. It is
-also possible to select more than one at a time which allows for
-greater flexibility with regard to information retrieval. To irreversibly reset 
-the selection press **_Clear features_** (only shown when features are 
-selected).
-
-<a id="displayPCA"></a>
-
-### 3.1. PCA 
-
-If you decide to identify proteins in the PCA plot, change to the tab
-**_PCA_** and start clicking on features in the PCA plot (tip: the
-zoom function may be of great expedient). When hovering over the PCA plot 
-the feature meta-data of the nearest feature will be displayed below the plot. 
-The check box will be checked when you start clicking in the PCA plot. 
-As soon as you have clicked on a feature it will be marked with a 
-black circle around it (or a blueish if `colour` is set to `none`).
-If you have selected a feature by accident or want to deselect it,
-just click again on the feature and it will be deselected.
-
-Selecting features works also in `pRolocComp`: just click on features in one of 
-the PCA plots will also highlight the same feature in the other plot if it is 
-present. If you want to analyse features which are only common in the two 
-`MSnSet` instances, go to tab **_Data_** and select `common` in the 
-radio button list **_Features used_**. 
-
-<img src="figures/Screenshot_PCA4.png" width="100%" alt="" /> <p
-align="center"> Fig. 13: Display of selected features in PCA plot
-(`andy2011`) for `pRolocVis`. The features selected originate from selection 
-in the PCA plot </p>
-
-There are two possibilities to deselect all selected features: If you
-decide to remove all your features click on **_Clear features_** 
-(the button will only show up if features were already selected).
-Please keep in mind that this step once carried out is
-irreversible and will delete features selected in `protein profiles`, 
-(`summary matrix`) and `query` as well. Besides that you are also able to simply blind 
-out the selected features by deselecting the check box left of PCA in the
-*Display selection* widget. Internally, the features are still
-stored, i.e. by clicking again on the check box you will see the
-selections again. Clicking on new proteins in the PCA plot will not
-check the check box again, so you have to do this manually. The
-features selected are shared between the different tabs. Click on the
-tabs **_quantitation_** and **_feature meta-data_** to have a look
-upon information about the selected features. For the case where you
-see all features in the data table change the radio buttons settings
-from **_all_** to **_selected_** at the lowermost widget in the
-sidebar. Here again, you can compose the features from different
-sources (PCA, protein profiles, saved searches and the text-based
-query search).
-
-If you display protein profiles in the tab **_protein profiles_**
-selected features will be displayed by black lines on all plots 
-drawn.
-
-<img src="figures/Screenshot_PP2.png" width="100%" alt="" /> <p
-align="center"> Fig. 14: Display of selected features in protein
-profiles plot for `pRolocVis`.  The features selected originate from 
-selection in PCA plot (`andy2011`) </p>
-
-
-<a id="displayPP"></a>
-
-### 3.2. protein profiles
-
-In principle the search for features in protein profiles is in
-accordance with the search in the PCA plot. Though, bear in mind that
-you are only able to select features when `1` is selected in the
-drop-down list **_number of plots to display_**. Hovering over the 
-plot will display the feature meta-data of the nearest protein below the plot. 
-Clicking on (or near)
-the points in the plot will select, clicking another time will
-deselect features.  The features will only be shown when the check box
-left of **_protein profiles_** is activated. Note, that you can only 
-select or deselect features whose protein profiles are displayed in a 
-transparent manner on the plot. 
-
-For `pRolocComp` selecting features works in the same way: click on features in 
-one of the protein profile plots (make sure that `1` is selected in the 
-drop-down list **_number of plots to display_**), thus highlighting
-the same feature in the other plot if the same feature name is present. 
-If you want to analyse features which are only common in the two 
-`MSnSet` instances, go to tab **_data_** and select `common` in the 
-radio button list **_Features used_**. 
-
-<img src="figures/Screenshot_PP1.png" width="100%" alt="" /> <p
-align="center"> Fig. 15: Display of selected features in protein
-profiles plot for `pRolocVis`.  The features selected originate from selection 
-in protein profiles plot (`andy2011`) </p>
-
-<a id="displaySaSe"></a>
-
-### 3.3. saved searches
-
-Clicking on the check box to the left of **_saved searches_** will
-load the selected features of the class `FeaturesOfInterest`. These
-will be displayed in the PCA plot, in the plots for protein profiles
-(depending on the displayed features) and will be available in the
-tabs **_quantitation_** and **_feature meta-data_** for information
-retrieval.  Add `FeaturesOfInterest` by clicking on the respective features in 
-the tab **_search_** in the multiple drop-down list; thus accordingly 
-altering the selected features in the *Display selection* widget context. Each
-`FeaturesOfInterest`instance will be highlighted in a different colour to 
-distinguish easily between them.
-
-In `pRolocVis`/`pRolocComp` there is no functionality implemented to remove 
-features from the object `pRolocGUI_SearchResults` in the global environment. 
-The authors decided that it is not the task of a GUI to fulfil the requirements 
-of this kind of data manipulation in a GUI, hence, the execution of removing
-features of interests belongs to the field of the users responsibility.
-
-<a id="displayData"></a>
-### 3.4. summary matrix (`pRolocComp` only)
-
-In `pRolocComp` another way of selecting and displaying features is possible
-via the tab **_data_**. Features can be selected and internally stored
-by selecting "all"/a marker via the drop-down menu 
-**_select marker_** - this will change the selected row - and one of the radio 
-buttons underneath - this will change the column. By pressing the 
-**_Submit selection_** button the features comprised in these categories will 
-be stored internally. The button will be only shown when the features 
-are not already stored internally and can be displayed/used in the other tabs. 
-The selected row, column and the number of features which is comprised in 
-these categories will be displayed in bold in the summary matrix. If features
-were submitted another button will be present which allows to remove the 
-features from the internal selection, the **_Undo selection_** button.
-
-When submitting features from the columns `unique1` and `unique2`, the feature 
-names will only be saved internally to the correspondent `MSnSet` and displayed 
-there accordingly. This is done because it is possible that the same feature 
-name exists in the other `MSnSet` but is not assigned to the `organelle`.
-
-As an example, for the two `MSnSet`instances `tan2009r1` and `tan2009r2` a 
-selection of `markers` and `markers` as **_marker object 1_** and 
-**_marker object 2_**, when selecting `mitochondrion` in **_select marker_**
-and the radio button next to `common` will be equivalent to and will contain the 
-following features
-```{r, eval = TRUE, echo = TRUE}
-data(tan2009r1, package = "pRolocdata")
-data(tan2009r2, package = "pRolocdata")
-featcomp <- compfnames(x = tan2009r1, y = tan2009r2, fcol1 = "markers", fcol2 = "markers", verbose = FALSE)
-## the fourth element in the list bears information about features which are assigned to 
-## "mitochondrion" in "markers", we can access all common features for tan2009r1 and tan2009r2 by
-feat <- slot(featcomp[[4]], "common") 
-feat
+```{r classify, eval = TRUE, echo = TRUE} 
+opt <- svmOptimisation(object = hyperLOPIT2015, 
+                       fcol = "markers", 
+                       times = 3, verbose = FALSE)
+res <- svmClassification(object = hyperLOPIT2015, assessRes = opt) 
 ```
-The selection means that for the marker object `markers` there are nine common 
-features comprised in the two data sets which are assigned to `Mitochondrion` in
-the column `markers` of the feature meta-data. Going to the tab 
-**_feature meta-data_** will list these features as well as meta-data. 
 
-The stored features will only displayed when the check box next to 
-`summary matrix` in the *Display selection*(#display) widget is selected. 
+By default, the classification function adds new feature variables containing the new sub-cellular
+assignments made by the SVM classifier and the associated assignment probabilities,
+called scores, to the `featureData` slot of
+the `MSnSet`, in this case, they are labelled `svm` and `svm.scores`,
+and can be accessed using the `fData` accessor method, e.g.
+`fData(res)$svm` or `fData(res)$svm.scores`.
 
-<a id="displayQuery"></a>
+It is common when applying a supervised classification algorithm,
+wherein the whole class diversity is not present in the training data,
+to set a specific score cutoff on which to define new assignments,
+below which classifications are set to unknown/unassigned. Deciding on
+a threshold is not trivial as classifier scores are heavily dependent
+upon the classifier used and different sub-cellular niches can exhibit
+different score distributions. To help examine these distributions and
+set a threshold one can use the `classify` app. 
 
-### 3.5. query feature-meta data
+To launch the `classify` application:
 
-The *Display selection* widget offers the opportunity to query 
-the feature meta-data
-of the `MSnSet` for levels. The drop-down list consists of the item `protein`,
-which will by definition the feature names and depending 
-on the data accession number, protein ID, protein description, assigned markers
-(varying on the underlying `MSnSet`). 
-
-For demonstration purposes we will use `pRolocVis` to select and display 
-features by using the `query` functionality. Keep in mind, to adjust the 
-selection of the [radio buttons](#RadioButtons) next to the appropriate 
-`MSnSet` when using `pRolocComp`: Accordingly to the selected `MSnSet` the list 
-of feature variables is rendered.
-
-Let's assume we want to look at `andy2011` which was derived from
-experiments of Breckels et al. (2013) for all proteins which are
-assigned by experimental evidence to the organelle `plasma membrane`. 
-We ensure ourselves that `andy2011` is selected in the tab
-**_data_** and change to a tab where the *Display selection* widget is
-loaded. We select `marker` in the upper drop-down list (for we are looking for
-organelles assigned to marker proteins). In the next drop-down list below we 
-select `PM` which codes for `plasma membrane`. Next, we click on 
-**_Submit selection_**, which will highlight all features which are assigned 
-to `PM` for the variable name `marker` 
-(the button only appears in the application when the corresponding proteins do 
-not exist in the selection). To remove the selected features from the
-internal assignment we have to either reset the search by clicking on
-**_Clear features_** or click on **_Undo selection_**.  The latter will only 
-remove the current selection of features, while the former
-will clear all features (also these of **_PCA_**, 
-**_protein profiles_** (and **_data_**). Of course, we can also add other 
-features: If we want to add all features which are assigned to the Golgi 
-apparatus we simply select `Golgi` in the lower drop-down list and click on
-**_Submit selection_** to save internally the selected features.
-
-It is relatively easy to find levels when the drop-down list for these
-levels. But how should we proceed when we want to look for a special
-protein, e.g. ACADV? The drop-down list for the variable name
-`protein` is very long and it is time consuming to scroll through the
-whole list and look for our protein of interest. Therefore, we can
-just enter ACADV in the text input field **_Search for_** in between
-the two drop-down lists and we will get the protein of interest (we
-are also able to query for protein names which have the string `AC` in
-their name which will limit the drop-down list to all proteins which
-have this specific string). By clicking on **_Submit selection_** we
-save internally the selected feature(s).
-
-<img src="figures/Screenshot_PCA2.png" width="100%" alt="" /> <p
-align="center"> Fig. 16: Query for proteins in `pRolocVis` which contain the 
-string "AC". This narrows the features in the drop-down list accordingly
-(`andy2011`) </p>
-
--------------------
-<a id="references"></a>
-
-<h2>4. References</h2>
-
-
-```{r, results="asis", message=FALSE, echo=FALSE}
-bibliography()
+```{r cutoff, eval = FALSE, echo = TRUE} 
+pRolocVis(object = res, what = "classify", fcol = "svm") 
 ```
+
+![The classification application, setting a "quantile" cutoff score](figures/SS_Classify1.jpg)
+
+The data is loaded and displayed on a PCA plot and a boxplot is used to
+display the classifier scores by data class. On the left there is
+a sidebar panel with sliders to control the thresholds upon which classifications 
+are made. There are two types of cut-off that the user can choose from: (1)
+"Quantile" and (2) "User-defined". By default, when the application is launched
+quatile scoring is selected and set to 0.5, the median. The 
+class-specific score thresholds that correspond to selecting the desired
+quantile are shown on as red dots on the boxplot. The assignments on the PCA
+plot are also updated according to the selected threshold. The quantile 
+threshold can be set by moving the corresponding quantile slider. If one
+wished to set their own cut-offs the "User-defined" radio button must be selected
+and then the sliders for defining user-specified scores become active and the
+scores and highlighted on the boxplot by blue dots. 
+
+![The classification application, setting a "user-defined" cutoff score](figures/SS_Classify2.jpg)
+
+By default, when user-specified
+scores are selected all sliders are set to 1 and can be changed by moving 
+the sliders to the desired score. Once the desired score has been found the
+application can be closed and the class-specific scores are displayed in the
+R console. These scores can be used to get protein localisation predictions
+using the `getPredictions` function, as demonstrated below:
+
+```{r score, eval=FALSE}
+mythreshold <- pRolocVis(object = res, what = "classify", fcol = "svm") 
+res <- getPredictions(res, fcol = "svm", 
+                      mcol = "markers", t = mythreshold)
+```
+
+The classification app can also be used as an intercative version of 
+the function `orgQuants` in the `r Biocpkg("pRoloc")` package.
+
+# The `compare` application
+
+The comparison application may be of interest if a user wishes to 
+examine two replicate experiments, or two experiments from different
+conditions etc.  Two PCA plots are loaded side-by-side and one can
+search and identify common proteins between the two data sets.
+
+A `MSnSetList` of length 2 must be supplied as input, containing
+the two datasets one wishes to compare. In the example below
+we load two replicate datasets of mouse embryonic stem cells 
+produced using the hyperLOPIT technology.
+
+```{r compare, eval = FALSE, echo = TRUE} 
+data(hyperLOPIT2015ms3r1)
+data(hyperLOPIT2015ms3r2) 
+mydata <- MSnSetList(list(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r2))
+pRolocVis(mydata, what = "compare") 
+```
+
+![The compare application, main panel](figures/SS_Compare1.jpg)
+![The compare application, selecting classes](figures/SS_Compare2.jpg)
+
+**Viewing, remapping, searching and zooming**
+The compare app has the same functionality as the main application and
+PCA, Profiles and Table Selection tabs. One key feature of the compare
+application is the ability to re-map the second dataset onto the PCA data
+space of the first (reference) data set (see `?pRolocVis` and the argument `remap = TRUE`). 
+
+Currently, only PCA is supported and re-mapping is done by default. This can 
+be switched off with the `remap` argument. Using the first dataset as the
+reference set, PCA is carried out on the first dataset and the standard 
+deviations of the principal components (i.e. the square roots of the 
+eigenvalues of the covariance/correlation matrix) and the matrix of 
+variable loadings (i.e. a matrix whose columns contain the eigenvectors) are
+stored and then used to calculate the principal components of the second 
+dataset. Both datasets are scaled and centered in the usual way. The
+first dataset appears on the left, and the second re-mapped data appears on the right. 
+The order of the first (the reference data for remapping) and second dataset 
+can be changed through regeneration/re-ordering of the `MSnSetList` object. 
+Note: the proteins that are common in both datasets are only displayed.
+
+As per the main application, and described in detail above, there is a sidebar with a 
+'Labels' menu, where input can be selected by clicking on and off
+the data class names. Proteins of interest can be highlighted by double clicking
+on any of the PCA plots (and highlighted in both datasets on both PCA plots), or
+by typing and  searching in the white input box above the data table and clicking
+on the protein of interest in the data table. Zooming, clicking and searching
+for proteins of interest is supported as per the main app.
+
+![The compare application, searching fpr proteins](figures/SS_Compare3.jpg)
+![The compare application, brushing](figures/SS_Compare4.jpg)
+![The compare application, zooming](figures/SS_Compare5.jpg)
+
+**Profiles**
+As per the main application there is a profiles tab which loads the
+quantitative protein profiles for the first experiment and second
+experiment, on the left- and right-hand sides respectively. One
+can highlight proteins of interest by clicking items in the data 
+table, and selecting classes to display in the side panel under the
+'Labels' menu.
+
+![The compare application, profiles](figures/SS_Compare6.jpg)
+
+**Table Selection**
+By default 4 columns containing the feature data the first dataset 
+(dark blue) and 4 columns for the second dataset (black) will be displayed 
+in the table, and users can select particular columns they wish to display
+in the Table Selection tab.
+
+![The compare application, table selection](figures/SS_Compare7.jpg)
+
+
+## References
+
+Gatto L., Vizcaíno J.A., Hermjakob H., Huber W. and Lilley K.S. 
+*Organelle proteomics experimental designs and analysis Proteomics*, 
+10:22, 3957-3969, 2010.
+
+Gatto L., Breckels L.M., Burger T., Nightingale D., Groen A.J.,
+Campbell C., Nikolovski N., Mulvey C.M., Christoforou A., Ferro M.,
+Lilley K.S. *A foundation for reliable spatial proteomics data
+analysis*, Mol Cell Proteomics. 2014 Aug;13(8):1937-52
+
+Christoforou A., Mulvey C.M., Breckels L.M., Hayward P.C., Geladaki
+E., Hurrell T., et al. *A draft map of the mouse pluripotent stem cell
+spatial proteome*. Nat Commun; In Press.
+
