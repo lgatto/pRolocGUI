@@ -11,41 +11,29 @@ pRolocVis_classify <- function(object,
                                scol,
                                mcol = "markers",
                                legend.cex = 1,
-                               method,
-#                                verbose = TRUE,
                                ...) {
-  
+
   if (!inherits(object, "MSnSet"))
     stop("The input must be of class MSnSet")
   if (missing(fcol))
     stop("fcol prediction column not specified")
   if (missing(scol)) 
     scol <- paste0(fcol, ".scores")
+  if (!scol %in% fvarLabels(object)) 
+    stop("scol is not found in fData, please provide scol")
   if (missing(mcol)) 
     mcol <- "markers"
-  if (!missing(mcol)) {
-    if (!mcol %in% fvarLabels(object)) {
-      stop("fcol missing in fData")
-    }
-  }
+  if (!mcol %in% fvarLabels(object)) 
+    stop("fcol missing in fData, please provide mcol")
+    
+
   
   ## Return scores
   on.exit(return(us))
   
-  ## check validpRolocVisMethod
-  if (missing(method)) {
-    pcas <- plot2D(object, fcol = NULL, plot = FALSE)
-  } else {
-    if (pRoloc:::.validpRolocVisMethod(method)) {
-      if (class(method) == "matrix") {
-        pcas <- method
-      } else {
-        pcas <- plot2D(object, fcol = NULL, plot = FALSE, method = method)
-      }
-    } else {
-      stop("Invalid visualisation method")
-    }
-  }
+  ## Get pcas coords for plot
+  pcas <- plot2D(object, fcol = NULL, plot = FALSE, ...)
+
  
   ## Marker colours
   orgs <- getMarkerClasses(object, fcol = mcol, verbose = FALSE)
@@ -190,9 +178,9 @@ pRolocVis_classify <- function(object,
         par(oma = c(0, 0, 0, 0))
         boxplot(scores, las = 2, ylab = "Scores", ylim = c(0, 1.1))
         if (input$cutoff == "quant") 
-          lcol = paste0(getStockcol(), 80)[1]
+          lcol = paste0(getLisacol(), 80)[1]
         else
-          lcol = paste0(getStockcol(), 80)[2]
+          lcol = paste0(getLisacol(), 80)[2]
         points(1:length(orgs), nn(), col = lcol, pch = 19, cex = 1.5) 
       })
       ## Output legend

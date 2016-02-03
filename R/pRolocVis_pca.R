@@ -12,7 +12,6 @@
 ## https://gallery.shinyapps.io/105-plot-interaction-zoom/
 ## https://gallery.shinyapps.io/106-plot-interaction-exclude/
 ## https://github.com/rstudio/shiny-examples
-
 ## http://shiny.rstudio.com/articles/selecting-rows-of-data.html
 ## http://shiny.rstudio.com/articles/plot-interaction-advanced.html
 
@@ -24,8 +23,9 @@
 ##' @param legend.width Width of the legend. Default is \code{"200\%"}.
 ##' @param nchar Maximum number of characters of the markers class
 ##' names, before their names are truncated. Default is 10.
-##' @param all If \code{TRUE} all clusters are displayed on startup.
-##' If \code{FALSE} only first cluster in the list is displayed.
+##' @param all If \code{TRUE} all clusters are displayed on startup, if the
+##' total number of clusters is less than including 15. If \code{FALSE} 
+##' or otherwise, only the first cluster in the list is displayed.
 ##' @return For \code{pca} a \code{character} of protein names, of the 
 ##' proteins selected upon application closure.
 pRolocVis_pca <- function(object, 
@@ -36,7 +36,8 @@ pRolocVis_pca <- function(object,
                           legend.width = "200%",
                           legend.cex = 1,
                           nchar = 40,
-                          all = TRUE) {
+                          all = TRUE,
+                          ...) {
   
   ## Return featureNames of proteins selected
   on.exit(return(invisible(idDT)))
@@ -104,7 +105,7 @@ pRolocVis_pca <- function(object,
   
   
   ## Marker colours
-  cols <- getStockcol()
+  cols <- getLisacol()
   if (length(cols) < ncol(pmarkers)) {
     message("Too many features for available colours. Some colours will be duplicated.")
     n <- ncol(pmarkers) %/% length(cols)
@@ -130,10 +131,10 @@ pRolocVis_pca <- function(object,
   ## If there are too many marker sets, better
   ## to display few and let the user choose
   pmsel <- TRUE
-  if (!all & ncol(pmarkers) > 10)
+  if (!all | ncol(pmarkers) > 15)
     pmsel <- 1
   
-  pcas <- plot2D(object, fcol = NULL, plot = FALSE)
+  pcas <- plot2D(object, fcol = NULL, plot = FALSE, ...)
   profs <- exprs(object)
   
   
@@ -247,7 +248,8 @@ pRolocVis_pca <- function(object,
                pch = 21, cex = 1,
                xlim = ranges$x,
                ylim = ranges$y,
-               fcol = newName)
+               fcol = newName,
+               ...)
         if (!is.null(input$markers)) {
           for (i in 1:length(input$markers)) 
             points(pcas[mrkSel()[[i]], ], pch = 16, 

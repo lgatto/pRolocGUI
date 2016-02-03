@@ -17,13 +17,13 @@
 ##' 
 ##' The \code{compare} Shiny app is meant for comparing protein
 ##' localisation between two conditions, or two different experiments,
-##' replicates etc.
+##' replicates etc. Please note that passing the argument \code{method} 
+##' to \code{...} will not work as it is already specified internally.
 ##' 
 ##' @title Interactive visualisation of spatial proteomics data
 ##' @rdname pRolocVis-apps
-##' @param object An instance of class \code{MSnSet}, or a list of
-##'     \code{MSnSet} objects of length 2 if using \code{"compare"}
-##'     application.
+##' @param object An instance of class \code{MSnSet}, or an \code{MSnSetList}
+##'     of length 2 if using \code{"compare"} application.
 ##' @param app The type of application requested: \code{"main"}
 ##'     (default), \code{"classify"}, \code{"compare"}.See description
 ##'     below.
@@ -32,20 +32,6 @@
 ##'     or the markers (labelled data) to be plotted otherwise.
 ##' @param legend.cex Point character expansion for the the legend.
 ##'     Default is 1.
-##' @param method Either a \code{character} of a \code{matrix}. When
-##'     the former, one of \code{"PCA"} (default), \code{"MDS"},
-##'     \code{"kpca"} or \code{"t-SNE"}, defining if dimensionality
-##'     reduction is done using principal component analysis (see
-##'     \code{\link{prcomp}}), classical multidimensional scaling (see
-##'     \code{\link{cmdscale}}), kernel PCA (see \code{kernlab::kpca})
-##'     or t-SNE (see \code{tsne::tsne}). If a \code{matrix} is
-##'     passed, its rownames must match object's feature names and
-##'     represent a projection of the data in \code{object} in two
-##'     dimensions, as produced (and invisibly returned) by
-##'     \code{plot2D}. This enables to re-generate the figure without
-##'     computing the dimensionality reduction over and over again,
-##'     which can be time consuming for certain methods. Available
-##'     methods are listed in \code{plot2Dmethods}.
 ##' @param ... Additional parameters passed to the respective app.
 ##' @author Laurent Gatto, Lisa Breckels and Thomas Naake
 ##' @seealso The package vignette: \code{vignette("pRolocGUI")}.

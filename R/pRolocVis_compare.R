@@ -1,10 +1,11 @@
-##' @param fcol1 The feature meta-data label (fData column name) for the first
-##' dataset in the \code{MSnSetList}. Default is \code{markers}.
-##' @param fcol2 The feature meta-data label (fData column name) for the second
-##' dataset in the \code{MSnSetList}. Default is \code{markers}. 
+##' @param fcol1 If using the \code{compare} app this is the feature meta-data 
+##' label (fData column name) for the first dataset in the \code{MSnSetList}. 
+##' Default is \code{markers}.
+##' @param fcol2 If using the \code{compare} app this is the feature meta-data 
+##' label (fData column name) for the second dataset in the \code{MSnSetList}. 
+##' Default is \code{markers}. 
 ##' @param remap A \code{logical} indicating whether the second dataset in the
-##' \code{MSnSetList} should be remapped to the first dataset
-##' @param dims A \code{numeric} of length 2 defining the dimensions to be plotted.
+##' \code{MSnSetList} should be remapped to the first dataset. Default is 
 ##' @return For \code{compare} and \code{main} a \code{character} vector of the 
 ##' \code{featureNames} of the proteins selected is invisibly returned.
 ##' @rdname pRolocVis-apps
@@ -17,11 +18,11 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
                               remap = TRUE,
                               nchar = 40,
                               all = TRUE,
-                              dims = c(1, 2),
                               ...) {
                                
   ## Return featureNames of proteins selected
   on.exit(return(invisible(idDT)))
+  
   
   ## Check MSnSetList and take intersection
   if (!inherits(object, "MSnSetList"))
@@ -29,6 +30,11 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
   message("Subsetting MSnSetList to their common feature names")
   object <- commonFeatureNames(object)
   
+  
+  ## Check if method specified
+  dotargs <- pairlist(...)
+  if (any(names(dotargs) == "method"))
+    stop("Argument 'method' is already defined internally and can not be used with the compare application")
   
   ## fcol checks
   if (missing(fcol1) | missing(fcol2)) {
@@ -62,7 +68,7 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
     if (!fcol1 %in% fvarLabels(object[[1]])) 
       stop("fcol1 is not found in fvarLabels")
     if (!fcol2 %in% fvarLabels(object[[2]])) 
-      stop("fcol2 is not found in fvarLabels")  
+      stop("fcol2 is not found in fvarLabels")
   } 
   
   ## Define data columns
@@ -140,7 +146,7 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
   
   
   ## Marker colours
-  cols <- getStockcol()
+  cols <- getLisacol()
   if (length(cols) < max(sapply(pmarkers, ncol))) {
     message("Too many features for available colours. Some colours will be duplicated.")
     ind <- which.max(sapply(pmarkers, ncol))
@@ -169,7 +175,7 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
   
   ## Display all classes unless user specifies not to
   pmsel <- TRUE
-  if (!all & max(sapply(pmarkers, ncol)) > 15)
+  if (!all | max(sapply(pmarkers, ncol)) > 15)
     pmsel <- 1    
   
   
@@ -181,12 +187,13 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
   if (remap) {
     message("Remapping data to the same PC space")
     object <- pRoloc:::remap(object)
-    pcas <- lapply(object@x, function(z) exprs(z)[, dims])
     plotmeth <- "none"
   } else {
-    pcas <- lapply(object@x, plot2D, fcol = NULL, plot = FALSE)
     plotmeth <- "PCA"
   }
+  pcas <- lapply(object@x, plot2D, fcol = NULL, 
+                 plot = FALSE, method = "none", ...)
+  
   
   ## Create column of unknowns (needed later for plot2D in server)
   newName <- paste0(format(Sys.time(), "%a%b%d%H%M%S%Y"), "unknowns")
@@ -367,7 +374,7 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
                xlim = ranges$x,
                ylim = ranges$y,
                fcol = newName, 
-               dims = dims)
+               ...)
         if (!is.null(input$markers)) {
           for (i in 1:length(input$markers)) {
             if (!is.na(mrkSel1()[[i]][1]))
@@ -397,7 +404,7 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
                xlim = ranges$x,
                ylim = ranges$y,
                fcol = newName,
-               dims = dims)
+               ...)
         if (!is.null(input$markers)) {
           for (i in 1:length(input$markers)) {
             if (!is.na(mrkSel2()[[i]][1]))
