@@ -10,19 +10,18 @@
 pRolocVis(object, app, fcol, legend.cex = 1, ...)
 
 pRolocVis_classify(object, fcol, scol, mcol = "markers", legend.cex = 1,
-  method, ...)
+  ...)
 
 pRolocVis_compare(object, fcol1, fcol2, foi, fig.height = "600px",
   fig.width = "100\%", legend.width = "200\%", legend.cex = 1,
-  remap = TRUE, nchar = 40, all = TRUE, dims = c(1, 2), ...)
+  remap = TRUE, nchar = 40, all = TRUE, ...)
 
 pRolocVis_pca(object, fcol, foi, fig.height = "600px", fig.width = "100\%",
-  legend.width = "200\%", legend.cex = 1, nchar = 40, all = TRUE)
+  legend.width = "200\%", legend.cex = 1, nchar = 40, all = TRUE, ...)
 }
 \arguments{
-\item{object}{An instance of class \code{MSnSet}, or a list of
-\code{MSnSet} objects of length 2 if using \code{"compare"}
-application.}
+\item{object}{An instance of class \code{MSnSet}, or an \code{MSnSetList}
+of length 2 if using \code{"compare"} application.}
 
 \item{app}{The type of application requested: \code{"main"}
 (default), \code{"classify"}, \code{"compare"}.See description
@@ -43,26 +42,13 @@ classification scores.}
 \item{mcol}{The feature meta data column containing the labelled training 
 data, for use with "classify".}
 
-\item{method}{Either a \code{character} of a \code{matrix}. When
-the former, one of \code{"PCA"} (default), \code{"MDS"},
-\code{"kpca"} or \code{"t-SNE"}, defining if dimensionality
-reduction is done using principal component analysis (see
-\code{\link{prcomp}}), classical multidimensional scaling (see
-\code{\link{cmdscale}}), kernel PCA (see \code{kernlab::kpca})
-or t-SNE (see \code{tsne::tsne}). If a \code{matrix} is
-passed, its rownames must match object's feature names and
-represent a projection of the data in \code{object} in two
-dimensions, as produced (and invisibly returned) by
-\code{plot2D}. This enables to re-generate the figure without
-computing the dimensionality reduction over and over again,
-which can be time consuming for certain methods. Available
-methods are listed in \code{plot2Dmethods}.}
+\item{fcol1}{If using the \code{compare} app this is the feature meta-data 
+label (fData column name) for the first dataset in the \code{MSnSetList}. 
+Default is \code{markers}.}
 
-\item{fcol1}{The feature meta-data label (fData column name) for the first
-dataset in the \code{MSnSetList}. Default is \code{markers}.}
-
-\item{fcol2}{The feature meta-data label (fData column name) for the second
-dataset in the \code{MSnSetList}. Default is \code{markers}.}
+\item{fcol2}{If using the \code{compare} app this is the feature meta-data 
+label (fData column name) for the second dataset in the \code{MSnSetList}. 
+Default is \code{markers}.}
 
 \item{foi}{A \code{\link{FeaturesOfInterest}} or 
 \code{\link{FoICollection}}object.}
@@ -74,15 +60,14 @@ dataset in the \code{MSnSetList}. Default is \code{markers}.}
 \item{legend.width}{Width of the legend. Default is \code{"200\%"}.}
 
 \item{remap}{A \code{logical} indicating whether the second dataset in the
-\code{MSnSetList} should be remapped to the first dataset}
+\code{MSnSetList} should be remapped to the first dataset. Default is}
 
 \item{nchar}{Maximum number of characters of the markers class
 names, before their names are truncated. Default is 10.}
 
-\item{all}{If \code{TRUE} all clusters are displayed on startup.
-If \code{FALSE} only first cluster in the list is displayed.}
-
-\item{dims}{A \code{numeric} of length 2 defining the dimensions to be plotted.}
+\item{all}{If \code{TRUE} all clusters are displayed on startup, if the
+total number of clusters is less than including 15. If \code{FALSE} 
+or otherwise, only the first cluster in the list is displayed.}
 }
 \value{
 For \code{classify} a \code{numeric} vector of thresholds, 
@@ -115,7 +100,8 @@ location predictions.
 
 The \code{compare} Shiny app is meant for comparing protein
 localisation between two conditions, or two different experiments,
-replicates etc.
+replicates etc. Please note that passing the argument \code{method} 
+to \code{...} will not work as it is already specified internally.
 }
 \examples{
 library("pRoloc")
