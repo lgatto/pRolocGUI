@@ -129,7 +129,7 @@ examining the protein profile patterns. Proteins that co-localise are
 known to exhibit similar distributions (De Duve's principale).
 * The classification app can be used for viewing the sub-cellular class 
 predictions output from a supervised machine learning analysis and to
-help the user set a classification threshold (see the `pRoloc`
+help the user set a classification threshold (see the [`pRoloc`
 tutorial](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-tutorial.pdf)
 for details on spatial proteomics data analysis).
 * The comparison application may be of interest if a user wishes to 
@@ -218,9 +218,9 @@ The plot can be resetted to the original size by clicking the
 ![Brushing on the plot](figures/SS_PCA4.jpg)
 ![Zooming proteins of interest](figures/SS_PCA5.jpg)
 
-**Profiles** By clicking the profiles tab at the top of the  
-page a protein profiles plot is displayed that
-shows the quantitation data that is stored in the `exprs` data slot 
+**Profiles** By clicking the profiles tab at the top of the 
+page a protein profiles plot is displayed that shows
+the quantitation data that is stored in the `exprs` data slot 
 of the `MSnSet`. For the `hyperLOPIT2015` dataset this is the relative 
 abundances of each protein across the 20 fractions (2 x 10-plex replicates). 
 As per the PCA tab, the profiles plot can also be updated according 
@@ -255,7 +255,8 @@ in the data table.
 **Note:** Other ordinance methods are available for displaying
 the data, for example, multidimensional scaling (MDS), and kernal-PCA,
 and t-SNE are all supported, and can be specified using the `method`
-argument when caling `pRolocVis`.
+argument when caling `pRolocVis` (this is not supported in the `compare` or
+`classify` application).
 
 # The `classify` application
 
@@ -277,10 +278,10 @@ found in `fcol = "markers"` and then apply these parameters using the
 `svmClassification` function. (Note, here we perform a reduced search
 using `times = 3` in the interest of time. In practise we recommend at
 least to use `times = 100` as described in the [`pRoloc`
-tutorial](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-tutorial.pdf). This tutorial also 
-contains more information on machine learning, the practise
-of training and testing, and some extensive examples of machine
-learning classification in spatial proteomics.)
+tutorial](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-tutorial.pdf).
+This tutorial also contains more information on machine learning, the practise
+of training and testing, and some extensive examples of machine learning 
+classification in spatial proteomics.)
 
 ```{r classify, eval = TRUE, echo = TRUE} 
 opt <- svmOptimisation(object = hyperLOPIT2015, 
@@ -355,7 +356,7 @@ search and identify common proteins between the two data sets.
 A `MSnSetList` of length 2 must be supplied as input, containing
 the two datasets one wishes to compare. In the example below
 we load two replicate datasets of mouse embryonic stem cells 
-produced using the hyperLOPIT technology. 
+produced using the hyperLOPIT technology.
 
 ```{r compare, eval = FALSE, echo = TRUE} 
 data(hyperLOPIT2015ms3r1)
@@ -368,11 +369,12 @@ pRolocVis(mydata, what = "compare")
 ![The compare application, selecting classes](figures/SS_Compare2.jpg)
 
 **Viewing, remapping, searching and zooming**
-The compare app has the same functionality as the main application with
+The compare app has the same functionality as the main application and
 PCA, Profiles and Table Selection tabs. One key feature of the compare
-application is the ability to remap the second dataset on to the PCA data
-space of the first data set (see ?pRolocVis and the argument `remap = TRUE`). 
-Currently, only PCA is supported and remapping is done by default but can 
+application is the ability to re-map the second dataset onto the PCA data
+space of the first (reference) data set (see `?pRolocVis` and the argument `remap = TRUE`). 
+
+Currently, only PCA is supported and re-mapping is done by default. This can 
 be switched off with the `remap` argument. Using the first dataset as the
 reference set, PCA is carried out on the first dataset and the standard 
 deviations of the principal components (i.e. the square roots of the 
@@ -380,13 +382,17 @@ eigenvalues of the covariance/correlation matrix) and the matrix of
 variable loadings (i.e. a matrix whose columns contain the eigenvectors) are
 stored and then used to calculate the principal components of the second 
 dataset. Both datasets are scaled and centered in the usual way. The
-first dataset appears on the left, and the second appears on the right. 
-The order of the first (reference for remapping) and second datasets 
-can be changed through regeneration of the `MSnSetList` object. As per the 
-main application there is a sidebar as described in detail above with a 
+first dataset appears on the left, and the second re-mapped data appears on the right. 
+The order of the first (the reference data for remapping) and second dataset 
+can be changed through regeneration/re-ordering of the `MSnSetList` object. 
+Note: the proteins that are common in both datasets are only displayed.
+
+As per the main application, and described in detail above, there is a sidebar with a 
 'Labels' menu, where input can be selected by clicking on and off
-the data class names, or by typing and  searching in the white input
-box and the PCA plot is updated accordingly. Zooming, clicking and searching
+the data class names. Proteins of interest can be highlighted by double clicking
+on any of the PCA plots (and highlighted in both datasets on both PCA plots), or
+by typing and  searching in the white input box above the data table and clicking
+on the protein of interest in the data table. Zooming, clicking and searching
 for proteins of interest is supported as per the main app.
 
 ![The compare application, searching fpr proteins](figures/SS_Compare3.jpg)
