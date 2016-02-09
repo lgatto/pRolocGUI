@@ -420,16 +420,18 @@ in the Table Selection tab.
 
 ## References
 
-Gatto L., Vizcaíno J.A., Hermjakob H., Huber W. and Lilley K.S. 
-*Organelle proteomics experimental designs and analysis Proteomics*, 
-10:22, 3957-3969, 2010.
+Gatto L., Vizcaíno J.A., Hermjakob H., Huber W. and Lilley K.S.
+*Organelle proteomics experimental designs and analysis* [Proteomics,
+10:22, 3957-3969, 2010](http://www.ncbi.nlm.nih.gov/pubmed/21080489).
 
 Gatto L., Breckels L.M., Burger T., Nightingale D., Groen A.J.,
 Campbell C., Nikolovski N., Mulvey C.M., Christoforou A., Ferro M.,
 Lilley K.S. *A foundation for reliable spatial proteomics data
-analysis*, Mol Cell Proteomics. 2014 Aug;13(8):1937-52
+analysis*,
+[Mol Cell Proteomics. 2014 Aug;13(8):1937-52](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC4125728/).
 
 Christoforou A., Mulvey C.M., Breckels L.M., Hayward P.C., Geladaki
 E., Hurrell T., et al. *A draft map of the mouse pluripotent stem cell
-spatial proteome*. Nat Commun; In Press.
+spatial
+proteome*. [Nat Commun. 2016 Jan 12;7:9992](http://www.nature.com/ncomms/2016/160112/ncomms9992/full/ncomms9992.html).
 
