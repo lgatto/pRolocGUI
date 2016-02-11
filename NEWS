@@ -6,6 +6,8 @@ CHANGES IN VERSION 1.5.2
    profiles app <2016-01-14 Thu>
  o new compare app <2016-01-30 Sat> 
  o updated vignette <2016-02-03 Wed> 
+ o added error message when sampleNames are different
+   in the compare app <2016-02-11 Thu>
 
 CHANGES IN VERSION 1.5.1
 ------------------------
