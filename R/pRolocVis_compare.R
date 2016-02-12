@@ -186,9 +186,6 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
   ## Remap data to same PC space
   if (remap) {
     message("Remapping data to the same PC space")
-    .sn <- lapply(object, sampleNames)
-    if (!all(.sn[[1]] == .sn[[2]]))
-      stop("sampleNames are not the same in dataset 1 and dataset 2")
     object <- pRoloc:::remap(object)
     plotmeth <- "none"
   } else {
