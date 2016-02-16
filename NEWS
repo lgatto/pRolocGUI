@@ -1,6 +1,7 @@
 CHANGES IN VERSION 1.5.4
 ------------------------
- o
+ o replace getLisacol by getStockcol (which are now Lisa's colours;
+   since pRoloc version 1.11.9) <2016-02-16 Tue>
  
 CHANGES IN VERSION 1.5.3
 ------------------------

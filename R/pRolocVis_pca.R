@@ -105,7 +105,7 @@ pRolocVis_pca <- function(object,
   
   
   ## Marker colours
-  cols <- getLisacol()
+  cols <- getStockcol()
   if (length(cols) < ncol(pmarkers)) {
     message("Too many features for available colours. Some colours will be duplicated.")
     n <- ncol(pmarkers) %/% length(cols)
