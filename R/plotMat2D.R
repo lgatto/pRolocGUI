@@ -34,7 +34,7 @@ plotMat2D <- function(object, fcol = "Markers", ncol., ...) {
     if (!pRoloc::isMrkMat(object, fcol))
         stop("Selected feature data is not a matrix of markers")
     pcas <- pRoloc::plot2D(object, fcol = NULL, plot = FALSE, ...)
-    cols <- pRoloc::getLisacol()
+    cols <- pRoloc::getStockcol()
     if (length(cols) < ncol(pmarkers)) {
         n <- ncol(pmarkers) %/% length(cols)
         cols <- rep(cols, n + 1)
