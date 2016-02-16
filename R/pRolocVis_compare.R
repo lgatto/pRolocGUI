@@ -146,7 +146,7 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
   
   
   ## Marker colours
-  cols <- getLisacol()
+  cols <- getStockcol()
   if (length(cols) < max(sapply(pmarkers, ncol))) {
     message("Too many features for available colours. Some colours will be duplicated.")
     ind <- which.max(sapply(pmarkers, ncol))

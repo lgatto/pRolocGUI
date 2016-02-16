@@ -38,7 +38,7 @@ pRolocVis_classify <- function(object,
   ## Marker colours
   orgs <- getMarkerClasses(object, fcol = mcol, verbose = FALSE)
   nk <- length(orgs)
-  cols <- getLisacol()
+  cols <- getStockcol()
   nc <- length(cols)
   if (nc < nk) {
     message("Too many features for available colours. 
@@ -144,7 +144,7 @@ pRolocVis_classify <- function(object,
         par(mar = c(5.1, 4.1, 2, 0)) 
         par(oma = c(0, 0, 0, 0))
         setStockcol(NULL)
-        newcols <- paste0(getLisacol(), 60)
+        newcols <- paste0(getStockcol(), 60)
         plot(pcas,
              col = getUnknowncol(),
              pch = 21, cex = 1)
@@ -157,7 +157,7 @@ pRolocVis_classify <- function(object,
           points(pcas[mrk.ind[[i]], 1], pcas[mrk.ind[[i]], 2], 
                  pch = 16,
                  cex = .7,
-                 col = getLisacol()[i])
+                 col = getStockcol()[i])
         }
       })
       ## Add points to boxplot
@@ -178,9 +178,9 @@ pRolocVis_classify <- function(object,
         par(oma = c(0, 0, 0, 0))
         boxplot(scores, las = 2, ylab = "Scores", ylim = c(0, 1.1))
         if (input$cutoff == "quant") 
-          lcol = paste0(getLisacol(), 80)[1]
+          lcol = paste0(getStockcol(), 80)[1]
         else
-          lcol = paste0(getLisacol(), 80)[2]
+          lcol = paste0(getStockcol(), 80)[2]
         points(1:length(orgs), nn(), col = lcol, pch = 19, cex = 1.5) 
       })
       ## Output legend
@@ -194,7 +194,7 @@ pRolocVis_classify <- function(object,
              adj = 0.05)
         legend("topleft",
                orgs,
-               col = getLisacol()[1:length(orgs)],
+               col = getStockcol()[1:length(orgs)],
                ncol = 1, 
                bty = "n",
                pch = 16,
