@@ -51,7 +51,7 @@ label (fData column name) for the second dataset in the \code{MSnSetList}.
 Default is \code{markers}.}
 
 \item{foi}{A \code{\link{FeaturesOfInterest}} or 
-\code{\link{FoICollection}}object.}
+\code{\link{FoICollection}} object.}
 
 \item{fig.height}{Height of the figure. Default is \code{"600px"}.}
 

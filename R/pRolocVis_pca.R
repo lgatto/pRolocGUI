@@ -17,7 +17,7 @@
 
 ##' @rdname pRolocVis-apps
 ##' @param foi A \code{\link{FeaturesOfInterest}} or 
-##' \code{\link{FoICollection}}object.
+##' \code{\link{FoICollection}} object.
 ##' @param fig.height Height of the figure. Default is \code{"600px"}.
 ##' @param fig.width Width of the figure. Default is \code{"100px"}.
 ##' @param legend.width Width of the legend. Default is \code{"200\%"}.
