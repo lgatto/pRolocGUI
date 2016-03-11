@@ -51,6 +51,8 @@
 ##'                                    scol = "svm.score", t = myThreshold)
 ##' }
 pRolocVis <- function(object, app, fcol, legend.cex = 1, ...) {
+    warning(redirectMsg())
+    return(invisible(TRUE))
     res <- NULL
     if (inherits(object, "MSnSetList"))
         app <- "compare"

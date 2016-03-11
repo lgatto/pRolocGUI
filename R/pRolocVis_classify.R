@@ -12,6 +12,8 @@ pRolocVis_classify <- function(object,
                                mcol = "markers",
                                legend.cex = 1,
                                ...) {
+    warning(redirectMsg())
+    return(invisible(TRUE))
 
   if (!inherits(object, "MSnSet"))
     stop("The input must be of class MSnSet")
