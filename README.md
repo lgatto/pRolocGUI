@@ -80,7 +80,7 @@ biocLite(c("pRoloc", "pRolocdata", "pRolocGUI"))
 #### Development version
 
 
-The most recent version of pRolocGUI depends on
+The most recent version of `pRolocGUI` depends on
 [`DT`](https://github.com/rstudio/DT) version 0.1.40 or higher, which
 is only available from GitHub. The official Bioconductor build
 infrastructure uses the package from
