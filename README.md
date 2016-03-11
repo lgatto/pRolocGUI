@@ -77,7 +77,7 @@ source("http://www.bioconductor.org/biocLite.R")
 biocLite(c("pRoloc", "pRolocdata", "pRolocGUI"))
 ```
 
-### Development version
+#### Development version
 
 
 The most recent version of pRolocGUI depends on
