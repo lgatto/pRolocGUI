@@ -38,8 +38,6 @@ pRolocVis_pca <- function(object,
                           nchar = 40,
                           all = TRUE,
                           ...) {
-    warning(redirectMsg())
-    return(invisible(TRUE))
   
   ## Return featureNames of proteins selected
   on.exit(return(invisible(idDT)))

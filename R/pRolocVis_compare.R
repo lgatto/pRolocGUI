@@ -19,8 +19,6 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
                               nchar = 40,
                               all = TRUE,
                               ...) {
-    warning(redirectMsg())
-    return(invisible(TRUE))
                                
   ## Return featureNames of proteins selected
   on.exit(return(invisible(idDT)))
