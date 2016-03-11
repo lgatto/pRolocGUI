@@ -6,7 +6,7 @@ import(methods)
 ## Imports
 importFrom("graphics", "axis", "boxplot", "legend", "matlines", "par",
            "points", "title")
-	   importFrom("utils", "packageVersion")
+importFrom("utils", "packageVersion")
 
 import(shiny)
 import(scales)
