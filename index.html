@@ -108,7 +108,7 @@ In an <code>R</code> console, type</p>
 biocLite(c(<span class="pl-s"><span class="pl-pds">"</span>pRoloc<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>pRolocdata<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>pRolocGUI<span class="pl-pds">"</span></span>))</pre></div>
 
 <h4>
-<a id="development-version" class="anchor" href="#development-version" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Development version</h4>
+<a id="dt-version-0140-or-later" class="anchor" href="#dt-version-0140-or-later" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>DT</code> version <code>0.1.40</code> or later</h4>
 
 <p>The most recent version of <code>pRolocGUI</code> depends on
 <a href="https://github.com/rstudio/DT"><code>DT</code></a> version 0.1.40 or higher, which
@@ -130,38 +130,20 @@ GitHub</p>
 
 <div class="highlight highlight-source-r"><pre>install_github(<span class="pl-s"><span class="pl-pds">"</span>RStudio/DT<span class="pl-pds">"</span></span>)</pre></div>
 
-<p>Now install the latest version of <code>pRolocGUI</code></p>
+<p>Or, alternatively, run the following function that will perform the
+above steps automatically</p>
 
-<div class="highlight highlight-source-r"><pre>install_github(<span class="pl-s"><span class="pl-pds">"</span>ComputationalProteomicsUnit/pRolocGUI<span class="pl-pds">"</span></span>)</pre></div>
+<div class="highlight highlight-source-r"><pre><span class="pl-e">pRolocGUI</span><span class="pl-k">:::</span>installDTfromGitHub()</pre></div>
 
-<p>Or, alternatively, run the function that will perform the above steps
-automatically</p>
+<h4>
+<a id="development-version" class="anchor" href="#development-version" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Development version</h4>
 
-<div class="highlight highlight-source-r"><pre><span class="pl-e">pRolocGUI</span><span class="pl-k">:::</span>updatepRolocGUI()</pre></div>
+<p>The development code on github can be installed using <code>biocLite</code> (or
+<code>install_github</code>, as above). New pre-release features might not be
+documented or thoroughly tested and could substantially change prior
+to release. Use at your own risks.</p>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<div class="highlight highlight-source-r"><pre>biocLite(<span class="pl-s"><span class="pl-pds">"</span>ComputationalProteomicsUnit/pRolocGUI<span class="pl-pds">"</span></span>)</pre></div>
 
 <h2>
 <a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Getting started</h2>
