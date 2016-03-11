@@ -107,29 +107,61 @@ In an <code>R</code> console, type</p>
 <div class="highlight highlight-source-r"><pre>source(<span class="pl-s"><span class="pl-pds">"</span>http://www.bioconductor.org/biocLite.R<span class="pl-pds">"</span></span>)
 biocLite(c(<span class="pl-s"><span class="pl-pds">"</span>pRoloc<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>pRolocdata<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>pRolocGUI<span class="pl-pds">"</span></span>))</pre></div>
 
-<p>To check the version of your <code>R</code> installation, check your session
-information:</p>
+<h4>
+<a id="development-version" class="anchor" href="#development-version" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Development version</h4>
 
-<div class="highlight highlight-source-r"><pre>sessionInfo()</pre></div>
+<p>The most recent version of <code>pRolocGUI</code> depends on
+<a href="https://github.com/rstudio/DT"><code>DT</code></a> version 0.1.40 or higher, which
+is only available from GitHub. The official Bioconductor build
+infrastructure uses the package from
+<a href="https://cran.r-project.org/web/packages/DT/">CRAN</a> which is still at
+version 0.1. Hence, you are required to manually install a more recent
+version of <code>DT</code> and update <code>pRolocGUI</code>. To do so, run the following
+commands.</p>
 
-<p>See the Bioconductor
-<a href="http://bioconductor.org/install/">installation page</a> for more
-details.</p>
+<p>If not already available, install <code>devtools</code></p>
 
-<h3>
-<a id="pre-releasedevelopment-version" class="anchor" href="#pre-releasedevelopment-version" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Pre-release/development version</h3>
+<div class="highlight highlight-source-r"><pre><span class="pl-k">if</span> (<span class="pl-k">!</span>require(<span class="pl-s"><span class="pl-pds">"</span>devtools<span class="pl-pds">"</span></span>))
+    install.packages(<span class="pl-s"><span class="pl-pds">"</span>devtools<span class="pl-pds">"</span></span>)
+library(<span class="pl-s"><span class="pl-pds">"</span>devtools<span class="pl-pds">"</span></span>)</pre></div>
 
-<p>The pre-release/development code on github can be installed using
-<code>biocLite</code>. Note that this requires a working R build environment (i.e
-<code>Rtools</code> on Windows - see
-<a href="https://github.com/lgatto/teachingmaterial/wiki/R-package">here</a>). New
-pre-release features might not be documented not thoroughly tested and
-could substantially change prior to release. Use at your own risks.</p>
+<p>Then, install the latest version of the <code>DT</code> package directly from
+GitHub</p>
 
-<div class="highlight highlight-source-c"><pre>## install from github
-<span class="pl-en">biocLite</span>(<span class="pl-s"><span class="pl-pds">"</span>lgatto/pRoloc<span class="pl-pds">"</span></span>)
-biocLite(<span class="pl-s"><span class="pl-pds">"</span>lgatto/pRolocdata<span class="pl-pds">"</span></span>)
-biocLite(<span class="pl-s"><span class="pl-pds">"</span>ComputationalProteomicsUnit/pRolocGUI<span class="pl-pds">"</span></span>)</pre></div>
+<div class="highlight highlight-source-r"><pre>install_github(<span class="pl-s"><span class="pl-pds">"</span>RStudio/DT<span class="pl-pds">"</span></span>)</pre></div>
+
+<p>Now install the latest version of <code>pRolocGUI</code></p>
+
+<div class="highlight highlight-source-r"><pre>install_github(<span class="pl-s"><span class="pl-pds">"</span>ComputationalProteomicsUnit/pRolocGUI<span class="pl-pds">"</span></span>)</pre></div>
+
+<p>Or, alternatively, run the function that will perform the above steps
+automatically</p>
+
+<div class="highlight highlight-source-r"><pre><span class="pl-e">pRolocGUI</span><span class="pl-k">:::</span>updatepRolocGUI()</pre></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <h2>
 <a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Getting started</h2>
