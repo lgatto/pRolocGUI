@@ -9,7 +9,7 @@ Description: The package pRolocGUI comprises functions to
     data on the basis of pRoloc, pRolocdata and shiny.
 Depends: R (>= 3.1.0), pRoloc (>= 1.11.1), MSnbase (>= 1.13.11),
 	 methods
-Imports: shiny (>= 0.9.1), scales, dplyr, utils, graphics
+Imports: shiny (>= 0.9.1), scales, dplyr, DT, utils, graphics
 Suggests: pRolocdata, knitr, BiocStyle, rmarkdown
 License: GPL-2
 URL: http://ComputationalProteomicsUnit.github.io/pRolocGUI/
