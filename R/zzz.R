@@ -1,4 +1,4 @@
 .onAttach <- function(libname, pkgname)
     packageStartupMessage(
-        paste("\nThis is pRolocGUI version", packageVersion("pRoloc"), "\n\n",
-              redirectMsg))
+        paste0("\nThis is pRolocGUI version ", packageVersion("pRolocGUI"), "\n\n",
+              paste(redirectMsg(), collapse = "")))
