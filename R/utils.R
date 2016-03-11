@@ -27,15 +27,15 @@ redirectMsg <- function() {
              "or higher, which is only available from GitHub. The official\n",
              "Bioconductor build infrastructure uses the package from CRAN,\n",
              "which is still at version 0.1. Hence, you are required to manually\n",
-             "install a more recent version of DT and update pRolocGUI.\n",
+             "install a more recent version of DT.\n",
              "Please read the installation instructions on\n\n",
              "  https://github.com/ComputationalProteomicsUnit/pRolocGUI",
              "\n\nand/or run the function\n\n",
-             "  pRolocGUI:::updatepRolocGUI().\n")
+             "  pRolocGUI:::installDTfromGitHub().\n")
     paste(msg)
 }
 
-updatepRolocGUI <- function() {
+installDTfromGitHub <- function() {
     if (!require("devtools")) {
         message("Installing devtools from default CRAN mirror.")
         install.packages("devtools")
@@ -43,7 +43,4 @@ updatepRolocGUI <- function() {
     }
     message("Installing DT from github.")
     devtools::install_github("rstudio/DT")
-    message("Installing pRolocGUI from github.")
-    devtools::install_github("ComputationalProteomicsUnit/pRolocGUI")
-    message("pRolocGUI is now up-to-date")
 }
