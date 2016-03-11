@@ -14,5 +14,4 @@ importFrom(DT,
 importFrom(dplyr, "%>%")
 
 
-export(plotMat2D)
 export(pRolocVis)
