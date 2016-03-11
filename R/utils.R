@@ -19,3 +19,30 @@ narrowFeatureData <- function(object,
     if (validObject(object))
         return(object)
 }
+
+
+
+redirectMsg <- function() {
+    msg <- c("The most recent version of pRolocGUI depends on DT version 0.1.40",
+             "or higher, which is only available from GitHub. The official",
+             "Bioconductor build infrastructure uses the package from CRAN,",
+             "which is still at version 0.1. Hence, you are required to manually",
+             "install a more recent version of DT and pRolocGUI. Please read the",
+             "installation instructions on\n",
+             "  https://github.com/ComputationalProteomicsUnit/pRolocGUI",
+             "\nand/or run the function\n", "  pRolocGUI:::updatepRolocGUI().\n")
+    message(cat(msg, sep = "\n"))
+}
+
+updatepRolocGUI <- function() {
+    if (!require("devtools")) {
+        message("Installing devtools from default CRAN mirror.")
+        install.packages("devtools")
+        require("devtools")
+    }
+    message("Installing DT from github.")
+    devtools::install_github("rstudio/DT")
+    message("Installing pRolocGUI from github.")
+    devtools::install_github("ComputationalProteomicsUnit/pRolocGUI")
+    message("pRolocGUI is now up-to-date")
+}
