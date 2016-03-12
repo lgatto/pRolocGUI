@@ -4,6 +4,10 @@ import(MSnbase)
 import(methods)
 
 ## Imports
+importFrom("graphics", "axis", "boxplot", "legend", "matlines", "par",
+           "points", "title")
+importFrom("utils", "packageVersion", "install.packages")
+
 import(shiny)
 import(scales)
 importFrom(DT,
@@ -14,5 +18,4 @@ importFrom(DT,
 importFrom(dplyr, "%>%")
 
 
-export(plotMat2D)
 export(pRolocVis)

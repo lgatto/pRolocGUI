@@ -72,36 +72,54 @@ excellent integration with the `R` terminal.
 `pRolocGUI` requires `R >= 3.1.1` and Bioconductor version `>= 3.0`.
 In an `R` console, type
 
-```{r dev, eval=FALSE}
+```{r dev}
 source("http://www.bioconductor.org/biocLite.R")
 biocLite(c("pRoloc", "pRolocdata", "pRolocGUI"))
 ```
 
-To check the version of your `R` installation, check your session
-information:
+#### `DT` version `0.1.40` or later
 
-```{r version}
-sessionInfo()
+
+The most recent version of `pRolocGUI` depends on
+[`DT`](https://github.com/rstudio/DT) version 0.1.40 or higher, which
+is only available from GitHub. The official Bioconductor build
+infrastructure uses the package from
+[CRAN](https://cran.r-project.org/web/packages/DT/) which is still at
+version 0.1. Hence, you are required to manually install a more recent
+version of `DT` and update `pRolocGUI`. To do so, run the following
+commands.
+
+If not already available, install `devtools`
+
+```{r}
+if (!require("devtools"))
+    install.packages("devtools")
+library("devtools")
 ```
 
-See the Bioconductor
-[installation page](http://bioconductor.org/install/) for more
-details.
+Then, install the latest version of the `DT` package directly from
+GitHub
 
-### Pre-release/development version
-
-The pre-release/development code on github can be installed using
-`biocLite`. Note that this requires a working R build environment (i.e
-`Rtools` on Windows - see
-[here](https://github.com/lgatto/teachingmaterial/wiki/R-package)). New
-pre-release features might not be documented not thoroughly tested and
-could substantially change prior to release. Use at your own risks.
+```{r}
+install_github("RStudio/DT")
+```
 
 
-```c
-## install from github
-biocLite("lgatto/pRoloc")
-biocLite("lgatto/pRolocdata")
+Or, alternatively, run the following function that will perform the
+above steps automatically
+
+```{r}
+pRolocGUI:::installDTfromGitHub()
+```
+
+#### Development version
+
+The development code on github can be installed using `biocLite` (or
+`install_github`, as above). New pre-release features might not be
+documented or thoroughly tested and could substantially change prior
+to release. Use at your own risks.
+
+```{r}
 biocLite("ComputationalProteomicsUnit/pRolocGUI")
 ```
 
