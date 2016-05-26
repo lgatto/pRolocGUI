@@ -96,11 +96,12 @@ pRolocVis_pca <- function(object,
     pmarkers <- pmarkers[, -which(sumpm == 0)]
   }
   if (length(grep("GO:", colnames(pmarkers))) > 0) {
-    cn <- pRoloc::flipGoTermId(colnames(pmarkers))
-    if (all(!is.na(cn))) {
-      names(cn) <- NULL
-      colnames(pmarkers) <- cn
-    }
+    cn <- pRoloc::flipGoTermId(colnames(pmarkers), names = FALSE, 
+                               keepNA = FALSE)
+#     if (all(!is.na(cn))) {
+#       names(cn) <- NULL
+    colnames(pmarkers) <- cn
+#     }
   }
   
   
