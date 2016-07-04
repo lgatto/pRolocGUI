@@ -283,7 +283,7 @@ This tutorial also contains more information on machine learning, the practise
 of training and testing, and some extensive examples of machine learning 
 classification in spatial proteomics.)
 
-```{r classify, eval = TRUE, echo = TRUE} 
+```{r classify, eval = TRUE, echo = TRUE, message = FALSE} 
 opt <- svmOptimisation(object = hyperLOPIT2015, 
                        fcol = "markers", 
                        times = 3, verbose = FALSE)
@@ -309,7 +309,7 @@ set a threshold one can use the `classify` app.
 To launch the `classify` application:
 
 ```{r cutoff, eval = FALSE, echo = TRUE} 
-pRolocVis(object = res, what = "classify", fcol = "svm") 
+pRolocVis(object = res, app = "classify", fcol = "svm") 
 ```
 
 ![The classification application, setting a "quantile" cutoff score](figures/SS_Classify1.jpg)
@@ -338,7 +338,7 @@ R console. These scores can be used to get protein localisation predictions
 using the `getPredictions` function, as demonstrated below:
 
 ```{r score, eval=FALSE}
-mythreshold <- pRolocVis(object = res, what = "classify", fcol = "svm") 
+mythreshold <- pRolocVis(object = res, app = "classify", fcol = "svm") 
 res <- getPredictions(res, fcol = "svm", 
                       mcol = "markers", t = mythreshold)
 ```
@@ -362,7 +362,7 @@ produced using the hyperLOPIT technology.
 data(hyperLOPIT2015ms3r1)
 data(hyperLOPIT2015ms3r2) 
 mydata <- MSnSetList(list(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r2))
-pRolocVis(mydata, what = "compare") 
+pRolocVis(mydata, app = "compare") 
 ```
 
 ![The compare application, main panel](figures/SS_Compare1.jpg)
