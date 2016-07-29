@@ -38,9 +38,10 @@ pRolocVis_pca <- function(object,
                           nchar = 40,
                           all = TRUE,
                           ...) {
-  
+
   ## Return featureNames of proteins selected
   on.exit(return(invisible(idDT)))
+  
   
   ## Usual checks
   if (!inherits(object, "MSnSet"))
@@ -50,7 +51,27 @@ pRolocVis_pca <- function(object,
     if (!fcol %in% fvarLabels(object))
       stop("fcol missing in fData")
   }
-    
+  
+  
+  ## Update feature data and convert any columns that are matrices
+  ## to vectors as otherwise in the shiny app these are displayed as
+  ## a long vector of 1,0,0,0,0,1,0 etc.
+  .tn <- length(fvarLabels(object))
+  chk <- vector(length = .tn)
+  for (i in 1:.tn) {
+    chk[i] <- is.matrix(fData(object)[, i])
+  }
+  if (any(chk)) {
+    .ind <- which(chk)
+    .nams <- fvarLabels(object)[.ind]
+    .tmpnams <- paste0(.nams, format(Sys.time(), "%a%b%d%H%M%S%Y"))
+    for (i in seq(.nams)) {
+      object <- mrkMatToVec(object, mfcol = .nams[i], vfcol = .tmpnams[i])
+    }
+    fData(object)[, .nams] <- NULL
+    fvarLabels(object)[match(.tmpnams, fvarLabels(object))] <- .nams
+  }
+  
   ## Define DT columns
   origFvarLab <- fvarLabels(object)
   if (length(origFvarLab) > 6) {
@@ -60,14 +81,17 @@ pRolocVis_pca <- function(object,
   } else {
     selDT <- origFvarLab[1:length(origFvarLab)]
   }
-    
+  
+  
   ## Make fcol a matrix of markers if not already  
-  if (!isMrkMat(object, fcol)) {
+  if (isMrkVec(object, fcol)) {
     mName <- paste0("Markers", format(Sys.time(), "%a%b%d%H%M%S%Y"))
     object <- mrkVecToMat(object, fcol, mfcol = mName)
     fcol <- mName
   }
   pmarkers <- fData(object)[, fcol]
+  
+  
   
   ## Create column of unknowns (needed later for plot2D in server)
   newName <- paste0(format(Sys.time(), "%a%b%d%H%M%S%Y"), "unknowns")

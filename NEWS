@@ -1,5 +1,9 @@
 CHANGES IN VERSION 1.5.8
 ------------------------
+ o Fixed bug with matrix of markers in fcol. Now if one of the 
+   columns in the feature data is a matrix, it is converted to
+   a vector using mrkMatToVec. This helps clarity and reduces 
+   wasted table space of 1's and 0's. <2016-07-29 Fri>  
 
 CHANGES IN VERSION 1.5.7
 ------------------------
