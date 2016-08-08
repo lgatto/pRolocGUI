@@ -5,7 +5,7 @@
 ##' label (fData column name) for the second dataset in the \code{MSnSetList}. 
 ##' Default is \code{markers}. 
 ##' @param remap A \code{logical} indicating whether the second dataset in the
-##' \code{MSnSetList} should be remapped to the first dataset. Default is 
+##' \code{MSnSetList} should be remapped to the first dataset.names(cols) <- myclasses Default is 
 ##' @return For \code{compare} and \code{main} a \code{character} vector of the 
 ##' \code{featureNames} of the proteins selected is invisibly returned.
 ##' @rdname pRolocVis-apps
@@ -35,6 +35,10 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
   dotargs <- pairlist(...)
   if (any(names(dotargs) == "method"))
     stop("Argument 'method' is already defined internally and can not be used with the compare application")
+  
+  if (any(names(dotargs) == "fcol"))
+    stop("Please specify fcol1 and fcol2 for each MSnSet respectively, see ?pRolocVis for more details")
+  
   
   ## fcol checks
   if (missing(fcol1) | missing(fcol2)) {
@@ -71,6 +75,32 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
       stop("fcol2 is not found in fvarLabels")
   } 
   
+  ## Update feature data and convert any columns that are matrices
+  ## to vectors as otherwise in the shiny app these are displayed as
+  ## a long vector of 1,0,0,0,0,1,0 etc.
+  .makeMatsVecs <- function(msnset) {
+    .tn <- length(fvarLabels(msnset))
+    chk <- vector(length = .tn)
+    for (i in 1:.tn) {
+      chk[i] <- is.matrix(fData(msnset)[, i])
+    }
+    if (any(chk)) {
+      .ind <- which(chk)
+      .nams <- fvarLabels(msnset)[.ind]
+      .tmpnams <- paste0(.nams, format(Sys.time(), "%a%b%d%H%M%S%Y"))
+      for (i in seq(.nams)) {
+        msnset <- mrkMatToVec(msnset, mfcol = .nams[i], vfcol = .tmpnams[i])
+      }
+      fData(msnset)[, .nams] <- NULL
+      fvarLabels(msnset)[match(.tmpnams, fvarLabels(msnset))] <- .nams
+    }
+    return(msnset)
+  }
+
+    for (i in seq_along(object))
+        object@x[[i]] <- .makeMatsVecs(object@x[[i]])
+  
+  
   ## Define data columns
   origFvarLab1 <- fvarLabels(object[[1]])
   origFvarLab2 <- fvarLabels(object[[2]])
@@ -92,7 +122,7 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
   
   ## Make fcol matrix of markers if it's not already
   fcol <- c(fcol1, fcol2)
-  tf <- !sapply(1:length(fcol), function(x) isMrkMat(object[[x]], fcol[x]))
+  tf <- sapply(1:length(fcol), function(x) isMrkVec(object[[x]], fcol[x]))
   pmarkers <- vector("list", length = length(object))
   for (i in 1:length(tf)) {
     if (tf[i]) {
@@ -104,7 +134,7 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
       pmarkers[[i]] <- fData(object[[i]])[, fcol[i]]
     }
   }
-
+  
   
   ## Setting features to be displayed
   if (!missing(foi)) {
@@ -150,18 +180,19 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
   if (length(cols) < max(sapply(pmarkers, ncol))) {
     message("Too many features for available colours. Some colours will be duplicated.")
     ind <- which.max(sapply(pmarkers, ncol))
-    n <- ncol(pmarkers[[ind]]) %/% length(cols)
+    n <- ncol(pmarkers[[ind]]) / length(cols)
     cols <- rep(cols, n + 1)
   }
   myclasses <- unique(unlist(lapply(pmarkers, colnames)))
+  cols <- cols[1:length(myclasses)]
   names(cols) <- myclasses
-  
+
   ## Shorten markers names if too long
   for (i in 1:length(object)) {
     cn <- sapply(colnames(pmarkers[[i]]),
                  function(x) {
                    if (nchar(x) > nchar) {
-                     x <- strsplit(x, "")[[i]]
+                     x <- strsplit(x, "")[[1]]
                      x <- paste(x[1:nchar], collapse = "")
                      x <- sub(" +$", "", x)
                      x <- paste0(x, "...")
