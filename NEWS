@@ -1,3 +1,6 @@
+CHANGES IN VERSION 1.7.4
+------------------------
+
 CHANGES IN VERSION 1.7.3
 ------------------------
  o Fixed bug with matrix of markers in fcol. Now if one of the 
