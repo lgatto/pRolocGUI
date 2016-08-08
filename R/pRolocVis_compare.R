@@ -75,7 +75,6 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
       stop("fcol2 is not found in fvarLabels")
   } 
   
-  
   ## Update feature data and convert any columns that are matrices
   ## to vectors as otherwise in the shiny app these are displayed as
   ## a long vector of 1,0,0,0,0,1,0 etc.
@@ -97,7 +96,9 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
     }
     return(msnset)
   }
-  object <- lapply(object, .makeMatsVecs)
+
+    for (i in seq_along(object))
+        object@x[[i]] <- .makeMatsVecs(object@x[[i]])
   
   
   ## Define data columns
