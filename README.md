@@ -77,47 +77,12 @@ source("http://www.bioconductor.org/biocLite.R")
 biocLite(c("pRoloc", "pRolocdata", "pRolocGUI"))
 ```
 
-#### `DT` version `0.1.40` or later
-
-
-The most recent version of `pRolocGUI` depends on
-[`DT`](https://github.com/rstudio/DT) version 0.1.40 or higher, which
-is only available from GitHub. The official Bioconductor build
-infrastructure uses the package from
-[CRAN](https://cran.r-project.org/web/packages/DT/) which is still at
-version 0.1. Hence, you are required to manually install a more recent
-version of `DT` and update `pRolocGUI`. To do so, run the following
-commands.
-
-If not already available, install `devtools`
-
-```{r}
-if (!require("devtools"))
-    install.packages("devtools")
-library("devtools")
-```
-
-Then, install the latest version of the `DT` package directly from
-GitHub
-
-```{r}
-install_github("RStudio/DT")
-```
-
-
-Or, alternatively, run the following function that will perform the
-above steps automatically
-
-```{r}
-pRolocGUI:::installDTfromGitHub()
-```
-
 #### Development version
 
 The development code on github can be installed using `biocLite` (or
-`install_github`, as above). New pre-release features might not be
-documented or thoroughly tested and could substantially change prior
-to release. Use at your own risks.
+`install_github`). New pre-release features might not be documented or
+thoroughly tested and could substantially change prior to release. Use
+at your own risks.
 
 ```{r}
 biocLite("ComputationalProteomicsUnit/pRolocGUI")

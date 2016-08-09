@@ -69,38 +69,15 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
       }
     }
   } else {
-    if (!fcol1 %in% fvarLabels(object[[1]])) 
+    if (!fcol1 %in% fvarLabels(object[[1]]))
       stop("fcol1 is not found in fvarLabels")
-    if (!fcol2 %in% fvarLabels(object[[2]])) 
+    if (!fcol2 %in% fvarLabels(object[[2]]))
       stop("fcol2 is not found in fvarLabels")
-  } 
-  
-  ## Update feature data and convert any columns that are matrices
-  ## to vectors as otherwise in the shiny app these are displayed as
-  ## a long vector of 1,0,0,0,0,1,0 etc.
-  .makeMatsVecs <- function(msnset) {
-    .tn <- length(fvarLabels(msnset))
-    chk <- vector(length = .tn)
-    for (i in 1:.tn) {
-      chk[i] <- is.matrix(fData(msnset)[, i])
-    }
-    if (any(chk)) {
-      .ind <- which(chk)
-      .nams <- fvarLabels(msnset)[.ind]
-      .tmpnams <- paste0(.nams, format(Sys.time(), "%a%b%d%H%M%S%Y"))
-      for (i in seq(.nams)) {
-        msnset <- mrkMatToVec(msnset, mfcol = .nams[i], vfcol = .tmpnams[i])
-      }
-      fData(msnset)[, .nams] <- NULL
-      fvarLabels(msnset)[match(.tmpnams, fvarLabels(msnset))] <- .nams
-    }
-    return(msnset)
   }
 
     for (i in seq_along(object))
         object@x[[i]] <- .makeMatsVecs(object@x[[i]])
-  
-  
+
   ## Define data columns
   origFvarLab1 <- fvarLabels(object[[1]])
   origFvarLab2 <- fvarLabels(object[[2]])
