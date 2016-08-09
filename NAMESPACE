@@ -1,12 +1,13 @@
 ## Depends
 import(pRoloc)
+import(Biobase)
 import(MSnbase)
 import(methods)
 
 ## Imports
 importFrom("graphics", "axis", "boxplot", "legend", "matlines", "par",
            "points", "title")
-importFrom("utils", "packageVersion", "install.packages")
+importFrom("utils", "packageVersion")
 
 import(shiny)
 import(scales)
