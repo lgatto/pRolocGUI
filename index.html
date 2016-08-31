@@ -82,6 +82,26 @@ documentation and vignettes for full details about the software.</p>
 </blockquote>
 
 <h2>
+<a id="build-status" class="anchor" href="#build-status" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Build status</h2>
+
+<table>
+<thead>
+<tr>
+<th align="center">Github</th>
+<th align="center">Bioconductor devel</th>
+<th align="center">Bioconductor release</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center"><a href="https://travis-ci.org/lmsimp/bioc-pRoloc-hyperLOPIT-workflow"><img src="https://travis-ci.org/lmsimp/bioc-pRoloc-hyperLOPIT-workflow.svg?branch=master" alt="Build Status"></a></td>
+<td align="center"><a href="http://bioconductor.org/packages/devel/bioc/html/pRolocGUI.html"><img src="http://bioconductor.org/shields/build/devel/bioc/pRolocGUI.svg" alt="Build Status"></a></td>
+<td align="center"><a href="http://bioconductor.org/packages/release/bioc/html/pRolocGUI.html"><img src="http://bioconductor.org/shields/build/release/bioc/pRolocGUI.svg" alt="Build Status"></a></td>
+</tr>
+</tbody>
+</table>
+
+<h2>
 <a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h2>
 
 <p><code>pRolocGUI</code> is written in the <a href="http://www.r-project.org/"><code>R</code></a>
@@ -108,40 +128,12 @@ In an <code>R</code> console, type</p>
 biocLite(c(<span class="pl-s"><span class="pl-pds">"</span>pRoloc<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>pRolocdata<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>pRolocGUI<span class="pl-pds">"</span></span>))</pre></div>
 
 <h4>
-<a id="dt-version-0140-or-later" class="anchor" href="#dt-version-0140-or-later" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>DT</code> version <code>0.1.40</code> or later</h4>
-
-<p>The most recent version of <code>pRolocGUI</code> depends on
-<a href="https://github.com/rstudio/DT"><code>DT</code></a> version 0.1.40 or higher, which
-is only available from GitHub. The official Bioconductor build
-infrastructure uses the package from
-<a href="https://cran.r-project.org/web/packages/DT/">CRAN</a> which is still at
-version 0.1. Hence, you are required to manually install a more recent
-version of <code>DT</code> and update <code>pRolocGUI</code>. To do so, run the following
-commands.</p>
-
-<p>If not already available, install <code>devtools</code></p>
-
-<div class="highlight highlight-source-r"><pre><span class="pl-k">if</span> (<span class="pl-k">!</span>require(<span class="pl-s"><span class="pl-pds">"</span>devtools<span class="pl-pds">"</span></span>))
-    install.packages(<span class="pl-s"><span class="pl-pds">"</span>devtools<span class="pl-pds">"</span></span>)
-library(<span class="pl-s"><span class="pl-pds">"</span>devtools<span class="pl-pds">"</span></span>)</pre></div>
-
-<p>Then, install the latest version of the <code>DT</code> package directly from
-GitHub</p>
-
-<div class="highlight highlight-source-r"><pre>install_github(<span class="pl-s"><span class="pl-pds">"</span>RStudio/DT<span class="pl-pds">"</span></span>)</pre></div>
-
-<p>Or, alternatively, run the following function that will perform the
-above steps automatically</p>
-
-<div class="highlight highlight-source-r"><pre><span class="pl-e">pRolocGUI</span><span class="pl-k">:::</span>installDTfromGitHub()</pre></div>
-
-<h4>
 <a id="development-version" class="anchor" href="#development-version" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Development version</h4>
 
 <p>The development code on github can be installed using <code>biocLite</code> (or
-<code>install_github</code>, as above). New pre-release features might not be
-documented or thoroughly tested and could substantially change prior
-to release. Use at your own risks.</p>
+<code>install_github</code>). New pre-release features might not be documented or
+thoroughly tested and could substantially change prior to release. Use
+at your own risks.</p>
 
 <div class="highlight highlight-source-r"><pre>biocLite(<span class="pl-s"><span class="pl-pds">"</span>ComputationalProteomicsUnit/pRolocGUI<span class="pl-pds">"</span></span>)</pre></div>
 
