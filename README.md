@@ -51,7 +51,9 @@ If you use these open-source software for your research, please cite:
 
 ## Build status
 
-Github: [![Build Status](https://travis-ci.org/lmsimp/bioc-pRoloc-hyperLOPIT-workflow.svg?branch=master)](https://travis-ci.org/lmsimp/bioc-pRoloc-hyperLOPIT-workflow) Bioconducutor devel: [![Build Status](http://bioconductor.org/shields/build/devel/bioc/pRolocGUI.svg)](http://bioconductor.org/packages/devel/bioc/html/pRolocGUI.html) release: [![Build Status](http://bioconductor.org/shields/build/release/bioc/pRolocGUI.svg)](http://bioconductor.org/packages/release/bioc/html/pRolocGUI.html)
+
+| Github | Bioconductor devel | Bioconductor release |
+| [![Build Status](https://travis-ci.org/lmsimp/bioc-pRoloc-hyperLOPIT-workflow.svg?branch=master)](https://travis-ci.org/lmsimp/bioc-pRoloc-hyperLOPIT-workflow) | [![Build Status](http://bioconductor.org/shields/build/devel/bioc/pRolocGUI.svg)](http://bioconductor.org/packages/devel/bioc/html/pRolocGUI.html) | [![Build Status](http://bioconductor.org/shields/build/release/bioc/pRolocGUI.svg)](http://bioconductor.org/packages/release/bioc/html/pRolocGUI.html) |
 
 ## Installation
 
