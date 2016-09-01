@@ -36,7 +36,7 @@ pRolocVis_classify <- function(object,
 
  
   ## Marker colours
-  orgs <- getMarkerClasses(object, fcol = mcol, verbose = FALSE)
+  orgs <- getMarkerClasses(object, fcol = mcol)
   nk <- length(orgs)
   cols <- getStockcol()
   nc <- length(cols)
