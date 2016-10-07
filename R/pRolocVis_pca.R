@@ -41,7 +41,7 @@ pRolocVis_pca <- function(object,
 
   ## Return featureNames of proteins selected
   on.exit(return(invisible(idDT)))
-  
+
   
   ## Usual checks
   if (!inherits(object, "MSnSet"))
@@ -51,6 +51,10 @@ pRolocVis_pca <- function(object,
     if (!fcol %in% fvarLabels(object))
       stop("fcol missing in fData")
   }
+  
+  
+  ## Get matrix or vector markers for defined fcol
+  pmarkers <- fData(object)[, fcol]
   
   
   ## Update feature data and convert any columns that are matrices
@@ -83,14 +87,13 @@ pRolocVis_pca <- function(object,
   }
   
   
-  ## Make fcol a matrix of markers if not already  
-  if (isMrkVec(object, fcol)) {
+  ## Check pmarkers, if not a matrix convery to a matrix
+  if (!inherits(pmarkers, "matrix")) {
     mName <- paste0("Markers", format(Sys.time(), "%a%b%d%H%M%S%Y"))
     object <- mrkVecToMat(object, fcol, mfcol = mName)
     fcol <- mName
+    pmarkers <- fData(object)[, fcol]
   }
-  pmarkers <- fData(object)[, fcol]
-  
   
   
   ## Create column of unknowns (needed later for plot2D in server)

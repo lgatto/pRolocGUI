@@ -49,6 +49,12 @@ If you use these open-source software for your research, please cite:
 >  foundation for reliable spatial proteomics data analysis' Mol Cell
 >  Proteomics. 2014 May 20. 
 
+## Build status
+
+
+| Github | Bioconductor devel | Bioconductor release |
+|:------:|:------------------:|:--------------------:|
+| [![Build Status](https://travis-ci.org/lmsimp/bioc-pRoloc-hyperLOPIT-workflow.svg?branch=master)](https://travis-ci.org/lmsimp/bioc-pRoloc-hyperLOPIT-workflow) | [![Build Status](http://bioconductor.org/shields/build/devel/bioc/pRolocGUI.svg)](http://bioconductor.org/packages/devel/bioc/html/pRolocGUI.html) | [![Build Status](http://bioconductor.org/shields/build/release/bioc/pRolocGUI.svg)](http://bioconductor.org/packages/release/bioc/html/pRolocGUI.html) |
 
 ## Installation
 
