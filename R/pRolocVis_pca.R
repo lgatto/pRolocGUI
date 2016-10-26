@@ -51,8 +51,7 @@ pRolocVis_pca <- function(object,
     if (!fcol %in% fvarLabels(object))
       stop("fcol missing in fData")
   }
-  
-  
+
   ## Get matrix or vector markers for defined fcol
   pmarkers <- fData(object)[, fcol]
   
@@ -87,7 +86,7 @@ pRolocVis_pca <- function(object,
   }
   
   
-  ## Check pmarkers, if not a matrix convery to a matrix
+  ## Check pmarkers, if not a matrix convert to a matrix
   if (!inherits(pmarkers, "matrix")) {
     mName <- paste0("Markers", format(Sys.time(), "%a%b%d%H%M%S%Y"))
     object <- mrkVecToMat(object, fcol, mfcol = mName)
