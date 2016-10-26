@@ -26,7 +26,6 @@ pRolocVis_classify <- function(object,
   if (!mcol %in% fvarLabels(object)) 
     stop("fcol missing in fData, please provide mcol")
     
-
   
   ## Return scores
   on.exit(return(us))

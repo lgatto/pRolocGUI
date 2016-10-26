@@ -50,20 +50,20 @@
 ##'   newPredictions <- getPredictions(hyperLOPIT2015, fcol = "svm.classification", 
 ##'                                    scol = "svm.score", t = myThreshold)
 ##' }
-pRolocVis <- function(object, app, fcol, legend.cex = 1, ...) {
-    res <- NULL
-    if (inherits(object, "MSnSetList"))
-        app <- "compare"
-    if (missing(app))
-        app <- "main"
-    if (missing(fcol) && app != "classify")
-        fcol <- "markers"
-    if (app == "main")
-        pRolocVis_pca(object, fcol = fcol, ...)
-    if (app == "classify")
-        res <- pRolocVis_classify(object, fcol = fcol,
-                                  legend.cex = legend.cex, ...)
-    if (app == "compare")
-        pRolocVis_compare(object, ...)
-    invisible(res)
+pRolocVis <- function(object, app = "main", fcol, ...) {
+  res <- NULL
+  app <- match.arg(app, c("main", "compare", "classify"))
+  if (inherits(object, "MSnSetList"))
+    app <- "compare"
+  if (missing(app))
+    app <- "main"
+  if (missing(fcol) && app != "classify")
+    fcol <- "markers"
+  if (app == "main")
+    pRolocVis_pca(object, fcol, ...)
+  if (app == "classify")
+    res <- pRolocVis_classify(object, fcol, ...)
+  if (app == "compare")
+    pRolocVis_compare(object, ...)
+  invisible(res)
 }

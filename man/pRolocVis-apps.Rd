@@ -7,7 +7,7 @@
 \alias{pRolocVis_pca}
 \title{Interactive visualisation of spatial proteomics data}
 \usage{
-pRolocVis(object, app, fcol, legend.cex = 1, ...)
+pRolocVis(object, app = "main", fcol, ...)
 
 pRolocVis_classify(object, fcol, scol, mcol = "markers", legend.cex = 1,
   ...)
@@ -31,9 +31,6 @@ below.}
 will correspond to the prediction column if using "classify",
 or the markers (labelled data) to be plotted otherwise.}
 
-\item{legend.cex}{Point character expansion for the the legend.
-Default is 1.}
-
 \item{...}{Additional parameters passed to the respective app.}
 
 \item{scol}{The feature meta data column containing the 
@@ -41,6 +38,9 @@ classification scores.}
 
 \item{mcol}{The feature meta data column containing the labelled training 
 data, for use with "classify".}
+
+\item{legend.cex}{Point character expansion for the the legend.
+Default is 1.}
 
 \item{fcol1}{If using the \code{compare} app this is the feature meta-data 
 label (fData column name) for the first dataset in the \code{MSnSetList}. 
@@ -60,7 +60,7 @@ Default is \code{markers}.}
 \item{legend.width}{Width of the legend. Default is \code{"200\%"}.}
 
 \item{remap}{A \code{logical} indicating whether the second dataset in the
-\code{MSnSetList} should be remapped to the first dataset. Default is}
+\code{MSnSetList} should be remapped to the first dataset.names(cols) <- myclasses Default is}
 
 \item{nchar}{Maximum number of characters of the markers class
 names, before their names are truncated. Default is 10.}
