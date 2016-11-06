@@ -22,14 +22,16 @@
 ##' 
 ##' @title Interactive visualisation of spatial proteomics data
 ##' @rdname pRolocVis-apps
-##' @param object An instance of class \code{MSnSet}, or an \code{MSnSetList}
-##'     of length 2 if using \code{"compare"} application.
+##' @param object An instance of class \code{MSnSet}, or an
+##'     \code{MSnSetList} of length 2 if using \code{"compare"}
+##'     application.
 ##' @param app The type of application requested: \code{"main"}
 ##'     (default), \code{"classify"}, \code{"compare"}.See description
 ##'     below.
 ##' @param fcol The feature meta-data label (fData column name). This
 ##'     will correspond to the prediction column if using "classify",
-##'     or the markers (labelled data) to be plotted otherwise.
+##'     or the markers (labelled data) to be plotted otherwise. If set
+##'     to \code{NULL}, no annotation is expected.
 ##' @param legend.cex Point character expansion for the the legend.
 ##'     Default is 1.
 ##' @param ... Additional parameters passed to the respective app.
