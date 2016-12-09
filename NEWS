@@ -1,9 +1,15 @@
-<<<<<<< HEAD
-CHANGES IN VERSION 1.7.6
+CHANGES IN VERSION 1.9.1
 ------------------------
+ o Remove accidental call to browser 
 
-=======
->>>>>>> devel
+CHANGES IN VERSION 1.9.0
+------------------------
+ o Bioc devel 3.5
+ 
+CHANGES IN VERSION 1.8.0
+------------------------
+ o Bioc release 3.4
+
 CHANGES IN VERSION 1.7.5
 ------------------------
  o Various bug fixes <2016-10-07 Fri>
