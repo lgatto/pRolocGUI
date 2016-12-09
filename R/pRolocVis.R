@@ -22,14 +22,16 @@
 ##' 
 ##' @title Interactive visualisation of spatial proteomics data
 ##' @rdname pRolocVis-apps
-##' @param object An instance of class \code{MSnSet}, or an \code{MSnSetList}
-##'     of length 2 if using \code{"compare"} application.
+##' @param object An instance of class \code{MSnSet}, or an
+##'     \code{MSnSetList} of length 2 if using \code{"compare"}
+##'     application.
 ##' @param app The type of application requested: \code{"main"}
 ##'     (default), \code{"classify"}, \code{"compare"}.See description
 ##'     below.
 ##' @param fcol The feature meta-data label (fData column name). This
 ##'     will correspond to the prediction column if using "classify",
-##'     or the markers (labelled data) to be plotted otherwise.
+##'     or the markers (labelled data) to be plotted otherwise. If set
+##'     to \code{NULL}, no annotation is expected.
 ##' @param legend.cex Point character expansion for the the legend.
 ##'     Default is 1.
 ##' @param ... Additional parameters passed to the respective app.
@@ -50,20 +52,20 @@
 ##'   newPredictions <- getPredictions(hyperLOPIT2015, fcol = "svm.classification", 
 ##'                                    scol = "svm.score", t = myThreshold)
 ##' }
-pRolocVis <- function(object, app, fcol, legend.cex = 1, ...) {
-    res <- NULL
-    if (inherits(object, "MSnSetList"))
-        app <- "compare"
-    if (missing(app))
-        app <- "main"
-    if (missing(fcol) && app != "classify")
-        fcol <- "markers"
-    if (app == "main")
-        pRolocVis_pca(object, fcol = fcol, ...)
-    if (app == "classify")
-        res <- pRolocVis_classify(object, fcol = fcol,
-                                  legend.cex = legend.cex, ...)
-    if (app == "compare")
-        pRolocVis_compare(object, ...)
-    invisible(res)
+pRolocVis <- function(object, app = "main", fcol, ...) {
+  res <- NULL
+  app <- match.arg(app, c("main", "compare", "classify"))
+  if (inherits(object, "MSnSetList"))
+    app <- "compare"
+  if (missing(app))
+    app <- "main"
+  if (missing(fcol) && app != "classify")
+    fcol <- "markers"
+  if (app == "main")
+    pRolocVis_pca(object, fcol, ...)
+  if (app == "classify")
+    res <- pRolocVis_classify(object, fcol, ...)
+  if (app == "compare")
+    pRolocVis_compare(object, ...)
+  invisible(res)
 }

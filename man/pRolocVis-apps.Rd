@@ -7,7 +7,7 @@
 \alias{pRolocVis_pca}
 \title{Interactive visualisation of spatial proteomics data}
 \usage{
-pRolocVis(object, app, fcol, legend.cex = 1, ...)
+pRolocVis(object, app = "main", fcol, ...)
 
 pRolocVis_classify(object, fcol, scol, mcol = "markers", legend.cex = 1,
   ...)
@@ -16,12 +16,14 @@ pRolocVis_compare(object, fcol1, fcol2, foi, fig.height = "600px",
   fig.width = "100\%", legend.width = "200\%", legend.cex = 1,
   remap = TRUE, nchar = 40, all = TRUE, ...)
 
-pRolocVis_pca(object, fcol, foi, fig.height = "600px", fig.width = "100\%",
-  legend.width = "200\%", legend.cex = 1, nchar = 40, all = TRUE, ...)
+pRolocVis_pca(object, fcol = NULL, foi, fig.height = "600px",
+  fig.width = "100\%", legend.width = "200\%", legend.cex = 1,
+  nchar = 40, all = TRUE, ...)
 }
 \arguments{
-\item{object}{An instance of class \code{MSnSet}, or an \code{MSnSetList}
-of length 2 if using \code{"compare"} application.}
+\item{object}{An instance of class \code{MSnSet}, or an
+\code{MSnSetList} of length 2 if using \code{"compare"}
+application.}
 
 \item{app}{The type of application requested: \code{"main"}
 (default), \code{"classify"}, \code{"compare"}.See description
@@ -29,10 +31,8 @@ below.}
 
 \item{fcol}{The feature meta-data label (fData column name). This
 will correspond to the prediction column if using "classify",
-or the markers (labelled data) to be plotted otherwise.}
-
-\item{legend.cex}{Point character expansion for the the legend.
-Default is 1.}
+or the markers (labelled data) to be plotted otherwise. If set
+to \code{NULL}, no annotation is expected.}
 
 \item{...}{Additional parameters passed to the respective app.}
 
@@ -42,6 +42,9 @@ classification scores.}
 \item{mcol}{The feature meta data column containing the labelled training 
 data, for use with "classify".}
 
+\item{legend.cex}{Point character expansion for the the legend.
+Default is 1.}
+
 \item{fcol1}{If using the \code{compare} app this is the feature meta-data 
 label (fData column name) for the first dataset in the \code{MSnSetList}. 
 Default is \code{markers}.}
@@ -50,24 +53,29 @@ Default is \code{markers}.}
 label (fData column name) for the second dataset in the \code{MSnSetList}. 
 Default is \code{markers}.}
 
-\item{foi}{A \code{\link{FeaturesOfInterest}} or 
+\item{foi}{A \code{\link{FeaturesOfInterest}} or
 \code{\link{FoICollection}} object.}
 
 \item{fig.height}{Height of the figure. Default is \code{"600px"}.}
 
 \item{fig.width}{Width of the figure. Default is \code{"100px"}.}
 
-\item{legend.width}{Width of the legend. Default is \code{"200\%"}.}
+\item{legend.width}{Width of the legend. Default is
+\code{"200\%"}.}
 
 \item{remap}{A \code{logical} indicating whether the second dataset in the
-\code{MSnSetList} should be remapped to the first dataset. Default is}
+\code{MSnSetList} should be remapped to the first dataset.names(cols) <- myclasses Default is}
 
 \item{nchar}{Maximum number of characters of the markers class
 names, before their names are truncated. Default is 10.}
 
-\item{all}{If \code{TRUE} all clusters are displayed on startup, if the
-total number of clusters is less than including 15. If \code{FALSE} 
-or otherwise, only the first cluster in the list is displayed.}
+\item{all}{If \code{TRUE} all clusters are displayed on startup,
+if the total number of clusters is less than including 15. If
+\code{FALSE} or otherwise, only the first cluster in the list
+is displayed.}
+
+\item{fcol}{Feature variable used to annotate clusters. Default is
+\code{NULL}.}
 }
 \value{
 For \code{classify} a \code{numeric} vector of thresholds, 
@@ -76,8 +84,8 @@ one per class, to use with \code{\link{getPredictions}}
 For \code{compare} and \code{main} a \code{character} vector of the 
 \code{featureNames} of the proteins selected is invisibly returned.
 
-For \code{pca} a \code{character} of protein names, of the 
-proteins selected upon application closure.
+For \code{pca} a \code{character} of protein names, of the
+    proteins selected upon application closure.
 }
 \description{
 These functions allow one to explore spatial proteomics data
