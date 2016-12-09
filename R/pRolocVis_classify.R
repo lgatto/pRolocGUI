@@ -25,15 +25,12 @@ pRolocVis_classify <- function(object,
     mcol <- "markers"
   if (!mcol %in% fvarLabels(object)) 
     stop("fcol missing in fData, please provide mcol")
-    
-
   
   ## Return scores
   on.exit(return(us))
   
   ## Get pcas coords for plot
   pcas <- plot2D(object, fcol = NULL, plot = FALSE, ...)
-
  
   ## Marker colours
   orgs <- getMarkerClasses(object, fcol = mcol)
