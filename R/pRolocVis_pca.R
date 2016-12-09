@@ -51,7 +51,6 @@ pRolocVis_pca <- function(object,
         setUnknowncol(NULL)
         return(invisible(idDT))
     })
-    browser()
   
     ## Usual checks
     if (!inherits(object, "MSnSet"))
