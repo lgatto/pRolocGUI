@@ -61,15 +61,19 @@ Bioconductor list.
 ### 1. Introduction
 
 Starting a pRolocGUI application is easy as it gets. Just type 
-```{r, eval = FALSE}
+
+```r
 pRolocVIS()
 ```
+
 in your console window and press [Enter]. This will open a new tab in your 
 Internet browser and after a bit you will see the application. You can also
-pass directly a MSnSet (e.g. dunkley 2006) to pRolocVIS by entering
-```{r, eval = FALSE}
+pass directly a MSnSet to pRolocVIS by entering
+
+```r
 pRolocVIS(object = dunkley2006)
 ```
+
 To stop the application from running press [Crtl] + [C] or [Esc] in the 
 console and close the browser tab. 
 
