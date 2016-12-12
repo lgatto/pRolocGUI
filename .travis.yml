@@ -8,8 +8,25 @@ apt_packages:
 r:
   - bioc-devel
 
+r_packages:
+  - rmarkdown
+  - knitr
+  - shiny
+  - scales
+  - plyr
+  - DT
+
+bioc_packages:
+  - pRoloc
+  - pRolocdata
+  - MSnbase
+  - BiocStyle
+  - Biobase
+
 after_success:
   - Rscript -e 'covr::codecov()'
+
+
 
 # print timings (of examples) and sysinfo
 after_script:
