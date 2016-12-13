@@ -445,8 +445,7 @@ pRolocVis_pca <- function(object,
         }
     app <- list(ui = ui, server = server)
     runApp(app)
-=======
-  on.exit(return(invisible(idDT)))
+    on.exit(return(invisible(idDT)))
 
   
   ## Usual checks
@@ -839,7 +838,6 @@ pRolocVis_pca <- function(object,
     }
   app <- list(ui = ui, server = server)
   runApp(app)
->>>>>>> devel
 }
 
 
