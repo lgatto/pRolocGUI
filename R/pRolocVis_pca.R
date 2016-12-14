@@ -149,7 +149,6 @@ pRolocVis_pca <- function(object,
                                         #     }
     }
   
-    # browser()
     ## Marker colours
     cols <- getStockcol()
     if (length(cols) < ncol(pmarkers)) {
