@@ -16,7 +16,7 @@ pRolocVis_compare(object, fcol1, fcol2, foi, fig.height = "600px",
   fig.width = "100\%", legend.width = "200\%", legend.cex = 1,
   remap = TRUE, nchar = 40, all = TRUE, ...)
 
-pRolocVis_pca(object, fcol = NULL, foi, fig.height = "600px",
+pRolocVis_pca(object, fcol = "markers", foi, fig.height = "600px",
   fig.width = "100\%", legend.width = "200\%", legend.cex = 1,
   nchar = 40, all = TRUE, ...)
 }
@@ -29,7 +29,8 @@ application.}
 (default), \code{"classify"}, \code{"compare"}.See description
 below.}
 
-\item{fcol}{The feature meta-data label (fData column name). This
+\item{fcol}{The feature meta-data label (\code{fData} column name)
+to be used for colouring. Default is \code{"markers"}. This
 will correspond to the prediction column if using "classify",
 or the markers (labelled data) to be plotted otherwise. If set
 to \code{NULL}, no annotation is expected.}
@@ -73,9 +74,6 @@ names, before their names are truncated. Default is 10.}
 if the total number of clusters is less than including 15. If
 \code{FALSE} or otherwise, only the first cluster in the list
 is displayed.}
-
-\item{fcol}{Feature variable used to annotate clusters. Default is
-\code{NULL}.}
 }
 \value{
 For \code{classify} a \code{numeric} vector of thresholds, 

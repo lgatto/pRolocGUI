@@ -28,10 +28,11 @@
 ##' @param app The type of application requested: \code{"main"}
 ##'     (default), \code{"classify"}, \code{"compare"}.See description
 ##'     below.
-##' @param fcol The feature meta-data label (fData column name). This
+##' @param fcol The feature meta-data label (\code{fData} column name)
+##'     to be used for colouring. Default is \code{"markers"}. This
 ##'     will correspond to the prediction column if using "classify",
 ##'     or the markers (labelled data) to be plotted otherwise. If set
-##'     to \code{NULL}, no annotation is expected.
+##'     to \code{NULL}, no annotation is expected. 
 ##' @param legend.cex Point character expansion for the the legend.
 ##'     Default is 1.
 ##' @param ... Additional parameters passed to the respective app.
