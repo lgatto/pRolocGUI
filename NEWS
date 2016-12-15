@@ -1,3 +1,7 @@
+CHANGES IN VERSION 1.9.2
+------------------------
+ o Remove accidental merging left-over <2016-12-13 Tue>
+ 
 CHANGES IN VERSION 1.9.1
 ------------------------
  o Remove accidental call to browser 
