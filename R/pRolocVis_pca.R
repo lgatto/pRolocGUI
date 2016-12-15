@@ -17,8 +17,6 @@
 
 ##' @rdname pRolocVis-apps
 ##' @param object
-##' @param fcol Feature variable used to annotate clusters. Default is
-##'     \code{NULL}.
 ##' @param foi A \code{\link{FeaturesOfInterest}} or
 ##'     \code{\link{FoICollection}} object.
 ##' @param fig.height Height of the figure. Default is \code{"600px"}.
