@@ -63,7 +63,7 @@
 <p>If you use these open-source software for your research, please cite:</p>
 <blockquote>
 <p>Gatto L, Breckels LM, Wieczorek S, Burger T, Lilley KS. Mass-spectrometry-based spatial proteomics data analysis using pRoloc and pRolocdata. Bioinformatics. 2014 May 1;30(9):1322-4. <a href="doi:10.1093/bioinformatics/btu013">doi:10.1093/bioinformatics/btu013</a>. Epub 2014 Jan 11. PubMed PMID: 24413670; PubMed Central PMCID: PMC3998135.</p>
-<p>Breckels LM, Gatto L, Christoforou A, Groen AJ, Lilley KS, Trotter MW. The effect of organelle discovery upon sub-cellular protein localisation. J Proteomics. 2013 Mar 21. <a href="doi:pii">doi:pii</a>: S1874-3919(13)00094-8. 10.1016/j.jprot.2013.02.019. [Epub ahead of print] PubMed PMID: 23523639.</p>
+<p>Breckels LM, Gatto L, Christoforou A, Groen AJ, Lilley KS, Trotter MW. The effect of organelle discovery upon sub-cellular protein localisation. J Proteomics. 2013 Mar 21. <a href="doi:pii">doi:pii</a>: S1874-3919(13)00094-8. 10.1016/j.jprot.2013.02.019. PubMed PMID: 23523639.</p>
 <p>Gatto L., Breckels L.M., Burger T, Nightingale D.J.H., Groen A.J., Campbell C., Mulvey C.M., Christoforou A., Ferro M., Lilley K.S. ‘A foundation for reliable spatial proteomics data analysis’ Mol Cell Proteomics. 2014 May 20.</p>
 </blockquote>
 </div>
@@ -76,23 +76,25 @@
 <p>3) Start <code>R</code> or <code>RStudio</code>.</p>
 <p>4) Install the Bioconductor packages <code>pRoloc</code>, <code>pRolocdata</code> and <code>pRolocGUI</code>:</p>
 <p><code>pRolocGUI</code> requires <code>R &gt;= 3.1.1</code> and Bioconductor version <code>&gt;= 3.0</code>. In an <code>R</code> console, type</p>
-<p><code>{r dev} source("http://www.bioconductor.org/biocLite.R") biocLite(c("pRoloc", "pRolocdata", "pRolocGUI"))</code></p>
+<pre><code>source("http://www.bioconductor.org/biocLite.R")
+biocLite(c("pRoloc", "pRolocdata", "pRolocGUI"))</code></pre>
 <div id="development-version" class="section level4">
 <h4 class="hasAnchor">
 <a href="#development-version" class="anchor"> </a>Development version</h4>
 <p>The development code on github can be installed using <code>biocLite</code> (or <code>install_github</code>). New pre-release features might not be documented or thoroughly tested and could substantially change prior to release. Use at your own risks.</p>
-<p><code>{r} biocLite("ComputationalProteomicsUnit/pRolocGUI")</code></p>
+<pre><code>biocLite("ComputationalProteomicsUnit/pRolocGUI")</code></pre>
 </div>
 </div>
 <div id="getting-started" class="section level2">
 <h2 class="hasAnchor">
 <a href="#getting-started" class="anchor"> </a>Getting started</h2>
 <p>Before using a package’s functionality, it needs to be loaded:</p>
-<p><code>{r load} library("pRolocGUI")</code></p>
+<pre><code>library("pRolocGUI")</code></pre>
 <p>We first load data from <a href="http://www.nature.com/ncomms/2016/160112/ncomms9992/full/ncomms9992.html">Christoforou et al 2016</a> distributed in the <code>pRolocdata</code> package:</p>
-<p><code>{r hyperLOP} library("pRolocdata") data(hyperLOPIT2015)</code></p>
+<pre><code>library("pRolocdata")
+data(hyperLOPIT2015)</code></pre>
 <p>There are 3 different visualisation applications currently available: <code>main</code>, <code>classification</code> and <code>compare</code>. These apps are launched using the <code>pRolocVis</code> function and passing <code>object</code>, which is an <code>MSnSet</code> containing the data one wishes to interrogate. One may also specify which app they wish to use by using the <code>app</code> argument, see <code><a href="reference/pRolocVis.html">?pRolocVis</a></code> for more details. The default app that is loaded if <code>app</code> is not specified is the <code>main</code> application:</p>
-<p><code>{r gui} pRolocVis(hyperLOPIT2015)</code></p>
+<pre><code><a href="reference/pRolocVis.html">pRolocVis(hyperLOPIT2015)</a></code></pre>
 <p><img src="https://github.com/ComputationalProteomicsUnit/pRolocGUI/blob/master/vignettes/figures/SS_PCA1.jpg" alt="Screenshot - PCA"></p>
 <p>The graphical interface is described in details in the package vignette that is included in the package itself (get it by typing <code><a href="articles/pRolocGUI.html">vignette("pRolocGUI")</a></code> in <code>R</code>), available by clicking the <code>?</code> once the interface is loaded or can be <a href="http://bioconductor.org/packages/devel/bioc/vignettes/pRolocGUI/inst/doc/pRolocGUI.html">consulted online</a>.</p>
 </div>
