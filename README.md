@@ -45,8 +45,8 @@ If you use these open-source software for your research, please cite:
 >  Breckels LM, Gatto L, Christoforou A, Groen AJ, Lilley KS, Trotter
 >  MW. The effect of organelle discovery upon sub-cellular protein
 >  localisation. J Proteomics. 2013 Mar 21. doi:pii:
->  S1874-3919(13)00094-8. 10.1016/j.jprot.2013.02.019. [Epub ahead of
->  print] PubMed PMID: 23523639.
+>  S1874-3919(13)00094-8. 10.1016/j.jprot.2013.02.019. PubMed PMID:
+>  23523639.
 >
 >  Gatto L., Breckels L.M., Burger T, Nightingale D.J.H., Groen A.J.,
 >  Campbell C., Mulvey C.M., Christoforou A., Ferro M., Lilley K.S. 'A
