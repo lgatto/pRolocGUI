@@ -1,13 +1,21 @@
 --- 
 title: "pRolocGUI - Interactive visualisation of spatial proteomics data" 
-author: "Lisa Breckels, Thomas Naake and Laurent Gatto" 
-output:  
-  BiocStyle::html_document
+author: 
+- name: Lisa Breckels
+  affiliation: 
+    - &cpu Computational Proteomics Unit, Cambridge, UK 
+- name: Thomas Naake
+- name: Laurent Gatto
+  affiliation: *cpu
+package: pRolocGUI
+output:
+  BiocStyle::html_document2:
+    toc_float: true
 vignette: >
   %\VignetteIndexEntry{pRolocGUI - Interactive visualisation of spatial proteomics data} 
   %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteKeywords{Infrastructure, Bioinformatics, ontology, data}
   %\VignetteEncoding{UTF-8}
-  %\VignettePackage{pRolocGUI}
 ---
 
 
@@ -283,7 +291,7 @@ This tutorial also contains more information on machine learning, the practise
 of training and testing, and some extensive examples of machine learning 
 classification in spatial proteomics.)
 
-```{r classify, eval = TRUE, echo = TRUE, message = FALSE} 
+```{r classify, eval = TRUE, echo = TRUE, warning = FALSE} 
 opt <- svmOptimisation(object = hyperLOPIT2015, 
                        fcol = "markers", 
                        times = 3, verbose = FALSE)
@@ -418,7 +426,7 @@ in the Table Selection tab.
 ![The compare application, table selection](figures/SS_Compare7.jpg)
 
 
-## References
+# References
 
 Gatto L., Vizcaíno J.A., Hermjakob H., Huber W. and Lilley K.S.
 *Organelle proteomics experimental designs and analysis* [Proteomics,
