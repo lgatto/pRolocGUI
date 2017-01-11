@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.org/lmsimp/bioc-pRoloc-hyperLOPIT-workflow.svg?branch=master)](https://travis-ci.org/lmsimp/bioc-pRoloc-hyperLOPIT-workflow) 
+[![Bioconductor devel build Status](http://bioconductor.org/shields/build/devel/bioc/pRolocGUI.svg)](http://bioconductor.org/packages/devel/bioc/html/pRolocGUI.html) 
+[![Bioconductor release build Status](http://bioconductor.org/shields/build/release/bioc/pRolocGUI.svg)](http://bioconductor.org/packages/release/bioc/html/pRolocGUI.html)
+
 Exploring and visualising spatial proteomics data
 =================================================
 
@@ -41,20 +45,13 @@ If you use these open-source software for your research, please cite:
 >  Breckels LM, Gatto L, Christoforou A, Groen AJ, Lilley KS, Trotter
 >  MW. The effect of organelle discovery upon sub-cellular protein
 >  localisation. J Proteomics. 2013 Mar 21. doi:pii:
->  S1874-3919(13)00094-8. 10.1016/j.jprot.2013.02.019. [Epub ahead of
->  print] PubMed PMID: 23523639.
+>  S1874-3919(13)00094-8. 10.1016/j.jprot.2013.02.019. PubMed PMID:
+>  23523639.
 >
 >  Gatto L., Breckels L.M., Burger T, Nightingale D.J.H., Groen A.J.,
 >  Campbell C., Mulvey C.M., Christoforou A., Ferro M., Lilley K.S. 'A
 >  foundation for reliable spatial proteomics data analysis' Mol Cell
 >  Proteomics. 2014 May 20. 
-
-## Build status
-
-
-| Github | Bioconductor devel | Bioconductor release |
-|:------:|:------------------:|:--------------------:|
-| [![Build Status](https://travis-ci.org/lmsimp/bioc-pRoloc-hyperLOPIT-workflow.svg?branch=master)](https://travis-ci.org/lmsimp/bioc-pRoloc-hyperLOPIT-workflow) | [![Build Status](http://bioconductor.org/shields/build/devel/bioc/pRolocGUI.svg)](http://bioconductor.org/packages/devel/bioc/html/pRolocGUI.html) | [![Build Status](http://bioconductor.org/shields/build/release/bioc/pRolocGUI.svg)](http://bioconductor.org/packages/release/bioc/html/pRolocGUI.html) |
 
 ## Installation
 
@@ -78,7 +75,7 @@ excellent integration with the `R` terminal.
 `pRolocGUI` requires `R >= 3.1.1` and Bioconductor version `>= 3.0`.
 In an `R` console, type
 
-```{r dev}
+```
 source("http://www.bioconductor.org/biocLite.R")
 biocLite(c("pRoloc", "pRolocdata", "pRolocGUI"))
 ```
@@ -90,7 +87,7 @@ The development code on github can be installed using `biocLite` (or
 thoroughly tested and could substantially change prior to release. Use
 at your own risks.
 
-```{r}
+```
 biocLite("ComputationalProteomicsUnit/pRolocGUI")
 ```
 
@@ -98,7 +95,7 @@ biocLite("ComputationalProteomicsUnit/pRolocGUI")
 
 Before using a package's functionality, it needs to be loaded:
 
-```{r load}
+```
 library("pRolocGUI")
 ```
 
@@ -106,7 +103,7 @@ We first load data from
 [Christoforou et al 2016](http://www.nature.com/ncomms/2016/160112/ncomms9992/full/ncomms9992.html)
 distributed in the `pRolocdata` package:
 
-```{r hyperLOP}
+```
 library("pRolocdata")
 data(hyperLOPIT2015)
 ```
@@ -120,7 +117,7 @@ they wish to use by using the `app` argument, see `?pRolocVis`
 for more details. The default app that is loaded if 
 `app` is not specified is the `main` application:
 
-```{r gui}
+```
 pRolocVis(hyperLOPIT2015)
 ```
 
