@@ -1,3 +1,5 @@
 docs
 .gitignores
+.travis.yml
+
 
