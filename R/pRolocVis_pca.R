@@ -30,7 +30,9 @@
 ##'     if the total number of clusters is less than including 15. If
 ##'     \code{FALSE} or otherwise, only the first cluster in the list
 ##'     is displayed.
-##' @param ...
+##' @param ... Additional parameters passed to \code{plot2D}. Note
+##'     that \code{mirrorX} and \code{mirrorY} are currently silently
+##'     ignored.
 ##' @return For \code{pca} a \code{character} of protein names, of the
 ##'     proteins selected upon application closure.
 pRolocVis_pca <- function(object,
@@ -177,7 +179,8 @@ pRolocVis_pca <- function(object,
     if (!all | ncol(pmarkers) > 15)
         pmsel <- 1
   
-    pcas <- plot2D(object, fcol = NULL, plot = FALSE, ...)
+    pcas <- plot2D(object, fcol = NULL, plot = FALSE,
+                   mirrorX = FALSE, mirrorY = FALSE, ...)
     profs <- exprs(object)
   
   
@@ -292,6 +295,8 @@ pRolocVis_pca <- function(object,
                        xlim = ranges$x,
                        ylim = ranges$y,
                        fcol = newName,
+                       mirrorX = FALSE,
+                       mirrorY = FALSE,
                        ...)
                 if (!is.null(input$markers)) {
                     for (i in 1:length(input$markers)) 

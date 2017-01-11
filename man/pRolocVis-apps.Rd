@@ -74,6 +74,10 @@ names, before their names are truncated. Default is 10.}
 if the total number of clusters is less than including 15. If
 \code{FALSE} or otherwise, only the first cluster in the list
 is displayed.}
+
+\item{...}{Additional parameters passed to \code{plot2D}. Note
+that \code{mirrorX} and \code{mirrorY} are currently silently
+ignored.}
 }
 \value{
 For \code{classify} a \code{numeric} vector of thresholds, 

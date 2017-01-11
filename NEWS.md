@@ -5,7 +5,9 @@
 - Update vignette use latest BiocStyle::html_document2() with
    floating table-f content <2016-12-30 Fri>
 - Change to NEWS.md <2016-12-30 Fri>
- 
+- mirrorX and mirrorY are now ignored in pRolocVis - see issue #84
+  <2017-01-11 Wed>
+
 ## CHANGES IN VERSION 1.9.2
 
 - Remove accidental merging left-over <2016-12-13 Tue>
