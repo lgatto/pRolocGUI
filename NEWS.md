@@ -1,5 +1,9 @@
 # pRoloc 1.9
 
+## CHANGES IN VERSION 1.9.4
+
+- (nothing yet)
+
 ## CHANGES IN VERSION 1.9.3
 
 - Update vignette use latest BiocStyle::html_document2() with
