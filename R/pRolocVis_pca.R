@@ -32,7 +32,7 @@
 ##'     is displayed.
 ##' @param ... Additional parameters passed to \code{plot2D}. Note
 ##'     that \code{mirrorX} and \code{mirrorY} are currently silently
-##'     ignored.
+##'     ignored other than for the \code{compare} app.
 ##' @return For \code{pca} a \code{character} of protein names, of the
 ##'     proteins selected upon application closure.
 pRolocVis_pca <- function(object,
