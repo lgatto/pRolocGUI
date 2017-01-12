@@ -2,7 +2,7 @@
 
 ## CHANGES IN VERSION 1.9.4
 
-- (nothing yet)
+- fixed remap=FALSE bug in compare app <2017-01-12 Thu>
 
 ## CHANGES IN VERSION 1.9.3
 

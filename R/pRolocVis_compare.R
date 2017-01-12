@@ -5,7 +5,7 @@
 ##' label (fData column name) for the second dataset in the \code{MSnSetList}. 
 ##' Default is \code{markers}. 
 ##' @param remap A \code{logical} indicating whether the second dataset in the
-##' \code{MSnSetList} should be remapped to the first dataset.names(cols) <- myclasses Default is 
+##' \code{MSnSetList} should be remapped to the first dataset. The default is TRUE.
 ##' @return For \code{compare} and \code{main} a \code{character} vector of the 
 ##' \code{featureNames} of the proteins selected is invisibly returned.
 ##' @rdname pRolocVis-apps
@@ -200,7 +200,7 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
     plotmeth <- "PCA"
   }
   pcas <- lapply(object@x, plot2D, fcol = NULL, 
-                 plot = FALSE, method = "none", ...)
+                 plot = FALSE, method = plotmeth, ...)
   
   
   ## Create column of unknowns (needed later for plot2D in server)

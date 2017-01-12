@@ -65,7 +65,7 @@ Default is \code{markers}.}
 \code{"200\%"}.}
 
 \item{remap}{A \code{logical} indicating whether the second dataset in the
-\code{MSnSetList} should be remapped to the first dataset.names(cols) <- myclasses Default is}
+\code{MSnSetList} should be remapped to the first dataset. The default is TRUE.}
 
 \item{nchar}{Maximum number of characters of the markers class
 names, before their names are truncated. Default is 10.}
