@@ -14,7 +14,8 @@ pRolocVis_classify(object, fcol, scol, mcol = "markers", legend.cex = 1,
 
 pRolocVis_compare(object, fcol1, fcol2, foi, fig.height = "600px",
   fig.width = "100\%", legend.width = "200\%", legend.cex = 1,
-  remap = TRUE, nchar = 40, all = TRUE, ...)
+  remap = TRUE, nchar = 40, all = TRUE, mirrorX = FALSE,
+  mirrorY = FALSE, ...)
 
 pRolocVis_pca(object, fcol = "markers", foi, fig.height = "600px",
   fig.width = "100\%", legend.width = "200\%", legend.cex = 1,
@@ -46,13 +47,9 @@ data, for use with "classify".}
 \item{legend.cex}{Point character expansion for the the legend.
 Default is 1.}
 
-\item{fcol1}{If using the \code{compare} app this is the feature meta-data 
-label (fData column name) for the first dataset in the \code{MSnSetList}. 
-Default is \code{markers}.}
-
-\item{fcol2}{If using the \code{compare} app this is the feature meta-data 
-label (fData column name) for the second dataset in the \code{MSnSetList}. 
-Default is \code{markers}.}
+\item{fcol2}{If using the \code{compare} app this is the feature
+meta-data label (fData column name) for the second dataset in
+the \code{MSnSetList}.  Default is \code{markers}.}
 
 \item{foi}{A \code{\link{FeaturesOfInterest}} or
 \code{\link{FoICollection}} object.}
@@ -64,8 +61,9 @@ Default is \code{markers}.}
 \item{legend.width}{Width of the legend. Default is
 \code{"200\%"}.}
 
-\item{remap}{A \code{logical} indicating whether the second dataset in the
-\code{MSnSetList} should be remapped to the first dataset.names(cols) <- myclasses Default is}
+\item{remap}{A \code{logical} indicating whether the second
+dataset in the \code{MSnSetList} should be remapped to the
+first dataset. The default is TRUE.}
 
 \item{nchar}{Maximum number of characters of the markers class
 names, before their names are truncated. Default is 10.}
@@ -75,16 +73,25 @@ if the total number of clusters is less than including 15. If
 \code{FALSE} or otherwise, only the first cluster in the list
 is displayed.}
 
+\item{mirrorX}{Should the first PC of the second \code{MSnSet} in
+\code{object} be mirrored (default is \code{FALSE}). Only
+relevant when \code{remap} is \code{FALSE}.}
+
+\item{mirrorY}{Should the second PC of the second \code{MSnSet} in
+\code{object} be mirrored (default is \code{FALSE}). Only
+relevant when \code{remap} is \code{FALSE}.}
+
 \item{...}{Additional parameters passed to \code{plot2D}. Note
 that \code{mirrorX} and \code{mirrorY} are currently silently
-ignored.}
+ignored other than for the \code{compare} app.}
 }
 \value{
 For \code{classify} a \code{numeric} vector of thresholds, 
 one per class, to use with \code{\link{getPredictions}}
 
-For \code{compare} and \code{main} a \code{character} vector of the 
-\code{featureNames} of the proteins selected is invisibly returned.
+For \code{compare} and \code{main} a \code{character}
+    vector of the \code{featureNames} of the proteins selected is
+    invisibly returned.
 
 For \code{pca} a \code{character} of protein names, of the
     proteins selected upon application closure.
