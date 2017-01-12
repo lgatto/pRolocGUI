@@ -3,6 +3,7 @@
 ## CHANGES IN VERSION 1.9.4
 
 - fixed remap=FALSE bug in compare app <2017-01-12 Thu>
+- Added mirrorX and mirrorY to the compare app <2017-01-12 Thu>
 
 ## CHANGES IN VERSION 1.9.3
 

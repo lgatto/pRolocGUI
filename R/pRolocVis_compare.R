@@ -1,14 +1,29 @@
-##' @param fcol1 If using the \code{compare} app this is the feature meta-data 
-##' label (fData column name) for the first dataset in the \code{MSnSetList}. 
-##' Default is \code{markers}.
-##' @param fcol2 If using the \code{compare} app this is the feature meta-data 
-##' label (fData column name) for the second dataset in the \code{MSnSetList}. 
-##' Default is \code{markers}. 
-##' @param remap A \code{logical} indicating whether the second dataset in the
-##' \code{MSnSetList} should be remapped to the first dataset. The default is TRUE.
-##' @return For \code{compare} and \code{main} a \code{character} vector of the 
-##' \code{featureNames} of the proteins selected is invisibly returned.
+##' @return For \code{compare} and \code{main} a \code{character}
+##'     vector of the \code{featureNames} of the proteins selected is
+##'     invisibly returned.
 ##' @rdname pRolocVis-apps
+##' @param object
+##' @param fcol1
+##' @param fcol2 If using the \code{compare} app this is the feature
+##'     meta-data label (fData column name) for the second dataset in
+##'     the \code{MSnSetList}.  Default is \code{markers}.
+##' @param foi
+##' @param fig.height
+##' @param fig.width
+##' @param legend.width
+##' @param legend.cex
+##' @param remap A \code{logical} indicating whether the second
+##'     dataset in the \code{MSnSetList} should be remapped to the
+##'     first dataset. The default is TRUE.
+##' @param nchar
+##' @param all
+##' @param mirrorX Should the first PC of the second \code{MSnSet} in
+##'     \code{object} be mirrored (default is \code{FALSE}). Only
+##'     relevant when \code{remap} is \code{FALSE}.
+##' @param mirrorY Should the second PC of the second \code{MSnSet} in
+##'     \code{object} be mirrored (default is \code{FALSE}). Only
+##'     relevant when \code{remap} is \code{FALSE}.
+##' @param ...
 pRolocVis_compare <- function(object, fcol1, fcol2,
                               foi,
                               fig.height = "600px",
@@ -18,6 +33,8 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
                               remap = TRUE,
                               nchar = 40,
                               all = TRUE,
+                              mirrorX = FALSE,
+                              mirrorY = FALSE,
                               ...) {
                                
   ## Return featureNames of proteins selected
@@ -38,7 +55,8 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
   
   if (any(names(dotargs) == "fcol"))
     stop("Please specify fcol1 and fcol2 for each MSnSet respectively, see ?pRolocVis for more details")
-  
+    if (any(grepl("mirror", names(dotargs))))
+        stop("Mirroring only supported as direct 'mirrorX' and 'mirrorY'. ")
   
   ## fcol checks
   if (missing(fcol1) | missing(fcol2)) {
@@ -196,13 +214,18 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
     message("Remapping data to the same PC space")
     object <- pRoloc:::remap(object)
     plotmeth <- "none"
+    mirrorX <- mirrorY <- FALSE
   } else {
     plotmeth <- "PCA"
   }
-  pcas <- lapply(object@x, plot2D, fcol = NULL, 
-                 plot = FALSE, method = plotmeth, ...)
-  
-  
+   
+    pcas <- list(plot2D(object[[1]], fol = NULL, plot = FALSE,
+                        mirrorX = FALSE, mirrorY = FALSE,
+                        method = plotmeth, ...),
+                 plot2D(object[[2]], fol = NULL, plot = FALSE,
+                        mirrorX = mirrorX, mirrorY = mirrorY,
+                        method = plotmeth, ...))
+    
   ## Create column of unknowns (needed later for plot2D in server)
   newName <- paste0(format(Sys.time(), "%a%b%d%H%M%S%Y"), "unknowns")
   object <- lapply(object@x, function(x) {fData(x)[, newName] = "unknown"; x})
@@ -381,7 +404,9 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
                pch = 21, cex = 1,
                xlim = ranges$x,
                ylim = ranges$y,
-               fcol = newName, 
+               fcol = newName,
+               mirrorX = FALSE,
+               mirrorY = FALSE,
                ...)
         if (!is.null(input$markers)) {
           for (i in 1:length(input$markers)) {
@@ -412,6 +437,8 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
                xlim = ranges$x,
                ylim = ranges$y,
                fcol = newName,
+               mirrorX = mirrorX,
+               mirrorY = mirrorY,
                ...)
         if (!is.null(input$markers)) {
           for (i in 1:length(input$markers)) {
