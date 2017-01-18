@@ -2,7 +2,7 @@
 
 ## CHANGES IN VERSION 1.9.5
 
-- (nothing yet)
+- Fix broken documentation files <2017-01-18 Wed>
 
 ## CHANGES IN VERSION 1.9.4
 

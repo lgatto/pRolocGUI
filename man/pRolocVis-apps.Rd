@@ -47,7 +47,11 @@ data, for use with "classify".}
 \item{legend.cex}{Point character expansion for the the legend.
 Default is 1.}
 
-\item{fcol2}{If using the \code{compare} app this is the feature
+\item{fcol1}{In yhe \code{compare} app this is the feature
+meta-data label (fData column name) for the first dataset in
+the \code{MSnSetList}.  Default is \code{markers}.}
+
+\item{fcol2}{In the \code{compare} app this is the feature
 meta-data label (fData column name) for the second dataset in
 the \code{MSnSetList}.  Default is \code{markers}.}
 

@@ -3,8 +3,10 @@
 ##'     invisibly returned.
 ##' @rdname pRolocVis-apps
 ##' @param object
-##' @param fcol1
-##' @param fcol2 If using the \code{compare} app this is the feature
+##' @param fcol1 In yhe \code{compare} app this is the feature
+##'     meta-data label (fData column name) for the first dataset in
+##'     the \code{MSnSetList}.  Default is \code{markers}.
+##' @param fcol2 In the \code{compare} app this is the feature
 ##'     meta-data label (fData column name) for the second dataset in
 ##'     the \code{MSnSetList}.  Default is \code{markers}.
 ##' @param foi
@@ -23,7 +25,6 @@
 ##' @param mirrorY Should the second PC of the second \code{MSnSet} in
 ##'     \code{object} be mirrored (default is \code{FALSE}). Only
 ##'     relevant when \code{remap} is \code{FALSE}.
-##' @param ...
 pRolocVis_compare <- function(object, fcol1, fcol2,
                               foi,
                               fig.height = "600px",
