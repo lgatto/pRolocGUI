@@ -35,7 +35,6 @@
 ##'     to \code{NULL}, no annotation is expected. 
 ##' @param legend.cex Point character expansion for the the legend.
 ##'     Default is 1.
-##' @param ... Additional parameters passed to the respective app.
 ##' @author Laurent Gatto, Lisa Breckels and Thomas Naake
 ##' @seealso The package vignette: \code{vignette("pRolocGUI")}.
 ##' @examples

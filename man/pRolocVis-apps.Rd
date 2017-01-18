@@ -36,7 +36,9 @@ will correspond to the prediction column if using "classify",
 or the markers (labelled data) to be plotted otherwise. If set
 to \code{NULL}, no annotation is expected.}
 
-\item{...}{Additional parameters passed to the respective app.}
+\item{...}{Additional parameters passed to \code{plot2D}. Note
+that \code{mirrorX} and \code{mirrorY} are currently silently
+ignored other than for the \code{compare} app.}
 
 \item{scol}{The feature meta data column containing the 
 classification scores.}
@@ -84,10 +86,6 @@ relevant when \code{remap} is \code{FALSE}.}
 \item{mirrorY}{Should the second PC of the second \code{MSnSet} in
 \code{object} be mirrored (default is \code{FALSE}). Only
 relevant when \code{remap} is \code{FALSE}.}
-
-\item{...}{Additional parameters passed to \code{plot2D}. Note
-that \code{mirrorX} and \code{mirrorY} are currently silently
-ignored other than for the \code{compare} app.}
 }
 \value{
 For \code{classify} a \code{numeric} vector of thresholds, 
