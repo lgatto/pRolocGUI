@@ -87,7 +87,8 @@ interactively.</p>
 
 <span class='fu'>pRolocVis_compare</span>(<span class='no'>object</span>, <span class='no'>fcol1</span>, <span class='no'>fcol2</span>, <span class='no'>foi</span>, <span class='kw'>fig.height</span> <span class='kw'>=</span> <span class='st'>"600px"</span>,
   <span class='kw'>fig.width</span> <span class='kw'>=</span> <span class='st'>"100%"</span>, <span class='kw'>legend.width</span> <span class='kw'>=</span> <span class='st'>"200%"</span>, <span class='kw'>legend.cex</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>remap</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>nchar</span> <span class='kw'>=</span> <span class='fl'>40</span>, <span class='kw'>all</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)
+  <span class='kw'>remap</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>nchar</span> <span class='kw'>=</span> <span class='fl'>40</span>, <span class='kw'>all</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>mirrorX</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>mirrorY</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
 
 <span class='fu'>pRolocVis_pca</span>(<span class='no'>object</span>, <span class='kw'>fcol</span> <span class='kw'>=</span> <span class='st'>"markers"</span>, <span class='no'>foi</span>, <span class='kw'>fig.height</span> <span class='kw'>=</span> <span class='st'>"600px"</span>,
   <span class='kw'>fig.width</span> <span class='kw'>=</span> <span class='st'>"100%"</span>, <span class='kw'>legend.width</span> <span class='kw'>=</span> <span class='st'>"200%"</span>, <span class='kw'>legend.cex</span> <span class='kw'>=</span> <span class='fl'>1</span>,
@@ -110,7 +111,9 @@ will correspond to the prediction column if using &quot;classify&quot;,
 or the markers (labelled data) to be plotted otherwise. If set
 to <code>NULL</code>, no annotation is expected.</dd>
       <dt>...</dt>
-      <dd>Additional parameters passed to the respective app.</dd>
+      <dd>Additional parameters passed to <code>plot2D</code>. Note
+that <code>mirrorX</code> and <code>mirrorY</code> are currently silently
+ignored other than for the <code>compare</code> app.</dd>
       <dt>scol</dt>
       <dd>The feature meta data column containing the 
 classification scores.</dd>
@@ -121,13 +124,13 @@ data, for use with &quot;classify&quot;.</dd>
       <dd>Point character expansion for the the legend.
 Default is 1.</dd>
       <dt>fcol1</dt>
-      <dd>If using the <code>compare</code> app this is the feature meta-data 
-label (fData column name) for the first dataset in the <code>MSnSetList</code>. 
-Default is <code>markers</code>.</dd>
+      <dd>In yhe <code>compare</code> app this is the feature
+meta-data label (fData column name) for the first dataset in
+the <code>MSnSetList</code>.  Default is <code>markers</code>.</dd>
       <dt>fcol2</dt>
-      <dd>If using the <code>compare</code> app this is the feature meta-data 
-label (fData column name) for the second dataset in the <code>MSnSetList</code>. 
-Default is <code>markers</code>.</dd>
+      <dd>In the <code>compare</code> app this is the feature
+meta-data label (fData column name) for the second dataset in
+the <code>MSnSetList</code>.  Default is <code>markers</code>.</dd>
       <dt>foi</dt>
       <dd>A <code>FeaturesOfInterest</code> or
 <code>FoICollection</code> object.</dd>
@@ -139,8 +142,9 @@ Default is <code>markers</code>.</dd>
       <dd>Width of the legend. Default is
 <code>&quot;200%&quot;</code>.</dd>
       <dt>remap</dt>
-      <dd>A <code>logical</code> indicating whether the second dataset in the
-<code>MSnSetList</code> should be remapped to the first dataset.names(cols) &lt;- myclasses Default is</dd>
+      <dd>A <code>logical</code> indicating whether the second
+dataset in the <code>MSnSetList</code> should be remapped to the
+first dataset. The default is TRUE.</dd>
       <dt>nchar</dt>
       <dd>Maximum number of characters of the markers class
 names, before their names are truncated. Default is 10.</dd>
@@ -149,14 +153,23 @@ names, before their names are truncated. Default is 10.</dd>
 if the total number of clusters is less than including 15. If
 <code>FALSE</code> or otherwise, only the first cluster in the list
 is displayed.</dd>
+      <dt>mirrorX</dt>
+      <dd>Should the first PC of the second <code>MSnSet</code> in
+<code>object</code> be mirrored (default is <code>FALSE</code>). Only
+relevant when <code>remap</code> is <code>FALSE</code>.</dd>
+      <dt>mirrorY</dt>
+      <dd>Should the second PC of the second <code>MSnSet</code> in
+<code>object</code> be mirrored (default is <code>FALSE</code>). Only
+relevant when <code>remap</code> is <code>FALSE</code>.</dd>
     </dl>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>For <code>classify</code> a <code>numeric</code> vector of thresholds, 
 one per class, to use with <code>getPredictions</code></p>
-    <p>For <code>compare</code> and <code>main</code> a <code>character</code> vector of the 
-<code>featureNames</code> of the proteins selected is invisibly returned.</p>
+    <p>For <code>compare</code> and <code>main</code> a <code>character</code>
+    vector of the <code>featureNames</code> of the proteins selected is
+    invisibly returned.</p>
     <p>For <code>pca</code> a <code>character</code> of protein names, of the
     proteins selected upon application closure.</p>
     
