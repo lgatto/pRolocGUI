@@ -220,10 +220,10 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
     plotmeth <- "PCA"
   }
    
-    pcas <- list(plot2D(object[[1]], fol = NULL, plot = FALSE,
+    pcas <- list(plot2D(object[[1]], fcol = NULL, plot = FALSE,
                         mirrorX = FALSE, mirrorY = FALSE,
                         method = plotmeth, ...),
-                 plot2D(object[[2]], fol = NULL, plot = FALSE,
+                 plot2D(object[[2]], fcol = NULL, plot = FALSE,
                         mirrorX = mirrorX, mirrorY = mirrorY,
                         method = plotmeth, ...))
     
