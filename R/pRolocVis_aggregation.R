@@ -386,10 +386,10 @@ pRolocVis_aggregate <- function(object,
         if (length(idDT)) {
           ## If a peptide is selected, highlight the protein group on the proteins plot
           highlightOnPlot(pcas[[1]], as.character(fData(peps)[idDT, groupBy]), 
-                          cex = 1.3)
+                          cex = 1.3, pch = 19)
           if (input$checkbox) 
             highlightOnPlot(pcas[[1]], as.character(fData(peps)[idDT, groupBy]), 
-                            labels = TRUE, pos = 3)
+                            labels = TRUE, pos = 3, pch = 19)
         }
       })
       
@@ -546,7 +546,7 @@ pRolocVis_aggregate <- function(object,
           indPep <- which(fData(peps)[, groupBy] == idPlot)
           idPlot <- featureNames(peps)[indPep]
           
-          if (idPlot %in% idDT) {                          ## 1--is it already clicked?
+          if (any(idPlot %in% idDT)) {                          ## 1--is it already clicked?
             idDT <<- setdiff(idDT, idPlot)                 ## Yes, remove it from table
           } else {                                         ## 2--new click?
             idDT <<- c(idDT, idPlot)                       ## Yes, highlight it to table
@@ -558,7 +558,7 @@ pRolocVis_aggregate <- function(object,
           dist <- apply(pcas[[2]], 1, function(z) sqrt((input$dblClick2$x - z[1])^2 
                                                        + (input$dblClick2$y - z[2])^2))
           idPlot <- names(which(dist == min(dist)))
-          if (idPlot %in% idDT) {                          ## 1--is it already clicked?
+          if (any(idPlot %in% idDT)) {                          ## 1--is it already clicked?
             idDT <<- setdiff(idDT, idPlot)                 ## Yes, remove it from table
           } else {                                         ## 2--new click?
             idDT <<- c(idDT, idPlot)                       ## Yes, highlight it to table
@@ -604,13 +604,13 @@ pRolocVis_aggregate <- function(object,
         }
         ranges$x <- c(bminx, bmaxx)
         ranges$y <- c(bminy, bmaxy)
-        brushedProts1$i <- try(pcas[[1]][, 1] >= bminx 
+        brushedProts$i <- try(pcas[[1]][, 1] >= bminx 
                                & pcas[[1]][, 1] <= bmaxx)
-        brushedProts1$j <- try(pcas[[1]][, 2] >= bminy 
+        brushedProts$j <- try(pcas[[1]][, 2] >= bminy 
                                & pcas[[1]][, 2] <= bmaxy)
-        brushedProts2$i <- try(pcas[[2]][, 1] >= bminx 
+        brushedPeps$i <- try(pcas[[2]][, 1] >= bminx 
                                & pcas[[2]][, 1] <= bmaxx)
-        brushedProts2$j <- try(pcas[[2]][, 2] >= bminy 
+        brushedPeps$j <- try(pcas[[2]][, 2] >= bminy 
                                & pcas[[2]][, 2] <= bmaxy)
       })
       
