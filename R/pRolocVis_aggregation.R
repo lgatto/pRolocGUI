@@ -203,9 +203,9 @@ pRolocVis_aggregate <- function(object,
   
   ## all features are displayed on start
   toSel_prot <- 1:nrow(prots)
-  feats_prot <- featureNames(peps)
+  feats_prot <- featureNames(prots)
   
-  toSel_pep <- 1:nrow(prots)
+  toSel_pep <- 1:nrow(peps)
   feats_pep <- featureNames(peps)
   
   idDT <- character()
@@ -537,7 +537,7 @@ pRolocVis_aggregate <- function(object,
         
         feats_pep <<- names(which(brushedPeps$i & brushedPeps$j))
         feats_prot <<- names(which(brushedProts$i & brushedProts$j))
-        
+
         ## Double clicking to identify protein
         if (!is.null(input$dblClick1)) {
           dist <- apply(pcas[[1]], 1, function(z) sqrt((input$dblClick1$x - z[1])^2 
