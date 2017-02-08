@@ -33,6 +33,7 @@ pRolocVis_aggregate <- function(object,
                                 fig.width = "100%",
                                 legend.width = "200%",
                                 legend.cex = 1,
+                                remap = TRUE,
                                 nchar = 40,
                                 all = TRUE,
                                 mirrorX = FALSE,
@@ -190,11 +191,26 @@ pRolocVis_aggregate <- function(object,
   profs[[2]] <- exprs(peps)
   
   
+  ## Remap data to same PC space
+  if (remap) {
+    message("Remapping data to the same PC space")
+    datalist <- MSnSetList(list(prots, peps))
+    datalist <- pRoloc:::remap(datalist)
+    mirrorX <- mirrorY <- FALSE
+    prots <- datalist[[1]]
+    peps <- datalist[[2]]
+    plotmeth <- "none"
+  } else {
+    plotmeth <- "PCA"
+  }
+  
   ## Get PCs for each plot 
   pcas <- list(plot2D(prots, fcol = NULL, plot = FALSE,
-                      mirrorX = FALSE, mirrorY = FALSE),
+                      mirrorX = FALSE, mirrorY = FALSE,
+                      method = plotmeth),
                plot2D(peps, fcol = NULL, plot = FALSE,
-                      mirrorX = mirrorX, mirrorY = mirrorY))
+                      mirrorX = mirrorX, mirrorY = mirrorY,
+                      method = plotmeth))
   
   ## Create column of unknowns (needed later for plot2D in server)
   newName <- paste0(format(Sys.time(), "%a%b%d%H%M%S%Y"), "unknowns")
@@ -363,7 +379,7 @@ pRolocVis_aggregate <- function(object,
       output$pca1 <- renderPlot({
         par(mar = c(4, 4, 0, 0))
         par(oma = c(1, 0, 0, 0))
-        plot2D(prots,
+        plot2D(prots, method = plotmeth,
                col = rep(getUnknowncol(), nrow(prots)),
                pch = 21, cex = 1,
                xlim = ranges$x,
@@ -399,7 +415,7 @@ pRolocVis_aggregate <- function(object,
       output$pca2 <- renderPlot({
         par(mar = c(4, 4, 0, 0))
         par(oma = c(1, 0, 0, 0))
-        plot2D(peps,
+        plot2D(peps, method = plotmeth,
                col = rep(getUnknowncol(), nrow(peps)),
                pch = 21, cex = 1,
                xlim = ranges$x,
