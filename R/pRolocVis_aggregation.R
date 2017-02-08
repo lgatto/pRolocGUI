@@ -486,7 +486,8 @@ pRolocVis_aggregate <- function(object,
         ## If an item is clicked in the table highlight profile
         idDT <<- feats_pep[input$fDataTable_rows_selected]
         if (length(idDT)) {
-          matlines(t(profs[[1]][idDT, , drop = FALSE]),
+          showprots <- unique(as.character(fData(peps)[idDT, groupBy]))
+          matlines(t(profs[[1]][showprots, , drop = FALSE]),
                    col = "black",
                    lty = 1,
                    lwd = 2)
@@ -523,10 +524,9 @@ pRolocVis_aggregate <- function(object,
         idDT <<- feats_pep[input$fDataTable_rows_selected]
         if (length(idDT)) {
           
-          
           ## Now add all peptides with the same protein group as
           ## dashed lines
-          
+            
           protacc <- as.character(fData(peps)[idDT, groupBy])
           allpeps <- unlist(lapply(protacc, 
                                    function(z) feats_pep[fData(peps)[, groupBy] == z]))
