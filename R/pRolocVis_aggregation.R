@@ -572,13 +572,26 @@ pRolocVis_aggregate <- function(object,
         #                          rep("darkblue", ncol(.dt1)), '">', 
         #                          colnames(.dt1), '</span>')
         # dataDT <- cbind(.dt1, .dt2)
-        browser()
+        
+        # allprots <- featureNames(peps)[unlist(sapply(feats_prot, function(z) 
+        #   which(z == fData(peps)[, groupBy])))]
+        # 
+        # getacc <- as.character(fData(peps)[feats_pep, groupBy])
+        # 
+        # allpeps <- featureNames(peps)[unlist(sapply(getacc, function(z) 
+        #   which(z == fData(peps)[, groupBy])))]    
+        # 
+        # union_for_table <- unique(c(allpeps, allprots, feats_pep))
+
         dataDT <- fData(peps)[feats_pep, input$selTab, drop = FALSE]
         DT::datatable(data = dataDT, 
                       rownames = TRUE,
                       selection = list(mode = 'multiple', selected = toSel)
                       # escape = FALSE)     ## NB: `escape = FALSE` required for colname coloring
         )
+        
+        
+        
       })
       
       
