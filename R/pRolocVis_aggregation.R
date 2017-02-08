@@ -605,11 +605,7 @@ pRolocVis_aggregate <- function(object,
                       selection = list(mode = 'multiple', selected = toSel)
                       # escape = FALSE)     ## NB: `escape = FALSE` required for colname coloring
         )
-        
-        
-        
       })
-      
       
       ## When the reset button is clicked check to see is there is a brush on
       ## the plot, if yes zoom, if not reset the plot.
