@@ -202,10 +202,10 @@ pRolocVis_aggregate <- function(object,
   fData(prots)[, newName] <- "unknown"
   
   ## all features are displayed on start
-  toSel_prot <- 1:nrow(prots)
-  feats_prot <- featureNames(prots)
+  # toSel_prot <- 1:nrow(prots)
+  toSel <- 1:nrow(peps)
   
-  toSel_pep <- 1:nrow(peps)
+  feats_prot <- featureNames(prots)
   feats_pep <- featureNames(peps)
   
   idDT <- character()
@@ -425,7 +425,6 @@ pRolocVis_aggregate <- function(object,
           
           ## Keep selected peptide solid circle and all other peptides empty?
           
-          
           ## ==== highlight all peps with the same protein group 
           protacc <- as.character(fData(peps)[idDT, groupBy])
           allpeps <- unlist(lapply(protacc, 
@@ -573,10 +572,11 @@ pRolocVis_aggregate <- function(object,
         #                          rep("darkblue", ncol(.dt1)), '">', 
         #                          colnames(.dt1), '</span>')
         # dataDT <- cbind(.dt1, .dt2)
+        browser()
         dataDT <- fData(peps)[feats_pep, input$selTab, drop = FALSE]
         DT::datatable(data = dataDT, 
                       rownames = TRUE,
-                      selection = list(mode = 'multiple', selected = toSel),
+                      selection = list(mode = 'multiple', selected = toSel)
                       # escape = FALSE)     ## NB: `escape = FALSE` required for colname coloring
         )
       })
