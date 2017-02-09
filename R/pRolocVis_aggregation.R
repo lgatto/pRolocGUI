@@ -46,11 +46,21 @@ pRolocVis_aggregate <- function(object,
   ## Check input object is an MSnSet
   if (!inherits(object, "MSnSet"))
     stop("The input must be of class MSnSet")
- 
+  
   ## Combine to protein and put the protein MSnSet first in the list, 
   ## peptide MSnSet second in the list
   peps <- object
+  if (groupBy == "Protein.Group.Accessions") {
+    ## Add a new column to fData with # peps
+    pglabel <- "Protein.Group.Acc (# peps)"
+    tt <- table(fData(peps)[, groupBy])
+    cc <- tt[fData(peps)[, groupBy]]
+    cc <- paste0(names(cc), " (", cc,")")
+    fData(peps)[, pglabel] <- cc   
+    groupBy <- pglabel
+  }
   prots <- combineFeatures(peps, fData(peps)[, groupBy])
+  
 
     ## fcol checks
   # if (!is.null(fcol) && !fcol %in% fvarLabels(object)) {
@@ -236,7 +246,7 @@ pRolocVis_aggregate <- function(object,
                        multiple = TRUE,
                        selected = myclasses[pmsel]),
         sliderInput("trans", "Transparancy",
-                    min = 0,  max = 1, value = 0.5),
+                    min = 0,  max = 1, value = 0.25),
         checkboxInput("checkbox", label = "Show labels", value = TRUE),
         br(),
         actionButton("resetButton", "Zoom/reset plot"),
