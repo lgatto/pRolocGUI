@@ -59,7 +59,7 @@ pRolocVis_aggregate <- function(object,
     fData(peps)[, pglabel] <- cc   
     groupBy <- pglabel
   }
-  prots <- combineFeatures(peps, fData(peps)[, groupBy])
+  prots <- combineFeatures(peps, fData(peps)[, groupBy], ...)
   
 
     ## fcol checks
