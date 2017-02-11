@@ -446,9 +446,12 @@ pRolocVis_aggregate <- function(object,
       
       ## Scatter plot
       output$scatter <- renderPlot({
-        ggplot(data = protscatter, aes(x = nb_feats, y = agg_dist)) +
-          geom_point() +
-          geom_smooth(method = "lm")
+        ggscatter <- ggplot(data = protscatter, aes(x = nb_feats, y = agg_dist)) +
+                         geom_point() +
+                         geom_smooth(method = "lm")
+        idDT <<- feats_pep[input$fDataTable_rows_selected]
+        if (resetLabels$logical) idDT <<- character()
+        ggscatter
       })
       
       ## PCA plot 2
@@ -497,42 +500,7 @@ pRolocVis_aggregate <- function(object,
         resetLabels$logical <<- FALSE
       })
       
-      
-      # ## Protein profile plot 1
-      # output$profile1 <- renderPlot({
-      #   par(mar = c(8, 2, 1, 1))
-      #   par(oma = c(1, 0, 0, 1))
-      #   ylim <- range(profs[[1]])
-      #   n <- nrow(profs[[1]])
-      #   m <- ncol(profs[[1]])
-      #   fracs <- colnames(profs[[1]])
-      #   plot(0, ylim = ylim, xlim = c(1, m), ylab = "Intensity", 
-      #        type = "n", xaxt = "n", xlab = "")
-      #   axis(1, at = 1:m, labels = fracs, las = 2)
-      #   title(xlab = "Fractions", line = 5.5)
-      #   matlines(t(profs[[1]][feats_prot, ]),
-      #            col = getUnknowncol(),
-      #            lty = 1,
-      #            type = "l")
-      #   if (!is.null(input$markers)) {
-      #     for (i in 1:length(input$markers)) { 
-      #       if (!is.na(mrkSel1()[[i]][1]))
-      #         matlines(t(profs[[1]][mrkSel1()[[i]], ]),
-      #                  col = myCols()[i],
-      #                  lty = 1,
-      #                  lwd = 1.5) 
-      #     }
-      #   }
-      #   ## If an item is clicked in the table highlight profile
-      #   idDT <<- feats_pep[input$fDataTable_rows_selected]
-      #   if (length(idDT)) {
-      #     showprots <- unique(as.character(fData(peps)[idDT, groupBy]))
-      #     matlines(t(profs[[1]][showprots, , drop = FALSE]),
-      #              col = "black",
-      #              lty = 1,
-      #              lwd = 2)
-      #   }
-      # })
+
       
       
       ## Protein profile plot 2
@@ -593,14 +561,11 @@ pRolocVis_aggregate <- function(object,
         feats_pep <<- names(which(brushedPeps$i & brushedPeps$j))
         feats_prot <<- rownames(protscatter)
 
-        ## Double clicking to identify protein on the scatter
-        
+        ## DOUBLE CLICK on SCATTER PLOT to identify protein on the scatter
+        ## calculate distance from points on the scatter plot
         if (!is.null(input$dblClick1)) {
-          ## calculate distance from points on the scatter plot (modify dataframe earlier)
           dist <- apply(protscatter, 1, function(z) sqrt((input$dblClick1$x - z[1])^2 
                                                        + (input$dblClick1$y - z[2])^2))
-          
-          
           idPlot <- names(which(dist == min(dist)))
           indPep <- which(fData(peps)[, groupBy] == idPlot)
           idPlot <- featureNames(peps)[indPep]
@@ -612,7 +577,7 @@ pRolocVis_aggregate <- function(object,
           }
         }
         
-        ## Double clicking to identify peptide
+        ## DOUBLE CLICK on PCA PLOT to identify peptide
         if (!is.null(input$dblClick2)) {
           dist <- apply(pcas[[2]], 1, function(z) sqrt((input$dblClick2$x - z[1])^2 
                                                        + (input$dblClick2$y - z[2])^2))
@@ -625,25 +590,8 @@ pRolocVis_aggregate <- function(object,
         } 
         
         toSel <- match(idDT, feats_pep)                    ## selection to highlight in DT
+        if (resetLabels$logical) toSel <<- numeric()        ## reset labels
         
-        if (resetLabels$logical) toSel <- numeric()        ## reset labels
-        # .dt1 <- fData(object[[1]])[feats, input$selTab1, drop = FALSE]
-        # .dt2 <- fData(object[[2]])[feats, input$selTab2, drop = FALSE]
-        # colnames(.dt1) <- paste0('<span style="color:',   
-        #                          rep("darkblue", ncol(.dt1)), '">', 
-        #                          colnames(.dt1), '</span>')
-        # dataDT <- cbind(.dt1, .dt2)
-        
-        # allprots <- featureNames(peps)[unlist(sapply(feats_prot, function(z) 
-        #   which(z == fData(peps)[, groupBy])))]
-        # 
-        # getacc <- as.character(fData(peps)[feats_pep, groupBy])
-        # 
-        # allpeps <- featureNames(peps)[unlist(sapply(getacc, function(z) 
-        #   which(z == fData(peps)[, groupBy])))]    
-        # 
-        # union_for_table <- unique(c(allpeps, allprots, feats_pep))
-
         dataDT <- fData(peps)[feats_pep, input$selTab, drop = FALSE]
         DT::datatable(data = dataDT, 
                       rownames = TRUE,
