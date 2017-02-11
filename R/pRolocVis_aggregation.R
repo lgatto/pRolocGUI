@@ -202,9 +202,9 @@ pRolocVis_aggregate <- function(object,
   indna <- which(is.na(protscatter)) 
   protscatter[indna, 1] <- 0
   protscatter <- protscatter[, c(2, 1)]
+  protscatter$highlight <- "normal"
   
-  
-  
+
   ## Get data for profiles (need to do this here before changing MSnSet with remap
   ## as exprs data gets lost with remap)
   profs <- vector("list", 2)
@@ -272,7 +272,7 @@ pRolocVis_aggregate <- function(object,
                                       plotOutput("scatter",
                                                  height = fig.height,
                                                  width = fig.width,
-                                                 dblclick = "dblClick1"
+                                                 dblclick = "dblClickScatter"
                                                  # brush = brushOpts(
                                                  #   id = "pcaBrush1",
                                                  #   resetOnNew = TRUE)
@@ -282,7 +282,7 @@ pRolocVis_aggregate <- function(object,
                                       plotOutput("pca2",
                                                  height = fig.height,
                                                  width = fig.width,
-                                                 dblclick = "dblClick2",
+                                                 dblclick = "dblClickPCA",
                                                  brush = brushOpts(
                                                    id = "pcaBrush2",
                                                    resetOnNew = TRUE)),
@@ -363,30 +363,12 @@ pRolocVis_aggregate <- function(object,
       output$click_info <- renderPrint({
         # Because it's a ggplot2, we don't need to supply xvar or yvar; if this
         # were a base graphics plot, we'd need those.
-        nearPoints(protscatter, input$dblClick1, addDist = TRUE)
+        nearPoints(protscatter, input$dblClickScatter, addDist = TRUE)
       })
       
       
       
       ## Get coords for proteins according to selectized marker class(es)
-      ## NB: need two reactive objects here as markers in object[[1]] do not
-      ## necessarily have the same indices as markers in object[[2]] (would like
-      ## to allow different markers between different datasets)
-      
-      # mrkSel1 <- reactive({
-      #   ind <- match(input$markers, colnames(pmarkers[[1]]))
-      #   .mrkSel1 <- vector("list", length(input$markers))
-      #   for (i in seq(length(input$markers))) {
-      #     if (is.na(ind[i])) {
-      #       .mrkSel1[[i]] <- NA
-      #     } else {
-      #       .mrkSel1[[i]] <- which(pmarkers[[1]][, ind[i]] == 1)
-      #     }
-      #   }
-      #   .mrkSel1
-      # })
-
-        
       mrkSel2 <- reactive({
         ind <- match(input$markers, colnames(pmarkers[[2]]))
         .mrkSel2 <- vector("list", length(input$markers))
@@ -407,52 +389,38 @@ pRolocVis_aggregate <- function(object,
                       input$trans)[sapply(input$markers, function(z) 
                         which(names(cols) == z))]})
       
-      
-      
-      # ## PCA plot 1
-      # output$pca1 <- renderPlot({
-      #   par(mar = c(4, 4, 0, 0))
-      #   par(oma = c(1, 0, 0, 0))
-      #   plot2D(prots, method = plotmeth,
-      #          col = rep(getUnknowncol(), nrow(prots)),
-      #          pch = 21, cex = 1,
-      #          xlim = ranges$x,
-      #          ylim = ranges$y,
-      #          fcol = newName,
-      #          mirrorX = FALSE,
-      #          mirrorY = FALSE)
-      #   if (!is.null(input$markers)) {
-      #     for (i in 1:length(input$markers)) {
-      #       if (!is.na(mrkSel1()[[i]][1]))
-      #         points(pcas[[1]][mrkSel1()[[i]], ], pch = 16, 
-      #                cex = 1.4, col = myCols()[i])
-      #     }
-      #   } 
-      #   ## highlight point on plot by selecting item in table
-      #   ## remember that rows in the table are by peptide
-      #   idDT <<- feats_pep[input$fDataTable_rows_selected]
-      #   
-      #   if (resetLabels$logical) idDT <<- character()  ## If TRUE clear labels
-      #   if (length(idDT)) {
-      #     ## If a peptide is selected, highlight the protein group on the proteins plot
-      #     highlightOnPlot(pcas[[1]], as.character(fData(peps)[idDT, groupBy]), 
-      #                     cex = 1.3, pch = 19)
-      #     if (input$checkbox) 
-      #       highlightOnPlot(pcas[[1]], as.character(fData(peps)[idDT, groupBy]), 
-      #                       labels = TRUE, pos = 3, pch = 19)
-      #   }
-      # })
-      
+
       
       ## Scatter plot
       output$scatter <- renderPlot({
-        ggscatter <- ggplot(data = protscatter, aes(x = nb_feats, y = agg_dist)) +
-                         geom_point() +
-                         geom_smooth(method = "lm")
+        
+        if (input$checkbox) {
+          protscatter[unique(fData(peps)[idDT, groupBy]), "highlight"] <- "highlight"
+        } else {
+          protscatter[unique(fData(peps)[idDT, groupBy]), "highlight"] <- "normal"
+        }
+        
+        mycolours <- c("highlight" = "red", "normal" = "black")
+        ggscatter <- ggplot(data = protscatter %>% arrange(desc(highlight)),
+                            aes(x = nb_feats, y = agg_dist)) +
+          scale_color_manual(values = mycolours) +
+          theme(legend.position = "none") +
+          geom_point()
+        if (input$checkbox) {
+          ggscatter <- ggscatter + geom_point(aes(colour = highlight))
+        }
+        ggscatter <- ggscatter + geom_smooth(method = "lm")
+
+        # ggscatter <- ggplot(data = protscatter, aes(x = nb_feats, y = agg_dist)) +
+        #                  geom_point() +
+        #                  geom_smooth(method = "lm")
+        
         idDT <<- feats_pep[input$fDataTable_rows_selected]
         if (resetLabels$logical) idDT <<- character()
         ggscatter
       })
+      
+      
       
       ## PCA plot 2
       output$pca2 <- renderPlot({
@@ -563,13 +531,12 @@ pRolocVis_aggregate <- function(object,
 
         ## DOUBLE CLICK on SCATTER PLOT to identify protein on the scatter
         ## calculate distance from points on the scatter plot
-        if (!is.null(input$dblClick1)) {
-          dist <- apply(protscatter, 1, function(z) sqrt((input$dblClick1$x - z[1])^2 
-                                                       + (input$dblClick1$y - z[2])^2))
+        if (!is.null(input$dblClickScatter)) {
+          dist <- apply(protscatter[, 1:2], 1, function(z) sqrt((input$dblClickScatter$x - z[1])^2 
+                                                       + (input$dblClickScatter$y - z[2])^2))
           idPlot <- names(which(dist == min(dist)))
           indPep <- which(fData(peps)[, groupBy] == idPlot)
           idPlot <- featureNames(peps)[indPep]
-          
           if (any(idPlot %in% idDT)) {                     ## 1--is it already clicked?
             idDT <<- setdiff(idDT, idPlot)                 ## Yes, remove it from table
           } else {                                         ## 2--new click?
@@ -578,9 +545,9 @@ pRolocVis_aggregate <- function(object,
         }
         
         ## DOUBLE CLICK on PCA PLOT to identify peptide
-        if (!is.null(input$dblClick2)) {
-          dist <- apply(pcas[[2]], 1, function(z) sqrt((input$dblClick2$x - z[1])^2 
-                                                       + (input$dblClick2$y - z[2])^2))
+        if (!is.null(input$dblClickPCA)) {
+          dist <- apply(pcas[[2]], 1, function(z) sqrt((input$dblClickPCA$x - z[1])^2 
+                                                       + (input$dblClickPCA$y - z[2])^2))
           idPlot <- names(which(dist == min(dist)))
           if (any(idPlot %in% idDT)) {                          ## 1--is it already clicked?
             idDT <<- setdiff(idDT, idPlot)                 ## Yes, remove it from table
