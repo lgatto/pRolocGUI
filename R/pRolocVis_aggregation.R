@@ -394,6 +394,10 @@ pRolocVis_aggregate <- function(object,
       ## Scatter plot
       output$scatter <- renderPlot({
         
+        idDT <<- feats_pep[input$fDataTable_rows_selected]
+        if (resetLabels$logical) idDT <<- character()
+        
+        
         if (input$checkbox) {
           protscatter[unique(fData(peps)[idDT, groupBy]), "highlight"] <- "highlight"
         } else {
@@ -406,6 +410,7 @@ pRolocVis_aggregate <- function(object,
           scale_color_manual(values = mycolours) +
           theme(legend.position = "none") +
           geom_point()
+        
         if (input$checkbox) {
           ggscatter <- ggscatter + geom_point(aes(colour = highlight))
         }
@@ -414,9 +419,7 @@ pRolocVis_aggregate <- function(object,
         # ggscatter <- ggplot(data = protscatter, aes(x = nb_feats, y = agg_dist)) +
         #                  geom_point() +
         #                  geom_smooth(method = "lm")
-        
-        idDT <<- feats_pep[input$fDataTable_rows_selected]
-        if (resetLabels$logical) idDT <<- character()
+
         ggscatter
       })
       
@@ -549,7 +552,7 @@ pRolocVis_aggregate <- function(object,
           dist <- apply(pcas[[2]], 1, function(z) sqrt((input$dblClickPCA$x - z[1])^2 
                                                        + (input$dblClickPCA$y - z[2])^2))
           idPlot <- names(which(dist == min(dist)))
-          if (any(idPlot %in% idDT)) {                          ## 1--is it already clicked?
+          if (any(idPlot %in% idDT)) {                     ## 1--is it already clicked?
             idDT <<- setdiff(idDT, idPlot)                 ## Yes, remove it from table
           } else {                                         ## 2--new click?
             idDT <<- c(idDT, idPlot)                       ## Yes, highlight it to table
