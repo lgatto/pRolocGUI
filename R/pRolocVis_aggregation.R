@@ -14,17 +14,12 @@
 ##' @param fig.width
 ##' @param legend.width
 ##' @param legend.cex
-##' @param remap A \code{logical} indicating whether the second
-##'     dataset in the \code{MSnSetList} should be remapped to the
-##'     first dataset. The default is TRUE.
 ##' @param nchar
 ##' @param all
 ##' @param mirrorX Should the first PC of the second \code{MSnSet} in
-##'     \code{object} be mirrored (default is \code{FALSE}). Only
-##'     relevant when \code{remap} is \code{FALSE}.
+##'     \code{object} be mirrored (default is \code{FALSE}).
 ##' @param mirrorY Should the second PC of the second \code{MSnSet} in
-##'     \code{object} be mirrored (default is \code{FALSE}). Only
-##'     relevant when \code{remap} is \code{FALSE}.
+##'     \code{object} be mirrored (default is \code{FALSE}). 
 pRolocVis_aggregate <- function(object, 
                                 fcol,
                                 # foi,
@@ -33,7 +28,6 @@ pRolocVis_aggregate <- function(object,
                                 fig.width = "100%",
                                 legend.width = "200%",
                                 legend.cex = 1,
-                                remap = TRUE,
                                 nchar = 40,
                                 all = TRUE,
                                 mirrorX = FALSE,
@@ -95,7 +89,6 @@ pRolocVis_aggregate <- function(object,
   
   
   ## Extract two binary matrices (pmarkers) for each MSnSet for markers
-  
   pmarkers <- vector("list", length = 2)
   
   if (isMrkVec(prots, fcol)) {
@@ -136,7 +129,6 @@ pRolocVis_aggregate <- function(object,
   # }     ## NB: pmarkers[[1]] and pmarkers[[2]] contains the same num of rows/proteins
   
   
-  
   ## Check foi matches some proteins/features in the dataset
   # sumpm <- lapply(pmarkers, function(z) apply(z, 2, sum, na.rm = TRUE))
   # if (any(sumpm[[1]] == 0)) {
@@ -144,20 +136,6 @@ pRolocVis_aggregate <- function(object,
   #   pmarkers[[1]] <- pmarkers[[1]][, -which(sumpm[[1]] == 0)]
   #   pmarkers[[2]] <- pmarkers[[2]][, -which(sumpm[[2]] == 0)]
   # }
-
-  
-  
-  # ## Convert GO names to CC names
-  # if (length(grep("GO:", colnames(pmarkers[[1]]))) > 0) {
-  #   for (i in 1:length(pmarkers)) {
-  #     cn <- pRoloc::flipGoTermId(colnames(pmarkers[[i]]))
-  #     if (all(!is.na(cn))) {
-  #       names(cn) <- NULL
-  #       colnames(pmarkers[[i]]) <- cn
-  #     } 
-  #   }
-  # }  
-  
   
   ## Marker colours
   cols <- getStockcol()
@@ -172,21 +150,21 @@ pRolocVis_aggregate <- function(object,
   names(cols) <- myclasses
 
   
-  ## Shorten markers names if too long
-  # for (i in 1:length(object)) {
-  #   cn <- sapply(colnames(pmarkers[[i]]),
-  #                function(x) {
-  #                  if (nchar(x) > nchar) {
-  #                    x <- strsplit(x, "")[[1]]
-  #                    x <- paste(x[1:nchar], collapse = "")
-  #                    x <- sub(" +$", "", x)
-  #                    x <- paste0(x, "...")
-  #                  }
-  #                  return(x)
-  #                })
-  #   names(cn) <- NULL
-  #   colnames(pmarkers[[i]]) <- cn
-  # }
+  # Shorten markers names if too long
+  for (i in 1:length(object)) {
+    cn <- sapply(colnames(pmarkers[[i]]),
+                 function(x) {
+                   if (nchar(x) > nchar) {
+                     x <- strsplit(x, "")[[1]]
+                     x <- paste(x[1:nchar], collapse = "")
+                     x <- sub(" +$", "", x)
+                     x <- paste0(x, "...")
+                   }
+                   return(x)
+                 })
+    names(cn) <- NULL
+    colnames(pmarkers[[i]]) <- cn
+  }
   
   
   ## Display all classes unless user specifies not to
@@ -205,33 +183,18 @@ pRolocVis_aggregate <- function(object,
   protscatter$highlight <- "normal"
   
 
-  ## Get data for profiles (need to do this here before changing MSnSet with remap
-  ## as exprs data gets lost with remap)
+  ## Get data for profiles 
   profs <- vector("list", 2)
   profs[[1]] <- exprs(prots)
   profs[[2]] <- exprs(peps)
   
   
-  ## Remap data to same PC space
-  if (remap) {
-    message("Remapping data to the same PC space")
-    datalist <- MSnSetList(list(prots, peps))
-    datalist <- pRoloc:::remap(datalist)
-    mirrorX <- mirrorY <- FALSE
-    prots <- datalist[[1]]
-    peps <- datalist[[2]]
-    plotmeth <- "none"
-  } else {
-    plotmeth <- "PCA"
-  }
-  
   ## Get PCs for each plot 
   pcas <- list(plot2D(prots, fcol = NULL, plot = FALSE,
-                      mirrorX = FALSE, mirrorY = FALSE,
-                      method = plotmeth),
+                      mirrorX = FALSE, mirrorY = FALSE),
                plot2D(peps, fcol = NULL, plot = FALSE,
-                      mirrorX = mirrorX, mirrorY = mirrorY,
-                      method = plotmeth))
+                      mirrorX = mirrorX, mirrorY = mirrorY))
+  
   
   ## Create column of unknowns (needed later for plot2D in server)
   newName <- paste0(format(Sys.time(), "%a%b%d%H%M%S%Y"), "unknowns")
@@ -273,9 +236,6 @@ pRolocVis_aggregate <- function(object,
                                                  height = fig.height,
                                                  width = fig.width,
                                                  dblclick = "dblClickScatter"
-                                                 # brush = brushOpts(
-                                                 #   id = "pcaBrush1",
-                                                 #   resetOnNew = TRUE)
                                                  ),
                                       offset = 0),
                                column(5, 
@@ -300,11 +260,6 @@ pRolocVis_aggregate <- function(object,
                     ),
                     tabPanel("Profiles", id = "profilesPanel",
                              fluidRow(
-                               # column(5,
-                               #        plotOutput("profile1",
-                               #                   height = "400px",
-                               #                   width = "110%"),
-                               #        offset = 0),
                                column(8,
                                       plotOutput("profile2",
                                                  height = "400px",
@@ -345,10 +300,6 @@ pRolocVis_aggregate <- function(object,
       
       
       ## Capture brushed proteins for zoom
-      # brushedProts <- reactiveValues(i =  try(pcas[[1]][, 1] >= min(pcas[[1]][, 1]) & 
-      #                                            pcas[[1]][, 1] <= max(pcas[[1]][, 1])),
-      #                                 j = try(pcas[[1]][, 2] >= min(pcas[[1]][, 2]) & 
-      #                                           pcas[[1]][, 2] <= max(pcas[[1]][, 2])))
       brushedPeps <- reactiveValues(i =  try(pcas[[2]][, 1] >= min(pcas[[2]][, 1]) & 
                                              pcas[[2]][, 1] <= max(pcas[[2]][, 1])),
                                     j = try(pcas[[2]][, 2] >= min(pcas[[2]][, 2]) & 
@@ -396,8 +347,7 @@ pRolocVis_aggregate <- function(object,
         
         idDT <<- feats_pep[input$fDataTable_rows_selected]
         if (resetLabels$logical) idDT <<- character()
-        
-        
+ 
         if (input$checkbox) {
           protscatter[unique(fData(peps)[idDT, groupBy]), "highlight"] <- "highlight"
         } else {
@@ -415,12 +365,8 @@ pRolocVis_aggregate <- function(object,
           ggscatter <- ggscatter + geom_point(aes(colour = highlight))
         }
         ggscatter <- ggscatter + geom_smooth(method = "lm")
-
-        # ggscatter <- ggplot(data = protscatter, aes(x = nb_feats, y = agg_dist)) +
-        #                  geom_point() +
-        #                  geom_smooth(method = "lm")
-
         ggscatter
+        
       })
       
       
@@ -429,9 +375,8 @@ pRolocVis_aggregate <- function(object,
       output$pca2 <- renderPlot({
         par(mar = c(4, 4, 0, 0))
         par(oma = c(1, 0, 0, 0))
-        plot2D(peps, method = plotmeth,
+        plot2D(peps, pch = 21, cex = 1,
                col = rep(getUnknowncol(), nrow(peps)),
-               pch = 21, cex = 1,
                xlim = ranges$x,
                ylim = ranges$y,
                fcol = newName,
