@@ -389,6 +389,12 @@ pRolocVis_aggregate <- function(object,
           if (input$checkbox) {
             highlightOnPlot(pcas[[2]], idDT, labels = TRUE, pos = 3, pch = 19)
           }
+          
+          ## === highlight corresponding proteins on PCA plot
+          highlightOnPlot(pcas[[1]], unique(protacc), cex = 3, lwd = 3,
+                          pch = 24, col = "black", bg = "grey")
+          
+          
         }
         resetLabels$logical <<- FALSE
       })
