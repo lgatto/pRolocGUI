@@ -331,7 +331,7 @@ pRolocVis_aggregate <- function(object,
         if (resetLabels$logical) idDT <<- character()
         ggscatter <- ggplot(data = data.frame(res), 
                             aes(x = nb_feats, y = agg_dist)) +
-          geom_point() +
+          geom_point(alpha = .5) +
           geom_smooth(method = "lm")
         if (length(idDT) > 0) {
           highlight <- unique(fData(data)[idDT, "Protein.Group.Accessions"])
@@ -543,7 +543,7 @@ pRolocVis_aggregate <- function(object,
         if (!is.null(input$markers)) {
           legend("topleft",
                  c(input$markers, "unlabelled"),
-                 col = c(myCols(), getUnknowncol()),
+                 col = c(substr(myCols(), 1, 7), getUnknowncol()),
                  ncol = 1, bty = "n",
                  
                  pch = c(rep(16, length(myCols())), 21),
@@ -569,7 +569,7 @@ pRolocVis_aggregate <- function(object,
         if (!is.null(input$markers)) {
           legend("topleft",
                  c(input$markers, "unlabelled"),
-                 col = c(myCols(), getUnknowncol()),
+                 col = c(substr(myCols(), 1, 7), getUnknowncol()),
                  ncol = 1, bty = "n",
                  pch = c(rep(16, length(myCols())), 21),
                  cex = legend.cex
