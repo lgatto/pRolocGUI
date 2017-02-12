@@ -188,12 +188,18 @@ pRolocVis_aggregate <- function(object,
   profs[[1]] <- exprs(prots)
   profs[[2]] <- exprs(peps)
   
+
+  ## Remap protein coords onto peptide PCA coords
+  remapped <- pRoloc:::remap(object = MSnSetList(list(peps, prots)))
+
   
   ## Get PCs for each plot 
-  pcas <- list(plot2D(prots, fcol = NULL, plot = FALSE,
-                      mirrorX = FALSE, mirrorY = FALSE),
-               plot2D(peps, fcol = NULL, plot = FALSE,
-                      mirrorX = mirrorX, mirrorY = mirrorY))
+  pcas <- list(plot2D(remapped[[2]], fcol = NULL, plot = FALSE,
+                      mirrorX = FALSE, mirrorY = FALSE,
+                      method = "none"),
+               plot2D(remapped[[1]], fcol = NULL, plot = FALSE,
+                      mirrorX = mirrorX, mirrorY = mirrorY,
+                      method = "none"))
   
   
   ## Create column of unknowns (needed later for plot2D in server)
@@ -329,16 +335,16 @@ pRolocVis_aggregate <- function(object,
       output$scatter <- renderPlot({
         idDT <<- feats_pep[input$fDataTable_rows_selected]
         if (resetLabels$logical) idDT <<- character()
-        ggscatter <- ggplot(data = data.frame(res), 
+        ggscatter <- ggplot(data = data.frame(protscatter), 
                             aes(x = nb_feats, y = agg_dist)) +
           geom_point(alpha = .5) +
           geom_smooth(method = "lm")
         if (length(idDT) > 0) {
-          highlight <- unique(fData(data)[idDT, "Protein.Group.Accessions"])
-          ggscatter <- ggscatter + geom_point(data = res[highlight, ], colour = "red")
+          highlight <- unique(fData(peps)[idDT, groupBy])
+          ggscatter <- ggscatter + geom_point(data = protscatter[highlight, ], colour = "red")
           if (input$checkbox) {
-            ggscatter <- ggscatter + annotate("text", x = res[highlight, 1], 
-                                              y = res[highlight, 2] + .03, 
+            ggscatter <- ggscatter + annotate("text", x = protscatter[highlight, 1], 
+                                              y = protscatter[highlight, 2] + .03, 
                                               label = highlight, colour = "red", 
                                               fontface = 2)
           }
@@ -371,12 +377,6 @@ pRolocVis_aggregate <- function(object,
         idDT <<- feats_pep[input$fDataTable_rows_selected]
         if (resetLabels$logical) idDT <<- character()  ## If TRUE labels are cleared
         if (length(idDT)) {
-    
-          ## If we select a peptide in the table, we want to highlight the peptide
-          ## of interest and all peptides belonging to the same protein group
-          
-          ## Keep selected peptide solid circle and all other peptides empty?
-          
           ## ==== highlight all peps with the same protein group 
           protacc <- as.character(fData(peps)[idDT, groupBy])
           allpeps <- unlist(lapply(protacc, 
@@ -515,10 +515,6 @@ pRolocVis_aggregate <- function(object,
         }
         ranges$x <- c(bminx, bmaxx)
         ranges$y <- c(bminy, bmaxy)
-        # brushedProts$i <- try(pcas[[1]][, 1] >= bminx 
-        #                        & pcas[[1]][, 1] <= bmaxx)
-        # brushedProts$j <- try(pcas[[1]][, 2] >= bminy 
-        #                        & pcas[[1]][, 2] <= bmaxy)
         brushedPeps$i <- try(pcas[[2]][, 1] >= bminx 
                                & pcas[[2]][, 1] <= bmaxx)
         brushedPeps$j <- try(pcas[[2]][, 2] >= bminy 
