@@ -16,7 +16,7 @@ importFrom(DT,
            ## dataTableOutput,
            ## renderDataTable,
            formatStyle)
-importFrom(dplyr, "%>%")
+importFrom(dplyr, "%>%", "arrange")
 
 
 export(pRolocVis)
