@@ -180,7 +180,7 @@ pRolocVis_aggregate <- function(object,
   indna <- which(is.na(protscatter)) 
   protscatter[indna, 1] <- 0
   protscatter <- protscatter[, c(2, 1)]
-  protscatter$highlight <- "normal"
+  # protscatter$highlight <- "normal"
   
 
   ## Get data for profiles 
@@ -344,29 +344,23 @@ pRolocVis_aggregate <- function(object,
       
       ## Scatter plot
       output$scatter <- renderPlot({
-        
         idDT <<- feats_pep[input$fDataTable_rows_selected]
         if (resetLabels$logical) idDT <<- character()
- 
-        if (input$checkbox) {
-          protscatter[unique(fData(peps)[idDT, groupBy]), "highlight"] <- "highlight"
-        } else {
-          protscatter[unique(fData(peps)[idDT, groupBy]), "highlight"] <- "normal"
-        }
-        
-        mycolours <- c("highlight" = "red", "normal" = "black")
-        ggscatter <- ggplot(data = protscatter %>% arrange(desc(highlight)),
+        ggscatter <- ggplot(data = data.frame(res), 
                             aes(x = nb_feats, y = agg_dist)) +
-          scale_color_manual(values = mycolours) +
-          theme(legend.position = "none") +
-          geom_point()
-        
-        if (input$checkbox) {
-          ggscatter <- ggscatter + geom_point(aes(colour = highlight))
+          geom_point() +
+          geom_smooth(method = "lm")
+        if (length(idDT) > 0) {
+          highlight <- unique(fData(data)[idDT, "Protein.Group.Accessions"])
+          ggscatter <- ggscatter + geom_point(data = res[highlight, ], colour = "red")
+          if (input$checkbox) {
+            ggscatter <- ggscatter + annotate("text", x = res[highlight, 1], 
+                                              y = res[highlight, 2] + .03, 
+                                              label = highlight, colour = "red", 
+                                              fontface = 2)
+          }
         }
-        ggscatter <- ggscatter + geom_smooth(method = "lm")
         ggscatter
-        
       })
       
       
