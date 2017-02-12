@@ -251,12 +251,7 @@ pRolocVis_aggregate <- function(object,
                                       plotOutput("legend1",
                                                  height = fig.height,
                                                  width = legend.width))
-                             ),
-                             fluidRow(
-                               column(8,
-                                      h4("Proteins near click"),
-                                      verbatimTextOutput("click_info"))
-                               )
+                             )
                     ),
                     tabPanel("Profiles", id = "profilesPanel",
                              fluidRow(
@@ -307,18 +302,6 @@ pRolocVis_aggregate <- function(object,
       
       resetLabels <- reactiveValues(logical = FALSE)
     
-      
-      
-      
-      ## Display protein point information
-      output$click_info <- renderPrint({
-        # Because it's a ggplot2, we don't need to supply xvar or yvar; if this
-        # were a base graphics plot, we'd need those.
-        nearPoints(protscatter, input$dblClickScatter, addDist = TRUE)
-      })
-      
-      
-      
       ## Get coords for proteins according to selectized marker class(es)
       mrkSel2 <- reactive({
         ind <- match(input$markers, colnames(pmarkers[[2]]))
