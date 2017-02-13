@@ -225,7 +225,7 @@ pRolocVis_aggregate <- function(object,
                        multiple = TRUE,
                        selected = myclasses[pmsel]),
         sliderInput("trans", "Transparancy",
-                    min = 0,  max = 1, value = 0.25),
+                    min = 0,  max = 1, value = 0.15),
         checkboxInput("checkbox", label = "Show labels", value = TRUE),
         br(),
         actionButton("resetButton", "Zoom/reset plot"),
@@ -391,8 +391,10 @@ pRolocVis_aggregate <- function(object,
           }
           
           ## === highlight corresponding proteins on PCA plot
-          highlightOnPlot(pcas[[1]], unique(protacc), cex = 3, lwd = 3,
-                          pch = 24, col = "black", bg = "grey")
+          highlightOnPlot(pcas[[1]], unique(protacc), cex = 2,
+                          pch = 19, col = "black")
+          highlightOnPlot(pcas[[1]], unique(protacc), cex = .8,
+                          pch = 19, col = "red")
           
           
         }
