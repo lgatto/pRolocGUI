@@ -23,7 +23,7 @@
 pRolocVis_aggregate <- function(object, 
                                 fcol,
                                 # foi,
-                                groupBy = "Protein.Group.Accessions",
+                                groupBy,
                                 fig.height = "600px",
                                 fig.width = "100%",
                                 legend.width = "200%",
@@ -32,9 +32,10 @@ pRolocVis_aggregate <- function(object,
                                 all = TRUE,
                                 mirrorX = FALSE,
                                 mirrorY = FALSE,
-                                fun = max,
+                                aggvar.fun = max,
+                                combine.fun = median,
                                 ...) {
-                              
+  
   ## Return featureNames of proteins selected
   on.exit(return(invisible(idDT)))
 
@@ -42,22 +43,28 @@ pRolocVis_aggregate <- function(object,
   if (!inherits(object, "MSnSet"))
     stop("The input must be of class MSnSet")
   
-  ## Combine to protein and put the protein MSnSet first in the list, 
-  ## peptide MSnSet second in the list
+  ## Check groubBy is specified
+  if (missing(groupBy))
+    stop("No groupBy specified")
+  if (!groupBy %in% fvarLabels(object))
+    stop("groupBy not found in fvarLabels")
+  
+  ## Rename object for convenience
   peps <- object
-  if (groupBy == "Protein.Group.Accessions") {
-    ## Add a new column to fData with # peps
-    pglabel <- "Protein.Group.Acc (# peps)"
-    tt <- table(fData(peps)[, groupBy])
-    cc <- tt[fData(peps)[, groupBy]]
-    cc <- paste0(names(cc), " (", cc,")")
-    fData(peps)[, pglabel] <- cc   
-    groupBy <- pglabel
-  }
-  prots <- combineFeatures(peps, fData(peps)[, groupBy], ...)
+  
+  ## Add a new column to fData with #features that have been combined
+  pglabel <- paste(groupBy, "(#feats)")
+  tt <- table(fData(peps)[, groupBy])
+  cc <- tt[fData(peps)[, groupBy]]
+  cc <- paste0(names(cc), " (", cc,")")
+  fData(peps)[, pglabel] <- cc   
+  groupBy <- pglabel
+  prots <- combineFeatures(peps, fData(peps)[, groupBy], 
+                           fun = combine.fun, cv = FALSE,
+                           ...)
   
 
-    ## fcol checks
+  ## fcol checks
   # if (!is.null(fcol) && !fcol %in% fvarLabels(object)) {
   #   warning("No fcol found using fcol = NULL", immediate. = TRUE)
   #   fcol <- NULL
@@ -88,105 +95,60 @@ pRolocVis_aggregate <- function(object,
   }
   
   
-  ## Extract two binary matrices (pmarkers) for each MSnSet for markers
-  pmarkers <- vector("list", length = 2)
-  
-  if (isMrkVec(prots, fcol)) {
-    ## Make a mrk vec mat, then extract mat
-    mName <- paste0("Markers", format(Sys.time(), "%a%b%d%H%M%S%Y"))
-    tmpObj <- mrkVecToMat(prots, fcol, mfcol = mName)
-    pmarkers[[1]] <- fData(tmpObj)[, mName]
-  } else {
-    pmarkers[[1]] <- fData(prots)[, fcol]
-  }
+  ## Extract binary matrix (pmarkers) for the peptide MSnSet for markers
   if (isMrkVec(peps, fcol)) {
     ## Make a mrk vec mat, then extract mat
     mName <- paste0("Markers", format(Sys.time(), "%a%b%d%H%M%S%Y"))
     tmpObj <- mrkVecToMat(peps, fcol, mfcol = mName)
-    pmarkers[[2]] <- fData(tmpObj)[, mName]
+    pmarkers <- fData(tmpObj)[, mName]
   } else {
-    pmarkers[[2]] <- fData(peps)[, fcol]
+    pmarkers <- fData(peps)[, fcol]
   }
   
-  
-  ## Setting features to be displayed
-  # if (!missing(foi)) {
-  #   if (inherits(foi, "FeaturesOfInterest") | inherits(foi, "FoICollection")) {
-  #     if (inherits(foi, "FeaturesOfInterest"))
-  #       foi <- FoICollection(list(foi))
-  #     foimarkers <- as(foi, "matrix")
-  #     if (exists("pmarkers", inherits = FALSE)) {
-  #       pmarkers <- lapply(pmarkers, function(z) merge(z, foimarkers,
-  #                                                      by = 0, all.x = TRUE))
-  #       rownames(pmarkers[[1]]) <- pmarkers[[1]][, "Row.names"]
-  #       rownames(pmarkers[[2]]) <- pmarkers[[1]][, "Row.names"]
-  #       pmarkers[[1]] <- pmarkers[[1]][featureNames(object[[1]]), -1]
-  #       pmarkers[[2]] <- pmarkers[[2]][featureNames(object[[2]]), -1]            
-  #     } else pmarkers <- list(foimarkers, foimarkers)
-  #   } else {
-  #     message("foi is not a valid FeaturesOfInterest or FoICollection object")
-  #   }
-  # }     ## NB: pmarkers[[1]] and pmarkers[[2]] contains the same num of rows/proteins
-  
-  
-  ## Check foi matches some proteins/features in the dataset
-  # sumpm <- lapply(pmarkers, function(z) apply(z, 2, sum, na.rm = TRUE))
-  # if (any(sumpm[[1]] == 0)) {
-  #   message(paste("foi object", names(which(sumpm[[1]] == 0)), "does not match any featuresNames that are common in both datasets, removing foi"))
-  #   pmarkers[[1]] <- pmarkers[[1]][, -which(sumpm[[1]] == 0)]
-  #   pmarkers[[2]] <- pmarkers[[2]][, -which(sumpm[[2]] == 0)]
-  # }
   
   ## Marker colours
   cols <- getStockcol()
-  if (length(cols) < max(sapply(pmarkers, ncol))) {
+  if (length(cols) < max(ncol(pmarkers))) {
     message("Too many features for available colours. Some colours will be duplicated.")
-    ind <- which.max(sapply(pmarkers, ncol))
-    n <- ncol(pmarkers[[ind]]) / length(cols)
+    n <- ncol(pmarkers / length(cols))
     cols <- rep(cols, n + 1)
   }
-  myclasses <- unique(unlist(lapply(pmarkers, colnames)))
+  myclasses <- colnames(pmarkers)
   cols <- cols[1:length(myclasses)]
   names(cols) <- myclasses
 
   
   # Shorten markers names if too long
-  for (i in 1:length(object)) {
-    cn <- sapply(colnames(pmarkers[[i]]),
-                 function(x) {
-                   if (nchar(x) > nchar) {
-                     x <- strsplit(x, "")[[1]]
-                     x <- paste(x[1:nchar], collapse = "")
-                     x <- sub(" +$", "", x)
-                     x <- paste0(x, "...")
-                   }
-                   return(x)
-                 })
-    names(cn) <- NULL
-    colnames(pmarkers[[i]]) <- cn
-  }
+  cn <- sapply(colnames(pmarkers),
+               function(x) {
+                 if (nchar(x) > nchar) {
+                   x <- strsplit(x, "")[[1]]
+                   x <- paste(x[1:nchar], collapse = "")
+                   x <- sub(" +$", "", x)
+                   x <- paste0(x, "...")
+                 }
+                 return(x)
+               })
+  names(cn) <- NULL
+  colnames(pmarkers) <- cn
   
   
   ## Display all classes unless user specifies not to
   pmsel <- TRUE
-  if (!all | max(sapply(pmarkers, ncol)) > 15)
+  if (!all | ncol(pmarkers) > 15)
     pmsel <- 1    
   
   
-  
   ## Data for scatterplot
-  protscatter <- data.frame(MSnbase:::aggvar(peps, groupBy, fun))
-  protscatter[, 2] <- log10(protscatter[, 2])
-  indna <- which(is.na(protscatter)) 
-  protscatter[indna, 1] <- 0
-  protscatter <- protscatter[, c(2, 1)]
-  # protscatter$highlight <- "normal"
-  
+  protscatter0 <- data.frame(MSnbase:::aggvar(peps, groupBy, aggvar.fun))
+  protscatter0[, "nb_feats"] <- log10(protscatter0[, "nb_feats"])
+  protscatter0 <- protscatter0[, c(2, 1)]
+  protscatter <- protscatter0
+  protscatter[is.na(protscatter)] <- 0
 
+  
   ## Get data for profiles 
-  profs <- vector("list", 2)
-  profs[[1]] <- exprs(prots)
-  profs[[2]] <- exprs(peps)
+  profs <- exprs(peps)
   
 
   ## Remap protein coords onto peptide PCA coords
@@ -207,6 +169,7 @@ pRolocVis_aggregate <- function(object,
   fData(peps)[, newName] <- "unknown"
   fData(prots)[, newName] <- "unknown"
   
+  
   ## all features are displayed on start
   # toSel_prot <- 1:nrow(prots)
   toSel <- 1:nrow(peps)
@@ -214,7 +177,6 @@ pRolocVis_aggregate <- function(object,
   feats_pep <- featureNames(peps)
   idDT <- character()
 
-  
   
   ## Build shiny app
   ui <- fluidPage(
@@ -245,7 +207,7 @@ pRolocVis_aggregate <- function(object,
                                                  ),
                                       offset = 0),
                                column(5, 
-                                      plotOutput("pca2",
+                                      plotOutput("pca",
                                                  height = fig.height,
                                                  width = fig.width,
                                                  dblclick = "dblClickPCA",
@@ -309,17 +271,17 @@ pRolocVis_aggregate <- function(object,
       resetLabels <- reactiveValues(logical = FALSE)
     
       ## Get coords for proteins according to selectized marker class(es)
-      mrkSel2 <- reactive({
-        ind <- match(input$markers, colnames(pmarkers[[2]]))
-        .mrkSel2 <- vector("list", length(input$markers))
+      mrkSel <- reactive({
+        ind <- match(input$markers, colnames(pmarkers))
+        .mrkSel <- vector("list", length(input$markers))
         for (i in seq(length(input$markers))) {
           if (is.na(ind[i])) {
-            .mrkSel2[[i]] <- NA
+            .mrkSel[[i]] <- NA
           } else {
-            .mrkSel2[[i]] <- which(pmarkers[[2]][, ind[i]] == 1)
+            .mrkSel[[i]] <- which(pmarkers[, ind[i]] == 1)
           }
         }
-        .mrkSel2
+        .mrkSel
       })
       
       
@@ -335,10 +297,13 @@ pRolocVis_aggregate <- function(object,
       output$scatter <- renderPlot({
         idDT <<- feats_pep[input$fDataTable_rows_selected]
         if (resetLabels$logical) idDT <<- character()
-        ggscatter <- ggplot(data = data.frame(protscatter), 
+        ggscatter <- ggplot(data = protscatter, 
                             aes(x = nb_feats, y = agg_dist)) +
           geom_point(alpha = .5) +
-          geom_smooth(method = "lm")
+          xlab("log10(number of feats)") +
+          geom_smooth(data = protscatter0, 
+                      mapping = aes(x = nb_feats, y = agg_dist), 
+                      method = "lm")   ## add lineaer model
         if (length(idDT) > 0) {
           highlight <- unique(fData(peps)[idDT, groupBy])
           ggscatter <- ggscatter + geom_point(data = protscatter[highlight, ], colour = "red")
@@ -353,9 +318,8 @@ pRolocVis_aggregate <- function(object,
       })
       
       
-      
-      ## PCA plot 2
-      output$pca2 <- renderPlot({
+      ## PCA plot
+      output$pca <- renderPlot({
         par(mar = c(4, 4, 0, 0))
         par(oma = c(1, 0, 0, 0))
         plot2D(peps, pch = 21, cex = 1,
@@ -367,12 +331,11 @@ pRolocVis_aggregate <- function(object,
                mirrorY = mirrorY)
         if (!is.null(input$markers)) {
           for (i in 1:length(input$markers)) {
-            if (!is.na(mrkSel2()[[i]][1]))
-              points(pcas[[2]][mrkSel2()[[i]], ], pch = 16, 
+            if (!is.na(mrkSel()[[i]][1]))
+              points(pcas[[2]][mrkSel()[[i]], ], pch = 16, 
                      cex = 1.4, col = myCols()[i])
           }
         }
-        
         ## highlight point on plot by selecting item in table
         idDT <<- feats_pep[input$fDataTable_rows_selected]
         if (resetLabels$logical) idDT <<- character()  ## If TRUE labels are cleared
@@ -382,48 +345,42 @@ pRolocVis_aggregate <- function(object,
           allpeps <- unlist(lapply(protacc, 
                                    function(z) feats_pep[fData(peps)[, groupBy] == z]))
           highlightOnPlot(pcas[[2]], allpeps, cex = 1.3)
-          
           ## === highlight selected pep as a solid circle
           highlightOnPlot(pcas[[2]], idDT, cex = 1.3, pch = 19)
           
           if (input$checkbox) {
             highlightOnPlot(pcas[[2]], idDT, labels = TRUE, pos = 3, pch = 19)
           }
-          
           ## === highlight corresponding proteins on PCA plot
           highlightOnPlot(pcas[[1]], unique(protacc), cex = 2,
                           pch = 19, col = "black")
           highlightOnPlot(pcas[[1]], unique(protacc), cex = .8,
                           pch = 19, col = "red")
-          
-          
         }
         resetLabels$logical <<- FALSE
       })
-      
 
-      
-      
-      ## Protein profile plot 2
+       
+      ## Protein profile plot
       output$profile2 <- renderPlot({
         par(mar = c(8, 3, 1, 1))
         par(oma = c(1, 0, 0, 0))
-        ylim <- range(profs[[2]])
-        n <- nrow(profs[[2]])
-        m <- ncol(profs[[2]])
-        fracs <- colnames(profs[[2]])
+        ylim <- range(profs)
+        n <- nrow(profs)
+        m <- ncol(profs)
+        fracs <- colnames(profs)
         plot(0, ylim = ylim, xlim = c(1, m), ylab = "Intensity", 
              type = "n", xaxt = "n", xlab = "")
         axis(1, at = 1:m, labels = fracs, las = 2)
         title(xlab = "Fractions", line = 5.5)
-        matlines(t(profs[[2]][feats_pep, ]),
+        matlines(t(profs[feats_pep, ]),
                  col = getUnknowncol(),
                  lty = 1,
                  type = "l")
         if (!is.null(input$markers)) {
           for (i in 1:length(input$markers)) { 
-            if (!is.na(mrkSel2()[[i]][1]))
-              matlines(t(profs[[2]][mrkSel2()[[i]], ]),
+            if (!is.na(mrkSel()[[i]][1]))
+              matlines(t(profs[mrkSel()[[i]], ]),
                        col = myCols()[i],
                        lty = 1,
                        lwd = 1.5)
@@ -432,26 +389,20 @@ pRolocVis_aggregate <- function(object,
         ## If an item is clicked in the table highlight profile
         idDT <<- feats_pep[input$fDataTable_rows_selected]
         if (length(idDT)) {
-          
           ## Now add all peptides with the same protein group as
           ## dashed lines
-            
           protacc <- as.character(fData(peps)[idDT, groupBy])
           allpeps <- unlist(lapply(protacc, 
                                    function(z) feats_pep[fData(peps)[, groupBy] == z]))
           ## Plot peptides selected
-          matlines(t(profs[[2]][allpeps, , drop = FALSE]),
+          matlines(t(profs[allpeps, , drop = FALSE]),
                    col = "black",
                    lty = 3,
                    lwd = 1)
-          
-          ## === highlight selected pep as a solid circle
-          
-          matlines(t(profs[[2]][idDT, , drop = FALSE]),
+          matlines(t(profs[idDT, , drop = FALSE]),
                    col = "black",
                    lty = 1,
                    lwd = 2)        
-          
         }
       })            
       
@@ -462,8 +413,8 @@ pRolocVis_aggregate <- function(object,
         feats_pep <<- names(which(brushedPeps$i & brushedPeps$j))
         feats_prot <<- rownames(protscatter)
 
-        ## DOUBLE CLICK on SCATTER PLOT to identify protein on the scatter
-        ## calculate distance from points on the scatter plot
+        ## DOUBLE CLICK on AGGVAR PLOT to identify protein then
+        ## calculate distance from point to find nearest
         if (!is.null(input$dblClickScatter)) {
           dist <- apply(protscatter[, 1:2], 1, function(z) sqrt((input$dblClickScatter$x - z[1])^2 
                                                        + (input$dblClickScatter$y - z[2])^2))
@@ -477,7 +428,7 @@ pRolocVis_aggregate <- function(object,
           }
         }
         
-        ## DOUBLE CLICK on PCA PLOT to identify peptide
+        ## DOUBLE CLICK on PCA PLOT to identify nearest peptide
         if (!is.null(input$dblClickPCA)) {
           dist <- apply(pcas[[2]], 1, function(z) sqrt((input$dblClickPCA$x - z[1])^2 
                                                        + (input$dblClickPCA$y - z[2])^2))
@@ -490,23 +441,21 @@ pRolocVis_aggregate <- function(object,
         } 
         
         toSel <- match(idDT, feats_pep)                    ## selection to highlight in DT
-        if (resetLabels$logical) toSel <<- numeric()        ## reset labels
+        if (resetLabels$logical) toSel <<- numeric()       ## reset labels
         
         dataDT <- fData(peps)[feats_pep, input$selTab, drop = FALSE]
         DT::datatable(data = dataDT, 
                       rownames = TRUE,
                       selection = list(mode = 'multiple', selected = toSel)
-                      # escape = FALSE)     ## NB: `escape = FALSE` required for colname coloring
         )
       })
       
-      ## When the reset button is clicked check to see is there is a brush on
+      
+      ## When the reset button is clicked check to see if there is a brush on
       ## the plot, if yes zoom, if not reset the plot.
       observeEvent(input$resetButton, {
-        # .brush1 <- input$pcaBrush1
         .brush2 <- input$pcaBrush2
         brush <- list(.brush2)
-        # brush <- list(.brush1, .brush2)
         tf <- !sapply(brush, is.null)
         if (any(tf)) { 
           tf <- which(tf)
