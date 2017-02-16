@@ -32,7 +32,6 @@ pRolocVis_aggregate <- function(object,
                                 all = TRUE,
                                 mirrorX = FALSE,
                                 mirrorY = FALSE,
-                                aggvar.fun = max,
                                 combine.fun = median,
                                 ...) {
   
@@ -136,16 +135,8 @@ pRolocVis_aggregate <- function(object,
   ## Display all classes unless user specifies not to
   pmsel <- TRUE
   if (!all | ncol(pmarkers) > 15)
-    pmsel <- 1    
+    pmsel <- 1  
   
-  
-  ## Data for scatterplot
-  protscatter0 <- data.frame(MSnbase:::aggvar(peps, groupBy, aggvar.fun))
-  protscatter0[, "nb_feats"] <- log10(protscatter0[, "nb_feats"])
-  protscatter0 <- protscatter0[, c(2, 1)]
-  protscatter <- protscatter0
-  protscatter[is.na(protscatter)] <- 0
-
   
   ## Get data for profiles 
   profs <- exprs(peps)
@@ -192,6 +183,9 @@ pRolocVis_aggregate <- function(object,
         br(),
         # actionButton("resetButton", "Zoom/reset plot"),
         # br(),
+        selectInput("aggvarDist", "Distance metric:", 
+                    choices = c ("max", "mean")),
+        br(),
         actionButton("clear", "Clear selection"),
         br(),
         width = 2),
@@ -259,6 +253,7 @@ pRolocVis_aggregate <- function(object,
   
   server <-
     function(input, output, session) {
+      
       ranges <- reactiveValues(x = c(min(pcas[[2]][, 1]), max(pcas[[2]][, 1])),
                                y = c(min(pcas[[2]][, 2]), max(pcas[[2]][, 2])))
       
@@ -269,8 +264,28 @@ pRolocVis_aggregate <- function(object,
       #                               j = try(pcas[[2]][, 2] >= min(pcas[[2]][, 2]) & 
       #                                       pcas[[2]][, 2] <= max(pcas[[2]][, 2])))
       
+      
+      ## Reset/clear labels on plots
       resetLabels <- reactiveValues(logical = FALSE)
     
+      
+      ## Update data for aggvar plot
+      protscatter0 <- reactive({
+        p0 <- data.frame(MSnbase:::aggvar(peps, groupBy, input$aggvarDist))
+        p0[, "nb_feats"] <- log10(p0[, "nb_feats"])
+        p0 <- p0[, c(2, 1)]
+        p0
+      })
+      protscatter <- reactive({
+        p0 <- data.frame(MSnbase:::aggvar(peps, groupBy, input$aggvarDist))
+        p0[, "nb_feats"] <- log10(p0[, "nb_feats"])
+        p0 <- p0[, c(2, 1)]
+        p <- p0
+        p[is.na(p)] <- 0
+        p
+      })
+
+      
       ## Get coords for proteins according to selectized marker class(es)
       mrkSel <- reactive({
         ind <- match(input$markers, colnames(pmarkers))
@@ -298,19 +313,19 @@ pRolocVis_aggregate <- function(object,
       output$scatter <- renderPlot({
         idDT <<- feats_pep[input$fDataTable_rows_selected]
         if (resetLabels$logical) idDT <<- character()
-        ggscatter <- ggplot(data = protscatter, 
+        ggscatter <- ggplot(data = protscatter(), 
                             aes(x = nb_feats, y = agg_dist)) +
           geom_point(alpha = .5) +
           xlab("log10(number of feats)") +
-          geom_smooth(data = protscatter0, 
+          geom_smooth(data = protscatter0(), 
                       mapping = aes(x = nb_feats, y = agg_dist), 
                       method = "lm")   ## add lineaer model
         if (length(idDT) > 0) {
           highlight <- unique(fData(peps)[idDT, groupBy])
-          ggscatter <- ggscatter + geom_point(data = protscatter[highlight, ], colour = "red")
+          ggscatter <- ggscatter + geom_point(data = protscatter()[highlight, ], colour = "red")
           if (input$checkbox) {
-            ggscatter <- ggscatter + annotate("text", x = protscatter[highlight, 1], 
-                                              y = protscatter[highlight, 2] + .03, 
+            ggscatter <- ggscatter + annotate("text", x = protscatter()[highlight, 1], 
+                                              y = protscatter()[highlight, 2] + .03, 
                                               label = highlight, colour = "red", 
                                               fontface = 2)
           }
