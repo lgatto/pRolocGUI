@@ -52,17 +52,36 @@ pRolocVis_aggregate <- function(object,
   peps <- object
   
   ## Add a new column to fData with #features that have been combined
+  n <- length(fvarLabels(peps))
   pglabel <- paste(groupBy, "(#feats)")
   tt <- table(fData(peps)[, groupBy])
   cc <- tt[fData(peps)[, groupBy]]
   cc <- paste0(names(cc), " (", cc,")")
-  fData(peps)[, pglabel] <- cc   
+  fData(peps)[, pglabel] <- cc
+  fData(peps) <- fData(peps)[, c(n + 1, 1:n)] # Add pgLabel column so appears first in fData
   groupBy <- pglabel
   prots <- combineFeatures(peps, fData(peps)[, groupBy], 
                            fun = combine.fun, cv = FALSE,
                            ...)
   
-
+  
+  ## data for aggvar plot
+  p0.max <- data.frame(MSnbase:::aggvar(peps, groupBy, "max"))
+  p0.max[, "nb_feats"] <- log10(p0.max[, "nb_feats"])
+  p0.max <- p0.max[, c(2, 1)]
+  p.max <- p0.max
+  p.max[is.na(p.max)] <- 0  
+  
+  p0.mean <- data.frame(MSnbase:::aggvar(peps, groupBy, "mean"))
+  p0.mean[, "nb_feats"] <- log10(p0.mean[, "nb_feats"])
+  p0.mean <- p0.mean[, c(2, 1)]
+  p.mean <- p0.mean
+  p.mean[is.na(p.mean)] <- 0  
+  
+  fData(peps)[, "aggvar_max"] <- p.max[fData(peps)[, groupBy], 2]
+  fData(peps)[, "aggvar_mean"] <- p.mean[fData(peps)[, groupBy], 2]
+  
+  
   ## fcol checks
   # if (!is.null(fcol) && !fcol %in% fvarLabels(object)) {
   #   warning("No fcol found using fcol = NULL", immediate. = TRUE)
@@ -81,17 +100,6 @@ pRolocVis_aggregate <- function(object,
   ## (we need to do this to make sure the table is displayed properly)
   peps <- .makeMatsVecs(peps)
   prots <- .makeMatsVecs(prots)
-  
-  ## Define data columns to be displayed on startup
-  origFvarLab <- fvarLabels(peps)
-  if (length(origFvarLab) > 6) {
-    .ind <- which(origFvarLab == fcol)
-    .gp <- which(origFvarLab == groupBy)
-    .fvarL <- origFvarLab[-c(.ind, .gp)]
-    selDT <- c(groupBy, .fvarL[1:4], fcol)
-  } else {
-    selDT <- origFvarLab[1:length(origFvarLab)]
-  }
   
   
   ## Extract binary matrix (pmarkers) for the peptide MSnSet for markers
@@ -141,7 +149,6 @@ pRolocVis_aggregate <- function(object,
   ## Get data for profiles 
   profs <- exprs(peps)
   
-
   ## Remap protein coords onto peptide PCA coords
   remapped <- pRoloc:::remap(object = MSnSetList(list(peps, prots)))
 
@@ -154,6 +161,19 @@ pRolocVis_aggregate <- function(object,
                       mirrorX = mirrorX, mirrorY = mirrorY,
                       method = "none"))
   
+
+  ## Define data columns to be displayed on startup
+  origFvarLab <- fvarLabels(peps)
+  if (length(origFvarLab) > 6) {
+    .ind <- which(origFvarLab == fcol)
+    .gp <- which(origFvarLab == groupBy)
+    .fvarL <- origFvarLab[-c(.ind, .gp)]
+    ll <- c(.fvarL[1:3],"aggvar_max", "aggvar_mean") 
+    selDT <- c(groupBy, ll, fcol)
+  } else {
+    selDT <- origFvarLab[1:length(origFvarLab)]
+  }
+ 
   
   ## Create column of unknowns (needed later for plot2D in server)
   newName <- paste0(format(Sys.time(), "%a%b%d%H%M%S%Y"), "unknowns")
@@ -271,17 +291,14 @@ pRolocVis_aggregate <- function(object,
       
       ## Update data for aggvar plot
       protscatter0 <- reactive({
-        p0 <- data.frame(MSnbase:::aggvar(peps, groupBy, input$aggvarDist))
-        p0[, "nb_feats"] <- log10(p0[, "nb_feats"])
-        p0 <- p0[, c(2, 1)]
+        if (input$aggvarDist == "max") p0 <- p0.max
+        if (input$aggvarDist == "mean") p0 <- p0.mean
         p0
       })
+        
       protscatter <- reactive({
-        p0 <- data.frame(MSnbase:::aggvar(peps, groupBy, input$aggvarDist))
-        p0[, "nb_feats"] <- log10(p0[, "nb_feats"])
-        p0 <- p0[, c(2, 1)]
-        p <- p0
-        p[is.na(p)] <- 0
+        if (input$aggvarDist == "max") p <- p.max
+        if (input$aggvarDist == "mean") p <- p.mean
         p
       })
 
@@ -322,7 +339,8 @@ pRolocVis_aggregate <- function(object,
                       method = "lm")   ## add lineaer model
         if (length(idDT) > 0) {
           highlight <- unique(fData(peps)[idDT, groupBy])
-          ggscatter <- ggscatter + geom_point(data = protscatter()[highlight, ], colour = "red")
+          ggscatter <- ggscatter + geom_point(data = protscatter()[highlight, ], 
+                                              colour = "red")
           if (input$checkbox) {
             ggscatter <- ggscatter + annotate("text", x = protscatter()[highlight, 1], 
                                               y = protscatter()[highlight, 2] + .03, 
@@ -428,12 +446,12 @@ pRolocVis_aggregate <- function(object,
         
         # feats_pep <<- names(which(brushedPeps$i & brushedPeps$j))
         feats_pep <<- featureNames(peps)
-        feats_prot <<- rownames(protscatter)
+        feats_prot <<- rownames(protscatter())
 
         ## DOUBLE CLICK on AGGVAR PLOT to identify protein then
         ## calculate distance from point to find nearest
         if (!is.null(input$dblClickScatter)) {
-          dist <- apply(protscatter[, 1:2], 1, function(z) sqrt((input$dblClickScatter$x - z[1])^2 
+          dist <- apply(protscatter()[, 1:2], 1, function(z) sqrt((input$dblClickScatter$x - z[1])^2 
                                                        + (input$dblClickScatter$y - z[2])^2))
           idPlot <- names(which(dist == min(dist)))
           indPep <- which(fData(peps)[, groupBy] == idPlot)
