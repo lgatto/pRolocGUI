@@ -336,7 +336,8 @@ pRolocVis_aggregate <- function(object,
           xlab("log10(number of feats)") +
           geom_smooth(data = protscatter0(), 
                       mapping = aes(x = nb_feats, y = agg_dist), 
-                      method = "lm")   ## add lineaer model
+                      method = "lm", na.rm = TRUE)   ## add lineaer model
+                                                     ##
         if (length(idDT) > 0) {
           highlight <- unique(fData(peps)[idDT, groupBy])
           ggscatter <- ggscatter + geom_point(data = protscatter()[highlight, ], 
