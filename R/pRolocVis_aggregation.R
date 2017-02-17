@@ -201,8 +201,6 @@ pRolocVis_aggregate <- function(object,
                     min = 0,  max = 1, value = 0.15),
         checkboxInput("checkbox", label = "Show labels", value = TRUE),
         br(),
-        # actionButton("resetButton", "Zoom/reset plot"),
-        # br(),
         selectInput("aggvarDist", "Distance metric:", 
                     choices = c ("max", "mean")),
         br(),
@@ -225,9 +223,6 @@ pRolocVis_aggregate <- function(object,
                                                  height = fig.height,
                                                  width = fig.width,
                                                  dblclick = "dblClickPCA"
-                                                 # brush = brushOpts(
-                                                 #   id = "pcaBrush2",
-                                                 #   resetOnNew = TRUE)
                                                  ),
                                       offset = 0),
                                column(2, 
@@ -278,13 +273,6 @@ pRolocVis_aggregate <- function(object,
                                y = c(min(pcas[[2]][, 2]), max(pcas[[2]][, 2])))
       
       
-      ## Capture brushed proteins for zoom
-      # brushedPeps <- reactiveValues(i =  try(pcas[[2]][, 1] >= min(pcas[[2]][, 1]) & 
-      #                                        pcas[[2]][, 1] <= max(pcas[[2]][, 1])),
-      #                               j = try(pcas[[2]][, 2] >= min(pcas[[2]][, 2]) & 
-      #                                       pcas[[2]][, 2] <= max(pcas[[2]][, 2])))
-      
-      
       ## Reset/clear labels on plots
       resetLabels <- reactiveValues(logical = FALSE)
     
@@ -301,7 +289,7 @@ pRolocVis_aggregate <- function(object,
         if (input$aggvarDist == "mean") p <- p.mean
         p
       })
-
+      
       
       ## Get coords for proteins according to selectized marker class(es)
       mrkSel <- reactive({
@@ -325,7 +313,6 @@ pRolocVis_aggregate <- function(object,
                         which(names(cols) == z))]})
       
 
-      
       ## Scatter plot
       output$scatter <- renderPlot({
         idDT <<- feats_pep[input$fDataTable_rows_selected]
@@ -337,7 +324,7 @@ pRolocVis_aggregate <- function(object,
           geom_smooth(data = protscatter0(), 
                       mapping = aes(x = nb_feats, y = agg_dist), 
                       method = "lm", na.rm = TRUE)   ## add lineaer model
-                                                     ##
+                                                     ## add na.rm to catch warning
         if (length(idDT) > 0) {
           highlight <- unique(fData(peps)[idDT, groupBy])
           ggscatter <- ggscatter + geom_point(data = protscatter()[highlight, ], 
@@ -445,7 +432,6 @@ pRolocVis_aggregate <- function(object,
       ## Feature data table
       output$fDataTable <- DT::renderDataTable({
         
-        # feats_pep <<- names(which(brushedPeps$i & brushedPeps$j))
         feats_pep <<- featureNames(peps)
         feats_prot <<- rownames(protscatter())
 
@@ -487,34 +473,6 @@ pRolocVis_aggregate <- function(object,
       })
       
       
-      ## When the reset button is clicked check to see if there is a brush on
-      ## the plot, if yes zoom, if not reset the plot.
-      # observeEvent(input$resetButton, {
-      #   .brush2 <- input$pcaBrush2
-      #   brush <- list(.brush2)
-      #   tf <- !sapply(brush, is.null)
-      #   if (any(tf)) { 
-      #     tf <- which(tf)
-      #     brush <- brush[[tf]] 
-      #     bminx <- brush$xmin
-      #     bmaxx <- brush$xmax
-      #     bminy <- brush$ymin
-      #     bmaxy <- brush$ymax
-      #   } else {   ## reset the plot
-      #     bminx <- min(pcas[[2]][, 1])
-      #     bmaxx <- max(pcas[[2]][, 1])
-      #     bminy <- min(pcas[[2]][, 2])
-      #     bmaxy <- max(pcas[[2]][, 2])
-      #   }
-      #   ranges$x <- c(bminx, bmaxx)
-      #   ranges$y <- c(bminy, bmaxy)
-      #   brushedPeps$i <- try(pcas[[2]][, 1] >= bminx 
-      #                          & pcas[[2]][, 1] <= bmaxx)
-      #   brushedPeps$j <- try(pcas[[2]][, 2] >= bminy 
-      #                          & pcas[[2]][, 2] <= bmaxy)
-      # })
-      
-      
       ## When clear selection is pressed labels and reset selection 
       observeEvent(input$clear, {
         resetLabels$logical <<- TRUE
@@ -546,6 +504,7 @@ pRolocVis_aggregate <- function(object,
                  cex = legend.cex)
         }
       })
+      
       
       ## Output legend for profiles
       output$legend2 <- renderPlot({
