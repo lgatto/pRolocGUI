@@ -279,12 +279,14 @@ pRolocVis_aggregate <- function(object,
       
       ## Update data for aggvar plot
       protscatter0 <- reactive({
+        if (resetLabels$logical) idDT <<- character()
         if (input$aggvarDist == "max") p0 <- p0.max
         if (input$aggvarDist == "mean") p0 <- p0.mean
         p0
       })
         
       protscatter <- reactive({
+        if (resetLabels$logical) idDT <<- character()
         if (input$aggvarDist == "max") p <- p.max
         if (input$aggvarDist == "mean") p <- p.mean
         p
@@ -464,6 +466,7 @@ pRolocVis_aggregate <- function(object,
         
         toSel <<- match(idDT, feats_pep)                    ## selection to highlight in DT
         if (resetLabels$logical) toSel <<- numeric()       ## reset labels
+        if (resetLabels$logical) idDT <<- character()       ## reset labels
         
         dataDT <- fData(peps)[feats_pep, input$selTab, drop = FALSE]
         DT::datatable(data = dataDT, 
