@@ -1,5 +1,4 @@
 ##' @rdname pRolocVis-apps
-##' @param object
 ##' @param fcol1 In yhe \code{compare} app this is the feature
 ##'     meta-data label (fData column name) for the first dataset in
 ##'     the \code{MSnSetList}.  Default is \code{markers}.

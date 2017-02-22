@@ -41,9 +41,10 @@ will correspond to the prediction column if using "classify",
 or the markers (labelled data) to be plotted otherwise. If set
 to \code{NULL}, no annotation is expected.}
 
-\item{...}{Additional parameters passed to \code{plot2D}. Note
-that \code{mirrorX} and \code{mirrorY} are currently silently
-ignored other than for the \code{compare} app.}
+\item{...}{Additional parameters passed to \code{plot2D} for the
+\code{"main"}, \code{"classify"}, \code{"compare"} apps. For 
+the \code{"aggregate"} app this is for additional parameters
+to be passed to \code{combineFeatures}.}
 
 \item{groupBy}{The feature meta-data label (\code{fData} column name)
 to be used for summarising the features to be combined.}
@@ -96,19 +97,13 @@ dataset in the \code{MSnSetList} should be remapped to the
 first dataset. The default is TRUE.}
 }
 \value{
-For \code{compare} and \code{main} a \code{character}
-    vector of the \code{featureNames} of the proteins selected is
-    invisibly returned.
-
-For \code{classify} a \code{numeric} vector of thresholds, 
+For the \code{classify} app a \code{numeric} vector of thresholds, 
 one per class, to use with \code{\link{getPredictions}}
 
-For \code{compare} and \code{main} a \code{character}
-    vector of the \code{featureNames} of the proteins selected is
-    invisibly returned.
-
-For \code{pca} a \code{character} of protein names, of the
-    proteins selected upon application closure.
+For the \code{main}, \code{compare} and \code{aggregate} apps 
+    a \code{character} vector of \code{featureNames} names of the
+    \code{object} loaded that have been selected in the app
+    upon application closure.
 }
 \description{
 These functions allow one to explore spatial proteomics data
@@ -116,8 +111,8 @@ interactively.
 }
 \details{
 The function \code{pRolocVis} is a wrapper for
-\code{pRolocVis_main}, \code{pRolocVis_classify} and
-\code{pRolocVis_compare}. These Shiny apps allow to explore and
+\code{pRolocVis_main}, \code{pRolocVis_classify},\code{pRolocVis_compare}. 
+and \code{pRolocVis_aggregate}. These Shiny apps allow to explore and
 analyse interactively spatial proteomics data.
  
 The \code{main} Shiny app allows exploration of quantitative data
@@ -146,9 +141,11 @@ and their distributions.
 library("pRoloc")
 library("pRolocdata")
 data(hyperLOPIT2015)
+## Load the "main" PCA app
 if (interactive()) {
   pRolocVis(hyperLOPIT2015)
 }
+
 ## Load classification results from hyperLOPIT stored in fData
 if (interactive()) {
   myThreshold <- pRolocVis(hyperLOPIT2015, app = "classify", 
@@ -157,6 +154,7 @@ if (interactive()) {
   newPredictions <- getPredictions(hyperLOPIT2015, fcol = "svm.classification", 
                                    scol = "svm.score", t = myThreshold)
 }
+
 ## Visualise the location and distribution of peptides per protein group
 data("hyperLOPIT2015ms2psm")
 if (interactive()) {
@@ -165,8 +163,8 @@ if (interactive()) {
                         groupBy = fData(hyperLOPIT2015ms2psm)$Sequence, 
                         fun = median)
   ## Visualise peptides according to protein group
-  pRolocGUI:::pRolocVis_aggregate(hl, fcol = "markers", 
-                                  groupBy = "Protein.Group.Accessions")                    
+  pRolocVis(hl, app = "aggregate", fcol = "markers", 
+            groupBy = "Protein.Group.Accessions")                    
 }
 }
 \author{

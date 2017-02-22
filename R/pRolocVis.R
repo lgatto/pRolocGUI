@@ -3,7 +3,7 @@
 ##' 
 ##' The function \code{pRolocVis} is a wrapper for
 ##' \code{pRolocVis_main}, \code{pRolocVis_classify},\code{pRolocVis_compare}. 
-##' and \code {pRolocVis_aggregate}. These Shiny apps allow to explore and
+##' and \code{pRolocVis_aggregate}. These Shiny apps allow to explore and
 ##' analyse interactively spatial proteomics data.
 ##'  
 ##' The \code{main} Shiny app allows exploration of quantitative data
@@ -45,7 +45,7 @@
 ##'     Default is 1.
 ##' @param ... Additional parameters passed to \code{plot2D} for the
 ##'     \code{"main"}, \code{"classify"}, \code{"compare"} apps. For 
-##'     the \code{aggregation} app this is for additional parameters
+##'     the \code{"aggregate"} app this is for additional parameters
 ##'     to be passed to \code{combineFeatures}.
 ##' @author Laurent Gatto, Lisa Breckels and Thomas Naake
 ##' @seealso The package vignette: \code{vignette("pRolocGUI")}.
@@ -75,8 +75,8 @@
 ##'                         groupBy = fData(hyperLOPIT2015ms2psm)$Sequence, 
 ##'                         fun = median)
 ##'   ## Visualise peptides according to protein group
-##'   pRolocGUI:::pRolocVis_aggregate(hl, fcol = "markers", 
-##'                                   groupBy = "Protein.Group.Accessions")                    
+##'   pRolocVis(hl, app = "aggregate", fcol = "markers", 
+##'             groupBy = "Protein.Group.Accessions")                    
 ##' }
 pRolocVis <- function(object, app = "main", fcol, ...) {
   res <- NULL
@@ -93,7 +93,7 @@ pRolocVis <- function(object, app = "main", fcol, ...) {
     res <- pRolocVis_classify(object, fcol, ...)
   if (app == "compare")
     pRolocVis_compare(object, ...)
-  if (app == "aggregation")
-    res <- pRolocVis_aggregation(object, fcol, ...)
+  if (app == "aggregate")
+    res <- pRolocVis_aggregate(object, fcol, ...)
   invisible(res)
 }

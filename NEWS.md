@@ -1,8 +1,7 @@
-# pRoloc 1.9
-
 ## CHANGES IN VERSION 1.9.5
 
 - Fix broken documentation files <2017-01-18 Wed>
+- New aggregation app added <2017-01-22 Wed>
 
 ## CHANGES IN VERSION 1.9.4
 

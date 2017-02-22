@@ -30,7 +30,8 @@
 ##'     is displayed.
 ##' @return For the \code{main}, \code{compare} and \code{aggregate} apps 
 ##'     a \code{character} vector of \code{featureNames} names of the
-##'     \code{object} that are selected selected upon application closure.
+##'     \code{object} loaded that have been selected in the app
+##'     upon application closure.
 pRolocVis_pca <- function(object,
                           fcol = "markers",
                           foi,
