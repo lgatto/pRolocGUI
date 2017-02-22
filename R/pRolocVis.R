@@ -2,8 +2,8 @@
 ##' interactively.
 ##' 
 ##' The function \code{pRolocVis} is a wrapper for
-##' \code{pRolocVis_main}, \code{pRolocVis_classify} and
-##' \code{pRolocVis_compare}. These Shiny apps allow to explore and
+##' \code{pRolocVis_main}, \code{pRolocVis_classify},\code{pRolocVis_compare}. 
+##' and \code {pRolocVis_aggregate}. These Shiny apps allow to explore and
 ##' analyse interactively spatial proteomics data.
 ##'  
 ##' The \code{main} Shiny app allows exploration of quantitative data
@@ -20,14 +20,22 @@
 ##' replicates etc. Please note that passing the argument \code{method} 
 ##' to \code{...} will not work as it is already specified internally.
 ##' 
+##' The \code{aggregation} Shiny app displays a scatter plot of the
+##' maximum or mean distances within each feature (e.g. protein group)
+##' according to its components (e.g. peptides) defined by the
+##' \code{groupBy} argument. A PCA plot of the components is also
+##' displayed. It can be used for visualising peptides, PSMs or any
+##' other features defined in the feature data of the \code{MSnSet}
+##' and their distributions.
+##' 
 ##' @title Interactive visualisation of spatial proteomics data
 ##' @rdname pRolocVis-apps
 ##' @param object An instance of class \code{MSnSet}, or an
 ##'     \code{MSnSetList} of length 2 if using \code{"compare"}
 ##'     application.
 ##' @param app The type of application requested: \code{"main"}
-##'     (default), \code{"classify"}, \code{"compare"}.See description
-##'     below.
+##'     (default), \code{"classify"}, \code{"compare"} or
+##'     \code{"aggregate"}. See description below.
 ##' @param fcol The feature meta-data label (\code{fData} column name)
 ##'     to be used for colouring. Default is \code{"markers"}. This
 ##'     will correspond to the prediction column if using "classify",
@@ -35,15 +43,21 @@
 ##'     to \code{NULL}, no annotation is expected. 
 ##' @param legend.cex Point character expansion for the the legend.
 ##'     Default is 1.
+##' @param ... Additional parameters passed to \code{plot2D} for the
+##'     \code{"main"}, \code{"classify"}, \code{"compare"} apps. For 
+##'     the \code{aggregation} app this is for additional parameters
+##'     to be passed to \code{combineFeatures}.
 ##' @author Laurent Gatto, Lisa Breckels and Thomas Naake
 ##' @seealso The package vignette: \code{vignette("pRolocGUI")}.
 ##' @examples
 ##' library("pRoloc")
 ##' library("pRolocdata")
 ##' data(hyperLOPIT2015)
+##' ## Load the "main" PCA app
 ##' if (interactive()) {
 ##'   pRolocVis(hyperLOPIT2015)
 ##' }
+##' 
 ##' ## Load classification results from hyperLOPIT stored in fData
 ##' if (interactive()) {
 ##'   myThreshold <- pRolocVis(hyperLOPIT2015, app = "classify", 
@@ -52,9 +66,21 @@
 ##'   newPredictions <- getPredictions(hyperLOPIT2015, fcol = "svm.classification", 
 ##'                                    scol = "svm.score", t = myThreshold)
 ##' }
+##' 
+##' ## Visualise the location and distribution of peptides per protein group
+##' data("hyperLOPIT2015ms2psm")
+##' if (interactive()) {
+##'   ## Combine PSM data to peptides
+##'   hl <- combineFeatures(hyperLOPIT2015ms2psm, 
+##'                         groupBy = fData(hyperLOPIT2015ms2psm)$Sequence, 
+##'                         fun = median)
+##'   ## Visualise peptides according to protein group
+##'   pRolocGUI:::pRolocVis_aggregate(hl, fcol = "markers", 
+##'                                   groupBy = "Protein.Group.Accessions")                    
+##' }
 pRolocVis <- function(object, app = "main", fcol, ...) {
   res <- NULL
-  app <- match.arg(app, c("main", "compare", "classify"))
+  app <- match.arg(app, c("main", "compare", "classify", "aggregate"))
   if (inherits(object, "MSnSetList"))
     app <- "compare"
   if (missing(app))
@@ -67,5 +93,7 @@ pRolocVis <- function(object, app = "main", fcol, ...) {
     res <- pRolocVis_classify(object, fcol, ...)
   if (app == "compare")
     pRolocVis_compare(object, ...)
+  if (app == "aggregation")
+    res <- pRolocVis_aggregation(object, fcol, ...)
   invisible(res)
 }

@@ -1,28 +1,8 @@
-##' @return For \code{compare} and \code{main} a \code{character}
-##'     vector of the \code{featureNames} of the proteins selected is
-##'     invisibly returned.
 ##' @rdname pRolocVis-apps
-##' @param object
-##' @param fcol1 In yhe \code{compare} app this is the feature
-##'     meta-data label (fData column name) for the first dataset in
-##'     the \code{MSnSetList}.  Default is \code{markers}.
-##' @param fcol2 In the \code{compare} app this is the feature
-##'     meta-data label (fData column name) for the second dataset in
-##'     the \code{MSnSetList}.  Default is \code{markers}.
-##' @param foi
-##' @param fig.height
-##' @param fig.width
-##' @param legend.width
-##' @param legend.cex
-##' @param nchar
-##' @param all
-##' @param mirrorX Should the first PC of the second \code{MSnSet} in
-##'     \code{object} be mirrored (default is \code{FALSE}).
-##' @param mirrorY Should the second PC of the second \code{MSnSet} in
-##'     \code{object} be mirrored (default is \code{FALSE}). 
+##' @param groupBy The feature meta-data label (\code{fData} column name)
+##' to be used for summarising the features to be combined.
 pRolocVis_aggregate <- function(object, 
                                 fcol,
-                                # foi,
                                 groupBy,
                                 fig.height = "600px",
                                 fig.width = "100%",
@@ -32,7 +12,6 @@ pRolocVis_aggregate <- function(object,
                                 all = TRUE,
                                 mirrorX = FALSE,
                                 mirrorY = FALSE,
-                                combine.fun = median,
                                 ...) {
   
   ## Return featureNames of proteins selected
@@ -61,8 +40,7 @@ pRolocVis_aggregate <- function(object,
   fData(peps) <- fData(peps)[, c(n + 1, 1:n)] # Add pgLabel column so appears first in fData
   groupBy <- pglabel
   prots <- combineFeatures(peps, fData(peps)[, groupBy], 
-                           fun = combine.fun, cv = FALSE,
-                           ...)
+                           cv = FALSE, ...)
   
   
   ## data for aggvar plot
@@ -367,7 +345,8 @@ pRolocVis_aggregate <- function(object,
           ## ==== highlight all peps with the same protein group 
           protacc <- as.character(fData(peps)[idDT, groupBy])
           allpeps <- unlist(lapply(protacc, 
-                                   function(z) feats_pep[fData(peps)[, groupBy] == z]))
+                                   function(z) 
+                                     feats_pep[fData(peps)[, groupBy] == z]))
           highlightOnPlot(pcas[[2]], allpeps, cex = 1.3)
           ## === highlight selected pep as a solid circle
           highlightOnPlot(pcas[[2]], idDT, cex = 1.3, pch = 19)
@@ -417,7 +396,8 @@ pRolocVis_aggregate <- function(object,
           ## dashed lines
           protacc <- as.character(fData(peps)[idDT, groupBy])
           allpeps <- unlist(lapply(protacc, 
-                                   function(z) feats_pep[fData(peps)[, groupBy] == z]))
+                                   function(z) 
+                                     feats_pep[fData(peps)[, groupBy] == z]))
           ## Plot peptides selected
           matlines(t(profs[allpeps, , drop = FALSE]),
                    col = "black",
@@ -440,8 +420,9 @@ pRolocVis_aggregate <- function(object,
         ## DOUBLE CLICK on AGGVAR PLOT to identify protein then
         ## calculate distance from point to find nearest
         if (!is.null(input$dblClickScatter)) {
-          dist <- apply(protscatter()[, 1:2], 1, function(z) sqrt((input$dblClickScatter$x - z[1])^2 
-                                                       + (input$dblClickScatter$y - z[2])^2))
+          dist <- apply(protscatter()[, 1:2], 1, 
+                        function(z) sqrt((input$dblClickScatter$x - z[1])^2
+                                         + (input$dblClickScatter$y - z[2])^2))
           idPlot <- names(which(dist == min(dist)))
           indPep <- which(fData(peps)[, groupBy] == idPlot)
           idPlot <- featureNames(peps)[indPep]
@@ -454,8 +435,9 @@ pRolocVis_aggregate <- function(object,
         
         ## DOUBLE CLICK on PCA PLOT to identify nearest peptide
         if (!is.null(input$dblClickPCA)) {
-          dist <- apply(pcas[[2]], 1, function(z) sqrt((input$dblClickPCA$x - z[1])^2 
-                                                       + (input$dblClickPCA$y - z[2])^2))
+          dist <- apply(pcas[[2]], 1, 
+                        function(z) sqrt((input$dblClickPCA$x - z[1])^2
+                                         + (input$dblClickPCA$y - z[2])^2))
           idPlot <- names(which(dist == min(dist)))
           if (any(idPlot %in% idDT)) {                     ## 1--is it already clicked?
             idDT <<- setdiff(idDT, idPlot)                 ## Yes, remove it from table
@@ -465,7 +447,7 @@ pRolocVis_aggregate <- function(object,
         } 
         
         toSel <<- match(idDT, feats_pep)                    ## selection to highlight in DT
-        if (resetLabels$logical) toSel <<- numeric()       ## reset labels
+        if (resetLabels$logical) toSel <<- numeric()        ## reset labels
         if (resetLabels$logical) idDT <<- character()       ## reset labels
         
         dataDT <- fData(peps)[feats_pep, input$selTab, drop = FALSE]
