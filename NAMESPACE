@@ -17,6 +17,6 @@ importFrom(DT,
            ## renderDataTable,
            formatStyle)
 importFrom(dplyr, "%>%")
-
-
+importFrom(ggplot2, "aes", "ggplot", "geom_point", "geom_smooth", 
+           "annotate", "xlab")
 export(pRolocVis)

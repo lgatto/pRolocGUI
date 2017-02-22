@@ -1,24 +1,13 @@
-##' @return For \code{compare} and \code{main} a \code{character}
-##'     vector of the \code{featureNames} of the proteins selected is
-##'     invisibly returned.
 ##' @rdname pRolocVis-apps
-##' @param object
 ##' @param fcol1 In yhe \code{compare} app this is the feature
 ##'     meta-data label (fData column name) for the first dataset in
 ##'     the \code{MSnSetList}.  Default is \code{markers}.
 ##' @param fcol2 In the \code{compare} app this is the feature
 ##'     meta-data label (fData column name) for the second dataset in
 ##'     the \code{MSnSetList}.  Default is \code{markers}.
-##' @param foi
-##' @param fig.height
-##' @param fig.width
-##' @param legend.width
-##' @param legend.cex
 ##' @param remap A \code{logical} indicating whether the second
 ##'     dataset in the \code{MSnSetList} should be remapped to the
 ##'     first dataset. The default is TRUE.
-##' @param nchar
-##' @param all
 ##' @param mirrorX Should the first PC of the second \code{MSnSet} in
 ##'     \code{object} be mirrored (default is \code{FALSE}). Only
 ##'     relevant when \code{remap} is \code{FALSE}.
