@@ -44,13 +44,13 @@ pRolocVis_aggregate <- function(object,
   
   
   ## data for aggvar plot
-  p0.max <- data.frame(MSnbase:::aggvar(peps, groupBy, "max"))
+  p0.max <- data.frame(MSnbase::aggvar(peps, groupBy, "max"))
   p0.max[, "nb_feats"] <- log10(p0.max[, "nb_feats"])
   p0.max <- p0.max[, c(2, 1)]
   p.max <- p0.max
   p.max[is.na(p.max)] <- 0  
   
-  p0.mean <- data.frame(MSnbase:::aggvar(peps, groupBy, "mean"))
+  p0.mean <- data.frame(MSnbase::aggvar(peps, groupBy, "mean"))
   p0.mean[, "nb_feats"] <- log10(p0.mean[, "nb_feats"])
   p0.mean <- p0.mean[, c(2, 1)]
   p.mean <- p0.mean
@@ -295,6 +295,7 @@ pRolocVis_aggregate <- function(object,
 
       ## Scatter plot
       output$scatter <- renderPlot({
+        agg_dist <- nb_feats <- NULL ## to address no visible binding for global var note
         idDT <<- feats_pep[input$fDataTable_rows_selected]
         if (resetLabels$logical) idDT <<- character()
         ggscatter <- ggplot(data = protscatter(), 
