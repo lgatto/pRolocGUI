@@ -1,5 +1,7 @@
 docs
 .gitignores
 .travis.yml
+.gitignore
+NEWS.md
 
 

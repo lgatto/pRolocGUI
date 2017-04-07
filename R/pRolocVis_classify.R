@@ -3,7 +3,7 @@
 ##' classification scores.
 ##' @param mcol The feature meta data column containing the labelled training 
 ##' data, for use with "classify".
-##' @return For \code{classify} a \code{numeric} vector of thresholds, 
+##' @return For the \code{classify} app a \code{numeric} vector of thresholds, 
 ##' one per class, to use with \code{\link{getPredictions}}
 
 pRolocVis_classify <- function(object,

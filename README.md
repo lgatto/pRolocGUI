@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/lmsimp/bioc-pRoloc-hyperLOPIT-workflow.svg?branch=master)](https://travis-ci.org/lmsimp/bioc-pRoloc-hyperLOPIT-workflow) 
+[![Build Status](https://travis-ci.org/ComputationalProteomicsUnit/pRolocGUI.svg?branch=master)](https://travis-ci.org/ComputationalProteomicsUnit/pRolocGUI)
 [![Bioconductor devel build Status](http://bioconductor.org/shields/build/devel/bioc/pRolocGUI.svg)](http://bioconductor.org/packages/devel/bioc/html/pRolocGUI.html) 
 [![Bioconductor release build Status](http://bioconductor.org/shields/build/release/bioc/pRolocGUI.svg)](http://bioconductor.org/packages/release/bioc/html/pRolocGUI.html)
 

@@ -16,25 +16,22 @@
 ## http://shiny.rstudio.com/articles/plot-interaction-advanced.html
 
 ##' @rdname pRolocVis-apps
-##' @param object
 ##' @param foi A \code{\link{FeaturesOfInterest}} or
 ##'     \code{\link{FoICollection}} object.
 ##' @param fig.height Height of the figure. Default is \code{"600px"}.
 ##' @param fig.width Width of the figure. Default is \code{"100px"}.
 ##' @param legend.width Width of the legend. Default is
 ##'     \code{"200\%"}.
-##' @param legend.cex
 ##' @param nchar Maximum number of characters of the markers class
 ##'     names, before their names are truncated. Default is 10.
 ##' @param all If \code{TRUE} all clusters are displayed on startup,
 ##'     if the total number of clusters is less than including 15. If
 ##'     \code{FALSE} or otherwise, only the first cluster in the list
 ##'     is displayed.
-##' @param ... Additional parameters passed to \code{plot2D}. Note
-##'     that \code{mirrorX} and \code{mirrorY} are currently silently
-##'     ignored other than for the \code{compare} app.
-##' @return For \code{pca} a \code{character} of protein names, of the
-##'     proteins selected upon application closure.
+##' @return For the \code{main}, \code{compare} and \code{aggregate} apps 
+##'     a \code{character} vector of \code{featureNames} names of the
+##'     \code{object} loaded that have been selected in the app
+##'     upon application closure.
 pRolocVis_pca <- function(object,
                           fcol = "markers",
                           foi,
