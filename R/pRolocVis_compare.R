@@ -1,29 +1,19 @@
-##' @return For \code{compare} and \code{main} a \code{character}
-##'     vector of the \code{featureNames} of the proteins selected is
-##'     invisibly returned.
 ##' @rdname pRolocVis-apps
-##' @param object
-##' @param fcol1
-##' @param fcol2 If using the \code{compare} app this is the feature
+##' @param fcol1 In yhe \code{compare} app this is the feature
+##'     meta-data label (fData column name) for the first dataset in
+##'     the \code{MSnSetList}.  Default is \code{markers}.
+##' @param fcol2 In the \code{compare} app this is the feature
 ##'     meta-data label (fData column name) for the second dataset in
 ##'     the \code{MSnSetList}.  Default is \code{markers}.
-##' @param foi
-##' @param fig.height
-##' @param fig.width
-##' @param legend.width
-##' @param legend.cex
 ##' @param remap A \code{logical} indicating whether the second
 ##'     dataset in the \code{MSnSetList} should be remapped to the
 ##'     first dataset. The default is TRUE.
-##' @param nchar
-##' @param all
 ##' @param mirrorX Should the first PC of the second \code{MSnSet} in
 ##'     \code{object} be mirrored (default is \code{FALSE}). Only
 ##'     relevant when \code{remap} is \code{FALSE}.
 ##' @param mirrorY Should the second PC of the second \code{MSnSet} in
 ##'     \code{object} be mirrored (default is \code{FALSE}). Only
 ##'     relevant when \code{remap} is \code{FALSE}.
-##' @param ...
 pRolocVis_compare <- function(object, fcol1, fcol2,
                               foi,
                               fig.height = "600px",
@@ -219,10 +209,10 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
     plotmeth <- "PCA"
   }
    
-    pcas <- list(plot2D(object[[1]], fol = NULL, plot = FALSE,
+    pcas <- list(plot2D(object[[1]], fcol = NULL, plot = FALSE,
                         mirrorX = FALSE, mirrorY = FALSE,
                         method = plotmeth, ...),
-                 plot2D(object[[2]], fol = NULL, plot = FALSE,
+                 plot2D(object[[2]], fcol = NULL, plot = FALSE,
                         mirrorX = mirrorX, mirrorY = mirrorY,
                         method = plotmeth, ...))
     

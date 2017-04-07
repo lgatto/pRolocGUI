@@ -1,6 +1,6 @@
 Package: pRolocGUI
 Title: Interactive visualisation of spatial proteomics data
-Version: 1.9.4
+Version: 1.9.5
 Authors@R: c(person(given = "Lisa", family ="Breckels",
                     email = "lms79@cam.ac.uk",
                     role = c("aut", "cre")),
@@ -16,9 +16,9 @@ Description: The package pRolocGUI comprises functions to
     interactively visualise organelle (spatial) proteomics
     data on the basis of pRoloc, pRolocdata and shiny.
 Depends: methods, R (>= 3.1.0), pRoloc (>= 1.11.1), Biobase,
-	 MSnbase (>= 1.13.11)
+	 MSnbase (>= 2.1.11)
 Imports: shiny (>= 0.9.1), scales, dplyr, DT (>= 0.1.40), graphics,
-	 utils
+	 utils, ggplot2
 Suggests: pRolocdata, knitr, BiocStyle, rmarkdown
 License: GPL-2
 URL: http://ComputationalProteomicsUnit.github.io/pRolocGUI/
@@ -26,4 +26,4 @@ BugReports: https://github.com/ComputationalProteomicsUnit/pRolocGUI/issues
 VignetteBuilder: knitr
 Video: https://www.youtube.com/playlist?list=PLvIXxpatSLA2loV5Srs2VBpJIYUlVJ4ow
 biocViews: Proteomics, Visualization, GUI
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1

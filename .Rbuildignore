@@ -1,3 +1,12 @@
 .travis.yml
 NEWS.md
 .gitignores
+articles
+authors.html
+index.html
+jquery.sticky-kit.min.js
+link.svg
+news
+pkgdown.css
+pkgdown.js
+reference
