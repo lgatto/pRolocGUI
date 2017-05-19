@@ -1,3 +1,21 @@
+# pRolocGUI 1.11
+
+## CHANGES IN VERSION 1.11.1
+- Avoid computing dimensionality reduction at every reactive
+  rendering, assuring that other, slower methods, in particular t-SNE,
+  can be used <2017-05-20 Sat>
+
+
+## CHANGES IN VERSION 1.11.0
+- New version for Bioc devel 3.6
+
+# pRolocGUI 1.10
+
+## CHANGES IN VERSION 1.10.0
+- New version for Bioc release 3.5
+
+# pRolocGUI 1.9
+
 ## CHANGES IN VERSION 1.9.5
 
 - Fix broken documentation files <2017-01-18 Wed>
