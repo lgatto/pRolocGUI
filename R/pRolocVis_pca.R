@@ -287,6 +287,10 @@ pRolocVis_pca <- function(object,
             output$pca <- renderPlot({
                 par(mar = c(4, 4, 0, 0))
                 par(oma = c(1, 0, 0, 0))
+                ## If we pas a method explicitly in pRolocVis, then
+                ## method would match multiple arguments below, as we
+                ## pass it explicitly as "none". Hence, we don't pass
+                ## ... below.
                 plot2D(pcas,
                        col = rep(getUnknowncol(), nrow(object)),
                        pch = 21, cex = 1,
@@ -296,8 +300,7 @@ pRolocVis_pca <- function(object,
                        mirrorX = FALSE,
                        mirrorY = FALSE,
                        method = "none",
-                       methargs = list(object),
-                       ...)
+                       methargs = list(object))
                 if (!is.null(input$markers)) {
                     for (i in 1:length(input$markers)) 
                         points(pcas[mrkSel()[[i]], ], pch = 16, 
