@@ -287,7 +287,7 @@ pRolocVis_pca <- function(object,
             output$pca <- renderPlot({
                 par(mar = c(4, 4, 0, 0))
                 par(oma = c(1, 0, 0, 0))
-                plot2D(object,
+                plot2D(pcas,
                        col = rep(getUnknowncol(), nrow(object)),
                        pch = 21, cex = 1,
                        xlim = ranges$x,
@@ -295,6 +295,8 @@ pRolocVis_pca <- function(object,
                        fcol = newName,
                        mirrorX = FALSE,
                        mirrorY = FALSE,
+                       method = "none",
+                       methargs = list(object),
                        ...)
                 if (!is.null(input$markers)) {
                     for (i in 1:length(input$markers)) 
@@ -305,11 +307,9 @@ pRolocVis_pca <- function(object,
                 idDT <<- feats[input$fDataTable_rows_selected]
                 if (resetLabels$logical) idDT <<- character()  ## If TRUE labels are cleared
                 if (length(idDT)) {
-                    highlightOnPlot(object, idDT, cex = 1.3,
-                                    args = list(fcol = NULL))
+                    highlightOnPlot(pcas, idDT, cex = 1.3)
                     if (input$checkbox) 
-                        highlightOnPlot(object, idDT, labels = TRUE,
-                                        pos = 3, args = list(fcol = NULL))
+                        highlightOnPlot(pcas, idDT, labels = TRUE, pos = 3)
                 }
                 resetLabels$logical <- FALSE
             })
