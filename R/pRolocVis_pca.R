@@ -63,6 +63,7 @@ pRolocVis_pca <- function(object,
         colnames(m) <- "0"
         fData(object)[, fcol] <- m
     }
+
     ## Get matrix or vector markers for defined fcol
     pmarkers <- fData(object)[, fcol]
   
@@ -304,9 +305,11 @@ pRolocVis_pca <- function(object,
                 idDT <<- feats[input$fDataTable_rows_selected]
                 if (resetLabels$logical) idDT <<- character()  ## If TRUE labels are cleared
                 if (length(idDT)) {
-                    highlightOnPlot(object, idDT, cex = 1.3)
+                    highlightOnPlot(object, idDT, cex = 1.3,
+                                    args = list(fcol = NULL))
                     if (input$checkbox) 
-                        highlightOnPlot(object, idDT, labels = TRUE, pos = 3)
+                        highlightOnPlot(object, idDT, labels = TRUE,
+                                        pos = 3, args = list(fcol = NULL))
                 }
                 resetLabels$logical <- FALSE
             })
