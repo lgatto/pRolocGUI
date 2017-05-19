@@ -40,13 +40,15 @@
 ##'     to be used for colouring. Default is \code{"markers"}. This
 ##'     will correspond to the prediction column if using "classify",
 ##'     or the markers (labelled data) to be plotted otherwise. If set
-##'     to \code{NULL}, no annotation is expected. 
+##'     to \code{NULL}, no annotation is expected.
 ##' @param legend.cex Point character expansion for the the legend.
 ##'     Default is 1.
 ##' @param ... Additional parameters passed to \code{plot2D} for the
-##'     \code{"main"}, \code{"classify"}, \code{"compare"} apps. For 
-##'     the \code{"aggregate"} app this is for additional parameters
-##'     to be passed to \code{combineFeatures}.
+##'     \code{"main"} (such as a different dimensionality reduction
+##'     technique than PCA, and its arguments), \code{"classify"},
+##'     \code{"compare"} apps. For the \code{"aggregate"} app this is
+##'     for additional parameters to be passed to
+##'     \code{combineFeatures}.
 ##' @author Laurent Gatto, Lisa Breckels and Thomas Naake
 ##' @seealso The package vignette: \code{vignette("pRolocGUI")}.
 ##' @examples
