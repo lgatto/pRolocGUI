@@ -41,12 +41,12 @@ If you use these open-source software for your research, please cite:
 >  pRoloc and pRolocdata. Bioinformatics. 2014 May 1;30(9):1322-4.
 >  doi:10.1093/bioinformatics/btu013. Epub 2014 Jan 11. PMID:24413670;
 >  PMCID:PMC3998135.
->
+
 >  Breckels LM, Gatto L, Christoforou A, Groen AJ, Lilley KS, Trotter
 >  MW. The effect of organelle discovery upon sub-cellular protein
 >  localisation. J Proteomics. 2013 Mar 21. doi:pii:
 >  S1874-3919(13)00094-8. 10.1016/j.jprot.2013.02.019. PMID:23523639.
->
+
 >  Gatto L., Breckels L.M., Burger T, Nightingale D.J.H., Groen A.J.,
 >  Campbell C., Mulvey C.M., Christoforou A., Ferro M., Lilley K.S. 'A
 >  foundation for reliable spatial proteomics data analysis' Mol Cell
