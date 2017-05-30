@@ -254,7 +254,7 @@ of selected protein(s) are shown by black lines.
 `FeaturesOfInterest`/`FoICollection` infrastructure distributed by the
 `MSnbase` package (for examples on how to create `FeaturesOfInterest`
 see the [`pRoloc`
-tutorial](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-tutorial.html))`.
+tutorial](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-tutorial.html)).
 
 ![Table Selection](figures/SS_PCA8.jpg)
 
