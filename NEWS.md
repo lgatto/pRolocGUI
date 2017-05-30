@@ -1,7 +1,8 @@
 # pRolocGUI 1.11
 
 ## CHANGES IN VERSION 1.11.2
-- Nothing yet
+- Fix links in vignette to point to new html pRoloc vignettes
+  <2017-05-30 Tue>
 
 ## CHANGES IN VERSION 1.11.1
 - Avoid computing dimensionality reduction at every reactive

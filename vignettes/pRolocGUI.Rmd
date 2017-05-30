@@ -84,7 +84,7 @@ technology on mouse E14TG2a embryonic stem cells ([Christoforou et al 2016](http
 For more background spatial proteomics data anlayses please see 
 [Gatto et al 2010](http://www.ncbi.nlm.nih.gov/pubmed/21080489), 
 [Gatto et al 2014](http://www.ncbi.nlm.nih.gov/pubmed/24846987) and also the 
-[`pRoloc` tutorial vignette](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-tutorial.pdf). 
+[`pRoloc` tutorial vignette](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-tutorial.html). 
 
 ```{r loadData, echo = TRUE, message = FALSE, warning = FALSE}
 data(hyperLOPIT2015) 
@@ -141,7 +141,7 @@ known to exhibit similar distributions (De Duve's principale).
 * The classification app can be used for viewing the sub-cellular class 
 predictions output from a supervised machine learning analysis and to
 help the user set a classification threshold (see the [`pRoloc`
-tutorial](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-tutorial.pdf)
+tutorial](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-tutorial.html)
 for details on spatial proteomics data analysis).
 * The comparison application may be of interest if a user wishes to 
 examine two replicate experiments, or two experiments from different
@@ -254,7 +254,7 @@ of selected protein(s) are shown by black lines.
 `FeaturesOfInterest`/`FoICollection` infrastructure distributed by the
 `MSnbase` package (for examples on how to create `FeaturesOfInterest`
 see the [`pRoloc`
-tutorial](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-tutorial.pdf))`.
+tutorial](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-tutorial.html))`.
 
 ![Table Selection](figures/SS_PCA8.jpg)
 
@@ -289,7 +289,7 @@ found in `fcol = "markers"` and then apply these parameters using the
 `svmClassification` function. (Note, here we perform a reduced search
 using `times = 3` in the interest of time. In practise we recommend at
 least to use `times = 100` as described in the [`pRoloc`
-tutorial](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-tutorial.pdf).
+tutorial](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-tutorial.html).
 This tutorial also contains more information on machine learning, the practise
 of training and testing, and some extensive examples of machine learning 
 classification in spatial proteomics.)
