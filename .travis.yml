@@ -14,6 +14,10 @@ before_install:
 r_packages:
   - covr
 
+## temporarilty, until latest BiocStyle becomes available
+r_github_packages:
+  - Bioconductor/BiocStyle
+
 after_success:
   - Rscript -e 'covr::codecov()'
 

@@ -9,7 +9,7 @@ author:
   affiliation: *cpu
 package: pRolocGUI
 output:
-  BiocStyle::html_document2:
+  BiocStyle::html_document:
     toc_float: true
 vignette: >
   %\VignetteIndexEntry{pRolocGUI - Interactive visualisation of spatial proteomics data} 
