@@ -28,7 +28,7 @@
 ##'     if the total number of clusters is less than including 15. If
 ##'     \code{FALSE} or otherwise, only the first cluster in the list
 ##'     is displayed.
-##' @return For the \code{main}, \code{compare} and \code{aggregate} apps 
+##' @return For the \code{pca}, \code{compare} and \code{aggregate} apps 
 ##'     a \code{character} vector of \code{featureNames} names of the
 ##'     \code{object} loaded that have been selected in the app
 ##'     upon application closure.

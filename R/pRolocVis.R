@@ -2,11 +2,11 @@
 ##' interactively.
 ##' 
 ##' The function \code{pRolocVis} is a wrapper for
-##' \code{pRolocVis_main}, \code{pRolocVis_classify},\code{pRolocVis_compare}. 
+##' \code{pRolocVis_pca}, \code{pRolocVis_classify},\code{pRolocVis_compare}. 
 ##' and \code{pRolocVis_aggregate}. These Shiny apps allow to explore and
 ##' analyse interactively spatial proteomics data.
 ##'  
-##' The \code{main} Shiny app allows exploration of quantitative data
+##' The \code{pca} Shiny app allows exploration of quantitative data
 ##' (1) visually through Principle Component Analysis (PCA), (2)
 ##' protein profiles, and (3) a searchable feature data table,
 ##' allowing visualisation of particular proteins of interest.
@@ -33,7 +33,7 @@
 ##' @param object An instance of class \code{MSnSet}, or an
 ##'     \code{MSnSetList} of length 2 if using \code{"compare"}
 ##'     application.
-##' @param app The type of application requested: \code{"main"}
+##' @param app The type of application requested: \code{"pca"}
 ##'     (default), \code{"classify"}, \code{"compare"} or
 ##'     \code{"aggregate"}. See description below.
 ##' @param fcol The feature meta-data label (\code{fData} column name)
@@ -44,7 +44,7 @@
 ##' @param legend.cex Point character expansion for the the legend.
 ##'     Default is 1.
 ##' @param ... Additional parameters passed to \code{plot2D} for the
-##'     \code{"main"} (such as a different dimensionality reduction
+##'     \code{"pca"} (such as a different dimensionality reduction
 ##'     technique than PCA, and its arguments), \code{"classify"},
 ##'     \code{"compare"} apps. For the \code{"aggregate"} app this is
 ##'     for additional parameters to be passed to
@@ -55,7 +55,7 @@
 ##' library("pRoloc")
 ##' library("pRolocdata")
 ##' data(hyperLOPIT2015)
-##' ## Load the "main" PCA app
+##' ## Load the PCA app
 ##' if (interactive()) {
 ##'   pRolocVis(hyperLOPIT2015)
 ##' }
@@ -80,16 +80,16 @@
 ##'   pRolocVis(hl, app = "aggregate", fcol = "markers", 
 ##'             groupBy = "Protein.Group.Accessions")                    
 ##' }
-pRolocVis <- function(object, app = "main", fcol, ...) {
+pRolocVis <- function(object, app = "pca", fcol, ...) {
   res <- NULL
-  app <- match.arg(app, c("main", "compare", "classify", "aggregate"))
+  app <- match.arg(app, c("pca", "compare", "classify", "aggregate"))
   if (inherits(object, "MSnSetList"))
     app <- "compare"
   if (missing(app))
-    app <- "main"
+    app <- "pca"
   if (missing(fcol) && app != "classify")
     fcol <- "markers"
-  if (app == "main")
+  if (app == "pca")
     pRolocVis_pca(object, fcol, ...)
   if (app == "classify")
     res <- pRolocVis_classify(object, fcol, ...)

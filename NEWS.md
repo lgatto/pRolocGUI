@@ -1,7 +1,7 @@
 # pRolocGUI 1.11
 
 ## CHANGES IN VERSION 1.11.3
-- Nothing yet
+- Rename the main app pca app <2017-08-21 Mon>
 
 ## CHANGES IN VERSION 1.11.2
 - Fix links in vignette to point to new html pRoloc vignettes

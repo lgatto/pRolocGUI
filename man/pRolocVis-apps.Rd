@@ -9,7 +9,7 @@
 \alias{pRolocVis_pca}
 \title{Interactive visualisation of spatial proteomics data}
 \usage{
-pRolocVis(object, app = "main", fcol, ...)
+pRolocVis(object, app = "pca", fcol, ...)
 
 pRolocVis_aggregate(object, fcol, groupBy, fig.height = "600px",
   fig.width = "100\%", legend.width = "200\%", legend.cex = 1,
@@ -32,7 +32,7 @@ pRolocVis_pca(object, fcol = "markers", foi, fig.height = "600px",
 \code{MSnSetList} of length 2 if using \code{"compare"}
 application.}
 
-\item{app}{The type of application requested: \code{"main"}
+\item{app}{The type of application requested: \code{"pca"}
 (default), \code{"classify"}, \code{"compare"} or
 \code{"aggregate"}. See description below.}
 
@@ -43,9 +43,11 @@ or the markers (labelled data) to be plotted otherwise. If set
 to \code{NULL}, no annotation is expected.}
 
 \item{...}{Additional parameters passed to \code{plot2D} for the
-\code{"main"}, \code{"classify"}, \code{"compare"} apps. For 
-the \code{"aggregate"} app this is for additional parameters
-to be passed to \code{combineFeatures}.}
+\code{"pca"} (such as a different dimensionality reduction
+technique than PCA, and its arguments), \code{"classify"},
+\code{"compare"} apps. For the \code{"aggregate"} app this is
+for additional parameters to be passed to
+\code{combineFeatures}.}
 
 \item{groupBy}{The feature meta-data label (\code{fData} column name)
 to be used for summarising the features to be combined.}
@@ -101,7 +103,7 @@ first dataset. The default is TRUE.}
 For the \code{classify} app a \code{numeric} vector of thresholds, 
 one per class, to use with \code{\link{getPredictions}}
 
-For the \code{main}, \code{compare} and \code{aggregate} apps 
+For the \code{pca}, \code{compare} and \code{aggregate} apps 
     a \code{character} vector of \code{featureNames} names of the
     \code{object} loaded that have been selected in the app
     upon application closure.
@@ -112,11 +114,11 @@ interactively.
 }
 \details{
 The function \code{pRolocVis} is a wrapper for
-\code{pRolocVis_main}, \code{pRolocVis_classify},\code{pRolocVis_compare}. 
+\code{pRolocVis_pca}, \code{pRolocVis_classify},\code{pRolocVis_compare}. 
 and \code{pRolocVis_aggregate}. These Shiny apps allow to explore and
 analyse interactively spatial proteomics data.
  
-The \code{main} Shiny app allows exploration of quantitative data
+The \code{pca} Shiny app allows exploration of quantitative data
 (1) visually through Principle Component Analysis (PCA), (2)
 protein profiles, and (3) a searchable feature data table,
 allowing visualisation of particular proteins of interest.
@@ -142,7 +144,7 @@ and their distributions.
 library("pRoloc")
 library("pRolocdata")
 data(hyperLOPIT2015)
-## Load the "main" PCA app
+## Load the PCA app
 if (interactive()) {
   pRolocVis(hyperLOPIT2015)
 }

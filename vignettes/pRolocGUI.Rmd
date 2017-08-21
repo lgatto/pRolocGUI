@@ -51,10 +51,10 @@ the `pRoloc` vignette (see `vignette("pRoloc-tutorial")`) before using
 There are 3 applications distributed with `pRolocGUI` which are
 wrapped and launched by the `pRolocVis` function. These 3 applications
 are called according to the argument `app` in the `pRolocVis`
-function which may be one of "main", "classify" or
+function which may be one of "pca", "classify" or
 "compare". 
 
-* The `main` application launches a Principal Components Analysis (PCA) 
+* The `pca` application launches a Principal Components Analysis (PCA) 
 plot of the data, with an alternate profiles tab for visualisation of 
 protein profiles, it also features a searchable data table for the
 identification of proteins of interest.
@@ -98,7 +98,7 @@ length 2 for the `compare` application). Please see
 `vignette("pRoloc-tutorial")` or `vignette("MSnbase-io")` for
 importing and loading data. The argument `app` tells the `pRolocVis`
 function what type of application to load. One can choose
-from: `"main"` (default), `"classify"`, `"compare"`.  The optional 
+from: `"pca"` (default), `"classify"`, `"compare"`.  The optional 
 argument `fcol` (and `fcol1` and `fcol2` for the compare app)
 can be used which allows the user to specify the 
 feature meta-data label(s) (`fData` column name(s)) to be plotted. 
@@ -108,7 +108,7 @@ feature meta-data label that corresponds to the column containing the
 classification results, generated from running a supervised machine
 learning analysis (see [below](#the-classify-application)).
 
-For example, to load the main `pRolocVis` application:
+For example, to load the default `pRolocVis` application:
 
 ```{r example, eval = FALSE, echo = TRUE} 
 pRolocVis(object = hyperLOPIT2015, fcol = "markers") 
@@ -128,7 +128,7 @@ browser tab, where `pRolocVis` is running.
 There are 3 different applications, each one designed to address a 
 different specific user requirement.
 
-* The main app is intended for exploratory data analysis, 
+* The PCA app is intended for exploratory data analysis, 
 which features a clickable interface and zoomable PCA plot. If you would
 like to search for a particular protein or set of proteins this is the
 application to use. This app also features a protein profiles tab, 
@@ -147,12 +147,12 @@ for details on spatial proteomics data analysis).
 examine two replicate experiments, or two experiments from different
 conditions etc.  Two PCA plots are loaded side-by-side and one can
 search and identify common proteins between the two data sets. As per the 
-main application there is also a protein profiles tab to allow one to look
+default application there is also a protein profiles tab to allow one to look
 at the patterns of protein profiles of interest in each dataset. 
 
-# The `main` application
+# The `pca` application
 
-The `main`, default, application is characterised by an interactive and
+The `pca`, default, application is characterised by an interactive and
 searchable Principal Components Analysis (PCA) plot. PCA is an
 ordinance method that can be used to transform a high-dimensional
 dataset into a smaller lower-dimenensional set of uncorrelated
@@ -170,7 +170,7 @@ feature meta-data is permanantly dispalyed at the bottom of the screen for
 ease. You can browse between the tabs by simply clicking on them at the top
 of the screen.
 
-To run the `main` application using `pRolocVis`: 
+To run the `pca` application using `pRolocVis`: 
 
 ```{r pca1, eval = FALSE, echo = TRUE} 
 pRolocVis(object = hyperLOPIT2015, fcol = "markers") 
@@ -381,7 +381,7 @@ pRolocVis(mydata, app = "compare")
 ![The compare application, selecting classes](figures/SS_Compare2.jpg)
 
 **Viewing, remapping, searching and zooming**
-The compare app has the same functionality as the main application and
+The compare app has the same functionality as the pca application and
 PCA, Profiles and Table Selection tabs. One key feature of the compare
 application is the ability to re-map the second dataset onto the PCA data
 space of the first (reference) data set (see `?pRolocVis` and the argument `remap = TRUE`). 
@@ -399,20 +399,20 @@ The order of the first (the reference data for remapping) and second dataset
 can be changed through regeneration/re-ordering of the `MSnSetList` object. 
 Note: the proteins that are common in both datasets are only displayed.
 
-As per the main application, and described in detail above, there is a sidebar with a 
+As per the pca application, and described in detail above, there is a sidebar with a 
 'Labels' menu, where input can be selected by clicking on and off
 the data class names. Proteins of interest can be highlighted by double clicking
 on any of the PCA plots (and highlighted in both datasets on both PCA plots), or
 by typing and  searching in the white input box above the data table and clicking
 on the protein of interest in the data table. Zooming, clicking and searching
-for proteins of interest is supported as per the main app.
+for proteins of interest is supported as per the pca app.
 
 ![The compare application, searching fpr proteins](figures/SS_Compare3.jpg)
 ![The compare application, brushing](figures/SS_Compare4.jpg)
 ![The compare application, zooming](figures/SS_Compare5.jpg)
 
 **Profiles**
-As per the main application there is a profiles tab which loads the
+As per the pca application there is a profiles tab which loads the
 quantitative protein profiles for the first experiment and second
 experiment, on the left- and right-hand sides respectively. One
 can highlight proteins of interest by clicking items in the data 
