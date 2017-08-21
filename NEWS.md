@@ -1,5 +1,8 @@
 # pRolocGUI 1.11
 
+## CHANGES IN VERSION 1.11.3
+- Nothing yet
+
 ## CHANGES IN VERSION 1.11.2
 - Fix links in vignette to point to new html pRoloc vignettes
   <2017-05-30 Tue>
