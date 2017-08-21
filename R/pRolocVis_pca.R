@@ -186,7 +186,6 @@ pRolocVis_pca <- function(object,
     ## all proteins are displayed on start
     toSel <- 1:nrow(object)
     feats <- featureNames(object)
-
   
     ## Build shiny app
     ui <- fluidPage(
