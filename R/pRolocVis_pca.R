@@ -43,6 +43,7 @@ pRolocVis_pca <- function(object,
                           all = TRUE,
                           ...) {
     ## Return featureNames of proteins selected
+    idDT <- character()
     on.exit({
         setUnknowncol(NULL)
         return(invisible(idDT))
@@ -185,7 +186,6 @@ pRolocVis_pca <- function(object,
     ## all proteins are displayed on start
     toSel <- 1:nrow(object)
     feats <- featureNames(object)
-    idDT <- character()
 
   
     ## Build shiny app
