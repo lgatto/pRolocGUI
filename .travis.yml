@@ -13,6 +13,7 @@ before_install:
   - Rscript -e "install.packages('Rcpp'); download.file('https://cran.r-project.org/src/contrib/Archive/RcppArmadillo/RcppArmadillo_0.7.900.2.0.tar.gz', 'RcppArmadillo_0.7.900.2.0.tar.gz'); install.packages('RcppArmadillo_0.7.900.2.0.tar.gz', repos = NULL)"  
 
 bioc_packages:
+ - mzR
  - MSnbase
 
 r_packages:
