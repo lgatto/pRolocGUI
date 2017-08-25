@@ -12,10 +12,11 @@ before_install:
   - if [[ "$TRAVIS_R_VERSION_STRING" = 'bioc-devel' ]]; then mkdir ~/.R && echo 'CXX1X=g++ -std=c++0x -g -O2 -fPIC' > ~/.R/Makevars; fi
 #   - Rscript -e "install.packages('Rcpp'); download.file('https://cran.r-project.org/src/contrib/Archive/RcppArmadillo/RcppArmadillo_0.7.900.2.0.tar.gz', 'RcppArmadillo_0.7.900.2.0.tar.gz'); install.packages('RcppArmadillo_0.7.900.2.0.tar.gz', repos = NULL)"  
 
-# bioc_packages:
-#   - mzR
-#   - MSnbase
-#   - pRoloc
+addons:
+  apt:
+    packages:
+      - libnetcdf-dev
+      - netcdf-bin 
 
 r_packages:
   - covr
