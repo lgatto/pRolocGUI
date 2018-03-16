@@ -1,3 +1,14 @@
+# pRolocGUI 1.13
+
+## CHANGES IN VERSION 1.13.1
+- Update pRolocVis documentation do show how to use precomputed
+  coordinates (see issue #92) <2018-03-16 Fri>
+
+# pRolocGUI 1.12
+
+## CHANGES IN VERSION 1.12.0
+- Biocondutor release 3.6
+
 # pRolocGUI 1.11
 
 ## CHANGES IN VERSION 1.11.3

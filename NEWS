@@ -1,3 +1,18 @@
+CHANGES IN VERSION 1.13.1
+-------------------------
+- Update pRolocVis documentation do show how to use precomputed
+  coordinates (see issue #92) <2018-03-16 Fri>
+
+
+CHANGES IN VERSION 1.12.0
+-------------------------
+- Biocondutor release 3.6
+
+
+CHANGES IN VERSION 1.11.3
+-------------------------
+- Rename the main app pca app <2017-08-21 Mon>
+
 CHANGES IN VERSION 1.11.2
 -------------------------
 - Fix links in vignette to point to new html pRoloc vignettes

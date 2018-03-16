@@ -114,14 +114,18 @@ interactively.
 }
 \details{
 The function \code{pRolocVis} is a wrapper for
-\code{pRolocVis_pca}, \code{pRolocVis_classify},\code{pRolocVis_compare}. 
+\code{pRolocVis_pca}, \code{pRolocVis_classify},\code{pRolocVis_compare}.
 and \code{pRolocVis_aggregate}. These Shiny apps allow to explore and
 analyse interactively spatial proteomics data.
- 
+
 The \code{pca} Shiny app allows exploration of quantitative data
 (1) visually through Principle Component Analysis (PCA), (2)
 protein profiles, and (3) a searchable feature data table,
-allowing visualisation of particular proteins of interest.
+allowing visualisation of particular proteins of interest. (NOTE:
+This
+\href{https://github.com/ComputationalProteomicsUnit/pRolocGUI/issues/92}{issue
+on GitHub} shows how to use pre-computed coodinates prior to
+visualisation with the app.)
 
 The \code{classify} Shiny app is used to visualise classification
 results and set user-specified thresholds for sub-cellular
@@ -129,7 +133,7 @@ location predictions.
 
 The \code{compare} Shiny app is meant for comparing protein
 localisation between two conditions, or two different experiments,
-replicates etc. Please note that passing the argument \code{method} 
+replicates etc. Please note that passing the argument \code{method}
 to \code{...} will not work as it is already specified internally.
 
 The \code{aggregation} Shiny app displays a scatter plot of the
@@ -151,10 +155,10 @@ if (interactive()) {
 
 ## Load classification results from hyperLOPIT stored in fData
 if (interactive()) {
-  myThreshold <- pRolocVis(hyperLOPIT2015, app = "classify", 
-                           fcol = "svm.classification", 
+  myThreshold <- pRolocVis(hyperLOPIT2015, app = "classify",
+                           fcol = "svm.classification",
                            scol = "svm.score")
-  newPredictions <- getPredictions(hyperLOPIT2015, fcol = "svm.classification", 
+  newPredictions <- getPredictions(hyperLOPIT2015, fcol = "svm.classification",
                                    scol = "svm.score", t = myThreshold)
 }
 
@@ -162,12 +166,12 @@ if (interactive()) {
 data("hyperLOPIT2015ms2psm")
 if (interactive()) {
   ## Combine PSM data to peptides
-  hl <- combineFeatures(hyperLOPIT2015ms2psm, 
-                        groupBy = fData(hyperLOPIT2015ms2psm)$Sequence, 
+  hl <- combineFeatures(hyperLOPIT2015ms2psm,
+                        groupBy = fData(hyperLOPIT2015ms2psm)$Sequence,
                         fun = median)
   ## Visualise peptides according to protein group
-  pRolocVis(hl, app = "aggregate", fcol = "markers", 
-            groupBy = "Protein.Group.Accessions")                    
+  pRolocVis(hl, app = "aggregate", fcol = "markers",
+            groupBy = "Protein.Group.Accessions")
 }
 }
 \seealso{
