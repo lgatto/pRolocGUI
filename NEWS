@@ -2,6 +2,7 @@ CHANGES IN VERSION 1.13.1
 -------------------------
 - Update pRolocVis documentation do show how to use precomputed
   coordinates (see issue #92) <2018-03-16 Fri>
+- Catch unnecessary idDT error produced on exit <2018-04-23 Mon>
 
 
 CHANGES IN VERSION 1.12.0
