@@ -10,3 +10,4 @@ news
 pkgdown.css
 pkgdown.js
 reference
+^docs$
