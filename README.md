@@ -75,8 +75,9 @@ excellent integration with the `R` terminal.
 In an `R` console, type
 
 ```
-source("http://www.bioconductor.org/biocLite.R")
-biocLite(c("pRoloc", "pRolocdata", "pRolocGUI"))
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+BiocManager::install(c("pRoloc", "pRolocdata", "pRolocGUI"))
 ```
 
 #### Development version
@@ -87,7 +88,7 @@ thoroughly tested and could substantially change prior to release. Use
 at your own risks.
 
 ```
-biocLite("ComputationalProteomicsUnit/pRolocGUI")
+BiocManager::install("ComputationalProteomicsUnit/pRolocGUI")
 ```
 
 ## Getting started
