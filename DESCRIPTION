@@ -26,4 +26,4 @@ BugReports: https://github.com/ComputationalProteomicsUnit/pRolocGUI/issues
 VignetteBuilder: knitr
 Video: https://www.youtube.com/playlist?list=PLvIXxpatSLA2loV5Srs2VBpJIYUlVJ4ow
 biocViews: Proteomics, Visualization, GUI
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0

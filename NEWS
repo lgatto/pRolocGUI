@@ -1,3 +1,21 @@
+CHANGES IN VERSION 1.15.2
+-------------------------
+- Update NEWS and pkgdown site
+
+CHANGES IN VERSION 1.15.1
+-------------------------
+- Replace BiocInstaller biocLite mentions with BiocManager
+
+CHANGES IN VERSION 1.15.0
+-------------------------
+- New version for Bioc devel
+
+
+CHANGES IN VERSION 1.14.0
+-------------------------
+- New version for Bioc release
+
+
 CHANGES IN VERSION 1.13.2
 -------------------------
 

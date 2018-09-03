@@ -82,10 +82,10 @@ BiocManager::install(c("pRoloc", "pRolocdata", "pRolocGUI"))
 
 #### Development version
 
-The development code on github can be installed using `biocLite` (or
-`install_github`). New pre-release features might not be documented or
-thoroughly tested and could substantially change prior to release. Use
-at your own risks.
+The development code on github can also be installed using
+`BiocManager::install` (or `install_github`). New pre-release features
+might not be documented or thoroughly tested and could substantially
+change prior to release. Use at your own risks.
 
 ```
 BiocManager::install("ComputationalProteomicsUnit/pRolocGUI")

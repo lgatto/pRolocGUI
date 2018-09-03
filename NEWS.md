@@ -1,3 +1,19 @@
+# pRolocGUI 1.15
+
+## CHANGES IN VERSION 1.15.2
+- Update NEWS and pkgdown site
+
+## CHANGES IN VERSION 1.15.1
+- Replace BiocInstaller biocLite mentions with BiocManager
+
+## CHANGES IN VERSION 1.15.0
+- New version for Bioc devel
+
+# pRolocGUI 1.14
+
+## CHANGES IN VERSION 1.14.0
+- New version for Bioc release
+
 # pRolocGUI 1.13
 
 ## CHANGES IN VERSION 1.13.2

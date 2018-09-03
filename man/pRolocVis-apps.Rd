@@ -15,8 +15,8 @@ pRolocVis_aggregate(object, fcol, groupBy, fig.height = "600px",
   fig.width = "100\%", legend.width = "200\%", legend.cex = 1,
   nchar = 40, all = TRUE, mirrorX = FALSE, mirrorY = FALSE, ...)
 
-pRolocVis_classify(object, fcol, scol, mcol = "markers", legend.cex = 1,
-  ...)
+pRolocVis_classify(object, fcol, scol, mcol = "markers",
+  legend.cex = 1, ...)
 
 pRolocVis_compare(object, fcol1, fcol2, foi, fig.height = "600px",
   fig.width = "100\%", legend.width = "200\%", legend.cex = 1,
