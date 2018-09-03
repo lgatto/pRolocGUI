@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/ComputationalProteomicsUnit/pRolocGUI.svg?branch=master)](https://travis-ci.org/ComputationalProteomicsUnit/pRolocGUI)
-[![Bioconductor devel build Status](http://bioconductor.org/shields/build/devel/bioc/pRolocGUI.svg)](http://bioconductor.org/packages/devel/bioc/html/pRolocGUI.html) 
+[![Bioconductor devel build Status](http://bioconductor.org/shields/build/devel/bioc/pRolocGUI.svg)](http://bioconductor.org/packages/devel/bioc/html/pRolocGUI.html)
 [![Bioconductor release build Status](http://bioconductor.org/shields/build/release/bioc/pRolocGUI.svg)](http://bioconductor.org/packages/release/bioc/html/pRolocGUI.html)
 
 Exploring and visualising spatial proteomics data
@@ -50,7 +50,7 @@ If you use these open-source software for your research, please cite:
 >  Gatto L., Breckels L.M., Burger T, Nightingale D.J.H., Groen A.J.,
 >  Campbell C., Mulvey C.M., Christoforou A., Ferro M., Lilley K.S. 'A
 >  foundation for reliable spatial proteomics data analysis' Mol Cell
->  Proteomics. 2014 May 20. 
+>  Proteomics. 2014 May 20.
 
 ## Installation
 
@@ -66,7 +66,7 @@ recommended. [Download](http://www.rstudio.com/products/rstudio/download/)
 and install the RStudio IDE. `RStudio` provides a good code editor and
 excellent integration with the `R` terminal.
 
-3) Start `R` or `RStudio`. 
+3) Start `R` or `RStudio`.
 
 4) Install the Bioconductor packages `pRoloc`, `pRolocdata` and
 `pRolocGUI`:
@@ -111,18 +111,17 @@ data(hyperLOPIT2015)
 There are 3 different visualisation applications currently
 available: `main`, `classification` and `compare`.
 These apps are launched using the `pRolocVis` function and
-passing `object`, which is an `MSnSet` containing the data 
+passing `object`, which is an `MSnSet` containing the data
 one wishes to interrogate. One may also specify which app
 they wish to use by using the `app` argument, see `?pRolocVis`
-for more details. The default app that is loaded if 
+for more details. The default app that is loaded if
 `app` is not specified is the `main` application:
 
 ```
 pRolocVis(hyperLOPIT2015)
 ```
 
-![Screenshot - PCA](https://github.com/ComputationalProteomicsUnit/pRolocGUI/blob/master/vignettes/figures/SS_PCA1.jpg)
-
+![Screenshot - PCA](https://raw.githubusercontent.com/ComputationalProteomicsUnit/pRolocGUI/master/vignettes/figures/SS_PCA1.jpg)
 
 The graphical interface is described in details in the package
 vignette that is included in the package itself (get it by typing
@@ -157,5 +156,3 @@ Tutorial [playlist](https://www.youtube.com/watch?v=qHMUnZnrkdA&list=PLvIXxpatSL
 - R and Bioconductor for proteomics
   [web page](http://lgatto.github.io/RforProteomics/) and
   [package](http://www.bioconductor.org/packages/release/data/experiment/html/RforProteomics.html).
-
-
