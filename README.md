@@ -1,5 +1,6 @@
-Devel: [![Bioconductor devel build Status](http://bioconductor.org/shields/build/devel/bioc/pRolocGUI.svg)](http://bioconductor.org/packages/devel/bioc/html/pRolocGUI.html)
- - Release: [![Bioconductor release build Status](http://bioconductor.org/shields/build/release/bioc/pRolocGUI.svg)](http://bioconductor.org/packages/release/bioc/html/pRolocGUI.html)
+Bioconductor build status:
+- Devel: [![Bioconductor devel build Status](http://bioconductor.org/shields/build/devel/bioc/pRolocGUI.svg)](http://bioconductor.org/packages/devel/bioc/html/pRolocGUI.html)
+- Release: [![Bioconductor release build Status](http://bioconductor.org/shields/build/release/bioc/pRolocGUI.svg)](http://bioconductor.org/packages/release/bioc/html/pRolocGUI.html)
 
 Exploring and visualising spatial proteomics data
 =================================================
