@@ -1,16 +1,14 @@
 Package: pRolocGUI
 Title: Interactive visualisation of spatial proteomics data
-Version: 1.17.0
+Version: 1.21.1
 Authors@R: c(person(given = "Lisa", family ="Breckels",
-                    email = "lms79@cam.ac.uk",
-                    role = c("aut", "cre")),
-             person(given = "Thomas", family ="Naake",
-                    role = "aut"),
-             person(given = "Laurent", family = "Gatto",
-	            email = "lg390@cam.ac.uk", 
-                    role = c("aut","cre")))
-Author: Lisa M Breckels, Thomas Naake and Laurent Gatto
-Maintainer: Laurent Gatto <lg390@cam.ac.uk>,
+		    email = "lms79@cam.ac.uk",
+		    role = c("aut", "cre")),
+	     person(given = "Thomas", family ="Naake",
+		    role = "aut"),
+	     person(given = "Laurent", family = "Gatto",
+		    email = "laurent.gatto@uclouvain.be",
+		    role = c("aut","cre")))
     Lisa M Breckels <lms79@cam.ac.uk>
 Description: The package pRolocGUI comprises functions to
     interactively visualise organelle (spatial) proteomics

@@ -1,3 +1,8 @@
+# pRolocGUI 1.21
+
+## CHANGES IN VERSION 1.21.1
+- Update email
+
 # pRolocGUI 1.15
 
 ## CHANGES IN VERSION 1.15.2
@@ -76,10 +81,10 @@
 ## CHANGES IN VERSION 1.9.2
 
 - Remove accidental merging left-over <2016-12-13 Tue>
- 
+
 ## CHANGES IN VERSION 1.9.1
 
-- Remove accidental call to browser 
+- Remove accidental call to browser
 
 ## CHANGES IN VERSION 1.9.0
 
@@ -96,17 +101,17 @@
 ## CHANGES IN VERSION 1.7.5
 
 - Various bug fixes <2016-10-07 Fri>
- 
+
 ## CHANGES IN VERSION 1.7.4
 
 - Add DT version dependency (see issue #71) <2016-08-09 Tue>
- 
+
 ## CHANGES IN VERSION 1.7.3
 
-- Fixed bug with matrix-f markers in fcol. Now if-ne-f the 
+- Fixed bug with matrix-f markers in fcol. Now if-ne-f the
    columns in the feature data is a matrix, it is converted to
-   a vector using mrkMatToVec. This helps clarity and reduces 
-   wasted table space-f 1's and 0's. <2016-07-29 Fri>  
+   a vector using mrkMatToVec. This helps clarity and reduces
+   wasted table space-f 1's and 0's. <2016-07-29 Fri>
 - Fixed bug in pRolocVis_compare application. Same issue as
    above with passing matrix as a fcol which manifested as an
    extra issue with zooming. Now fixed. <2016-07-29 Fri>
@@ -122,59 +127,59 @@
 - Removing plotMat2D app (closes issue #69) <2016-03-11 Fri>
 - add package startup msg <2016-03-11 Fri>
 - instruct users to install latest version from github
- 
+
 ## CHANGES IN VERSION 1.5.5
 
 - Depend-n DT >= 0.1.40
- 
+
 ## CHANGES IN VERSION 1.5.4
 
 - replace getLisacol by getStockcol (which are now Lisa's colours;
    since pRoloc version 1.11.9) <2016-02-16 Tue>
- 
+
 ## CHANGES IN VERSION 1.5.3
 
 - update refs in vignette <2016-02-09 Tue>
- 
+
 ## CHANGES IN VERSION 1.5.2
 
 - Updated pca app <2016-01-11 Mon>
 - Updated vignette <2016-01-12 Tue>
 - Fixed bugs, pca app renamed main app, removed
    profiles app <2016-01-14 Thu>
-- new compare app <2016-01-30 Sat> 
-- updated vignette <2016-02-03 Wed> 
+- new compare app <2016-01-30 Sat>
+- updated vignette <2016-02-03 Wed>
 
 ## CHANGES IN VERSION 1.5.1
 
 - New shiny apps <2015-10-12 Mon>
 - New vignette <2015-10-29 Thu>
-- Fixed bugs and updated examples in classify app 
-   <2015-11-09 Mon> 
- 
+- Fixed bugs and updated examples in classify app
+   <2015-11-09 Mon>
+
 ## CHANGES IN VERSION 1.5.0
 
 - Bioc devel 3.3
- 
+
 # pRoloc 1.4
- 
+
 ## CHANGES IN VERSION 1.4.0
 
 - Bioc release 3.2
- 
+
 # pRoloc 1.3
 
 ## CHANGES IN VERSION 1.3.2
 
 - Fix check warnings and errors <2015-07-20 Mon>
- 
+
 ## CHANGES IN VERSION 1.3.1
 
 - new plotMat2D function <2015-05-20 Wed>
 - Fix query search in pRolocVis, contributed by pierremj
    <2015-05-27 Wed>
 - pRolocVis has new method arg <2015-05-29 Fri>
- 
+
 ## CHANGES IN VERSION 1.3.0
 
 - Devel for Bioc 3.2
@@ -184,21 +189,21 @@
 ## CHANGES IN VERSION 1.2.0
 
 - Release for Bioc 3.1
- 
+
 # pRoloc 1.1
- 
+
 ## CHANGES IN VERSION 1.1.5
 
 - updating failing unit test [2015-04-03 Fri]
- 
+
 ## CHANGES IN VERSION 1.1.4
 
 - fix R_HOME error [2015-02-26 Thu]
- 
+
 ## CHANGES IN VERSION 1.1.3
 
 - don't require GNU make [2015-02-11 Wed]
- 
+
 ## CHANGES IN VERSION 1.1.2
 
 - Fix bug with FoIs and multiple data sets (reported by Harriet
@@ -225,7 +230,7 @@
 ## CHANGES IN VERSION 0.99.11
 
 - Add screenshot to README [2014-09-05 Fri]
-- fix bug when features-f fois are not present 
+- fix bug when features-f fois are not present
 - move data tab to the end
 
 ## CHANGES IN VERSION 0.99.10
@@ -264,7 +269,7 @@
 
 ## CHANGES IN VERSION 0.99.3
 
-- multiple-bjects can be passed to pRolocVis by using a list [2014-06-03 Tue] 
+- multiple-bjects can be passed to pRolocVis by using a list [2014-06-03 Tue]
 - improve query search (submit and select check box) [2014-06-02 Mon]
 - add unit tests for helper functions and add manual unit test [2014-06-03 Tue]
 
