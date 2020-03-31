@@ -1,5 +1,8 @@
 # pRolocGUI 1.21
 
+## CHANGES IN VERSION 1.21.2
+- Keep only one maintainer
+
 ## CHANGES IN VERSION 1.21.1
 - Update email
 
