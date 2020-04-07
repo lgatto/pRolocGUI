@@ -1,5 +1,8 @@
 # pRolocGUI 1.21
 
+## CHANGES IN VERSION 1.21.3
+- Depend on latest pRoloc
+
 ## CHANGES IN VERSION 1.21.2
 - Keep only one maintainer
 
