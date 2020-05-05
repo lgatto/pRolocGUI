@@ -19,3 +19,17 @@ narrowFeatureData <- function(object,
     if (validObject(object))
         return(object)
 }
+
+CSS <- function(values, colors){
+    template <- "
+.option[data-value='%s'], .item[data-value='%s']{
+  background: %s !important;
+  color: white !important;
+}"
+    paste0(
+        apply(cbind(values, colors), 1, function(vc){
+            sprintf(template, vc[1], vc[1], vc[2])
+        }),
+        collapse = "\n"
+    )
+}

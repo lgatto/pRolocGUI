@@ -24,8 +24,7 @@ pRolocVis_compare(object, fcol1, fcol2, foi, fig.height = "600px",
   mirrorY = FALSE, ...)
 
 pRolocVis_pca(object, fcol = "markers", foi, fig.height = "600px",
-  fig.width = "100\%", legend.width = "200\%", legend.cex = 1,
-  nchar = 40, all = TRUE, ...)
+  fig.width = "100\%", nchar = 40, all = TRUE, ...)
 }
 \arguments{
 \item{object}{An instance of class \code{MSnSet}, or an

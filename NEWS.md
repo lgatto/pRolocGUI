@@ -1,5 +1,9 @@
 # pRolocGUI 1.21
 
+## CHANGES IN VERSION 1.21.4
+- Colour code selectizeInput and remove legends
+  in the pca app
+
 ## CHANGES IN VERSION 1.21.3
 - Depend on latest pRoloc
 
