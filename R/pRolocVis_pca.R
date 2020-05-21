@@ -26,6 +26,19 @@
 ##'     if the total number of clusters is less than including 15. If
 ##'     \code{FALSE} or otherwise, only the first cluster in the list
 ##'     is displayed.
+##' @param method A \code{character} describe how to transform the
+##'     data or what to plot. One of \code{"PCA"} (default) or 
+##'     \code{"t-SNE"}. Other transformations can be used but the
+##'     data first needs to be transformed and passed as a matrix
+##'     see \code{methargs} and example herein  
+##' @param methargs A \code{list} of arguments to be passed when
+##'     \code{method} is called. If missing, the data will be scaled
+##'     and centred prior to PCA and t-SNE (i.e. \code{Rtsne}'s
+##'     arguments \code{pca_center} and \code{pca_scale} are set to
+##'     \code{TRUE}). If \code{method = "none"} and \code{object} is a
+##'     \code{matrix}, then the first and only argument of
+##'     \code{methargs} must be an \code{MSnSet} with matching
+##'     features with \code{object}.
 ##' @return For the \code{pca}, \code{compare} and \code{aggregate} apps 
 ##'     a \code{character} vector of \code{featureNames} names of the
 ##'     \code{object} loaded that have been selected in the app
@@ -38,8 +51,7 @@ pRolocVis_pca <- function(object,
                           nchar = 40,
                           all = TRUE,
                           method = "PCA",
-                          methargs,
-                          ...) {
+                          methargs) {
   ## Return featureNames of proteins selected
   idDT <- character()
   on.exit({

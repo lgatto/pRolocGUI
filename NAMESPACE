@@ -15,8 +15,10 @@ importFrom(DT,
            ## see issue 61
            ## dataTableOutput,
            ## renderDataTable,
-           formatStyle)
+           formatStyle, JS)
 importFrom(dplyr, "%>%")
 importFrom(ggplot2, "aes", "ggplot", "geom_point", "geom_smooth", 
            "annotate", "xlab")
+importFrom(colourpicker, "colourInput")
+importFrom(colorspace, "darken")
 export(pRolocVis)

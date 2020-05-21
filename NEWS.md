@@ -3,6 +3,8 @@
 ## CHANGES IN VERSION 1.21.4
 - Colour code selectizeInput and remove legends
   in the pca app
+- Add functionality for batch searching 
+- Add colour picker to pca app
 
 ## CHANGES IN VERSION 1.21.3
 - Depend on latest pRoloc
