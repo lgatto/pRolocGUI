@@ -46,8 +46,8 @@
 pRolocVis_pca <- function(object,
                           fcol = "markers",
                           foi,
-                          fig.height = "600px",
-                          fig.width = "100%",
+                          fig.height = "700px",
+                          fig.width = "700px",
                           nchar = 40,
                           all = TRUE,
                           method = "PCA",
@@ -260,7 +260,10 @@ pRolocVis_pca <- function(object,
   
   ui <- tagList(
     fluidPage(
-      tags$head(tags$head(uiOutput("css"))),     # add css code for coloured selectizeInput
+      titlePanel(h2("pRolocVis", align = "right"), 
+                 windowTitle = "pRolocVis"),
+      # add css code for coloured selectizeInput
+      tags$head(tags$head(uiOutput("css"))),     
       sidebarLayout(
         sidebarPanel(
           selectizeInput("markers", "Labels",
