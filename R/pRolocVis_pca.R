@@ -37,6 +37,8 @@ pRolocVis_pca <- function(object,
                           fig.width = "100%",
                           nchar = 40,
                           all = TRUE,
+                          method = "PCA",
+                          methargs,
                           ...) {
   ## Return featureNames of proteins selected
   idDT <- character()
@@ -45,9 +47,38 @@ pRolocVis_pca <- function(object,
     return(invisible(idDT))
   })
   
-  ## Usual checks
-  if (!inherits(object, "MSnSet"))
-    stop("The input must be of class MSnSet")
+  ## Check MSnSet or matrix
+  if (inherits(object, "MSnSet")) {
+    if (method == "PCA") {
+      object_coords <- plot2D(object, method = "PCA", plot = FALSE)
+    } 
+    else if (method == "t-SNE") {
+      object_coords <- plot2D(object, method = "t-SNE", plot = FALSE)
+    } 
+    if (!(any(method == c("PCA", "t-SNE")))) 
+      stop("Currently the only supported internal methods are PCA and t-SNE.",
+           "To use another visualisation please pass as a 2D matrix and set",
+           "method == \"none\" as per documentation for plot2D in pRoloc")
+  } 
+  else if (is.matrix(object)) {
+    object_coords <- object[, 1:2]
+    message(paste("Taking first two columns in the data matrix for the 2D plot"))
+    if (missing(methargs)) {
+      stop("When passing a matrix as the plotting object you must include the",
+           "corresponding MSnSet in methargs e.g. methargs = list(your_MSnSet)")
+    }
+    object <- methargs[[1]]
+    if (!inherits(object, "MSnSet")) 
+      stop(paste("When passing a matrix as the plotting object methargs must be",
+                 "the corresponding MSnSet e.g. methargs = list(your_MSnSet)"))
+    if (nrow(object_coords) != nrow(object)) 
+      stop("Number of features in the matrix and MSnSet differ.")
+    if (!all.equal(rownames(object_coords), featureNames(object))) 
+      warning("Matrix rownames and feature names don't match")
+  } 
+  else stop("object must be an 'MSnSet' or a 'matrix' (if method == \"none\").")
+  
+  ## check fcol
   if (!is.null(fcol) && !fcol %in% fvarLabels(object)) {
     warning("No fcol found using fcol = NULL", immediate. = TRUE)
     fcol <- NULL
@@ -61,12 +92,9 @@ pRolocVis_pca <- function(object,
     fData(object)[, fcol] <- m
   }
   
-  ## Get matrix or vector markers for defined fcol
-  pmarkers <- fData(object)[, fcol]
-  
   
   ## Update feature data and convert any columns that are matrices
-  ## to vectors as otherwise in the shiny app these are displayed as
+  ## to vectors as otherwise in the shiny app will display these as
   ## a long vector of 1,0,0,0,0,1,0 etc.
   .tn <- length(fvarLabels(object))
   chk <- vector(length = .tn)
@@ -95,7 +123,9 @@ pRolocVis_pca <- function(object,
   }
   
   
+  
   ## Check pmarkers, if not a matrix convert to a matrix
+  pmarkers <- fData(object)[, fcol]
   if (!inherits(pmarkers, "matrix")) {
     mName <- paste0("Markers", format(Sys.time(), "%a%b%d%H%M%S%Y"))
     object <- mrkVecToMat(object, fcol, mfcol = mName)
@@ -105,8 +135,8 @@ pRolocVis_pca <- function(object,
   
   
   ## Create column of unknowns (needed later for plot2D in server)
-  newName <- paste0(format(Sys.time(), "%a%b%d%H%M%S%Y"), "unknowns")
-  fData(object)[, newName] <- "unknown"
+  all_points <- paste0(format(Sys.time(), "%a%b%d%H%M%S%Y"), "unknowns")
+  fData(object)[, all_points] <- "unknown"
   
   
   ## Setting features to be displayed
@@ -125,6 +155,8 @@ pRolocVis_pca <- function(object,
       message("foi is not a valid FeaturesOfInterest or FoICollection object")
     }
   }
+  
+  ## more checks on the marker matrix
   sumpm <- apply(pmarkers, 2, sum, na.rm = TRUE)
   # if (fcol == "nullmarkers") sumpm <- 1
   if (any(sumpm == 0)) {
@@ -171,101 +203,135 @@ pRolocVis_pca <- function(object,
   ## If there are too many marker sets, better
   ## to display few and let the user choose
   pmsel <- TRUE
-  if (!all | ncol(pmarkers) > 15)
+  if (!all | ncol(pmarkers) > 30)
     pmsel <- 1
   
-  pcas <- plot2D(object, fcol = NULL, plot = FALSE,
-                 mirrorX = FALSE, mirrorY = FALSE, ...)
+  
+  # pcas <- plot2D(object, fcol = NULL, plot = FALSE,
+  #                mirrorX = FALSE, mirrorY = FALSE, ...)
+  # profs <- exprs(object)
+  
+  
+  ## Settings and objects for app
+  fd <- fData(object)
   profs <- exprs(object)
-  
-  
-  ## all proteins are displayed on start
-  toSel <- 1:nrow(object)
-  feats <- featureNames(object)
+  feats <- toSel <- featureNames(object)
+  idxDT <- numeric()
+  namesIdxDT <- character()
   
   
   ## generate CSS for selectizeInput 
   css <- CSS(colnames(pmarkers), cols[seq(colnames(pmarkers))])
   
+  ## generate UI inputs for colour picker 
+  col_ids <-  paste0("col", seq(colnames(pmarkers)))
+  colPicker <- function(x) {colourInput(col_ids[x], colnames(pmarkers)[x], 
+                                        value = getStockcol()[x])}
+  col_input <- lapply(seq(col_ids), colPicker)
+  ll <- length(col_input)
+  if (ll > 5) {
+    n <- 2
+    cw <- c("50%", "50%")
+    ntv <- round(ll/n)
+    num1 <- 1:ntv
+    num2 <- (ntv+1):ll
+  } else {
+    n <- 1
+    cw <- c("50%")
+  }
   
-  ## Build shiny app
+  
+  
+  ## Build shiny app ==========================================================
+  ## ===== UI =================================================================
+  ## ==========================================================================
+  
   ui <- tagList(
-      fluidPage(
-           tags$head(tags$style(HTML(css))),     # add css code for coloured selectizeInput
-               sidebarLayout(
-                 sidebarPanel(
-                   selectizeInput("markers", "Labels",
-                                  choices = colnames(pmarkers),
-                                  multiple = TRUE,
-                                  selected = colnames(pmarkers)[pmsel]),
-                   sliderInput("trans", "Transparancy",
-                               min = 0,  max = 1, value = 0.75),
-                   checkboxInput("checkbox", label = "Show labels", value = TRUE),
-                   br(),
-                   br(),
-                   actionButton("resetButton", "Zoom/reset plot"),
-                   br(),
-                   br(),
-                   actionButton("clear", "Clear selection"),
-                   br(),
-                   br(),
-                   width = 2),
-                 mainPanel(
-                   tabsetPanel(type = "tabs",
-                               tabPanel("Spatial Map", id = "pcaPanel",
-                                        plotOutput("pca",
-                                                   height = fig.height,
-                                                   width = fig.width,
-                                                   dblclick = "dblClick",
-                                                   brush = brushOpts(
-                                                     id = "pcaBrush",
-                                                     resetOnNew = TRUE))
-                               ),
-                               tabPanel("Protein Profiles", id = "profilesPanel",
-                                        plotOutput("profile",
-                                                   height = "400px",
-                                                   width = "120%")),
-                               tabPanel("Table Selection", id = "tableSelPanel",
+    fluidPage(
+      tags$head(tags$head(uiOutput("css"))),     # add css code for coloured selectizeInput
+      sidebarLayout(
+        sidebarPanel(
+          selectizeInput("markers", "Labels",
+                         choices = colnames(pmarkers),
+                         multiple = TRUE,
+                         selected = colnames(pmarkers)[pmsel]),
+          sliderInput("trans", "Transparancy",
+                      min = 0,  max = 1, value = 0.75),
+          checkboxInput("checkbox", label = "Show labels", value = TRUE),
+          br(),
+          actionButton("resetButton", "Zoom/reset plot"),
+          br(),
+          actionButton("clear", "Clear selection"),
+          br(),
+          actionButton("resetColours", "Reset colours"),
+          br(),
+          downloadButton("downloadData", "Save selection"),
+          br(),
+          downloadButton("saveplot", "Download plot"),
+          br(),
+          width = 2),
+        mainPanel(
+          tabsetPanel(type = "tabs",
+                      tabPanel("Spatial Map", id = "pcaPanel",
+                               plotOutput("pca",
+                                          height = fig.height,
+                                          width = fig.width,
+                                          dblclick = "dblClick",
+                                          brush = brushOpts(
+                                            id = "pcaBrush",
+                                            resetOnNew = TRUE))
+                      ),
+                      tabPanel("Protein Profiles", id = "profilesPanel",
+                               plotOutput("profile",
+                                          height = "400px",
+                                          width = "120%")),
+                      tabPanel("Table Selection", id = "tableSelPanel",
+                               fluidRow(
+                                 column(4,
                                         checkboxGroupInput("selTab", 
                                                            "Data columns to display",
                                                            choices = origFvarLab,
-                                                           selected = selDT))
-                               
-                   ),
-                   
-                   ## feature data table is always visible
-                   fluidRow(
-                     column(12,
-                            column(length(selDT),
-                                   DT::dataTableOutput("fDataTable"))))
-                 )
-               )
-               
+                                                           selected = selDT)))),
+                      tabPanel("Colour picker", id = "colPicker",
+                               fluidRow(
+                                 if (ll > 5) {
+                                   splitLayout(cellWidths = c("50%", "50%"),
+                                               col_input[num1], 
+                                               col_input[num2])
+                                 } else {
+                                   splitLayout(cellWidths = "50%",
+                                               col_input)
+                                 }, br(), br(), br(), br(), br()  ## add whitespace
+                               )   # this is a list of N colour containers 
+                      )),            # for N organelles
+          
+          ## feature data table is always visible
+          fluidRow(
+            column(12,
+                   column(length(selDT),
+                          DT::dataTableOutput("fDataTable"))))
+        )
       )
       
     )
+    
+  )
   
   
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+  ## == SERVER ================================================================
+  ## ==========================================================================
   
   server <-
     function(input, output, session) {
-      ranges <- reactiveValues(x = NULL, y = NULL)
-      brushBounds <- reactiveValues(i =  try(pcas[, 1] >= min(pcas[, 1]) & 
-                                               pcas[, 1] <= max(pcas[, 1])),
-                                    j = try(pcas[, 2] >= min(pcas[, 2]) & 
-                                              pcas[, 2] <= max(pcas[, 2])))
-      resetLabels <- reactiveValues(logical = FALSE)
       
+      ## --------Set reactive objects--------
+      ## set brush bounds for zooming
+      ranges <- reactiveValues(x = NULL, y = NULL)
+      brushBounds <- reactiveValues(i =  try(object_coords[, 1] >= min(object_coords[, 1]) & 
+                                               object_coords[, 1] <= max(object_coords[, 1])),
+                                    j = try(object_coords[, 2] >= min(object_coords[, 2]) & 
+                                              object_coords[, 2] <= max(object_coords[, 2])))
+      resetLabels <- reactiveValues(logical = FALSE)
       
       ## Get coords for proteins according to selectized marker class(es)
       mrkSel <- reactive({
@@ -274,11 +340,23 @@ pRolocVis_pca <- function(object,
       })
       
       
+      ## Update colours according to colourpicker input
+      cols_user <- reactive({
+        sapply(col_ids, function(z) input[[z]])
+      })
+      
+      
       ## Update colour transparacy according to slider input
       myCols <- reactive({
-        scales::alpha(cols,
-                      input$trans)[sapply(input$markers, function(z) 
+        scales::alpha(cols_user(),
+                      input$trans)[sapply(input$markers, function(z)
                         which(colnames(pmarkers) == z))]
+      })
+      myCols.bg <- reactive({
+        # scales::alpha(cols.bg,
+        #               NA)[sapply(input$markers, function(z)
+        #                   which(colnames(pmarkers) == z))]
+        darken(myCols())
       })
       
       
@@ -286,35 +364,27 @@ pRolocVis_pca <- function(object,
       output$pca <- renderPlot({
         par(mar = c(4, 4, 0, 0))
         par(oma = c(1, 0, 0, 0))
-        ## If we pas a method explicitly in pRolocVis, then
-        ## method would match multiple arguments below, as we
-        ## pass it explicitly as "none". Hence, we don't pass
-        ## ... below.
-        plot2D(pcas,
-               col = rep(getUnknowncol(), nrow(object)),
-               pch = 21, cex = 1,
-               xlim = ranges$x,
-               ylim = ranges$y,
-               fcol = newName,
-               mirrorX = FALSE,
-               mirrorY = FALSE,
-               method = "none",
-               methargs = list(object))
+        .plot(object_coords, fd = fd, unk = TRUE,
+              xlim = ranges$x,
+              ylim = ranges$y,
+              fcol = all_points)
         if (!is.null(input$markers)) {
-          for (i in 1:length(input$markers)) 
-            points(pcas[mrkSel()[[i]], ], pch = 16, 
-                   cex = 1.4, col = myCols()[i])
-        } 
-        ## highlight point on plot by selecting item in table
-        idDT <<- feats[input$fDataTable_rows_selected]
-        if (resetLabels$logical) idDT <<- character()  ## If TRUE labels are cleared
-        if (length(idDT)) {
-          highlightOnPlot(pcas, idDT, cex = 1.3)
-          if (input$checkbox) 
-            highlightOnPlot(pcas, idDT, labels = TRUE, pos = 3)
+          for (i in 1:length(input$markers))
+            points(object_coords[mrkSel()[[i]], ], pch = 21,
+                   cex = 1.4, bg = myCols()[i], col = myCols.bg()[i])
+        }
+        idxDT <<- feats[input$fDataTable_rows_selected] ## highlight point on plot by selecting item in table
+        if (resetLabels$logical) idxDT <<- numeric()  ## If TRUE labels are cleared
+        namesIdxDT <<- names(idxDT)
+        if (length(idxDT)) {
+          .highlight(object_coords, fd, namesIdxDT)
+          if (input$checkbox)
+            .highlight(object_coords, fd, namesIdxDT, labels = TRUE)
         }
         resetLabels$logical <- FALSE
+        height <- reactive(ifelse(!is.null(input$innerWidth),input$innerWidth*3/5,0)) # fix ratio 1:1
       })
+      
       
       
       ## Protein profile
@@ -324,56 +394,75 @@ pRolocVis_pca <- function(object,
         ylim <- range(profs)
         n <- nrow(profs)
         m <- ncol(profs)
-        fracs <- sampleNames(object)
-        plot(0, ylim = ylim, xlim = c(1, m), ylab = "Intensity", 
+        fracs <- colnames(profs)
+        plot(0, ylim = ylim, xlim = c(1, m), ylab = "Intensity",
              type = "n", xaxt = "n", xlab = "")
         axis(1, at = 1:m, labels = fracs, las = 2)
         title(xlab = "Fractions", line = 5.5)
         matlines(t(profs[feats, ]),
-                 col = getUnknowncol(),
+                 col = paste0("grey", 60),
                  lty = 1,
                  type = "l")
         if (!is.null(input$markers)) {
-          for (i in 1:length(input$markers)) { 
+          for (i in 1:length(input$markers)) {
             matlines(t(profs[mrkSel()[[i]], ]),
                      col = myCols()[i],
-                     lty = 1,
-                     lwd = 1.5) 
+                     lwd = 1.5)
           }
         }
         ## If an item is clicked in the table highlight profile
-        idDT <<- feats[input$fDataTable_rows_selected]
-        if (length(idDT)) {
-          matlines(t(profs[idDT, , drop = FALSE]),
+        idxDT <<- feats[input$fDataTable_rows_selected]
+        namesIdxDT <<- names(idxDT)
+        if (length(idxDT)) {
+          matlines(t(profs[namesIdxDT, , drop = FALSE]),
                    col = "black",
                    lty = 1,
-                   lwd = 2)
+                   lwd = 3)
         }
-      })             
+      })            
+      
       
       
       ## Feature data table
       output$fDataTable <- DT::renderDataTable({
-        feats <<- names(which(brushBounds$i & brushBounds$j))
-        ## Double click to identify protein
+        feats <<- which(brushBounds$i & brushBounds$j)
+        ## Double clicking to identify protein
         if (!is.null(input$dblClick)) {
-          dist <- apply(pcas, 1, function(z) sqrt((input$dblClick$x - z[1])^2 
-                                                  + (input$dblClick$y - z[2])^2))
-          idPlot <- names(which(dist == min(dist)))
-          if (idPlot %in% idDT) {    ## 1. Is it already clicked? Yes, remove it from table
-            idDT <<- setdiff(idDT, idPlot) 
-          } else {                   ## 2. New click? Yes, highlight it to table
-            idDT <<- c(idDT, idPlot)
+          dist <- apply(object_coords, 1, function(z) sqrt((input$dblClick$x - z[1])^2
+                                                           + (input$dblClick$y - z[2])^2))
+          idxPlot <- which(dist == min(dist))
+          if (idxPlot %in% idxDT) {                            ## 1--is it already clicked?
+            setsel <- setdiff(names(idxDT), names(idxPlot))  ## Yes, remove it from table
+            idxDT <<- idxDT[setsel]
+          } else {                                             ## 2--new click?
+            idxDT <<- c(idxDT, idxPlot)                      ## Yes, highlight it to table
           }
         }
-        toSel <- match(idDT, feats)                     ## selection to highlight in DT 
-        if (resetLabels$logical) toSel <- numeric()     ## reset labels
-        DT::datatable(data = fData(object)[feats, input$selTab], 
+        namesIdxDT <<- names(idxDT)
+        toSel <- match(namesIdxDT, rownames(fd)[brushBounds$i & brushBounds$j])
+        if (resetLabels$logical) toSel <- numeric()
+        ## don't display mName - see https://github.com/ComputationalProteomicsUnit/pRolocGUI/issues/52
+        dtdata <- fd[, -grep(mName, colnames(fd))]
+        dtdata <- dtdata[brushBounds$i & brushBounds$j, input$selTab]
+        DT::datatable(data = dtdata,
+                      filter = "top",
                       rownames = TRUE,
-                      selection = list(mode = 'multiple', selected = toSel))
-      })
+                      options = list(
+                        search = list(regex = TRUE, 
+                                      caseInsensitive = FALSE),
+                        dom = "l<'search'>rtip",
+                        pageLength = 10
+                      ),
+                      callback = JS(callback),
+                      style = "bootstrap4",
+                      selection = list(mode = 'multiple', selected = toSel))   
+        # selection = list(mode = 'multiple', selected = toSel))  %>% 
+        # DT::formatRound(5, 2) %>% 
+        # DT::formatStyle(3:6, 'text-align' = 'center')
+      }, server = FALSE)
       
       
+      ## --------Reset button--------
       ## When a the reset button is clicked check to see is there is a brush on
       ## the plot, if yes zoom, if not reset the plot.
       observeEvent(input$resetButton, {
@@ -381,22 +470,76 @@ pRolocVis_pca <- function(object,
         if (!is.null(brush)) {
           ranges$x <- c(brush$xmin, brush$xmax)
           ranges$y <- c(brush$ymin, brush$ymax)
-          brushBounds$i <- pcas[, 1] >= brush$xmin & pcas[, 1] <= brush$xmax
-          brushBounds$j <- pcas[, 2] >= brush$ymin & pcas[, 2] <= brush$ymax
+          brushBounds$i <- object_coords[, 1] >= brush$xmin & object_coords[, 1] <= brush$xmax
+          brushBounds$j <- object_coords[, 2] >= brush$ymin & object_coords[, 2] <= brush$ymax
         } else {
           ranges$x <- NULL
           ranges$y <- NULL
-          brushBounds$i <- try(pcas[, 1] >= min(pcas[, 1]) 
-                               & pcas[, 1] <= max(pcas[, 1]))
-          brushBounds$j <- try(pcas[, 2] >= min(pcas[, 2]) 
-                               & pcas[, 2] <= max(pcas[, 2]))
+          brushBounds$i <- try(object_coords[, 1] >= min(object_coords[, 1])
+                               & object_coords[, 1] <= max(object_coords[, 1]))
+          brushBounds$j <- try(object_coords[, 2] >= min(object_coords[, 2])
+                               & object_coords[, 2] <= max(object_coords[, 2]))
         }
       })
       
-      
-      ## When clear selection is pressed update clear idxDT above and reset selection 
+      ## --------Clear button--------
+      ## When clear selection is pressed update clear idxDT above and reset selection
       observeEvent(input$clear, {
         resetLabels$logical <- TRUE
+      })
+      
+      ## --------Save selection button--------
+      ## When save button is download save points/proteins selected
+      output$downloadData <- downloadHandler(
+        file = "features.csv",
+        content = function(file) { 
+          write.table(namesIdxDT, file = file, quote = FALSE, 
+                      row.names = FALSE, col.names = FALSE)
+        }
+      )
+      
+      ## --------Save figure button--------
+      ## Save figure of PCA
+      output$saveplot <- downloadHandler(
+        file = "pca.pdf" , 
+        content = function(file) {
+          pdf(file = file)
+          par(mar = c(4, 4, 0, 0))
+          par(oma = c(1, 0, 0, 0))
+          .plot(object_coords, fd, unk = TRUE,
+                xlim = ranges$x,
+                ylim = ranges$y,
+                fcol = all_points)
+          if (!is.null(input$markers)) {
+            for (i in 1:length(input$markers))
+              points(object_coords[mrkSel()[[i]], ], pch = 21,
+                     cex = 1.4, bg = myCols()[i], col = myCols.bg()[i])
+          }
+          idxDT <<- feats[input$fDataTable_rows_selected] ## highlight point on plot by selecting item in table
+          if (resetLabels$logical) idxDT <<- numeric()  ## If TRUE labels are cleared
+          namesIdxDT <<- names(idxDT)
+          if (length(idxDT)) {
+            .highlight(object_coords, fd, namesIdxDT)
+            if (input$checkbox)
+              .highlight(object_coords, fd, namesIdxDT, labels = TRUE)
+          }
+          resetLabels$logical <- FALSE
+          height <- reactive(ifelse(!is.null(input$innerWidth),input$innerWidth*3/5,0)) # fix ratio 1:1
+          dev.off()
+        })
+      
+      ## update CSS colours in selectizeInput
+      output$css <- renderUI({
+        tags$style(HTML(CSS(colnames(pmarkers), cols_user())))
+      })
+      
+      
+      ## reset colours to stockCols
+      observeEvent(input$resetColours, {
+        for (i in seq(ncol(pmarkers))) {
+          updateColourInput(session, col_ids[i],
+                            value = getStockcol()[i])
+        }
       })
       
     }
