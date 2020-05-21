@@ -50,7 +50,7 @@ pRolocVis_pca <- function(object,
                           fig.width = "700px",
                           nchar = 40,
                           all = TRUE,
-                          method = "PCA",
+                          method = c("PCA", "t-SNE", "none"),
                           methargs) {
   ## Return featureNames of proteins selected
   idDT <- character()
@@ -61,23 +61,27 @@ pRolocVis_pca <- function(object,
   
   ## Check MSnSet or matrix
   if (inherits(object, "MSnSet")) {
+    if (missing(method)) {method = "PCA"}
     if (method == "PCA") {
       object_coords <- plot2D(object, method = "PCA", plot = FALSE)
     } 
     else if (method == "t-SNE") {
       object_coords <- plot2D(object, method = "t-SNE", plot = FALSE)
     } 
-    if (!(any(method == c("PCA", "t-SNE")))) 
-      stop("Currently the only supported internal methods are PCA and t-SNE.",
+    else if (method == "none") {
+      object_coords <- exprs(object)[, c(1, 2)]
+    }
+    if (!(any(method == c("PCA", "t-SNE", "none")))) 
+      stop(paste("Currently the only supported internal methods are PCA and t-SNE.",
            "To use another visualisation please pass as a 2D matrix and set",
-           "method == \"none\" as per documentation for plot2D in pRoloc")
+           "method == \"none\" as per documentation for plot2D in pRoloc"))
   } 
   else if (is.matrix(object)) {
     object_coords <- object[, 1:2]
     message(paste("Taking first two columns in the data matrix for the 2D plot"))
     if (missing(methargs)) {
-      stop("When passing a matrix as the plotting object you must include the",
-           "corresponding MSnSet in methargs e.g. methargs = list(your_MSnSet)")
+      stop(paste("When passing a matrix as the plotting object you must include the",
+           "corresponding MSnSet in methargs e.g. methargs = list(your_MSnSet)"))
     }
     object <- methargs[[1]]
     if (!inherits(object, "MSnSet")) 
@@ -96,12 +100,8 @@ pRolocVis_pca <- function(object,
     fcol <- NULL
   }
   if (is.null(fcol)) {
-    setUnknowncol("#000000")
     fcol <- "nullmarkers"
-    m <- matrix(0, ncol = 1, nrow = nrow(object))
-    rownames(m) <- featureNames(object)
-    colnames(m) <- "0"
-    fData(object)[, fcol] <- m
+    fData(object)[, fcol] <- rep("unknown", nrow(object))
   }
   
   
@@ -140,11 +140,18 @@ pRolocVis_pca <- function(object,
   pmarkers <- fData(object)[, fcol]
   if (!inherits(pmarkers, "matrix")) {
     mName <- paste0("Markers", format(Sys.time(), "%a%b%d%H%M%S%Y"))
-    object <- mrkVecToMat(object, fcol, mfcol = mName)
-    fcol <- mName
-    pmarkers <- fData(object)[, fcol]
+    if (fcol == "nullmarkers") {
+      m <- matrix(1, ncol = 1, nrow = nrow(object))
+      rownames(m) <- featureNames(object)
+      colnames(m) <- fcol <- mName
+      fData(object)[, mName] <- pmarkers <- m
+      colnames(pmarkers) <- "unknown"
+    } else {
+      object <- mrkVecToMat(object, fcol, mfcol = mName)
+      fcol <- mName
+      pmarkers <- fData(object)[, fcol]
+    }
   }
-  
   
   ## Create column of unknowns (needed later for plot2D in server)
   all_points <- paste0(format(Sys.time(), "%a%b%d%H%M%S%Y"), "unknowns")
@@ -231,7 +238,6 @@ pRolocVis_pca <- function(object,
   idxDT <- numeric()
   namesIdxDT <- character()
   
-  
   ## generate CSS for selectizeInput 
   css <- CSS(colnames(pmarkers), cols[seq(colnames(pmarkers))])
   
@@ -309,16 +315,17 @@ pRolocVis_pca <- function(object,
                                                            choices = origFvarLab,
                                                            selected = selDT)))),
                       tabPanel("Colour picker", id = "colPicker",
-                               fluidRow(
-                                 if (ll > 5) {
-                                   splitLayout(cellWidths = c("50%", "50%"),
-                                               col_input[num1], 
-                                               col_input[num2])
-                                 } else {
-                                   splitLayout(cellWidths = "50%",
-                                               col_input)
-                                 }, br(), br(), br(), br(), br()  ## add whitespace
-                               )   # this is a list of N colour containers 
+                               if (ll > 5) {
+                                 fluidRow(
+                                   column(6, 
+                                          col_input[num1]), 
+                                   column(6,
+                                          col_input[num2]))
+                               } else {
+                                 fluidRow(
+                                   col_input)
+                               }, br(), br(), br(), br(), br() ## add whitespace
+                                     # this is a list of N colour containers 
                       )),            # for N organelles
           
           ## feature data table is always visible
