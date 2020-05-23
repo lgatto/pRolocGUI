@@ -15,12 +15,15 @@
 ##'     \code{object} be mirrored (default is \code{FALSE}). Only
 ##'     relevant when \code{remap} is \code{FALSE}.
 pRolocVis_compare <- function(object, fcol1, fcol2,
+                              method = c("PCA", "t-SNE", "none"),
+                              methargs,
+                              intersect.only = TRUE,
                               foi,
                               fig.height = "600px",
                               fig.width = "100%",
                               legend.width = "200%",
                               legend.cex = 1,
-                              remap = TRUE,
+                              remap = FALSE,
                               nchar = 40,
                               all = TRUE,
                               mirrorX = FALSE,
@@ -35,21 +38,72 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
   )
   
   ## Check MSnSetList and take intersection
-  if (!inherits(object, "MSnSetList"))
-    stop("The input must be of class MSnSetList")
-  message("Subsetting MSnSetList to their common feature names")
-  object <- commonFeatureNames(object)
+  # if (!inherits(object, "MSnSetList"))
+  #   stop("The input must be of class MSnSetList")
+  # message("Subsetting MSnSetList to their common feature names")
+  # object <- commonFeatureNames(object)
   
+  
+  ## Check MSnSet or matrix
+  if (inherits(object, "MSnSetList")) {
+    if (missing(method)) {method = "PCA"}
+    if (method == "PCA") {
+      object_coords <- lapply(seq(object), function(z) 
+        plot2D(object[[z]], fcol = NULL, method = "PCA", plot = FALSE))
+    } 
+    else if (method == "t-SNE") {
+      object_coords <- lapply(seq(object), function(z) 
+        plot2D(object[[z]], fcol = NULL, method = "t-SNE", plot = FALSE))
+    } 
+    else if (method == "none") {
+      object_coords <- lapply(seq(object), function(z) 
+        exprs(object[[z]])[, c(1, 2)])
+    }
+    if (!(any(method == c("PCA", "t-SNE", "none")))) 
+      stop(paste("Currently the only supported internal methods are PCA and t-SNE.",
+                 "To use another visualisation please pass as a 2D matrix and set",
+                 "method == \"none\" as per documentation for plot2D in pRoloc"))
+  } 
+  else if (all(sapply(object, is.matrix))) {
+    object_coords <- lapply(seq(object), function(z) object[[z]][, 1:2])
+    message(paste("Taking first two columns in each matrix in the list for the 2D plot"))
+    if (missing(methargs)) {
+      stop(paste("When passing a list of matrices as the the objects to plot",
+                 "you must include the corresponding MSnSetList in methargs e.g.", 
+                 "methargs = list(MSnSetList(your_MSnSet1, your_MSnSet2))"))
+    }
+    object <- methargs[[1]]
+    if (!inherits(object, "MSnSetList")) 
+      stop(paste("When passing a list of matrices as the the objects to plot",
+                 "you must include the corresponding MSnSetList in methargs e.g.", 
+                 "methargs = list(MSnSetList(your_MSnSet1, your_MSnSet2))"))
+    for (i in seq(object_coords)) {
+      if (nrow(object_coords[[i]]) != nrow(object[[i]])) 
+        stop(paste("Number of features in the matrix", i, ",and MSnSet differ."))
+      if (!all.equal(rownames(object_coords[[i]]), featureNames(object[[i]]))) 
+        warning(paste("Matrix", i, "rownames and feature names don't match"))
+    }
+  }
+  else stop("object must be an 'MSnSetList' or a 'list of matrices' (if method == \"none\").")
+  
+  
+  ## Only plot proteins common in both experiments
+  if (intersect.only) {
+    object <- commonFeatureNames(object)
+    fn <- featureNames(object[[1]])
+    object_coords <- lapply(seq(object_coords), function(z) object_coords[[z]][fn, ])
+  }
+
   
   ## Check if method specified
   dotargs <- pairlist(...)
-  if (any(names(dotargs) == "method"))
-    stop("Argument 'method' is already defined internally and can not be used with the compare application")
+  # if (any(names(dotargs) == "method"))
+  #   stop("Argument 'method' is already defined internally and can not be used with the compare application")
   
   if (any(names(dotargs) == "fcol"))
     stop("Please specify fcol1 and fcol2 for each MSnSet respectively, see ?pRolocVis for more details")
-    if (any(grepl("mirror", names(dotargs))))
-        stop("Mirroring only supported as direct 'mirrorX' and 'mirrorY'. ")
+    # if (any(grepl("mirror", names(dotargs))))
+    #     stop("Mirroring only supported as direct 'mirrorX' and 'mirrorY'. ")
   
   ## fcol checks
   if (missing(fcol1) | missing(fcol2)) {
@@ -86,30 +140,20 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
       stop("fcol2 is not found in fvarLabels")
   }
 
+  ## Update feature data and convert any columns that are matrices
+  ## to vectors as otherwise in the shiny app will display these as
+  ## a long vector of 1,0,0,0,0,1,0 etc.
     for (i in seq_along(object))
         object@x[[i]] <- .makeMatsVecs(object@x[[i]])
 
-  ## Define data columns
+  ## Define DT columns
   origFvarLab1 <- fvarLabels(object[[1]])
   origFvarLab2 <- fvarLabels(object[[2]])
-  if (length(origFvarLab1) > 4) {
-    .ind <- which(origFvarLab1 == fcol1)
-    .fvarL <- origFvarLab1[-.ind]
-    selDT1 <- c(.fvarL[1:3], fcol1)
-  } else {
-    selDT1 <- origFvarLab1[1:length(origFvarLab1)]
-  }
-  if (length(origFvarLab2) > 4) {
-    .ind <- which(origFvarLab2 == fcol2)
-    .fvarL <- origFvarLab2[-.ind]
-    selDT2 <- c(.fvarL[1:3], fcol2)
-  } else {
-    selDT2 <- origFvarLab2[1:length(origFvarLab2)]
-  }  
+  selDT1 <- .defineDT(origFvarLab1, fcol1)
+  selDT2 <- .defineDT(origFvarLab2, fcol2)
   
   
-  ## Make fcol matrix of markers if it's not already
-  fcol <- c(fcol1, fcol2)
+  ## Check pmarkers, if not a matrix convert to a matrix
   tf <- sapply(1:length(fcol), function(x) isMrkVec(object[[x]], fcol[x]))
   pmarkers <- vector("list", length = length(object))
   for (i in 1:length(tf)) {
@@ -194,7 +238,7 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
   
   ## Display all classes unless user specifies not to
   pmsel <- TRUE
-  if (!all | max(sapply(pmarkers, ncol)) > 15)
+  if (!all | max(sapply(pmarkers, ncol)) > 30)
     pmsel <- 1    
   
   
@@ -204,20 +248,21 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
   
   ## Remap data to same PC space
   if (remap) {
-    message("Remapping data to the same PC space")
-    object <- pRoloc:::remap(object)
-    plotmeth <- "none"
-    mirrorX <- mirrorY <- FALSE
-  } else {
-    plotmeth <- "PCA"
+    stop(paste("remap not supported - lisa fix this"))
+  #   message("Remapping data to the same PC space")
+  #   object <- pRoloc:::remap(object)
+  #   method <- "none"
+  #   mirrorX <- mirrorY <- FALSE
+  # } else {
+  #   method <- "PCA"
   }
    
-    pcas <- list(plot2D(object[[1]], fcol = NULL, plot = FALSE,
-                        mirrorX = FALSE, mirrorY = FALSE,
-                        method = plotmeth, ...),
-                 plot2D(object[[2]], fcol = NULL, plot = FALSE,
-                        mirrorX = mirrorX, mirrorY = mirrorY,
-                        method = plotmeth, ...))
+    # pcas <- list(plot2D(object[[1]], fcol = NULL, plot = FALSE,
+    #                     mirrorX = FALSE, mirrorY = FALSE,
+    #                     method = method, ...),
+    #              plot2D(object[[2]], fcol = NULL, plot = FALSE,
+    #                     mirrorX = mirrorX, mirrorY = mirrorY,
+    #                     method = method, ...))
     
   ## Create column of unknowns (needed later for plot2D in server)
   newName <- paste0(format(Sys.time(), "%a%b%d%H%M%S%Y"), "unknowns")
@@ -326,21 +371,21 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
   
   server <-
     function(input, output, session) {
-      ranges <- reactiveValues(x = c(min(c(pcas[[1]][, 1], pcas[[2]][, 1])), 
-                                     max(c(pcas[[1]][, 1], pcas[[2]][, 1]))),
-                               y = c(min(c(pcas[[1]][, 2], pcas[[2]][, 2])), 
-                                     max(c(pcas[[1]][, 2], pcas[[2]][, 2]))))
+      ranges <- reactiveValues(x = c(min(c(object_coords[[1]][, 1], object_coords[[2]][, 1])), 
+                                     max(c(object_coords[[1]][, 1], object_coords[[2]][, 1]))),
+                               y = c(min(c(object_coords[[1]][, 2], object_coords[[2]][, 2])), 
+                                     max(c(object_coords[[1]][, 2], object_coords[[2]][, 2]))))
       
       
       ## Capture brushed proteins for zoom
-      brushedProts1 <- reactiveValues(i =  try(pcas[[1]][, 1] >= min(pcas[[1]][, 1]) & 
-                                                 pcas[[1]][, 1] <= max(pcas[[1]][, 1])),
-                                      j = try(pcas[[1]][, 2] >= min(pcas[[1]][, 2]) & 
-                                                pcas[[1]][, 2] <= max(pcas[[1]][, 2])))
-      brushedProts2 <- reactiveValues(i =  try(pcas[[2]][, 1] >= min(pcas[[2]][, 1]) & 
-                                                 pcas[[2]][, 1] <= max(pcas[[2]][, 1])),
-                                      j = try(pcas[[2]][, 2] >= min(pcas[[2]][, 2]) & 
-                                                pcas[[2]][, 2] <= max(pcas[[2]][, 2])))
+      brushedProts1 <- reactiveValues(i =  try(object_coords[[1]][, 1] >= min(object_coords[[1]][, 1]) & 
+                                                 object_coords[[1]][, 1] <= max(object_coords[[1]][, 1])),
+                                      j = try(object_coords[[1]][, 2] >= min(object_coords[[1]][, 2]) & 
+                                                object_coords[[1]][, 2] <= max(object_coords[[1]][, 2])))
+      brushedProts2 <- reactiveValues(i =  try(object_coords[[2]][, 1] >= min(object_coords[[2]][, 1]) & 
+                                                 object_coords[[2]][, 1] <= max(object_coords[[2]][, 1])),
+                                      j = try(object_coords[[2]][, 2] >= min(object_coords[[2]][, 2]) & 
+                                                object_coords[[2]][, 2] <= max(object_coords[[2]][, 2])))
       
       resetLabels <- reactiveValues(logical = FALSE)
     
@@ -392,7 +437,7 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
       output$pca1 <- renderPlot({
         par(mar = c(4, 4, 0, 0))
         par(oma = c(1, 0, 0, 0))
-        plot2D(object[[1]], method = plotmeth,
+        plot2D(object[[1]], method = method,
                col = rep(getUnknowncol(), nrow(object[[1]])),
                pch = 21, cex = 1,
                xlim = ranges$x,
@@ -404,7 +449,7 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
         if (!is.null(input$markers)) {
           for (i in 1:length(input$markers)) {
             if (!is.na(mrkSel1()[[i]][1]))
-              points(pcas[[1]][mrkSel1()[[i]], ], pch = 16, 
+              points(object_coords[[1]][mrkSel1()[[i]], ], pch = 16, 
                      cex = 1.4, col = myCols()[i])
           }
         } 
@@ -412,9 +457,9 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
         idDT <<- feats[input$fDataTable_rows_selected]
         if (resetLabels$logical) idDT <<- character()  ## If TRUE clear labels
         if (length(idDT)) {
-          highlightOnPlot(pcas[[1]], idDT, cex = 1.3)
+          highlightOnPlot(object_coords[[1]], idDT, cex = 1.3)
           if (input$checkbox) 
-            highlightOnPlot(pcas[[1]], idDT, labels = TRUE, pos = 3)
+            highlightOnPlot(object_coords[[1]], idDT, labels = TRUE, pos = 3)
         }
       })
       
@@ -424,7 +469,7 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
       output$pca2 <- renderPlot({
         par(mar = c(4, 4, 0, 0))
         par(oma = c(1, 0, 0, 0))
-        plot2D(object[[2]], method = plotmeth,
+        plot2D(object[[2]], method = method,
                col = rep(getUnknowncol(), nrow(object[[2]])),
                pch = 21, cex = 1,
                xlim = ranges$x,
@@ -436,7 +481,7 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
         if (!is.null(input$markers)) {
           for (i in 1:length(input$markers)) {
             if (!is.na(mrkSel2()[[i]][1]))
-              points(pcas[[2]][mrkSel2()[[i]], ], pch = 16, 
+              points(object_coords[[2]][mrkSel2()[[i]], ], pch = 16, 
                      cex = 1.4, col = myCols()[i])
           }
         } 
@@ -444,9 +489,9 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
         idDT <<- feats[input$fDataTable_rows_selected]
         if (resetLabels$logical) idDT <<- character()  ## If TRUE labels are cleared
         if (length(idDT)) {
-          highlightOnPlot(pcas[[2]], idDT, cex = 1.3)
+          highlightOnPlot(object_coords[[2]], idDT, cex = 1.3)
           if (input$checkbox) 
-            highlightOnPlot(pcas[[2]], idDT, labels = TRUE, pos = 3)
+            highlightOnPlot(object_coords[[2]], idDT, labels = TRUE, pos = 3)
         }
         resetLabels$logical <<- FALSE
       })
@@ -532,7 +577,7 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
                            names(which(brushedProts2$i & brushedProts2$j))))
         ## Double clicking to identify protein
         if (!is.null(input$dblClick1)) {
-          dist <- apply(pcas[[1]], 1, function(z) sqrt((input$dblClick1$x - z[1])^2 
+          dist <- apply(object_coords[[1]], 1, function(z) sqrt((input$dblClick1$x - z[1])^2 
                                                        + (input$dblClick1$y - z[2])^2))
           idPlot <- names(which(dist == min(dist)))
           if (idPlot %in% idDT) {                          ## 1--is it already clicked?
@@ -542,7 +587,7 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
           }
         }
         if (!is.null(input$dblClick2)) {
-          dist <- apply(pcas[[2]], 1, function(z) sqrt((input$dblClick2$x - z[1])^2 
+          dist <- apply(object_coords[[2]], 1, function(z) sqrt((input$dblClick2$x - z[1])^2 
                                                        + (input$dblClick2$y - z[2])^2))
           idPlot <- names(which(dist == min(dist)))
           if (idPlot %in% idDT) {                          ## 1--is it already clicked?
@@ -582,21 +627,21 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
           bminy <- brush$ymin
           bmaxy <- brush$ymax
         } else {   ## reset the plot
-          bminx <- min(c(pcas[[1]][, 1], pcas[[2]][, 1]))
-          bmaxx <- max(c(pcas[[1]][, 1], pcas[[2]][, 1]))
-          bminy <- min(c(pcas[[1]][, 2], pcas[[2]][, 2]))
-          bmaxy <- max(c(pcas[[1]][, 2], pcas[[2]][, 2]))
+          bminx <- min(c(object_coords[[1]][, 1], object_coords[[2]][, 1]))
+          bmaxx <- max(c(object_coords[[1]][, 1], object_coords[[2]][, 1]))
+          bminy <- min(c(object_coords[[1]][, 2], object_coords[[2]][, 2]))
+          bmaxy <- max(c(object_coords[[1]][, 2], object_coords[[2]][, 2]))
         }
         ranges$x <- c(bminx, bmaxx)
         ranges$y <- c(bminy, bmaxy)
-        brushedProts1$i <- try(pcas[[1]][, 1] >= bminx 
-                               & pcas[[1]][, 1] <= bmaxx)
-        brushedProts1$j <- try(pcas[[1]][, 2] >= bminy 
-                               & pcas[[1]][, 2] <= bmaxy)
-        brushedProts2$i <- try(pcas[[2]][, 1] >= bminx 
-                               & pcas[[2]][, 1] <= bmaxx)
-        brushedProts2$j <- try(pcas[[2]][, 2] >= bminy 
-                               & pcas[[2]][, 2] <= bmaxy)
+        brushedProts1$i <- try(object_coords[[1]][, 1] >= bminx 
+                               & object_coords[[1]][, 1] <= bmaxx)
+        brushedProts1$j <- try(object_coords[[1]][, 2] >= bminy 
+                               & object_coords[[1]][, 2] <= bmaxy)
+        brushedProts2$i <- try(object_coords[[2]][, 1] >= bminx 
+                               & object_coords[[2]][, 1] <= bmaxx)
+        brushedProts2$j <- try(object_coords[[2]][, 2] >= bminy 
+                               & object_coords[[2]][, 2] <= bmaxy)
       })
       
       

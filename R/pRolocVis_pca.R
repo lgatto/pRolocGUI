@@ -108,50 +108,34 @@ pRolocVis_pca <- function(object,
   ## Update feature data and convert any columns that are matrices
   ## to vectors as otherwise in the shiny app will display these as
   ## a long vector of 1,0,0,0,0,1,0 etc.
-  .tn <- length(fvarLabels(object))
-  chk <- vector(length = .tn)
-  for (i in 1:.tn) {
-    chk[i] <- is.matrix(fData(object)[, i])
-  }
-  if (any(chk)) {
-    .ind <- which(chk)
-    .nams <- fvarLabels(object)[.ind]
-    .tmpnams <- paste0(.nams, format(Sys.time(), "%a%b%d%H%M%S%Y"))
-    for (i in seq(.nams)) {
-      object <- mrkMatToVec(object, mfcol = .nams[i], vfcol = .tmpnams[i])
-    }
-    fData(object)[, .nams] <- NULL
-    fvarLabels(object)[match(.tmpnams, fvarLabels(object))] <- .nams
-  }
+  object <- .makeMatsVecs(object)
   
   ## Define DT columns
   origFvarLab <- fvarLabels(object)
-  if (length(origFvarLab) > 6) {
-    .ind <- which(origFvarLab == fcol)
-    .fvarL <- origFvarLab[-.ind]
-    selDT <- c(.fvarL[1:5], fcol)
-  } else {
-    selDT <- origFvarLab[1:length(origFvarLab)]
-  }
-  
+  selDT <- .defineDT(origFvarLab, fcol)
   
   
   ## Check pmarkers, if not a matrix convert to a matrix
   pmarkers <- fData(object)[, fcol]
-  if (!inherits(pmarkers, "matrix")) {
-    mName <- paste0("Markers", format(Sys.time(), "%a%b%d%H%M%S%Y"))
-    if (fcol == "nullmarkers") {
-      m <- matrix(1, ncol = 1, nrow = nrow(object))
-      rownames(m) <- featureNames(object)
-      colnames(m) <- fcol <- mName
-      fData(object)[, mName] <- pmarkers <- m
-      colnames(pmarkers) <- "unknown"
-    } else {
-      object <- mrkVecToMat(object, fcol, mfcol = mName)
-      fcol <- mName
-      pmarkers <- fData(object)[, fcol]
-    }
-  }
+  .obj_list <- .chkMarkersMat(pmarkers, object, fcol)
+  pmarkers <- .obj_list$pm
+  object <- .obj_list$obj
+  mName <- .obj_list$mN
+  
+  # if (!inherits(pmarkers, "matrix")) {
+  #   mName <- paste0("Markers", format(Sys.time(), "%a%b%d%H%M%S%Y"))
+  #   if (fcol == "nullmarkers") {
+  #     m <- matrix(1, ncol = 1, nrow = nrow(object))
+  #     rownames(m) <- featureNames(object)
+  #     colnames(m) <- fcol <- mName
+  #     fData(object)[, mName] <- pmarkers <- m
+  #     colnames(pmarkers) <- "unknown"
+  #   } else {
+  #     object <- mrkVecToMat(object, fcol, mfcol = mName)
+  #     fcol <- mName
+  #     pmarkers <- fData(object)[, fcol]
+  #   }
+  # }
   
   ## Create column of unknowns (needed later for plot2D in server)
   all_points <- paste0(format(Sys.time(), "%a%b%d%H%M%S%Y"), "unknowns")
