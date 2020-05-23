@@ -317,10 +317,8 @@ pRolocVis_pca <- function(object,
                       tabPanel("Colour picker", id = "colPicker",
                                if (ll > 5) {
                                  fluidRow(
-                                   column(6, 
-                                          col_input[num1]), 
-                                   column(6,
-                                          col_input[num2]))
+                                   column(6, col_input[num1]), 
+                                   column(6, col_input[num2]))
                                } else {
                                  fluidRow(
                                    col_input)
