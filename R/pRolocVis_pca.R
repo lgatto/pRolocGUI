@@ -266,14 +266,14 @@ pRolocVis_pca <- function(object,
           width = 2),
         mainPanel(
           tabsetPanel(type = "tabs",
-                      tabPanel("Spatial Map", id = "pcaPanel",
+                      tabPanel("Spatial Map", id = "mapPanel",
                                fluidRow(
-                                 column(9, plotOutput("pca",
+                                 column(9, plotOutput("spatialmap",
                                                       height = fig.height,
                                                       width = fig.width,
                                                       dblclick = "dblClick",
                                                       brush = brushOpts(
-                                                        id = "pcaBrush",
+                                                        id = "plotBrush",
                                                         resetOnNew = TRUE))),
                                  column(2, 
                                         actionButton("resetButton", "Zoom/reset plot"),
@@ -365,8 +365,8 @@ pRolocVis_pca <- function(object,
       })
       
       
-      ## PCA plot
-      output$pca <- renderPlot({
+      ## Spatial map plot
+      output$spatialmap <- renderPlot({
         par(mar = c(4, 4, 0, 0))
         par(oma = c(1, 0, 0, 0))
         .plot(object_coords, fd = fd, unk = TRUE,
@@ -471,7 +471,7 @@ pRolocVis_pca <- function(object,
       ## When a the reset button is clicked check to see is there is a brush on
       ## the plot, if yes zoom, if not reset the plot.
       observeEvent(input$resetButton, {
-        brush <- input$pcaBrush
+        brush <- input$plotBrush
         if (!is.null(brush)) {
           ranges$x <- c(brush$xmin, brush$xmax)
           ranges$y <- c(brush$ymin, brush$ymax)
@@ -504,9 +504,9 @@ pRolocVis_pca <- function(object,
       )
       
       ## --------Save figure button--------
-      ## Save figure of PCA
+      ## Save figure of map
       output$saveplot <- downloadHandler(
-        file = "pca.pdf" , 
+        file = "spatialmap.pdf" , 
         content = function(file) {
           pdf(file = file)
           par(mar = c(4, 4, 0, 0))
