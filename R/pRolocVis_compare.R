@@ -273,6 +273,23 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
   feats <- featureNames(object[[1]])
   idDT <- character()
   css <- CSS(myclasses, cols[seq(myclasses)])
+  
+  ## generate UI inputs for colour picker 
+  col_ids <-  paste0("col", seq(myclasses))
+  colPicker <- function(x) {colourInput(col_ids[x], myclasses[x], 
+                                        value = getStockcol()[x])}
+  col_input <- lapply(seq(col_ids), colPicker)
+  ll <- length(col_input)
+  if (ll > 5) {
+    n <- 2
+    cw <- c("50%", "50%")
+    ntv <- round(ll/n)
+    num1 <- 1:ntv
+    num2 <- (ntv+1):ll
+  } else {
+    n <- 1
+    cw <- c("50%")
+  }
 
 
   ## Build shiny app ==========================================================
@@ -284,7 +301,7 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
       titlePanel(h2("pRolocVis - compare", align = "right"), 
                  windowTitle = "pRolocVis - compare"),
       # add css code for coloured selectizeInput
-      tags$head(tags$style(HTML(css))),
+      tags$head(tags$head(uiOutput("css"))),
       sidebarLayout(
         sidebarPanel(
           selectizeInput("markers", "Labels",
@@ -354,14 +371,25 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
                                         
                                  )
                                ),
-                               tags$head(tags$style("#selTab1{color: darkblue;}"))
+                               
                       ),
-                      ## feature data table is always visible
-                      fluidRow(
-                        column(12,
-                               column(length(c(selDT1, selDT2)),
-                                      DT::dataTableOutput("fDataTable"))))
-          ))
+                      tabPanel("Colour picker", id = "colPicker",
+                               if (ll > 5) {
+                                 fluidRow(
+                                   column(6, col_input[num1]), 
+                                   column(6, col_input[num2]))
+                               } else {
+                                 fluidRow(
+                                   col_input)
+                               }, br(), br(), br(), br(), br() ## add whitespace
+                               # this is a list of N colour containers 
+                      )),
+                    ## feature data table is always visible
+                    fluidRow(
+                      column(12,
+                             column(length(c(selDT1, selDT2)),
+                                    DT::dataTableOutput("fDataTable"))))
+          )
       )
     )
   )
@@ -409,7 +437,6 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
       ## necessarily have the same indices as markers in object[[2]] (would like
       ## to allow different markers between different datasets)
       mrkSel1 <- reactive({
-        # browser()
         ind <- match(input$markers, colnames(pmarkers[[1]]))
         .mrkSel1 <- vector("list", length(input$markers))
         for (i in seq(length(input$markers))) {
@@ -437,16 +464,25 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
       })
       
       
+      ## Update colours according to colourpicker input
+      cols_user <- reactive({
+        sapply(col_ids, function(z) input[[z]])
+      })
+      
+
       ## Update colour transparacy according to slider input
       myCols <- reactive({
-        scales::alpha(cols,
-                      input$trans)[sapply(input$markers, function(z) 
+        scales::alpha(cols_user(),
+                      input$trans)[sapply(input$markers, function(z)
                         which(myclasses == z))]
       })
       
+      myCols.bg <- reactive({
+        darken(myCols())
+      })
       
       
-      ## PCA plot 1
+      ## Spatial plot 1
       output$spatialmap1 <- renderPlot({
         par(mar = c(4, 4, 0, 0))
         par(oma = c(1, 0, 0, 0))
@@ -663,11 +699,10 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
         resetLabels$logical <<- TRUE
       })
       
-      
       ## update CSS colours in selectizeInput
-      # output$css <- renderUI({
-      #   tags$style(HTML(CSS(myclasses, cols_user())))
-      # })
+      output$css <- renderUI({
+        tags$style(HTML(CSS(myclasses, cols_user())))
+      })
       
     }
   app <- list(ui = ui, server = server)
