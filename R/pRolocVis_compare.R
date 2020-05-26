@@ -21,8 +21,6 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
                               foi,
                               fig.height = "600px",
                               fig.width = "100%",
-                              legend.width = "200%",
-                              legend.cex = 1,
                               remap = FALSE,
                               nchar = 40,
                               all = TRUE,
@@ -188,7 +186,8 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
   }     ## NB: pmarkers[[1]] and pmarkers[[2]] contains the same num of rows/proteins
   sumpm <- lapply(pmarkers, function(z) apply(z, 2, sum, na.rm = TRUE))
   if (any(sumpm[[1]] == 0)) {
-    message(paste("foi object", names(which(sumpm[[1]] == 0)), "does not match any featuresNames that are common in both datasets, removing foi"))
+    message(paste("foi object", names(which(sumpm[[1]] == 0)), 
+                  "does not match any featuresNames that are common in both datasets, removing foi"))
     pmarkers[[1]] <- pmarkers[[1]][, -which(sumpm[[1]] == 0)]
     pmarkers[[2]] <- pmarkers[[2]][, -which(sumpm[[2]] == 0)]
   }
@@ -322,11 +321,7 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
                                                    brush = brushOpts(
                                                      id = "plotBrush2",
                                                      resetOnNew = TRUE)),
-                                        offset = 0),
-                                 column(2, 
-                                        plotOutput("legend1",
-                                                   height = fig.height,
-                                                   width = legend.width))
+                                        offset = 0)
                                )
                       ),
                       tabPanel("Profiles", id = "profilesPanel",
@@ -340,11 +335,6 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
                                         plotOutput("profile2",
                                                    height = "400px",
                                                    width = "110%"),
-                                        offset = 0),
-                                 
-                                 column(2, 
-                                        plotOutput("legend2",
-                                                   width = "100%"),
                                         offset = 0)
                                )
                       ),
@@ -377,25 +367,38 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
   )
   
   
-  
+  ## == SERVER ================================================================
+  ## ==========================================================================
   
   server <-
     function(input, output, session) {
-      ranges <- reactiveValues(x = c(min(c(object_coords[[1]][, 1], object_coords[[2]][, 1])), 
-                                     max(c(object_coords[[1]][, 1], object_coords[[2]][, 1]))),
-                               y = c(min(c(object_coords[[1]][, 2], object_coords[[2]][, 2])), 
-                                     max(c(object_coords[[1]][, 2], object_coords[[2]][, 2]))))
+      ranges <- reactiveValues(x = c(min(c(object_coords[[1]][, 1], 
+                                           object_coords[[2]][, 1])), 
+                                     max(c(object_coords[[1]][, 1], 
+                                           object_coords[[2]][, 1]))),
+                               y = c(min(c(object_coords[[1]][, 2], 
+                                           object_coords[[2]][, 2])), 
+                                     max(c(object_coords[[1]][, 2], 
+                                           object_coords[[2]][, 2]))))
       
       
       ## Capture brushed proteins for zoom
-      brushedProts1 <- reactiveValues(i =  try(object_coords[[1]][, 1] >= min(object_coords[[1]][, 1]) & 
-                                                 object_coords[[1]][, 1] <= max(object_coords[[1]][, 1])),
-                                      j = try(object_coords[[1]][, 2] >= min(object_coords[[1]][, 2]) & 
-                                                object_coords[[1]][, 2] <= max(object_coords[[1]][, 2])))
-      brushedProts2 <- reactiveValues(i =  try(object_coords[[2]][, 1] >= min(object_coords[[2]][, 1]) & 
-                                                 object_coords[[2]][, 1] <= max(object_coords[[2]][, 1])),
-                                      j = try(object_coords[[2]][, 2] >= min(object_coords[[2]][, 2]) & 
-                                                object_coords[[2]][, 2] <= max(object_coords[[2]][, 2])))
+      brushedProts1 <- reactiveValues(i =  try(object_coords[[1]][, 1] >= 
+                                                 min(object_coords[[1]][, 1]) & 
+                                                 object_coords[[1]][, 1] <= 
+                                                 max(object_coords[[1]][, 1])),
+                                      j = try(object_coords[[1]][, 2] >= 
+                                                min(object_coords[[1]][, 2]) & 
+                                                object_coords[[1]][, 2] <= 
+                                                max(object_coords[[1]][, 2])))
+      brushedProts2 <- reactiveValues(i =  try(object_coords[[2]][, 1] >= 
+                                                 min(object_coords[[2]][, 1]) & 
+                                                 object_coords[[2]][, 1] <= 
+                                                 max(object_coords[[2]][, 1])),
+                                      j = try(object_coords[[2]][, 2] >= 
+                                                min(object_coords[[2]][, 2]) & 
+                                                object_coords[[2]][, 2] <= 
+                                                max(object_coords[[2]][, 2])))
       
       resetLabels <- reactiveValues(logical = FALSE)
     
@@ -660,58 +663,6 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
         resetLabels$logical <<- TRUE
       })
       
-      
-      ## Output legend for pca
-      output$legend1 <- renderPlot({
-        par(mar = c(0, 0, 0, 0))
-        par(oma = c(0, 0, 0, 0))
-        plot(0, type = "n",
-             xaxt = "n", yaxt = "n",
-             xlab = "", ylab = "",
-             bty = "n")
-        if (!is.null(input$markers)) {
-          legend("topleft",
-                 c(input$markers, "unlabelled"),
-                 col = c(myCols(), getUnknowncol()),
-                 ncol = 1, bty = "n",
-                 
-                 pch = c(rep(16, length(myCols())), 21),
-                 cex = legend.cex)
-        } else {
-          legend("topleft",
-                 "unlabelled",
-                 col = getUnknowncol(),
-                 ncol = 1, bty = "n",
-                 pch = 21,
-                 cex = legend.cex)
-        }
-      })
-      
-      ## Output legend for profiles
-      output$legend2 <- renderPlot({
-        par(mar = c(0, 0, 0, 0))
-        par(oma = c(0, 0, 0, 0))
-        plot(0, type = "n",
-             xaxt = "n", yaxt = "n",
-             xlab = "", ylab = "",
-             bty = "n")
-        if (!is.null(input$markers)) {
-          legend("topleft",
-                 c(input$markers, "unlabelled"),
-                 col = c(myCols(), getUnknowncol()),
-                 ncol = 1, bty = "n",
-                 pch = c(rep(16, length(myCols())), 21),
-                 cex = legend.cex
-          )
-        } else {
-          legend("topleft",
-                 "unlabelled",
-                 col = getUnknowncol(),
-                 ncol = 1, bty = "n",
-                 pch = 21,
-                 cex = legend.cex)
-        }
-      })
       
       ## update CSS colours in selectizeInput
       # output$css <- renderUI({
