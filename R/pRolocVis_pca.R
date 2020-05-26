@@ -221,13 +221,14 @@ pRolocVis_pca <- function(object,
   feats <- toSel <- featureNames(object)
   idxDT <- numeric()
   namesIdxDT <- character()
+  myclasses <- colnames(pmarkers)
   
   ## generate CSS for selectizeInput 
-  css <- CSS(colnames(pmarkers), cols[seq(colnames(pmarkers))])
+  css <- CSS(myclasses, cols[seq(myclasses)])
   
   ## generate UI inputs for colour picker 
-  col_ids <-  paste0("col", seq(colnames(pmarkers)))
-  colPicker <- function(x) {colourInput(col_ids[x], colnames(pmarkers)[x], 
+  col_ids <-  paste0("col", seq(myclasses))
+  colPicker <- function(x) {colourInput(col_ids[x], myclasses[x], 
                                         value = getStockcol()[x])}
   col_input <- lapply(seq(col_ids), colPicker)
   ll <- length(col_input)
@@ -257,9 +258,9 @@ pRolocVis_pca <- function(object,
       sidebarLayout(
         sidebarPanel(
           selectizeInput("markers", "Labels",
-                         choices = colnames(pmarkers),
+                         choices = myclasses,
                          multiple = TRUE,
-                         selected = colnames(pmarkers)[pmsel]),
+                         selected = myclasses[pmsel]),
           sliderInput("trans", "Transparancy",
                       min = 0,  max = 1, value = 0.75),
           checkboxInput("checkbox", label = "Show labels", value = TRUE), 
@@ -355,12 +356,12 @@ pRolocVis_pca <- function(object,
       myCols <- reactive({
         scales::alpha(cols_user(),
                       input$trans)[sapply(input$markers, function(z)
-                        which(colnames(pmarkers) == z))]
+                        which(myclasses == z))]
       })
       myCols.bg <- reactive({
         # scales::alpha(cols.bg,
         #               NA)[sapply(input$markers, function(z)
-        #                   which(colnames(pmarkers) == z))]
+        #                   which(myclasses == z))]
         darken(myCols())
       })
       
@@ -535,7 +536,7 @@ pRolocVis_pca <- function(object,
       
       ## update CSS colours in selectizeInput
       output$css <- renderUI({
-        tags$style(HTML(CSS(colnames(pmarkers), cols_user())))
+        tags$style(HTML(CSS(myclasses, cols_user())))
       })
       
       
