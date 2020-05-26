@@ -250,7 +250,7 @@ pRolocVis_pca <- function(object,
   
   ui <- tagList(
     fluidPage(
-      titlePanel(h2("pRolocVis", align = "right"), 
+      titlePanel(h2("pRolocVis - explore", align = "right"), 
                  windowTitle = "pRolocVis"),
       # add css code for coloured selectizeInput
       tags$head(tags$head(uiOutput("css"))),     

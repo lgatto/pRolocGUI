@@ -277,6 +277,8 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
   
   ## Build shiny app
   ui <- fluidPage(
+    titlePanel(h2("pRolocVis - compare", align = "right"), 
+               windowTitle = "pRolocVis"),
     sidebarLayout(
       sidebarPanel(
         selectizeInput("markers", "Labels",
@@ -294,24 +296,24 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
         width = 2),
       mainPanel(
         tabsetPanel(type = "tabs",
-                    tabPanel("PCA", id = "pcaPanel",
+                    tabPanel("Spatial Map", id = "mapPanel",
                              fluidRow(
                                column(5, 
-                                      plotOutput("pca1",
+                                      plotOutput("spatialmap1",
                                                  height = fig.height,
                                                  width = fig.width,
                                                  dblclick = "dblClick1",
                                                  brush = brushOpts(
-                                                   id = "pcaBrush1",
+                                                   id = "plotBrush1",
                                                    resetOnNew = TRUE)),
                                       offset = 0),
                                column(5, 
-                                      plotOutput("pca2",
+                                      plotOutput("spatialmap2",
                                                  height = fig.height,
                                                  width = fig.width,
                                                  dblclick = "dblClick2",
                                                  brush = brushOpts(
-                                                   id = "pcaBrush2",
+                                                   id = "plotBrush2",
                                                    resetOnNew = TRUE)),
                                       offset = 0),
                                column(2, 
@@ -434,7 +436,7 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
       
       
       ## PCA plot 1
-      output$pca1 <- renderPlot({
+      output$spatialmap1 <- renderPlot({
         par(mar = c(4, 4, 0, 0))
         par(oma = c(1, 0, 0, 0))
         plot2D(object[[1]], method = method,
@@ -466,7 +468,7 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
       
       
       ## PCA plot 2
-      output$pca2 <- renderPlot({
+      output$spatialmap2 <- renderPlot({
         par(mar = c(4, 4, 0, 0))
         par(oma = c(1, 0, 0, 0))
         plot2D(object[[2]], method = method,
@@ -615,8 +617,8 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
       ## When a the reset button is clicked check to see is there is a brush on
       ## the plot, if yes zoom, if not reset the plot.
       observeEvent(input$resetButton, {
-        .brush1 <- input$pcaBrush1
-        .brush2 <- input$pcaBrush2
+        .brush1 <- input$plotBrush1
+        .brush2 <- input$plotBrush2
         brush <- list(.brush1, .brush2)
         tf <- !sapply(brush, is.null)
         if (any(tf)) { 
