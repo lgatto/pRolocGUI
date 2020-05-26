@@ -273,98 +273,106 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
   toSel <- 1:nrow(object[[1]])
   feats <- featureNames(object[[1]])
   idDT <- character()
+  css <- CSS(myclasses, cols[seq(myclasses)])
 
+
+  ## Build shiny app ==========================================================
+  ## ===== UI =================================================================
+  ## ==========================================================================
   
-  ## Build shiny app
-  ui <- fluidPage(
-    titlePanel(h2("pRolocVis - compare", align = "right"), 
-               windowTitle = "pRolocVis"),
-    sidebarLayout(
-      sidebarPanel(
-        selectizeInput("markers", "Labels",
-                       choices = myclasses,
-                       multiple = TRUE,
-                       selected = myclasses[pmsel]),
-        sliderInput("trans", "Transparancy",
-                    min = 0,  max = 1, value = 0.5),
-        checkboxInput("checkbox", label = "Show labels", value = TRUE),
-        br(),
-        actionButton("resetButton", "Zoom/reset plot"),
-        br(),
-        actionButton("clear", "Clear selection"),
-        br(),
-        width = 2),
-      mainPanel(
-        tabsetPanel(type = "tabs",
-                    tabPanel("Spatial Map", id = "mapPanel",
-                             fluidRow(
-                               column(5, 
-                                      plotOutput("spatialmap1",
-                                                 height = fig.height,
-                                                 width = fig.width,
-                                                 dblclick = "dblClick1",
-                                                 brush = brushOpts(
-                                                   id = "plotBrush1",
-                                                   resetOnNew = TRUE)),
-                                      offset = 0),
-                               column(5, 
-                                      plotOutput("spatialmap2",
-                                                 height = fig.height,
-                                                 width = fig.width,
-                                                 dblclick = "dblClick2",
-                                                 brush = brushOpts(
-                                                   id = "plotBrush2",
-                                                   resetOnNew = TRUE)),
-                                      offset = 0),
-                               column(2, 
-                                      plotOutput("legend1",
-                                                 height = fig.height,
-                                                 width = legend.width))
-                             )
-                    ),
-                    tabPanel("Profiles", id = "profilesPanel",
-                             fluidRow(
-                               column(5,
-                                      plotOutput("profile1",
-                                                 height = "400px",
-                                                 width = "110%"),
-                                      offset = 0),
-                               column(5,
-                                      plotOutput("profile2",
-                                                 height = "400px",
-                                                 width = "110%"),
-                                      offset = 0),
-                               
-                               column(2, 
-                                      plotOutput("legend2",
-                                                 width = "100%"),
-                                      offset = 0)
-                             )
-                    ),
-                    tabPanel("Table Selection", id = "tableSelPanel",
-                             fluidRow(
-                               column(5,
-                                      checkboxGroupInput("selTab1", 
-                                                         "Columns to display for data 1",
-                                                         choices = origFvarLab1,
-                                                         selected = selDT1)
-                                      ),
-                               column(5,
-                                      checkboxGroupInput("selTab2",
-                                                         "Columns to display for data 2",
-                                                         choices = origFvarLab2,
-                                                         selected = selDT2)
-                                      
-                                      )
-                             ),
-                             tags$head(tags$style("#selTab1{color: darkblue;}"))
-                    ),
-                    ## feature data table is always visible
-                    fluidRow(
-                      column(12,
-                             column(length(c(selDT1, selDT2)),
-                                    DT::dataTableOutput("fDataTable"))))
-        ))
+  ui <- tagList(
+    fluidPage(
+      titlePanel(h2("pRolocVis - compare", align = "right"), 
+                 windowTitle = "pRolocVis - compare"),
+      # add css code for coloured selectizeInput
+      tags$head(tags$style(HTML(css))),
+      sidebarLayout(
+        sidebarPanel(
+          selectizeInput("markers", "Labels",
+                         choices = myclasses,
+                         multiple = TRUE,
+                         selected = myclasses[pmsel]),
+          sliderInput("trans", "Transparancy",
+                      min = 0,  max = 1, value = 0.5),
+          checkboxInput("checkbox", label = "Show labels", value = TRUE),
+          br(),
+          actionButton("resetButton", "Zoom/reset plot"),
+          br(),
+          actionButton("clear", "Clear selection"),
+          br(),
+          width = 2),
+        mainPanel(
+          tabsetPanel(type = "tabs",
+                      tabPanel("Spatial Map", id = "mapPanel",
+                               fluidRow(
+                                 column(5, 
+                                        plotOutput("spatialmap1",
+                                                   height = fig.height,
+                                                   width = fig.width,
+                                                   dblclick = "dblClick1",
+                                                   brush = brushOpts(
+                                                     id = "plotBrush1",
+                                                     resetOnNew = TRUE)),
+                                        offset = 0),
+                                 column(5, 
+                                        plotOutput("spatialmap2",
+                                                   height = fig.height,
+                                                   width = fig.width,
+                                                   dblclick = "dblClick2",
+                                                   brush = brushOpts(
+                                                     id = "plotBrush2",
+                                                     resetOnNew = TRUE)),
+                                        offset = 0),
+                                 column(2, 
+                                        plotOutput("legend1",
+                                                   height = fig.height,
+                                                   width = legend.width))
+                               )
+                      ),
+                      tabPanel("Profiles", id = "profilesPanel",
+                               fluidRow(
+                                 column(5,
+                                        plotOutput("profile1",
+                                                   height = "400px",
+                                                   width = "110%"),
+                                        offset = 0),
+                                 column(5,
+                                        plotOutput("profile2",
+                                                   height = "400px",
+                                                   width = "110%"),
+                                        offset = 0),
+                                 
+                                 column(2, 
+                                        plotOutput("legend2",
+                                                   width = "100%"),
+                                        offset = 0)
+                               )
+                      ),
+                      tabPanel("Table Selection", id = "tableSelPanel",
+                               fluidRow(
+                                 column(5,
+                                        checkboxGroupInput("selTab1", 
+                                                           "Columns to display for data 1",
+                                                           choices = origFvarLab1,
+                                                           selected = selDT1)
+                                 ),
+                                 column(5,
+                                        checkboxGroupInput("selTab2",
+                                                           "Columns to display for data 2",
+                                                           choices = origFvarLab2,
+                                                           selected = selDT2)
+                                        
+                                 )
+                               ),
+                               tags$head(tags$style("#selTab1{color: darkblue;}"))
+                      ),
+                      ## feature data table is always visible
+                      fluidRow(
+                        column(12,
+                               column(length(c(selDT1, selDT2)),
+                                      DT::dataTableOutput("fDataTable"))))
+          ))
+      )
     )
   )
   
@@ -430,7 +438,7 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
       myCols <- reactive({
         scales::alpha(cols,
                       input$trans)[sapply(input$markers, function(z) 
-                        which(names(cols) == z))]
+                        which(myclasses == z))]
       })
       
       
@@ -704,6 +712,11 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
                  cex = legend.cex)
         }
       })
+      
+      ## update CSS colours in selectizeInput
+      # output$css <- renderUI({
+      #   tags$style(HTML(CSS(myclasses, cols_user())))
+      # })
       
     }
   app <- list(ui = ui, server = server)
