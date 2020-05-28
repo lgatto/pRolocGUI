@@ -52,7 +52,7 @@ narrowFeatureData <- function(object,
 }
 
 
-.highlight <- function(coords, fd, myfoi, 
+.highlight <- function(coords, myfoi, 
                        labels = FALSE) {
   scheme <- "white"
   scheme2 <- "black"

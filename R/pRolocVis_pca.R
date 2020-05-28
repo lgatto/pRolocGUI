@@ -53,10 +53,10 @@ pRolocVis_pca <- function(object,
                           method = c("PCA", "t-SNE", "none"),
                           methargs) {
   ## Return featureNames of proteins selected
-  idDT <- character()
+  namesIdxDT <- character()
   on.exit({
     setUnknowncol(NULL)
-    return(invisible(idDT))
+    return(invisible(namesIdxDT))
   })
   
   ## Check MSnSet or matrix
@@ -383,13 +383,13 @@ pRolocVis_pca <- function(object,
         if (resetLabels$logical) idxDT <<- numeric()  ## If TRUE labels are cleared
         namesIdxDT <<- names(idxDT)
         if (length(idxDT)) {
-          .highlight(object_coords, fd, namesIdxDT)
+          .highlight(object_coords, namesIdxDT)
           if (input$checkbox)
-            .highlight(object_coords, fd, namesIdxDT, labels = TRUE)
+            .highlight(object_coords, namesIdxDT, labels = TRUE)
         }
         resetLabels$logical <- FALSE
-        height <- reactive(ifelse(!is.null(input$innerWidth),input$innerWidth*3/5,0)) # fix ratio 1:1
-      })
+       } # ,height = 600, width = 600
+      )
       
       
       
@@ -529,8 +529,6 @@ pRolocVis_pca <- function(object,
             if (input$checkbox)
               .highlight(object_coords, fd, namesIdxDT, labels = TRUE)
           }
-          resetLabels$logical <- FALSE
-          height <- reactive(ifelse(!is.null(input$innerWidth),input$innerWidth*3/5,0)) # fix ratio 1:1
           dev.off()
         })
       

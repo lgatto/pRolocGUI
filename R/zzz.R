@@ -63,11 +63,3 @@
               obj = object, 
               mN = mName))
 }
-
-for (i in seq(object_coords)) {
-  if (nrow(object_coords[[i]]) != nrow(object[[i]])) 
-    stop(paste("Number of features in the matrix", i, ",and MSnSet differ."))
-  if (!all.equal(rownames(object_coords[[i]]), featureNames(object[[i]]))) 
-    warning(paste("Matrix", i, "rownames and feature names don't match"))
-}
-
