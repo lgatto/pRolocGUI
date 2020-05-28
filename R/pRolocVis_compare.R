@@ -8,24 +8,18 @@
 ##' @param remap A \code{logical} indicating whether the second
 ##'     dataset in the \code{MSnSetList} should be remapped to the
 ##'     first dataset. The default is TRUE.
-##' @param mirrorX Should the first PC of the second \code{MSnSet} in
-##'     \code{object} be mirrored (default is \code{FALSE}). Only
-##'     relevant when \code{remap} is \code{FALSE}.
-##' @param mirrorY Should the second PC of the second \code{MSnSet} in
-##'     \code{object} be mirrored (default is \code{FALSE}). Only
-##'     relevant when \code{remap} is \code{FALSE}.
 pRolocVis_compare  <- function(object, fcol1, fcol2,
                                method = c("PCA", "t-SNE", "none"),
                                methargs,
                                intersect.only = TRUE,
                                foi,
-                               fig.height = "600px",
+                               fig.height = "500px",
                                fig.width = "100%",
                                remap = FALSE,
                                nchar = 40,
                                all = TRUE,
-                               mirrorX = FALSE,
-                               mirrorY = FALSE,
+                               # mirrorX = FALSE,
+                               # mirrorY = FALSE,
                                ...) {
   
   ## Return featureNames of proteins selected
@@ -265,8 +259,8 @@ pRolocVis_compare  <- function(object, fcol1, fcol2,
   #                     method = method, ...))
   
   ## Create column of unknowns (needed later for plot2D in server)
-  newName <- paste0(format(Sys.time(), "%a%b%d%H%M%S%Y"), "unknowns")
-  object <- lapply(object@x, function(x) {fData(x)[, newName] = "unknown"; x})
+  all_points <- paste0(format(Sys.time(), "%a%b%d%H%M%S%Y"), "unknowns")
+  object <- lapply(object@x, function(x) {fData(x)[, all_points] = "unknown"; x})
   
   
   ## all features are displayed on start
@@ -315,10 +309,6 @@ pRolocVis_compare  <- function(object, fcol1, fcol2,
                       min = 0,  max = 1, value = 0.75),
           checkboxInput("checkbox", label = "Show labels", value = TRUE),
           br(),
-          actionButton("resetButton", "Zoom/reset plot"),
-          br(),
-          actionButton("clear", "Clear selection"),
-          br(),
           width = 2),
         mainPanel(
           tabsetPanel(type = "tabs",
@@ -341,7 +331,17 @@ pRolocVis_compare  <- function(object, fcol1, fcol2,
                                                    brush = brushOpts(
                                                      id = "plotBrush2",
                                                      resetOnNew = TRUE)),
-                                        offset = 0)
+                                        offset = 0),
+                                 column(2, 
+                                        actionButton("resetButton", "Zoom/reset plot"),
+                                        br(),
+                                        actionButton("clear", "Clear selection"),
+                                        br(),
+                                        actionButton("resetColours", "Reset colours"),
+                                        br(),
+                                        downloadButton("downloadData", "Save selection"))
+                                        # br(),
+                                        # downloadButton("saveplot", "Download plot"))
                                )
                       ),
                       tabPanel("Profiles", id = "profilesPanel",
@@ -489,19 +489,10 @@ pRolocVis_compare  <- function(object, fcol1, fcol2,
       output$spatialmap1 <- renderPlot({
         par(mar = c(4, 4, 0, 0))
         par(oma = c(1, 0, 0, 0))
-        # plot2D(object[[1]], method = method,
-        #        col = rep(getUnknowncol(), nrow(object[[1]])),
-        #        pch = 21, cex = 1,
-        #        xlim = ranges$x,
-        #        ylim = ranges$y,
-        #        fcol = newName,
-        #        mirrorX = FALSE,
-        #        mirrorY = FALSE,
-        #        ...)
         .plot(object_coords[[1]], fd = fd1, unk = TRUE,
               xlim = ranges$x,
               ylim = ranges$y,
-              fcol = newName)
+              fcol = all_points)
         if (!is.null(input$markers)) {
           for (i in 1:length(input$markers)) {
             if (!is.na(mrkSel1()[[i]][1]))
@@ -525,19 +516,10 @@ pRolocVis_compare  <- function(object, fcol1, fcol2,
       output$spatialmap2 <- renderPlot({
         par(mar = c(4, 4, 0, 0))
         par(oma = c(1, 0, 0, 0))
-        # plot2D(object[[2]], method = method,
-        #        col = rep(getUnknowncol(), nrow(object[[2]])),
-        #        pch = 21, cex = 1,
-        #        xlim = ranges$x,
-        #        ylim = ranges$y,
-        #        fcol = newName,
-        #        mirrorX = mirrorX,
-        #        mirrorY = mirrorY,
-        #        ...)
         .plot(object_coords[[2]], fd = fd2, unk = TRUE,
               xlim = ranges$x,
               ylim = ranges$y,
-              fcol = newName)
+              fcol = all_points)
         if (!is.null(input$markers)) {
           for (i in 1:length(input$markers)) {
             if (!is.na(mrkSel2()[[i]][1]))
@@ -722,6 +704,26 @@ pRolocVis_compare  <- function(object, fcol1, fcol2,
       output$css <- renderUI({
         tags$style(HTML(CSS(myclasses, cols_user())))
       })
+      
+      ## reset colours to stockCols
+      observeEvent(input$resetColours, {
+        for (i in seq(myclasses)) {
+          updateColourInput(session, col_ids[i],
+                            value = getStockcol()[i])
+        }
+      })
+      
+      
+      ## --------Save selection button--------
+      ## When save button is download save points/proteins selected
+      output$downloadData <- downloadHandler(
+        file = "features.csv",
+        content = function(file) { 
+          write.table(idxDT, file = file, quote = FALSE, 
+                      row.names = FALSE, col.names = FALSE)
+        }
+      )
+      
       
     }
   app <- list(ui = ui, server = server)
