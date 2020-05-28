@@ -14,10 +14,10 @@
 ##' @param mirrorY Should the second PC of the second \code{MSnSet} in
 ##'     \code{object} be mirrored (default is \code{FALSE}). Only
 ##'     relevant when \code{remap} is \code{FALSE}.
-pRolocVis_compare <- function(object, fcol1, fcol2,
-                              method = c("PCA", "t-SNE", "none"),
-                              methargs,
-                              intersect.only = TRUE,
+pRolocVis_compare  <- function(object, fcol1, fcol2,
+                               method = c("PCA", "t-SNE", "none"),
+                               methargs,
+                               intersect.only = TRUE,
                                foi,
                                fig.height = "600px",
                                fig.width = "100%",
@@ -30,8 +30,8 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
   
   ## Return featureNames of proteins selected
   on.exit(
-    if(exists("idDT")) {
-      return(invisible(idDT))
+    if(exists("idxDT")) {
+      return(invisible(idxDT))
     }
   )
   
@@ -272,8 +272,10 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
   ## all features are displayed on start
   toSel <- 1:nrow(object[[1]])
   feats <- featureNames(object[[1]])
-  idDT <- character()
+  idxDT <- character()
   css <- CSS(myclasses, cols[seq(myclasses)])
+  fd1 <- fData(object[[1]])
+  fd2 <- fData(object[[2]])
   
   ## generate UI inputs for colour picker 
   col_ids <-  paste0("col", seq(myclasses))
@@ -310,7 +312,7 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
                          multiple = TRUE,
                          selected = myclasses[pmsel]),
           sliderInput("trans", "Transparancy",
-                      min = 0,  max = 1, value = 0.5),
+                      min = 0,  max = 1, value = 0.75),
           checkboxInput("checkbox", label = "Show labels", value = TRUE),
           br(),
           actionButton("resetButton", "Zoom/reset plot"),
@@ -487,15 +489,19 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
       output$spatialmap1 <- renderPlot({
         par(mar = c(4, 4, 0, 0))
         par(oma = c(1, 0, 0, 0))
-        plot2D(object[[1]], method = method,
-               col = rep(getUnknowncol(), nrow(object[[1]])),
-               pch = 21, cex = 1,
-               xlim = ranges$x,
-               ylim = ranges$y,
-               fcol = newName,
-               mirrorX = FALSE,
-               mirrorY = FALSE,
-               ...)
+        # plot2D(object[[1]], method = method,
+        #        col = rep(getUnknowncol(), nrow(object[[1]])),
+        #        pch = 21, cex = 1,
+        #        xlim = ranges$x,
+        #        ylim = ranges$y,
+        #        fcol = newName,
+        #        mirrorX = FALSE,
+        #        mirrorY = FALSE,
+        #        ...)
+        .plot(object_coords[[1]], fd = fd1, unk = TRUE,
+              xlim = ranges$x,
+              ylim = ranges$y,
+              fcol = newName)
         if (!is.null(input$markers)) {
           for (i in 1:length(input$markers)) {
             if (!is.na(mrkSel1()[[i]][1]))
@@ -504,12 +510,12 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
           }
         } 
         ## highlight point on plot by selecting item in table
-        idDT <<- feats[input$fDataTable_rows_selected]
-        if (resetLabels$logical) idDT <<- character()  ## If TRUE clear labels
-        if (length(idDT)) {
-          highlightOnPlot(object_coords[[1]], idDT, cex = 1.3)
+        idxDT <<- feats[input$fDataTable_rows_selected]
+        if (resetLabels$logical) idxDT <<- character()  ## If TRUE clear labels
+        if (length(idxDT)) {
+          .highlight(object_coords[[1]], idxDT)
           if (input$checkbox) 
-            highlightOnPlot(object_coords[[1]], idDT, labels = TRUE, pos = 3)
+            .highlight(object_coords[[1]], idxDT, labels = TRUE)
         }
       })
       
@@ -519,15 +525,19 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
       output$spatialmap2 <- renderPlot({
         par(mar = c(4, 4, 0, 0))
         par(oma = c(1, 0, 0, 0))
-        plot2D(object[[2]], method = method,
-               col = rep(getUnknowncol(), nrow(object[[2]])),
-               pch = 21, cex = 1,
-               xlim = ranges$x,
-               ylim = ranges$y,
-               fcol = newName,
-               mirrorX = mirrorX,
-               mirrorY = mirrorY,
-               ...)
+        # plot2D(object[[2]], method = method,
+        #        col = rep(getUnknowncol(), nrow(object[[2]])),
+        #        pch = 21, cex = 1,
+        #        xlim = ranges$x,
+        #        ylim = ranges$y,
+        #        fcol = newName,
+        #        mirrorX = mirrorX,
+        #        mirrorY = mirrorY,
+        #        ...)
+        .plot(object_coords[[2]], fd = fd2, unk = TRUE,
+              xlim = ranges$x,
+              ylim = ranges$y,
+              fcol = newName)
         if (!is.null(input$markers)) {
           for (i in 1:length(input$markers)) {
             if (!is.na(mrkSel2()[[i]][1]))
@@ -536,12 +546,12 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
           }
         } 
         ## highlight point on plot by selecting item in table
-        idDT <<- feats[input$fDataTable_rows_selected]
-        if (resetLabels$logical) idDT <<- character()  ## If TRUE labels are cleared
-        if (length(idDT)) {
-          highlightOnPlot(object_coords[[2]], idDT, cex = 1.3)
+        idxDT <<- feats[input$fDataTable_rows_selected]
+        if (resetLabels$logical) idxDT <<- character()  ## If TRUE labels are cleared
+        if (length(idxDT)) {
+          .highlight(object_coords[[2]], idxDT)
           if (input$checkbox) 
-            highlightOnPlot(object_coords[[2]], idDT, labels = TRUE, pos = 3)
+            .highlight(object_coords[[2]], idxDT, labels = TRUE)
         }
         resetLabels$logical <<- FALSE
       })
@@ -574,9 +584,9 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
           }
         }
         ## If an item is clicked in the table highlight profile
-        idDT <<- feats[input$fDataTable_rows_selected]
-        if (length(idDT)) {
-          matlines(t(profs[[1]][idDT, , drop = FALSE]),
+        idxDT <<- feats[input$fDataTable_rows_selected]
+        if (length(idxDT)) {
+          matlines(t(profs[[1]][idxDT, , drop = FALSE]),
                    col = "black",
                    lty = 1,
                    lwd = 2)
@@ -610,9 +620,9 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
           }
         }
         ## If an item is clicked in the table highlight profile
-        idDT <<- feats[input$fDataTable_rows_selected]
-        if (length(idDT)) {
-          matlines(t(profs[[2]][idDT, , drop = FALSE]),
+        idxDT <<- feats[input$fDataTable_rows_selected]
+        if (length(idxDT)) {
+          matlines(t(profs[[2]][idxDT, , drop = FALSE]),
                    col = "black",
                    lty = 1,
                    lwd = 2)
@@ -630,23 +640,23 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
           dist <- apply(object_coords[[1]], 1, function(z) sqrt((input$dblClick1$x - z[1])^2 
                                                                 + (input$dblClick1$y - z[2])^2))
           idPlot <- names(which(dist == min(dist)))
-          if (idPlot %in% idDT) {                          ## 1--is it already clicked?
-            idDT <<- setdiff(idDT, idPlot)                 ## Yes, remove it from table
+          if (idPlot %in% idxDT) {                          ## 1--is it already clicked?
+            idxDT <<- setdiff(idxDT, idPlot)                 ## Yes, remove it from table
           } else {                                         ## 2--new click?
-            idDT <<- c(idDT, idPlot)                       ## Yes, highlight it to table
+            idxDT <<- c(idxDT, idPlot)                       ## Yes, highlight it to table
           }
         }
         if (!is.null(input$dblClick2)) {
           dist <- apply(object_coords[[2]], 1, function(z) sqrt((input$dblClick2$x - z[1])^2 
                                                                 + (input$dblClick2$y - z[2])^2))
           idPlot <- names(which(dist == min(dist)))
-          if (idPlot %in% idDT) {                          ## 1--is it already clicked?
-            idDT <<- setdiff(idDT, idPlot)                 ## Yes, remove it from table
+          if (idPlot %in% idxDT) {                          ## 1--is it already clicked?
+            idxDT <<- setdiff(idxDT, idPlot)                 ## Yes, remove it from table
           } else {                                         ## 2--new click?
-            idDT <<- c(idDT, idPlot)                       ## Yes, highlight it to table
+            idxDT <<- c(idxDT, idPlot)                       ## Yes, highlight it to table
           }
         } 
-        toSel <- match(idDT, feats)                        ## selection to highlight in DT
+        toSel <- match(idxDT, feats)                        ## selection to highlight in DT
         if (resetLabels$logical) toSel <- numeric()        ## reset labels
         .dt1 <- fData(object[[1]])[feats, input$selTab1, drop = FALSE]
         .dt2 <- fData(object[[2]])[feats, input$selTab2, drop = FALSE]
