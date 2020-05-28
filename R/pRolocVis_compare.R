@@ -241,7 +241,13 @@ pRolocVis_compare  <- function(object, fcol1, fcol2,
   
   ## Remap data to same PC space
   if (remap) {
-    stop(paste("remap not supported - lisa fix this"))
+    # stop(paste("remap not supported - lisa fix this"))
+    if (method != "PCA") {
+      stop("Remap only supported for method = PCA")
+    } else {
+      object <- pRoloc:::remap(object)
+      method <- "none"
+    }
     #   message("Remapping data to the same PC space")
     #   object <- pRoloc:::remap(object)
     #   method <- "none"
