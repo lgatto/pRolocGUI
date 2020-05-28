@@ -18,16 +18,16 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
                               method = c("PCA", "t-SNE", "none"),
                               methargs,
                               intersect.only = TRUE,
-                              foi,
-                              fig.height = "600px",
-                              fig.width = "100%",
-                              remap = FALSE,
-                              nchar = 40,
-                              all = TRUE,
-                              mirrorX = FALSE,
-                              mirrorY = FALSE,
-                              ...) {
-                       
+                               foi,
+                               fig.height = "600px",
+                               fig.width = "100%",
+                               remap = FALSE,
+                               nchar = 40,
+                               all = TRUE,
+                               mirrorX = FALSE,
+                               mirrorY = FALSE,
+                               ...) {
+  
   ## Return featureNames of proteins selected
   on.exit(
     if(exists("idDT")) {
@@ -91,7 +91,7 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
     fn <- featureNames(object[[1]])
     object_coords <- lapply(seq(object_coords), function(z) object_coords[[z]][fn, ])
   }
-
+  
   
   ## Check if method specified
   dotargs <- pairlist(...)
@@ -100,8 +100,8 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
   
   if (any(names(dotargs) == "fcol"))
     stop("Please specify fcol1 and fcol2 for each MSnSet respectively, see ?pRolocVis for more details")
-    # if (any(grepl("mirror", names(dotargs))))
-    #     stop("Mirroring only supported as direct 'mirrorX' and 'mirrorY'. ")
+  # if (any(grepl("mirror", names(dotargs))))
+  #     stop("Mirroring only supported as direct 'mirrorX' and 'mirrorY'. ")
   
   ## fcol checks
   if (missing(fcol1) | missing(fcol2)) {
@@ -137,13 +137,13 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
     if (!fcol2 %in% fvarLabels(object[[2]]))
       stop("fcol2 is not found in fvarLabels")
   }
-
+  
   ## Update feature data and convert any columns that are matrices
   ## to vectors as otherwise in the shiny app will display these as
   ## a long vector of 1,0,0,0,0,1,0 etc.
-    for (i in seq_along(object))
-        object@x[[i]] <- .makeMatsVecs(object@x[[i]])
-
+  for (i in seq_along(object))
+    object@x[[i]] <- .makeMatsVecs(object@x[[i]])
+  
   ## Define DT columns
   origFvarLab1 <- fvarLabels(object[[1]])
   origFvarLab2 <- fvarLabels(object[[2]])
@@ -152,6 +152,7 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
   
   
   ## Check pmarkers, if not a matrix convert to a matrix
+  fcol <- c(fcol1, fcol2)
   tf <- sapply(1:length(fcol), function(x) isMrkVec(object[[x]], fcol[x]))
   pmarkers <- vector("list", length = length(object))
   for (i in 1:length(tf)) {
@@ -191,7 +192,7 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
     pmarkers[[1]] <- pmarkers[[1]][, -which(sumpm[[1]] == 0)]
     pmarkers[[2]] <- pmarkers[[2]][, -which(sumpm[[2]] == 0)]
   }
-
+  
   
   
   ## Convert GO names to CC names
@@ -217,7 +218,7 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
   myclasses <- unique(unlist(lapply(pmarkers, colnames)))
   cols <- cols[1:length(myclasses)]
   names(cols) <- myclasses
-
+  
   ## Shorten markers names if too long
   for (i in 1:length(object)) {
     cn <- sapply(colnames(pmarkers[[i]]),
@@ -248,21 +249,21 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
   ## Remap data to same PC space
   if (remap) {
     stop(paste("remap not supported - lisa fix this"))
-  #   message("Remapping data to the same PC space")
-  #   object <- pRoloc:::remap(object)
-  #   method <- "none"
-  #   mirrorX <- mirrorY <- FALSE
-  # } else {
-  #   method <- "PCA"
+    #   message("Remapping data to the same PC space")
+    #   object <- pRoloc:::remap(object)
+    #   method <- "none"
+    #   mirrorX <- mirrorY <- FALSE
+    # } else {
+    #   method <- "PCA"
   }
-   
-    # pcas <- list(plot2D(object[[1]], fcol = NULL, plot = FALSE,
-    #                     mirrorX = FALSE, mirrorY = FALSE,
-    #                     method = method, ...),
-    #              plot2D(object[[2]], fcol = NULL, plot = FALSE,
-    #                     mirrorX = mirrorX, mirrorY = mirrorY,
-    #                     method = method, ...))
-    
+  
+  # pcas <- list(plot2D(object[[1]], fcol = NULL, plot = FALSE,
+  #                     mirrorX = FALSE, mirrorY = FALSE,
+  #                     method = method, ...),
+  #              plot2D(object[[2]], fcol = NULL, plot = FALSE,
+  #                     mirrorX = mirrorX, mirrorY = mirrorY,
+  #                     method = method, ...))
+  
   ## Create column of unknowns (needed later for plot2D in server)
   newName <- paste0(format(Sys.time(), "%a%b%d%H%M%S%Y"), "unknowns")
   object <- lapply(object@x, function(x) {fData(x)[, newName] = "unknown"; x})
@@ -290,8 +291,8 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
     n <- 1
     cw <- c("50%")
   }
-
-
+  
+  
   ## Build shiny app ==========================================================
   ## ===== UI =================================================================
   ## ==========================================================================
@@ -384,12 +385,12 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
                                }, br(), br(), br(), br(), br() ## add whitespace
                                # this is a list of N colour containers 
                       )),
-                    ## feature data table is always visible
-                    fluidRow(
-                      column(12,
-                             column(length(c(selDT1, selDT2)),
-                                    DT::dataTableOutput("fDataTable"))))
-          )
+          ## feature data table is always visible
+          fluidRow(
+            column(12,
+                   column(length(c(selDT1, selDT2)),
+                          DT::dataTableOutput("fDataTable"))))
+        )
       )
     )
   )
@@ -429,7 +430,7 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
                                                 max(object_coords[[2]][, 2])))
       
       resetLabels <- reactiveValues(logical = FALSE)
-    
+      
       
       
       ## Get coords for proteins according to selectized marker class(es)
@@ -448,8 +449,8 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
         }
         .mrkSel1
       })
-
-        
+      
+      
       mrkSel2 <- reactive({
         ind <- match(input$markers, colnames(pmarkers[[2]]))
         .mrkSel2 <- vector("list", length(input$markers))
@@ -469,7 +470,7 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
         sapply(col_ids, function(z) input[[z]])
       })
       
-
+      
       ## Update colour transparacy according to slider input
       myCols <- reactive({
         scales::alpha(cols_user(),
@@ -627,7 +628,7 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
         ## Double clicking to identify protein
         if (!is.null(input$dblClick1)) {
           dist <- apply(object_coords[[1]], 1, function(z) sqrt((input$dblClick1$x - z[1])^2 
-                                                       + (input$dblClick1$y - z[2])^2))
+                                                                + (input$dblClick1$y - z[2])^2))
           idPlot <- names(which(dist == min(dist)))
           if (idPlot %in% idDT) {                          ## 1--is it already clicked?
             idDT <<- setdiff(idDT, idPlot)                 ## Yes, remove it from table
@@ -637,7 +638,7 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
         }
         if (!is.null(input$dblClick2)) {
           dist <- apply(object_coords[[2]], 1, function(z) sqrt((input$dblClick2$x - z[1])^2 
-                                                       + (input$dblClick2$y - z[2])^2))
+                                                                + (input$dblClick2$y - z[2])^2))
           idPlot <- names(which(dist == min(dist)))
           if (idPlot %in% idDT) {                          ## 1--is it already clicked?
             idDT <<- setdiff(idDT, idPlot)                 ## Yes, remove it from table
@@ -656,6 +657,14 @@ pRolocVis_compare <- function(object, fcol1, fcol2,
         DT::datatable(data = dataDT, 
                       rownames = TRUE,
                       selection = list(mode = 'multiple', selected = toSel),
+                      options = list(
+                        search = list(regex = TRUE, 
+                                      caseInsensitive = FALSE),
+                        dom = "l<'search'>rtip",
+                        pageLength = 10
+                      ),
+                      callback = JS(callback),
+                      style = "bootstrap4",
                       escape = FALSE) %>%     ## NB: `escape = FALSE` required for colname coloring
           formatStyle(columns = colnames(.dt1), color = c("darkblue")) 
       })
