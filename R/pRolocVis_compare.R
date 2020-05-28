@@ -13,7 +13,6 @@ pRolocVis_compare  <- function(object, fcol1, fcol2,
                                methargs,
                                intersect.only = TRUE,
                                foi,
-                               fig.height = "500px",
                                fig.width = "100%",
                                remap = FALSE,
                                nchar = 40,
@@ -316,45 +315,39 @@ pRolocVis_compare  <- function(object, fcol1, fcol2,
                                fluidRow(
                                  column(5, 
                                         plotOutput("spatialmap1",
-                                                   height = fig.height,
                                                    width = fig.width,
                                                    dblclick = "dblClick1",
                                                    brush = brushOpts(
                                                      id = "plotBrush1",
                                                      resetOnNew = TRUE)),
-                                        offset = 0),
+                                        offset = 1),
                                  column(5, 
                                         plotOutput("spatialmap2",
-                                                   height = fig.height,
                                                    width = fig.width,
                                                    dblclick = "dblClick2",
                                                    brush = brushOpts(
                                                      id = "plotBrush2",
                                                      resetOnNew = TRUE)),
-                                        offset = 0),
-                                 column(2, 
-                                        actionButton("resetButton", "Zoom/reset plot"),
-                                        br(),
-                                        actionButton("clear", "Clear selection"),
-                                        br(),
-                                        actionButton("resetColours", "Reset colours"),
-                                        br(),
-                                        downloadButton("downloadData", "Save selection"),
-                                        br(),
-                                        downloadButton("saveplot", "Download plot"))
-                               )
+                                        offset = 1)),
+                               fluidRow(column(1, actionButton("resetButton", "Zoom/reset plot"), offset = 1),
+                                        column(1,actionButton("clear", "Clear selection"), offset = 1),
+                                        column(1,actionButton("resetColours", "Reset colours"), offset = 1),
+                                        column(1,downloadButton("downloadData", "Save selection"), offset = 1),
+                                        column(1,downloadButton("saveplot", "Download plot"), offset = 1))
+                                 # )
+                               # )
                       ),
                       tabPanel("Profiles", id = "profilesPanel",
                                fluidRow(
                                  column(5,
                                         plotOutput("profile1",
                                                    height = "400px",
-                                                   width = "110%"),
+                                                   width = "100%"),
                                         offset = 0),
                                  column(5,
                                         plotOutput("profile2",
                                                    height = "400px",
-                                                   width = "110%"),
+                                                   width = "100%"),
                                         offset = 0)
                                )
                       ),
@@ -388,7 +381,7 @@ pRolocVis_compare  <- function(object, fcol1, fcol2,
                                # this is a list of N colour containers 
                       )),
           ## feature data table is always visible
-          fluidRow(
+          fluidRow(br(),
             column(12,
                    column(length(c(selDT1, selDT2)),
                           DT::dataTableOutput("fDataTable"))))
@@ -508,7 +501,7 @@ pRolocVis_compare  <- function(object, fcol1, fcol2,
           if (input$checkbox) 
             .highlight(object_coords[[1]], idxDT, labels = TRUE)
         }
-      })
+      }, height = 400, width = 400)
       
       
       
@@ -536,7 +529,7 @@ pRolocVis_compare  <- function(object, fcol1, fcol2,
             .highlight(object_coords[[2]], idxDT, labels = TRUE)
         }
         resetLabels$logical <<- FALSE
-      })
+      }, height = 400, width = 400)
       
       
       
