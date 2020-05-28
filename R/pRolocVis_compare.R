@@ -339,9 +339,9 @@ pRolocVis_compare  <- function(object, fcol1, fcol2,
                                         br(),
                                         actionButton("resetColours", "Reset colours"),
                                         br(),
-                                        downloadButton("downloadData", "Save selection"))
-                                        # br(),
-                                        # downloadButton("saveplot", "Download plot"))
+                                        downloadButton("downloadData", "Save selection"),
+                                        br(),
+                                        downloadButton("saveplot", "Download plot"))
                                )
                       ),
                       tabPanel("Profiles", id = "profilesPanel",
@@ -723,6 +723,56 @@ pRolocVis_compare  <- function(object, fcol1, fcol2,
                       row.names = FALSE, col.names = FALSE)
         }
       )
+      
+      ## --------Save figure button--------
+      ## Save figure of map
+      output$saveplot <- downloadHandler(
+        file = "spatialmap.pdf" , 
+        content = function(file) {
+          pdf(file = file)
+          par(mar = c(4, 4, 0, 0), oma = c(1, 0, 0, 0), mfrow = c(1, 2))
+          ## plot 1
+          .plot(object_coords[[1]], fd = fd1, unk = TRUE,
+                xlim = ranges$x,
+                ylim = ranges$y,
+                fcol = all_points)
+          if (!is.null(input$markers)) {
+            for (i in 1:length(input$markers)) {
+              if (!is.na(mrkSel1()[[i]][1]))
+                points(object_coords[[1]][mrkSel1()[[i]], ], pch = 16, 
+                       cex = 1.4, col = myCols()[i])
+            }
+          } 
+          ## highlight point on plot by selecting item in table
+          idxDT <<- feats[input$fDataTable_rows_selected]
+          if (resetLabels$logical) idxDT <<- character()  ## If TRUE clear labels
+          if (length(idxDT)) {
+            .highlight(object_coords[[1]], idxDT)
+            if (input$checkbox) 
+              .highlight(object_coords[[1]], idxDT, labels = TRUE)
+          }
+          ## plot 2 
+          .plot(object_coords[[2]], fd = fd2, unk = TRUE,
+                xlim = ranges$x,
+                ylim = ranges$y,
+                fcol = all_points)
+          if (!is.null(input$markers)) {
+            for (i in 1:length(input$markers)) {
+              if (!is.na(mrkSel2()[[i]][1]))
+                points(object_coords[[2]][mrkSel2()[[i]], ], pch = 16, 
+                       cex = 1.4, col = myCols()[i])
+            }
+          } 
+          ## highlight point on plot by selecting item in table
+          idxDT <<- feats[input$fDataTable_rows_selected]
+          if (resetLabels$logical) idxDT <<- character()  ## If TRUE labels are cleared
+          if (length(idxDT)) {
+            .highlight(object_coords[[2]], idxDT)
+            if (input$checkbox) 
+              .highlight(object_coords[[2]], idxDT, labels = TRUE)
+          }
+          dev.off()
+        })
       
       
     }
