@@ -314,6 +314,13 @@ pRolocVis_compare  <- function(object, fcol1, fcol2,
                       min = 0,  max = 1, value = 0.75),
           checkboxInput("checkbox", label = "Show labels", value = TRUE),
           br(),
+          # checkboxGroupInput(inputId = "axescontrols", 
+          #                    label = "Axes control",
+          #                    choices = c("Mirror x-axis",
+          #                                "Mirror y-axis",
+          #                                "Switch axes")),
+          checkboxInput(inputId = "axescontrols", label = "Axes transform"),
+          br(),
           width = 2),
         mainPanel(
           tabsetPanel(type = "tabs",
@@ -336,10 +343,10 @@ pRolocVis_compare  <- function(object, fcol1, fcol2,
                                                      resetOnNew = TRUE)),
                                         offset = 1)),
                                fluidRow(column(1, actionButton("resetButton", "Zoom/reset plot"), offset = 1),
-                                        column(1,actionButton("clear", "Clear selection"), offset = 1),
-                                        column(1,actionButton("resetColours", "Reset colours"), offset = 1),
-                                        column(1,downloadButton("downloadData", "Save selection"), offset = 1),
-                                        column(1,downloadButton("saveplot", "Download plot"), offset = 1))
+                                        column(1, actionButton("clear", "Clear selection"), offset = 1),
+                                        column(1, actionButton("resetColours", "Reset colours"), offset = 1),
+                                        column(1, downloadButton("downloadData", "Save selection"), offset = 1),
+                                        column(1, downloadButton("saveplot", "Download plot"), offset = 2))
                                  # )
                                # )
                       ),
@@ -402,6 +409,11 @@ pRolocVis_compare  <- function(object, fcol1, fcol2,
   
   server <-
     function(input, output, session) {
+      
+      # if (input$axescontrols[1])
+      #   object_coords <- lapply(object_coords, function(x) x*-1)
+      
+      ## define range for plots
       ranges <- reactiveValues(x = c(min(c(object_coords[[1]][, 1], 
                                            object_coords[[2]][, 1])), 
                                      max(c(object_coords[[1]][, 1], 
@@ -482,6 +494,8 @@ pRolocVis_compare  <- function(object, fcol1, fcol2,
       myCols.bg <- reactive({
         darken(myCols())
       })
+    
+      
       
       
       ## Spatial plot 1
@@ -639,8 +653,8 @@ pRolocVis_compare  <- function(object, fcol1, fcol2,
         } 
         toSel <- match(idxDT, feats)                        ## selection to highlight in DT
         if (resetLabels$logical) toSel <- numeric()        ## reset labels
-        .dt1 <- fData(object[[1]])[feats, input$selTab1, drop = FALSE]
-        .dt2 <- fData(object[[2]])[feats, input$selTab2, drop = FALSE]
+        .dt1 <- fd1[feats, input$selTab1, drop = FALSE]
+        .dt2 <- fd2[feats, input$selTab2, drop = FALSE]
         colnames(.dt1) <- paste0('<span style="color:',   
                                  rep("darkblue", ncol(.dt1)), '">', 
                                  colnames(.dt1), '</span>')
