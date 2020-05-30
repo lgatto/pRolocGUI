@@ -566,7 +566,7 @@ pRolocVis_compare  <- function(object, fcol1, fcol2,
         axis(1, at = 1:m, labels = fracs, las = 2)
         title(xlab = "Fractions", line = 5.5)
         matlines(t(profs[[1]][feats, ]),
-                 col = getUnknowncol(),
+                 col = paste0("grey", 60),
                  lty = 1,
                  type = "l")
         if (!is.null(input$markers)) {
@@ -602,7 +602,7 @@ pRolocVis_compare  <- function(object, fcol1, fcol2,
         axis(1, at = 1:m, labels = fracs, las = 2)
         title(xlab = "Fractions", line = 5.5)
         matlines(t(profs[[2]][feats, ]),
-                 col = getUnknowncol(),
+                 col = paste0("grey", 60),
                  lty = 1,
                  type = "l")
         if (!is.null(input$markers)) {
