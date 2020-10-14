@@ -11,6 +11,8 @@ importFrom("utils", "packageVersion")
 
 import(shiny)
 import(scales)
+import(shinydashboardPlus)
+
 importFrom(DT,
            ## see issue 61
            ## dataTableOutput,
@@ -19,4 +21,9 @@ importFrom(DT,
 importFrom(dplyr, "%>%")
 importFrom(ggplot2, "aes", "ggplot", "geom_point", "geom_smooth", 
            "annotate", "xlab")
+importFrom(colourpicker, "colourInput")
+importFrom(shinyhelper, "observe_helpers", "helper")
+importFrom(shinyWidgets, "checkboxGroupButtons", "updateCheckboxGroupButtons")
+importFrom(shinyjs, "useShinyjs")
+importFrom(colorspace, "darken", "lighten")
 export(pRolocVis)
