@@ -152,9 +152,9 @@ $("#mySearch").on("keyup redraw", function(){
 '
 
 ## make data frame for ggplot
-makeDF <- function(data = profs, fcol = fcol, pd = pd, replicate.column.name) {
+makeDF <- function(data = profs, fcol = fcol, fd = fd, pd = pd, replicate.column.name) {
     if (missing(replicate.column.name)) {
-        message(paste("Replicate information not provided, assuming 1 replicate only"))
+        # message(paste("Replicate information not provided, assuming 1 replicate only"))
         repInfo <- rep(1, ncol(data))
     } else {
         repInfo <- pd[, replicate.column.name]

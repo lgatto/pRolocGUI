@@ -1,0 +1,1 @@
+This sidebar allows you to explore items (proteins/peptides) that belong to pre-defined (subcellular) classes. To remove or add the class labels on the spatial map click the desired button that corresponds to the compartment/class name. All class labels can be added back to the plot (or fully removed) by clicking them individually or using the "Select/clear all" action button.

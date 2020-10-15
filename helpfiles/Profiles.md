@@ -1,0 +1,1 @@
+Profile plot displaying the data contained in the exprs slot of the MSnSet. For example, for a LOPIT experiment this typically is the relative abundance of each protein in each fraction across the gradient employed.
