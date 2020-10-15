@@ -93,7 +93,7 @@ pRolocVis_explore <- function(object,
     if (nrow(object) != nrow(object_coords)) {
       object_coords <- object_coords[!chk, ]
     }
-    if (featureNames(object) != rownames(object_coords)) {
+    if (all(featureNames(object) != rownames(object_coords))) {
       stop(paste("Row/featureNames in matrix/MSnSet do not match"))
     }
     message(paste(c("Removing ",length(chk), " rows with missing values", 
@@ -148,13 +148,21 @@ pRolocVis_explore <- function(object,
   pmarkers_msnset <- mrkVecToMat(object, fcol, mfcol = mName)
   pmarkers <- fData(pmarkers_msnset)[, mName]     # marker matrix    
   
-  
   ## Check pmarkers, if not a matrix convert to a matrix
   if (!inherits(pmarkers, "matrix")) {
-    mName <- paste0("Markers", format(Sys.time(), "%a%b%d%H%M%S%Y"))
+    if (fcol == "nullmarkers") {
+      pmarkers <- matrix(1, ncol = 1, nrow = nrow(object))
+      rownames(pmarkers) <- rownames(profs)
+      colnames(pmarkers) <- fcol
+    }
+    else {
+      mName <- paste0("Markers", format(Sys.time(), "%a%b%d%H%M%S%Y"))
     object <- mrkVecToMat(object, fcol, mfcol = mName)
     fcol <- mName
     pmarkers <- fData(object)[, fcol]
+    }
+    
+    
   }
   ## Shorten markers names if too long
   cn <- sapply(colnames(pmarkers),
