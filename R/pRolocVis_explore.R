@@ -51,39 +51,61 @@ pRolocVis_explore <- function(object,
   ## Check if MSnSet and if not, check it's a matrix with MSnSet in 
   ## the methargs (as per plot2D)
   myargs <- list(...)
-  if (!inherits(object, "MSnSet")) {
-      if (is.matrix(object)) {
-        if ("dims" %in% names(myargs)) {
-          if (length(myargs$dims) != 2) {
-            stop("Only 2 dimensions allowed for 2D plotting, check dims argument")
-          }
-          object_coords <- object[, myargs$dims]
-        } 
-        else {
-          if (ncol(object) != 2) {
-            stop("Only 2 dimensions allowed for 2D plotting, check dimensions of object")
-          }
-          object_coords <- object
-        }
-        object <- myargs$methargs[[1]]
-        if (!inherits(object, "MSnSet")) 
-          stop(paste("If method == \"none\", and object is a 'matrix',", 
-                     "the feature metadata must be provided as an 'MSnSet'", 
-                     "(the object matching the coordinate matrix) in 'methargs'"))
-        if (nrow(object_coords) != nrow(object)) 
-          stop("Number of features in the matrix and feature metadata differ.")
-        if (!all.equal(rownames(object_coords), featureNames(object))) 
-          warning("Matrix rownames and feature names don't match")
-      }
-      else stop("object must be an 'MSnSet' or a 'matrix' (if method == \"none\").")
-      .xlab <- colnames(object_coords)[1]
-      .ylab <- colnames(object_coords)[2]
-    } 
-  else {
-    object_coords <- plot2D(object, plot = FALSE, ...)
+
+  if (!inherits(object, "MSnSet") | !is.matrix(object)) {
+    if (inherits(object, "MSnSet")) {
+      object_coords <- plot2D(object, plot = FALSE, ...)
+    } else {
+      message(paste("---------------------------------------------------------",
+                    "\nWhen passing a matrix as the object please check that",
+                    "\nthe arguments method = 'none' and metharg are also passed",
+                    "\nSee ?plot2D and the pRolocGUI vignette for more details.",
+                    "\n---------------------------------------------------------"))
+      chk <- plot2D(object, plot = FALSE, ...)
+      object_coords <- myargs$methargs[[1]]
+      object <- myargs$methargs
+    }
   }
-  stopifnot(inherits(object, "MSnSet"))
+  else stop(paste("must be a msnset or matrix"))
+  .xlab <- colnames(object_coords)[1]
+  .ylab <- colnames(object_coords)[2]
   
+
+
+  # if (!inherits(object, "MSnSet") | !is.matrix(object)) {
+  #   if (is.matrix(object)) {
+  #     if ("method" %in% names(myargs)) {
+  #       if (myargs$method == "none") {
+  #         
+  #         
+  #         if ("dims" %in% names(myargs)) {
+  #           if (length(myargs$dims) != 2) stop("Only 2 dimensions allowed for 2D plotting, check dims argument")
+  #           object_coords <- object[, myargs$dims]
+  #         }
+  #         else {
+  #           if (ncol(object) != 2) stop("Only 2 dimensions allowed for 2D plotting, check dimensions of object")
+  #           object_coords <- object
+  #         }
+  #         if ("methargs" %in% names(myargs)) stop("methargs must be supplied if object is a matrix and method must be 'none'")
+  #         object <- myargs$methargs[[1]]
+  #         if (!inherits(object, "MSnSet")) 
+  #           stop(paste("If method == \"none\", and the object is a 'matrix',", 
+  #                      "methargs must be a supplied as list(MSnSet)"))
+  #         if (nrow(object_coords) != nrow(object)) 
+  #           stop("Number of features in the matrix and feature metadata differ.")
+  #         if (!all.equal(rownames(object_coords), featureNames(object))) 
+  #           stop(paste("Matrix rownames and feature names don't match"))
+  #         
+  #       } else stop(paste("If object is a matrix, method must be set to 'none' and methargs must be provided"))
+  #     }
+  #     else stop("If object is a matrix, method must be set to 'none' and methargs must be provided")
+  #     .xlab <- colnames(object_coords)[1]
+  #     .ylab <- colnames(object_coords)[2]
+  #   } 
+  #   else object_coords <- plot2D(object, plot = FALSE, ...)
+  # }
+  # else stop("object must be an 'MSnSet' or a 'matrix' (if method == \"none\")")
+    
    
   ## Check for missing values
   if (anyNA(exprs(object))) {
@@ -96,8 +118,9 @@ pRolocVis_explore <- function(object,
     if (all(featureNames(object) != rownames(object_coords))) {
       stop(paste("Row/featureNames in matrix/MSnSet do not match"))
     }
-    message(paste(c("Removing ",length(chk), " rows with missing values", 
-                    "\nConsider using filterNA or impute before proceeding")))
+    message(paste(c("--------------------------------------------------",
+                    "\nMissing values in dataset",
+                    "\n--------------------------------------------------")))
   }
 
   ## Check fcol is present and if not add a new column called nullmarkers
