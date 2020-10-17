@@ -52,22 +52,20 @@ pRolocVis_explore <- function(object,
   ## the methargs (as per plot2D)
   myargs <- list(...)
 
-  if (!inherits(object, "MSnSet") | !is.matrix(object)) {
-    if (inherits(object, "MSnSet")) {
-      object_coords <- plot2D(object, plot = FALSE, ...)
-    } 
-    else if (inherits(object, "matrix")) {
-      message(paste("---------------------------------------------------------",
-                    "\nWhen passing a matrix as the object please check that",
-                    "\nthe arguments method = 'none' and metharg are also passed",
-                    "\nSee ?plot2D and the pRolocGUI vignette for more details.",
-                    "\n---------------------------------------------------------"))
-      chk <- plot2D(object, plot = FALSE, ...)
-      object_coords <- myargs$methargs[[1]]
-      object <- myargs$methargs
-    }
-    else stop(paste("Object must be of class MSnSet or matrix"))
+  if (inherits(object, "MSnSet")) {
+    object_coords <- plot2D(object, plot = FALSE, ...)
+  } 
+  else if (inherits(object, "matrix")) {
+    message(paste("---------------------------------------------------------",
+                  "\nWhen passing a matrix as the object please check that the",
+                  "\narguments method = 'none' and methargs are also passed",
+                  "\nSee ?plot2D and the pRolocGUI vignette for more details.",
+                  "\n---------------------------------------------------------"))
+    chk <- plot2D(object, plot = FALSE, ...)
+    object_coords <- object
+    object <- myargs$methargs[[1]]
   }
+  else stop(paste("Object must be of class MSnSet or matrix"))  
   .xlab <- colnames(object_coords)[1]
   .ylab <- colnames(object_coords)[2]
   
