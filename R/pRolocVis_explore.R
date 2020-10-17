@@ -55,7 +55,8 @@ pRolocVis_explore <- function(object,
   if (!inherits(object, "MSnSet") | !is.matrix(object)) {
     if (inherits(object, "MSnSet")) {
       object_coords <- plot2D(object, plot = FALSE, ...)
-    } else {
+    } 
+    else if (inherits(object, "matrix")) {
       message(paste("---------------------------------------------------------",
                     "\nWhen passing a matrix as the object please check that",
                     "\nthe arguments method = 'none' and metharg are also passed",
@@ -65,8 +66,8 @@ pRolocVis_explore <- function(object,
       object_coords <- myargs$methargs[[1]]
       object <- myargs$methargs
     }
+    else stop(paste("Object must be of class MSnSet or matrix"))
   }
-  else stop(paste("must be a msnset or matrix"))
   .xlab <- colnames(object_coords)[1]
   .ylab <- colnames(object_coords)[2]
   
