@@ -205,11 +205,9 @@ pRolocVis_explore <- function(object,
   ## initialize other objects for the datatable tracking
   origFvarLab <- colnames(fd)
   selDT <- colnames(fd)[1:4]           
-  feats <- toSel <- c(1:ncol(fd))
-  idxDT <- numeric()
+  feats <- toSel <- idxDT <- numeric()
   namesIdxDT <- character()
-  pmsel <- 1:ncol(pmarkers)
-  
+
   
   ## Marker colours
   scheme = "white"
@@ -550,9 +548,9 @@ pRolocVis_explore <- function(object,
       feats <<- which(brushBounds$i & brushBounds$j)
       ## Double clicking to identify protein
       if (!is.null(input$dblClick)) {
-        dist <- apply(object_coords, 1, function(z) sqrt((input$dblClick$x - z[1])^2
+        l2_dist <- apply(object_coords, 1, function(z) sqrt((input$dblClick$x - z[1])^2
                                                          + (input$dblClick$y - z[2])^2))
-        idxPlot <- which(dist == min(dist))
+        idxPlot <- which(l2_dist == min(l2_dist))
         if (idxPlot %in% idxDT) {                            ## 1--is it already clicked?
           setsel <- setdiff(names(idxDT), names(idxPlot))   ## Yes, remove it from table
           idxDT <<- idxDT[setsel]
@@ -565,7 +563,7 @@ pRolocVis_explore <- function(object,
       if (resetLabels$logical) toSel <- numeric()
       ## don't display mName - see https://github.com/ComputationalProteomicsUnit/pRolocGUI/issues/52
       # dtdata <- fd[, -grep(mName, colnames(fd))]
-      dtdata <- fd[, ]
+      dtdata <- fd[, ] # remove this
       dtdata <- dtdata[brushBounds$i & brushBounds$j, input$selTab]
       DT::datatable(data = dtdata,
                     filter = "top",
@@ -808,7 +806,7 @@ pRolocVis_explore <- function(object,
     })
     
     ## table legends
-    output$tbl <- renderTable(pd)
+    # output$tbl <- renderTable(pd)
     
     ## table legends
     output$pdata <- renderTable(pd)

@@ -247,7 +247,7 @@ makeDF <- function(data = profs, fcol = fcol, fd = fd, pd = pd, replicate.column
 # } 
 
 ## facet of all profile plots
-plotAllLayers<-function(df, col, reps = FALSE){
+plotAllLayers<-function(df, col, reps = FALSE, ...){
     fracLev <- levels(df$fraction)
     if (reps == TRUE) {
         repLev <- levels(df$rep)
@@ -285,7 +285,7 @@ plotAllLayers<-function(df, col, reps = FALSE){
               axis.title.x = element_blank(),
               axis.title.y = element_text(size = 10 + 2, colour = rgb(0, 0, 0)),
               axis.text.y = element_text(size = 10, colour = rgb(0, 0, 0))) +
-        facet_wrap(~ mrk, scales = "free_y") 
+        facet_wrap(~ mrk, scales = "free_y", ...) 
     return(p)
 }
 
