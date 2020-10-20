@@ -452,9 +452,9 @@ pRolocVis_explore <- function(object,
       if (resetLabels$logical) idxDT <<- numeric()  ## If TRUE labels are cleared
       namesIdxDT <<- names(idxDT)
       if (length(idxDT)) {
-        highlightOnPlot(object_coords, fd, namesIdxDT)
+        highlightOnPlot(object_coords, namesIdxDT)
         if (input$checkbox)
-          highlightOnPlot(object_coords, fd, namesIdxDT, labels = TRUE)
+          highlightOnPlot(object_coords, namesIdxDT, labels = TRUE)
       }
       resetLabels$logical <- FALSE
       height <- reactive(ifelse(!is.null(input$innerWidth),input$innerWidth*3/5,0)) # fix ratio 1:1

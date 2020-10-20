@@ -90,7 +90,7 @@ plot2D_lisa <- function(coords, fd, fcol = fcol,
 }
 
 
-highlightOnPlot <- function(coords, fd, myfoi, labels = FALSE,
+highlightOnPlot <- function(coords, myfoi, labels = FALSE,
                             scheme = c("white"), cex = 1.2) {
     
     .data <- coords

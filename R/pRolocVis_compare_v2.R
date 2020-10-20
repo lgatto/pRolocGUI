@@ -185,8 +185,9 @@ pRolocVis_compare <- function(object,
   ## initialize other objects for the datatable tracking
   origFvarLab <- lapply(fd, colnames)
   selDT <- lapply(origFvarLab, function(x) x[1:4])          
-  feats <- toSel <- idxDT <- numeric()
-  namesIdxDT <- character()
+  feats <- rownames(fd[[1]])
+  toSel <- 1:nrow(fd[[1]])
+  idxDT <- character()
   myclasses <- unique(unlist(lapply(pmarkers, colnames)))
   
   ## generate UI inputs for colour picker 
@@ -514,14 +515,14 @@ pRolocVis_compare <- function(object,
         }
       }
       idxDT <<- feats[input$fDataTable_rows_selected] ## highlight point on plot by selecting item in table
-      if (resetLabels$logical) idxDT <<- numeric()  ## If TRUE labels are cleared
-      namesIdxDT <<- names(idxDT)
+      if (resetLabels$logical) idxDT <<- character()  ## If TRUE labels are cleared
+      # namesIdxDT <<- names(idxDT)
       if (length(idxDT)) {
-        highlightOnPlot(object_coords[[1]], fd[[1]], namesIdxDT)
+        highlightOnPlot(object_coords[[1]], idxDT)
         if (input$checkbox)
-          highlightOnPlot(object_coords[[1]], fd[[1]], namesIdxDT, labels = TRUE)
+          highlightOnPlot(object_coords[[1]], idxDT, labels = TRUE)
       }
-      resetLabels$logical <- FALSE
+      # resetLabels$logical <- FALSE
       height <- reactive(ifelse(!is.null(input$innerWidth),input$innerWidth*3/5,0)) # fix ratio 1:1
     })
     
@@ -540,14 +541,14 @@ pRolocVis_compare <- function(object,
         }
       }
       idxDT <<- feats[input$fDataTable_rows_selected] ## highlight point on plot by selecting item in table
-      if (resetLabels$logical) idxDT <<- numeric()  ## If TRUE labels are cleared
-      namesIdxDT <<- names(idxDT)
+      if (resetLabels$logical) idxDT <<- character()  ## If TRUE labels are cleared
+      # namesIdxDT <<- names(idxDT)
       if (length(idxDT)) {
-        highlightOnPlot(object_coords[[2]], fd[[2]], namesIdxDT)
+        highlightOnPlot(object_coords[[2]], idxDT)
         if (input$checkbox)
-          highlightOnPlot(object_coords[[2]], fd[[2]], namesIdxDT, labels = TRUE)
+          highlightOnPlot(object_coords[[2]], idxDT, labels = TRUE)
       }
-      resetLabels$logical <- FALSE
+      resetLabels$logical <<- FALSE
       height <- reactive(ifelse(!is.null(input$innerWidth),input$innerWidth*3/5,0)) # fix ratio 1:1
     })
     
@@ -593,7 +594,7 @@ pRolocVis_compare <- function(object,
       mtext("Fractions", side=1, line=8, cex = 1.2)
       
       ## update lines on plot according to zoom
-      feats <<- which(brushBounds1$i & brushBounds1$j)
+      feats <- which(brushBounds1$i & brushBounds1$j)
       namFeats <- names(feats)[which(names(feats) %in% rownames(profs_un))]
       
       ## plot unknowns
@@ -617,10 +618,10 @@ pRolocVis_compare <- function(object,
       }
       ## If an item is clicked in the table highlight profile
       idxDT <<- feats[input$fDataTable_rows_selected]
-      namesIdxDT <<- names(idxDT)
+      # namesIdxDT <<- names(idxDT)
       if (length(idxDT)) {
         invisible(lapply(fracInds, function(z)     # don't plot all lines
-          matlines(z, t(profs[[1]][namesIdxDT, z, drop = FALSE]),
+          matlines(z, t(profs[[1]][idxDT, z, drop = FALSE]),
                    col = "black",   # would like to colour by location here need names vector of colours
                    lty = 5, lwd = 2,
                    type = "l")))
@@ -691,10 +692,10 @@ pRolocVis_compare <- function(object,
       }
       ## If an item is clicked in the table highlight profile
       idxDT <<- feats[input$fDataTable_rows_selected]
-      namesIdxDT <<- names(idxDT)
+      # namesIdxDT <<- names(idxDT)
       if (length(idxDT)) {
         invisible(lapply(fracInds, function(z)     # don't plot all lines
-          matlines(z, t(profs[[2]][namesIdxDT, z, drop = FALSE]),
+          matlines(z, t(profs[[2]][idxDT, z, drop = FALSE]),
                    col = "black",   # would like to colour by location here need names vector of colours
                    lty = 5, lwd = 2,
                    type = "l")))
@@ -719,16 +720,16 @@ pRolocVis_compare <- function(object,
     ## Feature data table
     output$fDataTable <- DT::renderDataTable({
       
-      feats <<- unique(c(which(brushBounds1$i & brushBounds1$j),
-                         which(brushBounds2$i & brushBounds2$j)))
+      feats <<- unique(c(names(which(brushBounds1$i & brushBounds1$j)),
+                         names(which(brushBounds2$i & brushBounds2$j))))
     ## Double clicking to identify protein
       if (!is.null(input$dblClick1)) {
         l2_dist <- apply(object_coords[[1]], 1, function(z) sqrt((input$dblClick1$x - z[1])^2 
                                                               + (input$dblClick1$y - z[2])^2))
         idxPlot <- names(which(l2_dist == min(l2_dist)))
         if (idxPlot %in% idxDT) {                          ## 1--is it already clicked?
-          setsel <- setdiff(names(idxDT), names(idxPlot))                 ## Yes, remove it from table
-          idxDT <<- idxDT[setsel]
+          # setsel <- setdiff(names(idxDT), names(idxPlot))                 ## Yes, remove it from table
+          idxDT <<- setdiff(idxDT, idxPlot)
         } else {                                         ## 2--new click?
           idxDT <<- c(idxDT, idxPlot)                    ## Yes, highlight it to table
         }
@@ -738,32 +739,39 @@ pRolocVis_compare <- function(object,
                                                               + (input$dblClick2$y - z[2])^2))
         idxPlot <- names(which(l2_dist == min(l2_dist)))
         if (idxPlot %in% idxDT) {                          ## 1--is it already clicked?
-          setsel <- setdiff(names(idxDT), names(idxPlot)) 
-          idxDT <<- idxDT[setsel]                        ## Yes, remove it from table
+          # setsel <- setdiff(names(idxDT), names(idxPlot)) 
+          idxDT <<- setdiff(idxDT, idxPlot)                        ## Yes, remove it from table
         } else {                                         ## 2--new click?
           idxDT <<- c(idxDT, idxPlot)                       ## Yes, highlight it to table
         }
       } 
- 
-      namesIdxDT <<- names(idxDT)
-      # have to change this if we decide to use different size datasets (e.g. tracking via name or index)
-      toSel1 <- match(namesIdxDT, rownames(fd[[1]])[brushBounds1$i & brushBounds1$j])
-      toSel2 <- match(namesIdxDT, rownames(fd[[2]])[brushBounds2$i & brushBounds2$j])
-      toSel <- unique(c(toSel1, toSel2))
-      
-      if (resetLabels$logical) toSel <- numeric()
-      ## don't display mName - see https://github.com/ComputationalProteomicsUnit/pRolocGUI/issues/52
-      # dtdata <- fd[, -grep(mName, colnames(fd))]
-      
-      dtdata1 <- fd[[1]][brushBounds1$i & brushBounds1$j, input$selTab1, drop = FALSE]
-      dtdata2 <- fd[[2]][brushBounds2$i & brushBounds2$j, input$selTab2, drop = FALSE]
-      
-      # .dt1 <- fd[[1]][feats, input$selTab1, drop = FALSE]
-      # .dt2 <- fd[[2]][feats, input$selTab2, drop = FALSE]
-      colnames(dtdata1) <- paste0('<span style="color:',   
-                               rep("darkblue", ncol(dtdata1)), '">', 
-                               colnames(dtdata1), '</span>')
-      dtdata <- cbind(dtdata1, dtdata2)
+      toSel <- match(idxDT, feats)                        ## selection to highlight in DT
+      if (resetLabels$logical) toSel <- numeric()        ## reset labels
+      .dt1 <- fd[[1]][feats, input$selTab1, drop = FALSE]
+      .dt2 <- fd[[2]][feats, input$selTab2, drop = FALSE]
+      colnames(.dt1) <- paste0('<span style="color:',   
+                               rep("darkblue", ncol(.dt1)), '">', 
+                               colnames(.dt1), '</span>')
+      dtdata <- cbind(.dt1, .dt2)
+      # namesIdxDT <<- names(idxDT)
+      # # have to change this if we decide to use different size datasets (e.g. tracking via name or index)
+      # toSel1 <- match(namesIdxDT, rownames(fd[[1]])[brushBounds1$i & brushBounds1$j])
+      # toSel2 <- match(namesIdxDT, rownames(fd[[2]])[brushBounds2$i & brushBounds2$j])
+      # toSel <- unique(c(toSel1, toSel2))
+      # 
+      # if (resetLabels$logical) toSel <- numeric()
+      # ## don't display mName - see https://github.com/ComputationalProteomicsUnit/pRolocGUI/issues/52
+      # # dtdata <- fd[, -grep(mName, colnames(fd))]
+      # 
+      # dtdata1 <- fd[[1]][brushBounds1$i & brushBounds1$j, input$selTab1, drop = FALSE]
+      # dtdata2 <- fd[[2]][brushBounds2$i & brushBounds2$j, input$selTab2, drop = FALSE]
+      # 
+      # # .dt1 <- fd[[1]][feats, input$selTab1, drop = FALSE]
+      # # .dt2 <- fd[[2]][feats, input$selTab2, drop = FALSE]
+      # colnames(dtdata1) <- paste0('<span style="color:',   
+      #                          rep("darkblue", ncol(dtdata1)), '">', 
+      #                          colnames(dtdata1), '</span>')
+      # dtdata <- cbind(dtdata1, dtdata2)
       
       # dtdata <- fd[brushBounds$i & brushBounds$j, input$selTab]
       DT::datatable(data = dtdata,
@@ -780,7 +788,7 @@ pRolocVis_compare <- function(object,
                     callback = JS(callback),
                     style = "bootstrap4",
                     escape = FALSE)  %>%     ## NB: `escape = FALSE` required for colname coloring
-        formatStyle(columns = colnames(dtdata1), color = c("darkblue")) 
+        formatStyle(columns = colnames(.dt2), color = c("darkblue")) 
       # selection = list(mode = 'multiple', selected = toSel))  %>% 
       # DT::formatRound(5, 2) %>% 
       # DT::formatStyle(3:6, 'text-align' = 'center')
@@ -824,7 +832,7 @@ pRolocVis_compare <- function(object,
     ## --------Clear button--------
     ## When clear selection is pressed update clear idxDT above and reset selection
     observeEvent(input$clear, {
-      resetLabels$logical <- TRUE
+      resetLabels$logical <<- TRUE
     })
     
     ## --------Save selection button--------
@@ -832,7 +840,7 @@ pRolocVis_compare <- function(object,
     output$downloadData <- downloadHandler(
       file = "features.csv",
       content = function(file) { 
-        write.table(namesIdxDT, file = file, quote = FALSE, 
+        write.table(idxDT, file = file, quote = FALSE, 
                     row.names = FALSE, col.names = FALSE)
       }
     )
