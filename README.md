@@ -24,14 +24,14 @@ experiment package.
 
 The `pRoloc` suite set of software are distributed as part of the
 `R`/[Bioconductor](http://bioconductor.org/) project and are developed
-at the [Computational Proteomics Unit](http://cpu.sysbiol.cam.ac.uk/)
-at the
-[Cambridge Centre for Proteomics](http://proteomics.bio.cam.ac.uk)
-labs, at the University of Cambridge.
+by Lisa Breckels at the [Cambridge Centre for Proteomics](http://proteomics.bio.cam.ac.uk)
+at the University of Cambridge and by [Laurent Gatto](http://lgatto.github.io/),
+director of the Computational Biology and Bioinformatics (CBIO) group
+at UCLouvain, in Belgium.
 
 This document describes the installation of the software, followed by
 a basic quick start guide for using `pRolocGUI` to search and
-visualise the organelle map. Please refer to the respective
+visualise spatial proteomics data. Please refer to the respective
 documentation and vignettes for full details about the software.
 
 If you use these open-source software for your research, please cite:
@@ -109,13 +109,13 @@ data(hyperLOPIT2015)
 ```
 
 There are 3 different visualisation applications currently
-available: `main`, `classification` and `compare`.
+available: `explore`, `compare` and `aggregate`.
 These apps are launched using the `pRolocVis` function and
 passing `object`, which is an `MSnSet` containing the data
 one wishes to interrogate. One may also specify which app
 they wish to use by using the `app` argument, see `?pRolocVis`
 for more details. The default app that is loaded if
-`app` is not specified is the `main` application:
+`app` is not specified is the `explore` application:
 
 ```
 pRolocVis(hyperLOPIT2015)

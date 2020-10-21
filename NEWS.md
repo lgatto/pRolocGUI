@@ -1,3 +1,10 @@
+# pRolocGUI 1.22
+
+## CHANGES IN VERSION 1.22.0
+- Update apps to new shinydashboard style
+- Options to save plots as images and download data
+- Support batch import searching and export of datatable
+
 # pRolocGUI 1.21
 
 ## CHANGES IN VERSION 1.21.3
