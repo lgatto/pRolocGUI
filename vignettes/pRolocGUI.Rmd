@@ -181,7 +181,7 @@ To run the `explore` application using `pRolocVis`:
 pRolocVis(object = hyperLOPIT2015, fcol = "markers") 
 ```
 
-![The PCA Tab](figures/SS_PCA1.jpg)
+![The PCA Tab](figures/SS_01_map.png)
 
 **Viewing** The Spatial Map tab is characterised by its main panel which shows
 a PCA plot for the selected `MSnSet`. By default a PCA plot is used to
@@ -219,7 +219,7 @@ on the plot. Any selected proteins on the plot or in the table
 can be cleared at any time by clicking the 'Clear selection' button in
 the right sidebar panel.
 
-![Searching for proteins of interest](figures/SS_PCA3.jpg)
+![Searching for proteins of interest](figures/SS_02_search.png)
 **Saving selected proteins**
 Once proteins have been highlighted in the table and/or the plot
 they can be exported using the "Save selection" button in the
@@ -234,8 +234,8 @@ This process can be repeated until the desired level of zoom is reached.
 The plot can be resetted to the original size by clicking the 
 'Zoom/reset button' once again.
 
-![Brushing on the plot](figures/SS_PCA4.jpg)
-![Zooming proteins of interest](figures/SS_PCA5.jpg)
+![Brushing on the plot](figures/SS_03_brush.png)
+![Zooming proteins of interest](figures/SS_04_zoom.png)
 
 **Downloading figures**
 All visualisations in the app (the map and two profile plots) 
@@ -245,6 +245,9 @@ can be downloaded as high resolution PDFs by clicking the
 **Hiding the sidebar panels**
 The left and right sidebar panels can be shown/hidden at
 any time by clicking the icons in the main dashboard.
+
+![Hiding the sidebars](figures/SS_05_nosidebars.png)
+
 
 **The profiles tabs** 
 There are two profiles tabs in `pRolocGUI` which display the
@@ -268,29 +271,34 @@ examined on a group by group basis. Proteins of interest can be
 searched in the data table and once clicked, the distribution(s) 
 of selected protein(s) are shown by dotted black lines. 
 
-![The profiles tab](figures/SS_PCA6.jpg)
-![The profiles tab, selecting proteins of interest](figures/SS_PCA7.jpg)
+![The profiles tab](figures/SS_06a_ribbons.png)
+![The profiles tab, selecting proteins of interest](figures/SS_06b_ribbons.png)
 There is a second profiles tab called "Profiles (by class)" which
 shows the protein profiles faceted by their class labels. This static 
 plot can be useful when comparing the trend between classes, 
 especially when two or more classes have very similar trends.
 
 
-![Table Selection](figures/SS_PCA8.jpg)
+![Profiles faceted by subcellular class](figures/SS_07_facets.png)
 
 **Table Selection** The Table Selection tab provides an interface 
 for data table column selection. Multiple columns can be selected on and 
 off by clicking/unclicking the checkboxes that correspond to the columns
 in the data table. 
 
+![Customising the table](figures/SS_08_tableselection.png)
+
 **Sample Information**
 The tab "Sample Info" stores any sample information that is stored in 
 the `pData` slot of the `MSnSet`.
+
+![the Sample Info Tab](figures/SS_09_sampleInfo.png)
 
 **Colour Picker**
 This tab provides an interface to select and set colours for the 
 class labels.
 
+![The colour picker](figures/SS_10_colourpicker.png)
 
 # The `compare` application
 
@@ -312,8 +320,7 @@ mydata <- MSnSetList(list(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r2))
 pRolocVis(mydata, app = "compare") 
 ```
 
-![The compare application, main panel](figures/SS_Compare1.jpg)
-![The compare application, selecting classes](figures/SS_Compare2.jpg)
+![The compare application, main panel](figures/SS_12_compare.png)
 
 The compare app has the same functionality as the explore application
 for protein profile visualisation,interactive searchable datatable that
@@ -323,6 +330,80 @@ appear in each tab are loaded side-by-side, one per dataset.
 
 # The `aggregate` application
 
+The aggregate app allows users to look both the peptide (and/or PSM)
+and/or protein level data together and explore the effects of
+PSM/protein aggregation to protein and identify protein groups
+with interesting expression patterns. 
+
+To run the `aggregate` app we first load a PSM level dataset from
+`pRolocdata`. The dataset `hyperLOPIT2015ms2psm` contains PSM 
+level intensity data, where each row corresponds to one PSM 
+and each column is the TMT-plex. Please see `?hyperLOPIT2015ms2psm` 
+for more information.
+
+We can launch the `pRolocVis` function and look at the PSM data
+without aggregating to peptide
+
+```{r aggvar, echo = TRUE, message = FALSE, warning = FALSE}
+## load PSM data
+data("hyperLOPIT2015ms2psm")
+
+## Visualise the PSMs per to protein group
+pRolocVis(hyperLOPIT2015ms2psm, app = "aggregate", fcol = "markers",
+          groupBy = "Protein.Group.Accessions")
+```
+
+Or we can first aggregate from PSM to peptide and then launch the
+app to look at the relationships between peptide level data and 
+protein groups. For this latter case we can use the `combineFeatures`
+function from `MSnbase`. 
+
+```{r aggvar, echo = TRUE, message = FALSE, warning = FALSE}
+## Combine PSM data to peptides
+hl <- combineFeatures(hyperLOPIT2015ms2psm,
+                      groupBy = fData(hyperLOPIT2015ms2psm)$Sequence,
+                      method = median)
+
+## Visualise peptides according to protein group
+pRolocVis(hyperLOPIT2015ms2psm, app = "aggregate", fcol = "markers",
+          groupBy = "Protein.Group.Accessions")
+```
+
+![The aggregate app](figures/SS_13_aggregate_mean.png)
+
+The main body of the app contains (1) a `aggvar` distance plot and a 
+(2) PCA plot of the PSMs/peptides. The `aggvar` distance plot shows the 
+(log10) number of features (in this example peptides) per protein group
+and the aggregation summarising distance per protein group. 
+The app uses the function `aggvar` from 
+`r Biocpkg("MSnbase")` package. 
+
+As described in the `?aggvar` 
+documentation, the app, can take `max` or `mean` as a function, 
+and this can be selected in the left sidebar panel. By default,
+on loading the max is calculated. Using max as a function, 
+one can help identify protein groups with single extreme outliers, 
+such as, for example, a mis-identified peptide that was erroneously 
+assigned to that protein group. The mean can also be used as a function
+to identify more systematic inconsistencies where, for example, 
+the subsets of peptide (or PSM) feautres correspond to proteins 
+with different expression patterns.
+
+
+![Examining peptides and proteins](figures/SS_14_aggregate_hl.png)
+
+Both the aggvar plot and PCA plot are interactive, 
+and similarly to the other `pRolocVis` apps you can click 
+individual proteins or peptides in either the aggvar
+or PCA plot, to search and highlight peptides and 
+proteins of interest. When a protein group is clicked 
+in the left plot, the peptides and associated protein 
+group are automatically shown on the right PCA plot.
+
+![the max function](figures/SS_15_aggregate_mean.png)
+As previously mentioned `aggvar` can use either max or mean as
+a function. In the left sidebar there is a drop down menu for
+users to try each method.
 
 # References
 
