@@ -40,7 +40,7 @@ pRolocVis_explore <- function(object,
                           # fig.width = "100%",
                           # legend.width = "200%",
                           # legend.cex = 1,
-                          nchar = 30,
+                          nchar = 25,
                           # all = TRUE,
                           ...) {
   
@@ -298,6 +298,7 @@ pRolocVis_explore <- function(object,
     ## main body of the app
     tabsetPanel(type = "tabs", id = "tabs",
                 tabPanel("Spatial Map", value = "mapPanel",
+                         br(),
                          plotOutput("pca",
                                     height = fig.height,
                                     dblclick = "dblClick",
@@ -310,6 +311,7 @@ pRolocVis_explore <- function(object,
                                   content = "Map", size = "s")
                 ),
                 tabPanel("Profiles", value = "profilesPanel1",
+                         br(),
                          plotOutput("profile1",
                                     height = "550px") %>%
                            helper(colour = "grey",
@@ -317,6 +319,7 @@ pRolocVis_explore <- function(object,
                                   title = "Protein profiles",
                                   content = "Profiles", size = "s")),
                 tabPanel("Profiles (by class)", value = "profilesPanel2",
+                         br(),
                          plotOutput("profile2",
                                     height = "800px")),
                 tabPanel("Table Selection", id = "tableSelPanel",
@@ -494,7 +497,7 @@ pRolocVis_explore <- function(object,
       ## make polygon plots
       plot(0, ylim = ylim, xlim = c(1, m),
            type = "n", xaxt = "n", yaxt = "n", xlab = "", 
-           ylab = "Normalised intensities", cex.axis = 1.2,
+           ylab = "Intensities", cex.axis = 1.2,
            cex.lab = 1.2)
       v_x <- axis(1, at = 1:m, labels = fracs, las = 2, cex.axis = 1.2)
       v_y <- axis(2)
@@ -539,7 +542,7 @@ pRolocVis_explore <- function(object,
     ## Class specific/faceted plots
     output$profile2 <- renderPlot({
       mycol <- c(cols_user(), "grey")
-      plotAllLayers(df = calcData, col = mycol, reps = FALSE)
+      plotFacetProfiles(df = calcData, col = mycol, reps = FALSE)
     })
     
     ## --------Display/update data table--------
@@ -736,7 +739,7 @@ pRolocVis_explore <- function(object,
             h <- ncol(profs)/2
           }
           mycol <- c(cols_user(), "grey")
-          profByClass <- plotAllLayers(df = calcData, col = mycol, reps = FALSE)
+          profByClass <- plotFacetProfiles(df = calcData, col = mycol, reps = FALSE)
           ggsave(filename = file, plot = profByClass, device = "pdf", width = w, height = h) 
         } 
         else {

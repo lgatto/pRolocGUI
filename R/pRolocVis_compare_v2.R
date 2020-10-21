@@ -25,7 +25,7 @@ source("css.R")
 ##' @param legend.width Width of the legend. Default is
 ##'     \code{"200\%"}.
 ##' @param nchar Maximum number of characters of the markers class
-##'     names, before their names are truncated. Default is 10.
+##'     names, before their names are truncated. Default is 25.
 ##' @param all If \code{TRUE} all clusters are displayed on startup,
 ##'     if the total number of clusters is less than including 15. If
 ##'     \code{FALSE} or otherwise, only the first cluster in the list
@@ -41,7 +41,7 @@ pRolocVis_compare <- function(object,
                           # fig.width = "100%",
                           # legend.width = "200%",
                           # legend.cex = 1,
-                          nchar = 50,
+                          nchar = 25,
                           # all = TRUE,
                           ...) {
   
@@ -57,7 +57,7 @@ pRolocVis_compare <- function(object,
   
   ## check fcol is not set, user must define fcol1 and fcol2 explicitly
   if (any(names(myargs) == "fcol"))
-    stop("Please specify 'fcol'1 and 'fcol2' for each MSnSet respectively, see ?pRolocVis for more details")
+    stop("Please specify 'fcol1' and 'fcol2' for each MSnSet respectively, see ?pRolocVis for more details")
   
   ## Check if object is an MSnSetList and if not, check it's a list of matrices 
   ## with MSnSets in the methargs (as per plot2D)
@@ -66,7 +66,7 @@ pRolocVis_compare <- function(object,
   }
   else if (inherits(object, "list")) {
     object_coords <- list()
-    if (all(sapply(xx, is.matrix))) {
+    if (all(sapply(object, is.matrix))) {
       message(paste("---------------------------------------------------------",
                     "\nWhen passing a list of matrices as the object please check",
                     "\nthe arguments method = 'none' and metharg are also passed",
@@ -74,16 +74,16 @@ pRolocVis_compare <- function(object,
                     "\n---------------------------------------------------------"))
       ### --------------------TEST THIS-------------------
       for (i in seq(object)) {
-        .methargs <- myargs$methargs
-        if (is.null(.methargs)) stop(paste("Missing methargs, please pass MSnSets as a list, see ?pRolocVis"))
-        if (class(.methargs) != "list") stop(paste("methargs must be a list of MSnSets of length 2, see ?pRolocVis"))
-        if (length(.methargs) != 2) stop(paste("methargs must be a list of MSnSets of length 2, see ?pRolocVis"))
-        if (!all(sapply(.methargs, inherits, "MSnSet"))) stop(paste("methargs must be a list of MSnSets of length 2, see ?pRolocVis"))
+        .methargs <- myargs$methargs[[1]]  ## this should be a MSnSetList
+        if (is.null(.methargs)) stop(paste("Missing methargs, please pass MSnSets as a MSnSetList, see ?pRolocVis"))
+        if (class(.methargs) != "MSnSetList") stop(paste("methargs must be a MSnSetList of length 2, see ?pRolocVis"))
+        if (length(.methargs) != 2) stop(paste("methargs must be a MSnSetList of length 2, see ?pRolocVis"))
+        # if (!all(sapply(.methargs, inherits, "MSnSet"))) stop(paste("methargs must be a list of MSnSets of length 2, see ?pRolocVis"))
         if (is.null(myargs$method)) stop(paste("method must be set to method = 'none' if a matrix is passed"))
         if (myargs$method != "none") stop(paste("method must be set to method = 'none' if a matrix is passed"))
         chk <- plot2D(object[[i]], plot = FALSE, method = myargs$method, methargs = list(.methargs[[i]]))
         object_coords[[i]] <- object[[i]]
-        object[[i]] <- myargs$methargs[[i]]
+        object[[i]] <- myargs$methargs[[1]][[i]]
       }
     }
     else stop(paste("Object must be either a MSnSetList or a list of two matrices"))
@@ -104,8 +104,8 @@ pRolocVis_compare <- function(object,
   .fcol <- c(fcol1, fcol2)
   for (i in seq(.fcol)) {
     if (!is.null(.fcol[i]) && !.fcol[i] %in% fvarLabels(object[[i]])) {
-      warning("No fcol found using fcol = NULL", immediate. = TRUE)
-      fcol <- NULL
+      stop("No fcol found, please specify fcol", immediate. = TRUE)
+      # .fcol[i] <- NULL
     }
     if (is.null(.fcol[i])) {
       message(paste("fcol = NULL, no annotation column specified, setting fcol name to nullmarkers"))
@@ -284,14 +284,14 @@ pRolocVis_compare <- function(object,
     tabsetPanel(type = "tabs", id = "tabs",
                 tabPanel("Spatial Map", value = "mapPanel",
                          fluidRow(
-                           column(5,
+                           column(5, br(),
                                   plotOutput("pca1",
                                              height = fig.height,
                                              dblclick = "dblClick1",
                                              brush = brushOpts(
                                                id = "plotBrush1",
                                                resetOnNew = TRUE))),
-                           column(5,
+                           column(5, br(),
                                   plotOutput("pca2",
                                              height = fig.height,
                                              dblclick = "dblClick2",
@@ -322,22 +322,22 @@ pRolocVis_compare <- function(object,
                            )),
                 tabPanel("Profiles (by class)", value = "profilesPanel2",
                          fluidRow(
-                           column(5,
+                           column(5, br(),
                                   plotOutput("classProfiles1",
-                                             height = "800px")),
-                           column(5,
+                                             height = "1200px")),
+                           column(5, br(),
                                   plotOutput("classProfiles2",
-                                             height = "800px"))
+                                             height = "1200px"))
                            )),
                 tabPanel("Table Selection", value = "tableSelPanel",
                          fluidRow(
-                           column(5,
+                           column(5, br(),
                                   checkboxGroupInput("selTab1", 
                                                      "Columns to display for data 1",
                                                      choices = origFvarLab[[1]],
                                                      selected = selDT[[1]])
                            ),
-                           column(5,
+                           column(5, br(),
                                   checkboxGroupInput("selTab2",
                                                      "Columns to display for data 2",
                                                      choices = origFvarLab[[2]],
@@ -346,13 +346,17 @@ pRolocVis_compare <- function(object,
                            )
                          )),
                 tabPanel("Sample info", value = "sampleInfo",
-                         br(),br(),
+                         br(),
                          fluidRow(
-                           column(5, tableOutput("pdata1")),
-                           column(5, tableOutput("pdata2")))
+                           column(5, p(strong("Sample data for data 1")),
+                                       tableOutput("pdata1")),
+                           column(5, p(strong("Sample data for data 2")), 
+                                       tableOutput("pdata2"))
+                         ),
+                         br(),br(),
                 ), 
                 tabPanel("Colour picker", value = "colPicker",
-                         fluidRow(
+                         fluidRow(br(),
                            if (ll > 5) {
                              splitLayout(cellWidths = c("50%", "50%"),
                                          col_input[num1],
@@ -505,17 +509,18 @@ pRolocVis_compare <- function(object,
     ## ========================PCA plot========================
     ## ========================================================
     ## Generate PCA or MDS plot
-    output$pca1 <- renderPlot({
+    
+    plotMap <- function(indData = 1, indMrk = mrkSel1()) {
       par(mar = c(4, 4, 0, 0))
       par(oma = c(1, 0, 0, 0))
-      plot2D_lisa(object_coords[[1]], fd[[1]], unk = TRUE,
-             xlim = ranges$x,
-             ylim = ranges$y,
-             fcol = fcol[1])
+      plot2D_lisa(object_coords[[indData]], fd[[indData]], unk = TRUE,
+                  xlim = ranges$x,
+                  ylim = ranges$y,
+                  fcol = fcol[indData])
       if (!is.null(input$markers)) {
         for (i in 1:length(input$markers)) {
-          if (!is.na(mrkSel1()[[i]][1]))
-            points(object_coords[[1]][mrkSel1()[[i]], ], pch = 16,
+          if (!is.na(indMrk[[i]][1]))
+            points(object_coords[[indData]][mrkSel2()[[i]], ], pch = 16,
                    cex = 1.4, bg = myCols()[i], col = myCols.bg()[i])
         }
       }
@@ -523,36 +528,19 @@ pRolocVis_compare <- function(object,
       if (resetLabels$logical) idxDT <<- character()  ## If TRUE labels are cleared
       # namesIdxDT <<- names(idxDT)
       if (length(idxDT)) {
-        highlightOnPlot(object_coords[[1]], idxDT)
+        highlightOnPlot(object_coords[[indData]], idxDT)
         if (input$checkbox)
-          highlightOnPlot(object_coords[[1]], idxDT, labels = TRUE)
+          highlightOnPlot(object_coords[[indData]], idxDT, labels = TRUE)
       }
-      # resetLabels$logical <- FALSE
+    }
+    
+    output$pca1 <- renderPlot({
+      plotMap(indData = 1, indMrk = mrkSel1())
       height <- reactive(ifelse(!is.null(input$innerWidth),input$innerWidth*3/5,0)) # fix ratio 1:1
     })
     
     output$pca2 <- renderPlot({
-      par(mar = c(4, 4, 0, 0))
-      par(oma = c(1, 0, 0, 0))
-      plot2D_lisa(object_coords[[2]], fd[[2]], unk = TRUE,
-                  xlim = ranges$x,
-                  ylim = ranges$y,
-                  fcol = fcol[2])
-      if (!is.null(input$markers)) {
-        for (i in 1:length(input$markers)) {
-          if (!is.na(mrkSel1()[[i]][2]))
-            points(object_coords[[2]][mrkSel2()[[i]], ], pch = 16,
-                   cex = 1.4, bg = myCols()[i], col = myCols.bg()[i])
-        }
-      }
-      idxDT <<- feats[input$fDataTable_rows_selected] ## highlight point on plot by selecting item in table
-      if (resetLabels$logical) idxDT <<- character()  ## If TRUE labels are cleared
-      # namesIdxDT <<- names(idxDT)
-      if (length(idxDT)) {
-        highlightOnPlot(object_coords[[2]], idxDT)
-        if (input$checkbox)
-          highlightOnPlot(object_coords[[2]], idxDT, labels = TRUE)
-      }
+      plotMap(indData = 2, indMrk = mrkSel2())
       resetLabels$logical <<- FALSE
       height <- reactive(ifelse(!is.null(input$innerWidth),input$innerWidth*3/5,0)) # fix ratio 1:1
     })
@@ -562,80 +550,80 @@ pRolocVis_compare <- function(object,
     ## ==========================================================
     
     plotProfiles <- function(indData = 1, indMrk = mrkSel1()) {
-        par(mar = c(13, 4, 1, 1), oma = c(0, 0, 0, 0), bg = scheme,
+      par(mar = c(13, 4, 1, 1), oma = c(0, 0, 0, 0), bg = scheme,
             col.axis = scheme2, col.main = scheme2,
             col.lab = scheme2, fg = scheme2)
-        ylim <- range(profs[[indData]])
-        n <- nrow(profs[[indData]])
-        m <- ncol(profs[[indData]])
-        fracs <- colnames(profs[[indData]])
-        ## check if there are replicates and if their are, create breaks in the plot
-        # if (!is.null(pcol)) {
-        #   repInfo <- unique(pd[, pcol])
-        #   repNames <- vector("list", length(repInfo))
-        #   ## get fraction names by replicate
-        #   fracNames <- lapply(repInfo, function(z) colnames(profs)[pd$Experiment == z])
-        #   fracInds <- lapply(fracNames, function(z) which(z == colnames(profs)))
-        # } else {
-        fracInds <- list(seq(colnames(profs[[indData]])))
-        # }
-        ## get unknowns
-        profs_un <- profs[[indData]][which(fd[[indData]][, fcol[indData]] == "unknown"), ]
-        ## get quantiles for each fraction in unknowns
-        quants <- apply(profs_un, MARGIN = 2, function(x) quantile(x, c(0, 1)))  # max and min for unknowns
-        bound_low <- quants[1, ]
-        bound_high <- quants[2, ]
-        ## get quantiles for subcellular classes
-        mrkProfs <- lapply(mrkSel1(), function(z) profs[[indData]][z, , drop = FALSE])   # 5% and 95% quantiles for all other classes
-        quants <- lapply(mrkProfs, function(z) apply(z, MARGIN = 2, function(x) quantile(x, c(0.05, .95))))
-        meanProfs <- lapply(mrkProfs, function(z) apply(z, 2, mean))
-        ## make polygon plots
-        plot(0, ylim = ylim, xlim = c(1, m),
-             type = "n", xaxt = "n", yaxt = "n", xlab = "",
-             ylab = "Intensities", cex.axis = 1.2,
-             cex.lab = 1.2)
-        v_x <- axis(1, at = 1:m, labels = fracs, las = 2, cex.axis = 1.2)
-        v_y <- axis(2)
-        abline(v = v_x, h = v_y, lty = "dotted", col = "lightgray", lwd = 1)
-        mtext("Fractions", side=1, line=8, cex = 1.2)
-        ## update lines on plot according to zoom
-        # feats <<- which(brushBounds$i & brushBounds$j)
-        # namFeats <- names(feats)[which(names(feats) %in% rownames(profs_un))]
-        zoomedProts <-  which(brushBounds1$i & brushBounds1$j)
-        namFeats <- names(zoomedProts)[which(names(zoomedProts) %in% rownames(profs_un))]
-        ## plot unknowns
-        invisible(lapply(fracInds, function(x)     # plot all unknowns as lines here
-          matlines(x, t(profs_un[namFeats, x, drop = FALSE]),
-                   col = "grey90", lty = 1, lwd = 1, type = "l")
-        ))
-        ## markers
-        if (!is.null(input$markers)) {
-          for (i in 1:length(input$markers)) {
-            if (!is.na(indMrk[[i]][1])) {
-              invisible(lapply(fracInds, function(x)     # don't plot all lines
-                polygon(c(x, rev(x)),
-                        c(quants[[i]][2, x], rev(quants[[i]][1, x])),
-                        col = profCols()[i], border = FALSE)
-              ))
-              invisible(lapply(fracInds, function(z)     # plot the mean profile
-                matlines(z, meanProfs[[i]][z],
-                         col = myCols()[i],
-                         lty = 1, lwd = 1,
-                         type = "l")))
-            }
+      ylim <- range(profs[[indData]])
+      n <- nrow(profs[[indData]])
+      m <- ncol(profs[[indData]])
+      fracs <- colnames(profs[[indData]])
+      ## check if there are replicates and if their are, create breaks in the plot
+      # if (!is.null(pcol)) {
+      #   repInfo <- unique(pd[, pcol])
+      #   repNames <- vector("list", length(repInfo))
+      #   ## get fraction names by replicate
+      #   fracNames <- lapply(repInfo, function(z) colnames(profs)[pd$Experiment == z])
+      #   fracInds <- lapply(fracNames, function(z) which(z == colnames(profs)))
+      # } else {
+      fracInds <- list(seq(colnames(profs[[indData]])))
+      # }
+      ## get unknowns
+      profs_un <- profs[[indData]][which(fd[[indData]][, fcol[indData]] == "unknown"), ]
+      ## get quantiles for each fraction in unknowns
+      quants <- apply(profs_un, MARGIN = 2, function(x) quantile(x, c(0, 1)))  # max and min for unknowns
+      bound_low <- quants[1, ]
+      bound_high <- quants[2, ]
+      ## get quantiles for subcellular classes
+      mrkProfs <- lapply(mrkSel1(), function(z) profs[[indData]][z, , drop = FALSE])   # 5% and 95% quantiles for all other classes
+      quants <- lapply(mrkProfs, function(z) apply(z, MARGIN = 2, function(x) quantile(x, c(0.05, .95))))
+      meanProfs <- lapply(mrkProfs, function(z) apply(z, 2, mean))
+      ## make polygon plots
+      plot(0, ylim = ylim, xlim = c(1, m),
+           type = "n", xaxt = "n", yaxt = "n", xlab = "",
+           ylab = "Intensities", cex.axis = 1.2,
+           cex.lab = 1.2)
+      v_x <- axis(1, at = 1:m, labels = fracs, las = 2, cex.axis = 1.2)
+      v_y <- axis(2)
+      abline(v = v_x, h = v_y, lty = "dotted", col = "lightgray", lwd = 1)
+      mtext("Fractions", side=1, line=8, cex = 1.2)
+      ## update lines on plot according to zoom
+      # feats <<- which(brushBounds$i & brushBounds$j)
+      # namFeats <- names(feats)[which(names(feats) %in% rownames(profs_un))]
+      zoomedProts <-  which(brushBounds1$i & brushBounds1$j)
+      namFeats <- names(zoomedProts)[which(names(zoomedProts) %in% rownames(profs_un))]
+      ## plot unknowns
+      invisible(lapply(fracInds, function(x)     # plot all unknowns as lines here
+        matlines(x, t(profs_un[namFeats, x, drop = FALSE]),
+                 col = "grey90", lty = 1, lwd = 1, type = "l")
+      ))
+      ## markers
+      if (!is.null(input$markers)) {
+        for (i in 1:length(input$markers)) {
+          if (!is.na(indMrk[[i]][1])) {
+            invisible(lapply(fracInds, function(x)     # don't plot all lines
+              polygon(c(x, rev(x)),
+                      c(quants[[i]][2, x], rev(quants[[i]][1, x])),
+                      col = profCols()[i], border = FALSE)
+            ))
+            invisible(lapply(fracInds, function(z)     # plot the mean profile
+              matlines(z, meanProfs[[i]][z],
+                       col = myCols()[i],
+                       lty = 1, lwd = 1,
+                       type = "l")))
           }
         }
-        ## If an item is clicked in the table highlight profile
-        idxDT <<- feats[input$fDataTable_rows_selected]
-        # namesIdxDT <<- names(idxDT)
-        if (length(idxDT)) {
-          invisible(lapply(fracInds, function(z)     # don't plot all lines
-            matlines(z, t(profs[[indData]][idxDT, z, drop = FALSE]),
-                     col = "black",   # would like to colour by location here need names vector of colours
-                     lty = 5, lwd = 2,
-                     type = "l")))
-        }
-    } ## ----------- end of function
+      }
+      ## If an item is clicked in the table highlight profile
+      idxDT <<- feats[input$fDataTable_rows_selected]
+      # namesIdxDT <<- names(idxDT)
+      if (length(idxDT)) {
+        invisible(lapply(fracInds, function(z)     # don't plot all lines
+          matlines(z, t(profs[[indData]][idxDT, z, drop = FALSE]),
+                   col = "black",   # would like to colour by location here need names vector of colours
+                   lty = 5, lwd = 2,
+                   type = "l")))
+      }
+    } ## ----------- end of function----------------
 
     output$profile1 <- renderPlot({
       plotProfiles(1, mrkSel1())
@@ -645,178 +633,22 @@ pRolocVis_compare <- function(object,
       plotProfiles(2, mrkSel2())
     })
     
-    # output$profile1 <- renderPlot({
-    #   # browser()
-    #   par(mar = c(13, 4, 1, 1), oma = c(0, 0, 0, 0), bg = scheme, 
-    #       col.axis = scheme2, col.main = scheme2, 
-    #       col.lab = scheme2, fg = scheme2)
-    #   ylim <- range(profs[[1]])
-    #   n <- nrow(profs[[1]])
-    #   m <- ncol(profs[[1]])
-    #   fracs <- colnames(profs[[1]])
-    #   ## check if there are replicates and if their are, create breaks in the plot
-    #   # if (!is.null(pcol)) {
-    #   #   repInfo <- unique(pd[, pcol])
-    #   #   repNames <- vector("list", length(repInfo))
-    #   #   ## get fraction names by replicate
-    #   #   fracNames <- lapply(repInfo, function(z) colnames(profs)[pd$Experiment == z])
-    #   #   fracInds <- lapply(fracNames, function(z) which(z == colnames(profs)))
-    #   # } else {
-    #   fracInds <- list(seq(colnames(profs[[1]])))
-    #   # }
-    #   ## get unknowns
-    #   profs_un <- profs[[1]][which(fd[[1]][, fcol[1]] == "unknown"), ]
-    #   ## get quantiles for each fraction in unknowns
-    #   quants <- apply(profs_un, MARGIN = 2, function(x) quantile(x, c(0, 1)))  # max and min for unknowns
-    #   bound_low <- quants[1, ]
-    #   bound_high <- quants[2, ]
-    #   ## get quantiles for subcellular classes
-    #   mrkProfs <- lapply(mrkSel1(), function(z) profs[[1]][z, , drop = FALSE])   # 5% and 95% quantiles for all other classes
-    #   quants <- lapply(mrkProfs, function(z) apply(z, MARGIN = 2, function(x) quantile(x, c(0.05, .95))))
-    #   meanProfs <- lapply(mrkProfs, function(z) apply(z, 2, mean)) 
-    #   ## make polygon plots
-    #   plot(0, ylim = ylim, xlim = c(1, m),
-    #        type = "n", xaxt = "n", yaxt = "n", xlab = "", 
-    #        ylab = "Intensities", cex.axis = 1.2,
-    #        cex.lab = 1.2)
-    #   v_x <- axis(1, at = 1:m, labels = fracs, las = 2, cex.axis = 1.2)
-    #   v_y <- axis(2)
-    #   abline(v = v_x, h = v_y, lty = "dotted", col = "lightgray", lwd = 1)
-    #   mtext("Fractions", side=1, line=8, cex = 1.2)
-    #   ## update lines on plot according to zoom
-    #   # feats <<- which(brushBounds$i & brushBounds$j)
-    #   # namFeats <- names(feats)[which(names(feats) %in% rownames(profs_un))]
-    #   zoomedProts <-  which(brushBounds1$i & brushBounds1$j)
-    #   namFeats <- names(zoomedProts)[which(names(zoomedProts) %in% rownames(profs_un))]
-    #   ## plot unknowns
-    #   invisible(lapply(fracInds, function(x)     # plot all unknowns as lines here
-    #     matlines(x, t(profs_un[namFeats, x, drop = FALSE]),
-    #              col = "grey90", lty = 1, lwd = 1, type = "l")
-    #   ))
-    #   ## markers
-    #   if (!is.null(input$markers)) {
-    #     for (i in 1:length(input$markers)) {
-    #       if (!is.na(mrkSel1()[[i]][1])) {
-    #         invisible(lapply(fracInds, function(x)     # don't plot all lines
-    #           polygon(c(x, rev(x)), 
-    #                   c(quants[[i]][2, x], rev(quants[[i]][1, x])),
-    #                   col = profCols()[i], border = FALSE)
-    #         ))
-    #         invisible(lapply(fracInds, function(z)     # plot the mean profile
-    #           matlines(z, meanProfs[[i]][z],
-    #                    col = myCols()[i],
-    #                    lty = 1, lwd = 1,
-    #                    type = "l")))
-    #       }
-    #     }
-    #   }
-    #   ## If an item is clicked in the table highlight profile
-    #   idxDT <<- feats[input$fDataTable_rows_selected]
-    #   if (length(idxDT)) {
-    #     invisible(lapply(fracInds, function(z)     # don't plot all lines
-    #       matlines(z, t(profs[[1]][idxDT, z, drop = FALSE]),
-    #                col = "black",   # would like to colour by location here need names vector of colours
-    #                lty = 5, lwd = 2,
-    #                type = "l")))
-    #   }
-    # })
-    # 
-    # ## profile 2
-    # output$profile2 <- renderPlot({
-    #   # browser()
-    #   par(mar = c(13, 4, 1, 1), oma = c(0, 0, 0, 0), bg = scheme, 
-    #       col.axis = scheme2, col.main = scheme2, 
-    #       col.lab = scheme2, fg = scheme2)
-    #   ylim <- range(profs[[2]])
-    #   n <- nrow(profs[[2]])
-    #   m <- ncol(profs[[2]])
-    #   fracs <- colnames(profs[[2]])
-    #   ## check if there are replicates and if their are, create breaks in the plot
-    #   # if (!is.null(pcol)) {
-    #   #   repInfo <- unique(pd[, pcol])
-    #   #   repNames <- vector("list", length(repInfo))
-    #   #   ## get fraction names by replicate
-    #   #   fracNames <- lapply(repInfo, function(z) colnames(profs)[pd$Experiment == z])
-    #   #   fracInds <- lapply(fracNames, function(z) which(z == colnames(profs)))
-    #   # } else {
-    #   fracInds <- list(seq(colnames(profs[[2]])))
-    #   # }
-    #   ## get unknowns
-    #   profs_un <- profs[[2]][which(fd[[2]][, fcol[1]] == "unknown"), ]
-    #   ## get quantiles for each fraction in unknowns
-    #   quants <- apply(profs_un, MARGIN = 2, function(x) quantile(x, c(0, 1)))  # max and min for unknowns
-    #   bound_low <- quants[1, ]
-    #   bound_high <- quants[2, ]
-    #   ## get quantiles for subcellular classes
-    #   mrkProfs <- lapply(mrkSel1(), function(z) profs[[2]][z, , drop = FALSE])   # 5% and 95% quantiles for all other classes
-    #   quants <- lapply(mrkProfs, function(z) apply(z, MARGIN = 2, function(x) quantile(x, c(0.05, .95))))
-    #   meanProfs <- lapply(mrkProfs, function(z) apply(z, 2, mean)) 
-    #   ## make polygon plots
-    #   plot(0, ylim = ylim, xlim = c(1, m),
-    #        type = "n", xaxt = "n", yaxt = "n", xlab = "", 
-    #        ylab = "Intensities", cex.axis = 1.2,
-    #        cex.lab = 1.2)
-    #   v_x <- axis(1, at = 1:m, labels = fracs, las = 2, cex.axis = 1.2)
-    #   v_y <- axis(2)
-    #   abline(v = v_x, h = v_y, lty = "dotted", col = "lightgray", lwd = 1)
-    #   mtext("Fractions", side=1, line=8, cex = 1.2)
-    #   ## update lines on plot according to zoom
-    #   # feats <<- which(brushBounds$i & brushBounds$j)
-    #   # namFeats <- names(feats)[which(names(feats) %in% rownames(profs_un))]
-    #   zoomedProts <-  which(brushBounds1$i & brushBounds1$j)
-    #   namFeats <- names(zoomedProts)[which(names(zoomedProts) %in% rownames(profs_un))]
-    #   ## plot unknowns
-    #   invisible(lapply(fracInds, function(x)     # plot all unknowns as lines here
-    #     matlines(x, t(profs_un[namFeats, x, drop = FALSE]),
-    #              col = "grey90", lty = 1, lwd = 1, type = "l")
-    #   ))
-    #   ## markers
-    #   if (!is.null(input$markers)) {
-    #     for (i in 1:length(input$markers)) {
-    #       if (!is.na(mrkSel1()[[i]][1])) {
-    #         invisible(lapply(fracInds, function(x)     # don't plot all lines
-    #           polygon(c(x, rev(x)), 
-    #                   c(quants[[i]][2, x], rev(quants[[i]][1, x])),
-    #                   col = profCols()[i], border = FALSE)
-    #         ))
-    #         invisible(lapply(fracInds, function(z)     # plot the mean profile
-    #           matlines(z, meanProfs[[i]][z],
-    #                    col = myCols()[i],
-    #                    lty = 1, lwd = 1,
-    #                    type = "l")))
-    #       }
-    #     }
-    #   }
-    #   ## If an item is clicked in the table highlight profile
-    #   idxDT <<- feats[input$fDataTable_rows_selected]
-    #   namesIdxDT <<- names(idxDT)
-    #   if (length(idxDT)) {
-    #     invisible(lapply(fracInds, function(z)     # don't plot all lines
-    #       matlines(z, t(profs[[2]][namesIdxDT, z, drop = FALSE]),
-    #                col = "black",   # would like to colour by location here need names vector of colours
-    #                lty = 5, lwd = 2,
-    #                type = "l")))
-    #   }
-    # })
-    # 
     
-    
-    ## Class specific/faceted plots
+    ## =====================FACET profiles plot========================
+    ## ================================================================
     output$classProfiles1 <- renderPlot({
       mycol <- c(cols_user(), "grey")
-      plotAllLayers(df = calcData[[1]], col = mycol, reps = FALSE, ncol = 1)
+      plotFacetProfiles(df = calcData[[1]], col = mycol, reps = FALSE, ncol = 1)
     })
     
     output$classProfiles2 <- renderPlot({
       mycol <- c(cols_user(), "grey")
-      plotAllLayers(df = calcData[[2]], col = mycol, reps = FALSE, ncol = 1)
+      plotFacetProfiles(df = calcData[[2]], col = mycol, reps = FALSE, ncol = 1)
     })
     
     
-    
-    
-    ## --------Display/update data table--------
-    ## Feature data table
+    ## ========================DATA TABLE========================
+    ## ==========================================================
     output$fDataTable <- DT::renderDataTable({
       
       feats <<- unique(c(names(which(brushBounds1$i & brushBounds1$j)),
@@ -852,27 +684,6 @@ pRolocVis_compare <- function(object,
                                rep("darkblue", ncol(.dt1)), '">', 
                                colnames(.dt2), '</span>')
       dtdata <- cbind(.dt1, .dt2)
-      # namesIdxDT <<- names(idxDT)
-      # # have to change this if we decide to use different size datasets (e.g. tracking via name or index)
-      # toSel1 <- match(namesIdxDT, rownames(fd[[1]])[brushBounds1$i & brushBounds1$j])
-      # toSel2 <- match(namesIdxDT, rownames(fd[[2]])[brushBounds2$i & brushBounds2$j])
-      # toSel <- unique(c(toSel1, toSel2))
-      # 
-      # if (resetLabels$logical) toSel <- numeric()
-      # ## don't display mName - see https://github.com/ComputationalProteomicsUnit/pRolocGUI/issues/52
-      # # dtdata <- fd[, -grep(mName, colnames(fd))]
-      # 
-      # dtdata1 <- fd[[1]][brushBounds1$i & brushBounds1$j, input$selTab1, drop = FALSE]
-      # dtdata2 <- fd[[2]][brushBounds2$i & brushBounds2$j, input$selTab2, drop = FALSE]
-      # 
-      # # .dt1 <- fd[[1]][feats, input$selTab1, drop = FALSE]
-      # # .dt2 <- fd[[2]][feats, input$selTab2, drop = FALSE]
-      # colnames(dtdata1) <- paste0('<span style="color:',   
-      #                          rep("darkblue", ncol(dtdata1)), '">', 
-      #                          colnames(dtdata1), '</span>')
-      # dtdata <- cbind(dtdata1, dtdata2)
-      
-      # dtdata <- fd[brushBounds$i & brushBounds$j, input$selTab]
       DT::datatable(data = dtdata,
                     filter = "top",
                     rownames = TRUE,
@@ -888,13 +699,11 @@ pRolocVis_compare <- function(object,
                     style = "bootstrap4",
                     escape = FALSE)  %>%     ## NB: `escape = FALSE` required for colname coloring
         formatStyle(columns = colnames(.dt2), color = c("darkblue")) 
-      # selection = list(mode = 'multiple', selected = toSel))  %>% 
-      # DT::formatRound(5, 2) %>% 
-      # DT::formatStyle(3:6, 'text-align' = 'center')
     }, server = FALSE)
     
     
-    ## --------Reset button--------
+    ## =====================ZOOM/RESET plot========================
+    ## ============================================================
     ## When a the reset button is clicked check to see is there is a brush on
     ## the plot, if yes zoom, if not reset the plot.
     observeEvent(input$resetButton, {
@@ -928,13 +737,16 @@ pRolocVis_compare <- function(object,
     })
     
     
-    ## --------Clear button--------
-    ## When clear selection is pressed update clear idxDT above and reset selection
+    ## =====================CLEAR LABELS=========================
+    ## ==========================================================
+    ## When clear selection is pressed update clear idxDT above 
+    ## and reset selection
     observeEvent(input$clear, {
       resetLabels$logical <<- TRUE
     })
     
-    ## --------Save selection button--------
+    ## =====================DOWNLOAD DATA=========================
+    ## ===========================================================
     ## When save button is download save points/proteins selected
     output$downloadData <- downloadHandler(
       file = "features.csv",
@@ -945,110 +757,53 @@ pRolocVis_compare <- function(object,
     )
     
     
-    ## ============ HERE ==================
-    ## --------Save figure button--------
+    ### =====================SAVE FIGURES=========================
+    ## ===========================================================
     ## Save figure of PCA
     output$saveplot <- downloadHandler(
       file = function(){"plot.pdf"}, 
       content = function(file) {
         if (input$tabs == "mapPanel") {
-          pdf(file = file)
-          par(mar = c(4, 4, 0, 0))
-          par(oma = c(1, 0, 0, 0))
+          pdf(file = file, width = 13, height = 6)
+          par(mfrow = c(1, 2)) 
+          plotMap(indData = 1, indMrk = mrkSel1())
+          plotMap(indData = 2, indMrk = mrkSel2())  
           dev.off()  
         } 
         else if (input$tabs == "profilesPanel1") {
-          output$profile1 <- renderPlot({
-            pdf(file = file, width = 12)
-            par(mar = c(13, 4, 1, 1), oma = c(0, 0, 0, 0), bg = scheme, 
-                col.axis = scheme2, col.main = scheme2, 
-                col.lab = scheme2, fg = scheme2,
-                mfrow = c(1, 2))
-            ylim <- range(profs[[1]])
-            n <- nrow(profs[[1]])
-            m <- ncol(profs[[1]])
-            fracs <- colnames(profs[[1]])
-            ## check if there are replicates and if their are, create breaks in the plot
-            # if (!is.null(pcol)) {
-            #   repInfo <- unique(pd[, pcol])
-            #   repNames <- vector("list", length(repInfo))
-            #   ## get fraction names by replicate
-            #   fracNames <- lapply(repInfo, function(z) colnames(profs)[pd$Experiment == z])
-            #   fracInds <- lapply(fracNames, function(z) which(z == colnames(profs)))
-            # } else {
-            fracInds <- list(seq(colnames(profs[[1]])))
-            # }
-            ## get unknowns
-            profs_un <- profs[[1]][which(fd[[1]][, fcol[1]] == "unknown"), ]
-            ## get quantiles for each fraction in unknowns
-            quants <- apply(profs_un, MARGIN = 2, function(x) quantile(x, c(0, 1)))  # max and min for unknowns
-            bound_low <- quants[1, ]
-            bound_high <- quants[2, ]
-            ## get quantiles for subcellular classes
-            mrkProfs <- lapply(mrkSel1(), function(z) profs[[1]][z, , drop = FALSE])   # 5% and 95% quantiles for all other classes
-            quants <- lapply(mrkProfs, function(z) apply(z, MARGIN = 2, function(x) quantile(x, c(0.05, .95))))
-            meanProfs <- lapply(mrkProfs, function(z) apply(z, 2, mean)) 
-            ## make polygon plots
-            plot(0, ylim = ylim, xlim = c(1, m),
-                 type = "n", xaxt = "n", yaxt = "n", xlab = "", 
-                 ylab = "Intensities", cex.axis = 1.2,
-                 cex.lab = 1.2)
-            v_x <- axis(1, at = 1:m, labels = fracs, las = 2, cex.axis = 1.2)
-            v_y <- axis(2)
-            abline(v = v_x, h = v_y, lty = "dotted", col = "lightgray", lwd = 1)
-            mtext("Fractions", side=1, line=8, cex = 1.2)
-            ## update lines on plot according to zoom
-            # feats <<- which(brushBounds$i & brushBounds$j)
-            # namFeats <- names(feats)[which(names(feats) %in% rownames(profs_un))]
-            zoomedProts <-  which(brushBounds1$i & brushBounds1$j)
-            namFeats <- names(zoomedProts)[which(names(zoomedProts) %in% rownames(profs_un))]
-            ## plot unknowns
-            invisible(lapply(fracInds, function(x)     # plot all unknowns as lines here
-              matlines(x, t(profs_un[namFeats, x, drop = FALSE]),
-                       col = "grey90", lty = 1, lwd = 1, type = "l")
-            ))
-            ## markers
-            if (!is.null(input$markers)) {
-              for (i in 1:length(input$markers)) {
-                if (!is.na(mrkSel1()[[i]][1])) {
-                  invisible(lapply(fracInds, function(x)     # don't plot all lines
-                    polygon(c(x, rev(x)), 
-                            c(quants[[i]][2, x], rev(quants[[i]][1, x])),
-                            col = profCols()[i], border = FALSE)
-                  ))
-                  invisible(lapply(fracInds, function(z)     # plot the mean profile
-                    matlines(z, meanProfs[[i]][z],
-                             col = myCols()[i],
-                             lty = 1, lwd = 1,
-                             type = "l")))
-                }
-              }
-            }
-            ## If an item is clicked in the table highlight profile
-            idxDT <<- feats[input$fDataTable_rows_selected]
-            namesIdxDT <<- names(idxDT)
-            if (length(idxDT)) {
-              invisible(lapply(fracInds, function(z)     # don't plot all lines
-                matlines(z, t(profs[[1]][namesIdxDT, z, drop = FALSE]),
-                         col = "black",   # would like to colour by location here need names vector of colours
-                         lty = 5, lwd = 2,
-                         type = "l")))
-            }
-          })
+          pdf(file = file, width = 13, height = 6)
+          par(mfrow = c(1, 2)) 
+          plotProfiles(indData = 1, indMrk = mrkSel1())
+          plotProfiles(indData = 2, indMrk = mrkSel2())  
           dev.off()
         } 
         else if (input$tabs == "profilesPanel2") {
-          if (ncol(profs) < 15) {
-            w <- 10
-            h <- 10
-          } else {
-            w <- round(ncol(profs)/1.5)
-            h <- ncol(profs)/2
-          }
+          # if (ncol(profs) < 15) {
+          #   w <- 10
+          #   h <- 10
+          # } else {
+          #   w <- round(ncol(profs)/1.5)
+          #   h <- ncol(profs)/2
+          # }
           mycol <- c(cols_user(), "grey")
-          profByClass <- plotAllLayers(df = calcData[[1]], col = mycol, reps = FALSE)
-          ggsave(filename = file, plot = profByClass, device = "pdf", width = w, height = h) 
+          profByClass <- plotFacetProfiles(df = calcData[[1]], col = mycol, reps = FALSE)
+          profByClass <- plotFacetProfiles(df = calcData[[2]], col = mycol, reps = FALSE)
+          ggsave(filename = file, plot = profByClass1, device = "pdf", width = 12, height = 5) 
+          ggsave(filename = file, plot = profByClass2, device = "pdf", width = 12, height = 5) 
         } 
+        # 
+        # else if (input$tabs == "profilesPanel2") {
+        #   if (ncol(profs) < 15) {
+        #     w <- 10
+        #     h <- 10
+        #   } else {
+        #     w <- round(ncol(profs)/1.5)
+        #     h <- ncol(profs)/2
+        #   }
+        #   mycol <- c(cols_user(), "grey")
+        #   profByClass <- plotFacetProfiles(df = calcData[[1]], col = mycol, reps = FALSE)
+        #   ggsave(filename = file, plot = profByClass, device = "pdf", width = w, height = h) 
+        # } 
         else {
           pdf(file = file)
           plot(0,type='n',axes=FALSE,ann=FALSE)
