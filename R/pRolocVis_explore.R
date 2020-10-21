@@ -502,7 +502,7 @@ pRolocVis_explore <- function(object,
       mtext("Fractions", side=1, line=8, cex = 1.2)
       
       ## update lines on plot according to zoom
-      feats <<- which(brushBounds$i & brushBounds$j)
+      # feats <<- which(brushBounds$i & brushBounds$j)
       namFeats <- names(feats)[which(names(feats) %in% rownames(profs_un))]
       
       ## plot unknowns
@@ -700,7 +700,7 @@ pRolocVis_explore <- function(object,
           
           ## plot unknowns
           invisible(lapply(fracInds, function(x)     # plot all unknowns as lines here
-            matlines(x, t(profs_un[namFeats, x]),
+            matlines(x, t(profs_un[namFeats, x, drop = FALSE]),
                      col = "grey90", lty = 1, lwd = 1, type = "l")
           ))
           for (i in seq(input$markers)) {

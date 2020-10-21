@@ -289,14 +289,14 @@ pRolocVis_compare <- function(object,
                                              height = fig.height,
                                              dblclick = "dblClick1",
                                              brush = brushOpts(
-                                               id = "pcaBrush1",
+                                               id = "plotBrush1",
                                                resetOnNew = TRUE))),
                            column(5,
                                   plotOutput("pca2",
                                              height = fig.height,
                                              dblclick = "dblClick2",
                                              brush = brushOpts(
-                                               id = "pcaBrush2",
+                                               id = "plotBrush2",
                                                resetOnNew = TRUE))) %>%
                            helper(colour = "grey",
                                   type = "markdown",
@@ -446,30 +446,34 @@ pRolocVis_compare <- function(object,
     ## necessarily have the same indices as markers in object[[2]] (would like
     ## to allow different markers between different datasets)
     mrkSel1 <- reactive({
-      ind <- match(input$markers, colnames(pmarkers[[1]]))
-      .mrkSel1 <- vector("list", length(input$markers))
-      for (i in seq(length(input$markers))) {
-        if (is.na(ind[i])) {
-          .mrkSel1[[i]] <- NA
-        } else {
-          .mrkSel1[[i]] <- which(pmarkers[[1]][, ind[i]] == 1)
-        }
-      }
-      .mrkSel1
+      lapply(input$markers,
+            function(z) which(pmarkers[[1]][, z] == 1))
+      # ind <- match(input$markers, colnames(pmarkers[[1]]))
+      # .mrkSel1 <- vector("list", length(input$markers))
+      # for (i in seq(length(input$markers))) {
+      #   if (is.na(ind[i])) {
+      #     .mrkSel1[[i]] <- NA
+      #   } else {
+      #     .mrkSel1[[i]] <- which(pmarkers[[1]][, ind[i]] == 1)
+      #   }
+      # }
+      # .mrkSel1
     })
     
-    
+  
     mrkSel2 <- reactive({
-      ind <- match(input$markers, colnames(pmarkers[[2]]))
-      .mrkSel2 <- vector("list", length(input$markers))
-      for (i in seq(length(input$markers))) {
-        if (is.na(ind[i])) {
-          .mrkSel2[[i]] <- NA
-        } else {
-          .mrkSel2[[i]] <- which(pmarkers[[2]][, ind[i]] == 1)
-        }
-      }
-      .mrkSel2
+      lapply(input$markers,
+            function(z) which(pmarkers[[2]][, z] == 1))
+      # ind <- match(input$markers, colnames(pmarkers[[2]]))
+      # .mrkSel2 <- vector("list", length(input$markers))
+      # for (i in seq(length(input$markers))) {
+      #   if (is.na(ind[i])) {
+      #     .mrkSel2[[i]] <- NA
+      #   } else {
+      #     .mrkSel2[[i]] <- which(pmarkers[[2]][, ind[i]] == 1)
+      #   }
+      # }
+      # .mrkSel2
     })
     
     
@@ -498,7 +502,8 @@ pRolocVis_compare <- function(object,
     
     
 
-    ## --------PCA plot--------
+    ## ========================PCA plot========================
+    ## ========================================================
     ## Generate PCA or MDS plot
     output$pca1 <- renderPlot({
       par(mar = c(4, 4, 0, 0))
@@ -553,154 +558,248 @@ pRolocVis_compare <- function(object,
     })
     
   
-    ## profile plot
-    output$profile1 <- renderPlot({
-      par(mar = c(13, 4, 1, 1), oma = c(0, 0, 0, 0), bg = scheme, 
-          col.axis = scheme2, col.main = scheme2, 
-          col.lab = scheme2, fg = scheme2)
-      ylim <- range(profs[[1]])
-      n <- nrow(profs[[1]])
-      m <- ncol(profs[[1]])
-      fracs <- colnames(profs[[1]])
-      ## check if there are replicates and if their are, create breaks in the plot
-      if (!is.null(pcol)) {
-        repInfo <- unique(pd[, pcol])
-        repNames <- vector("list", length(repInfo))
-        ## get fraction names by replicate
-        fracNames <- lapply(repInfo, function(z) colnames(profs)[pd[[1]]$Experiment == z])
-        fracInds <- lapply(fracNames, function(z) which(z == colnames(profs[[1]])))
-      } else {
-        fracInds <- list(seq(colnames(profs[[1]])))
-      }
-      ## get unknowns
-      profs_un <- profs[[1]][which(fd[[1]][, fcol[1]] == "unknown"), ]
-      ## get quantiles for each fraction in unknowns
-      quants <- apply(profs_un, MARGIN = 2, function(x) quantile(x, c(0, 1)))  # max and min for unknowns
-      bound_low <- quants[1, ]
-      bound_high <- quants[2, ]
-      ## get quantiles for subcellular classes
-      mrkProfs <- lapply(mrkSel1(), function(z) profs[[1]][z, ])   # 5% and 95% quantiles for all other classes
-      quants <- lapply(mrkProfs, function(z) apply(z, MARGIN = 2, function(x) quantile(x, c(0.05, .95))))
-      meanProfs <- lapply(mrkProfs, function(z) apply(z, 2, mean)) 
-      
-      ## make polygon plots
-      plot(0, ylim = ylim, xlim = c(1, m),
-           type = "n", xaxt = "n", yaxt = "n", xlab = "", 
-           ylab = "Normalised intensities", cex.axis = 1.2,
-           cex.lab = 1.2)
-      v_x <- axis(1, at = 1:m, labels = fracs, las = 2, cex.axis = 1.2)
-      v_y <- axis(2)
-      abline(v = v_x, h = v_y, lty = "dotted", col = "lightgray", lwd = 1)
-      mtext("Fractions", side=1, line=8, cex = 1.2)
-      
-      ## update lines on plot according to zoom
-      feats <- which(brushBounds1$i & brushBounds1$j)
-      namFeats <- names(feats)[which(names(feats) %in% rownames(profs_un))]
-      
-      ## plot unknowns
-      invisible(lapply(fracInds, function(x)     # plot all unknowns as lines here
-        matlines(x, t(profs_un[namFeats, x]),
-                 col = "grey90", lty = 1, lwd = 1, type = "l")
-      ))
-      
-      ## markers
-      for (i in seq(input$markers)) {
-        invisible(lapply(fracInds, function(x)     # don't plot all lines
-          polygon(c(x, rev(x)), 
-                  c(quants[[i]][2, x], rev(quants[[i]][1, x])),
-                  col = profCols()[i], border = FALSE)
+    ## =====================PROFILES plot========================
+    ## ==========================================================
+    
+    plotProfiles <- function(indData = 1, indMrk = mrkSel1()) {
+        par(mar = c(13, 4, 1, 1), oma = c(0, 0, 0, 0), bg = scheme,
+            col.axis = scheme2, col.main = scheme2,
+            col.lab = scheme2, fg = scheme2)
+        ylim <- range(profs[[indData]])
+        n <- nrow(profs[[indData]])
+        m <- ncol(profs[[indData]])
+        fracs <- colnames(profs[[indData]])
+        ## check if there are replicates and if their are, create breaks in the plot
+        # if (!is.null(pcol)) {
+        #   repInfo <- unique(pd[, pcol])
+        #   repNames <- vector("list", length(repInfo))
+        #   ## get fraction names by replicate
+        #   fracNames <- lapply(repInfo, function(z) colnames(profs)[pd$Experiment == z])
+        #   fracInds <- lapply(fracNames, function(z) which(z == colnames(profs)))
+        # } else {
+        fracInds <- list(seq(colnames(profs[[indData]])))
+        # }
+        ## get unknowns
+        profs_un <- profs[[indData]][which(fd[[indData]][, fcol[indData]] == "unknown"), ]
+        ## get quantiles for each fraction in unknowns
+        quants <- apply(profs_un, MARGIN = 2, function(x) quantile(x, c(0, 1)))  # max and min for unknowns
+        bound_low <- quants[1, ]
+        bound_high <- quants[2, ]
+        ## get quantiles for subcellular classes
+        mrkProfs <- lapply(mrkSel1(), function(z) profs[[indData]][z, , drop = FALSE])   # 5% and 95% quantiles for all other classes
+        quants <- lapply(mrkProfs, function(z) apply(z, MARGIN = 2, function(x) quantile(x, c(0.05, .95))))
+        meanProfs <- lapply(mrkProfs, function(z) apply(z, 2, mean))
+        ## make polygon plots
+        plot(0, ylim = ylim, xlim = c(1, m),
+             type = "n", xaxt = "n", yaxt = "n", xlab = "",
+             ylab = "Intensities", cex.axis = 1.2,
+             cex.lab = 1.2)
+        v_x <- axis(1, at = 1:m, labels = fracs, las = 2, cex.axis = 1.2)
+        v_y <- axis(2)
+        abline(v = v_x, h = v_y, lty = "dotted", col = "lightgray", lwd = 1)
+        mtext("Fractions", side=1, line=8, cex = 1.2)
+        ## update lines on plot according to zoom
+        # feats <<- which(brushBounds$i & brushBounds$j)
+        # namFeats <- names(feats)[which(names(feats) %in% rownames(profs_un))]
+        zoomedProts <-  which(brushBounds1$i & brushBounds1$j)
+        namFeats <- names(zoomedProts)[which(names(zoomedProts) %in% rownames(profs_un))]
+        ## plot unknowns
+        invisible(lapply(fracInds, function(x)     # plot all unknowns as lines here
+          matlines(x, t(profs_un[namFeats, x, drop = FALSE]),
+                   col = "grey90", lty = 1, lwd = 1, type = "l")
         ))
-        invisible(lapply(fracInds, function(z)     # plot the mean profile
-          matlines(z, meanProfs[[i]][z],
-                   col = myCols()[i],
-                   lty = 1, lwd = 1,
-                   type = "l")))
-      }
-      ## If an item is clicked in the table highlight profile
-      idxDT <<- feats[input$fDataTable_rows_selected]
-      # namesIdxDT <<- names(idxDT)
-      if (length(idxDT)) {
-        invisible(lapply(fracInds, function(z)     # don't plot all lines
-          matlines(z, t(profs[[1]][idxDT, z, drop = FALSE]),
-                   col = "black",   # would like to colour by location here need names vector of colours
-                   lty = 5, lwd = 2,
-                   type = "l")))
-      }
+        ## markers
+        if (!is.null(input$markers)) {
+          for (i in 1:length(input$markers)) {
+            if (!is.na(indMrk[[i]][1])) {
+              invisible(lapply(fracInds, function(x)     # don't plot all lines
+                polygon(c(x, rev(x)),
+                        c(quants[[i]][2, x], rev(quants[[i]][1, x])),
+                        col = profCols()[i], border = FALSE)
+              ))
+              invisible(lapply(fracInds, function(z)     # plot the mean profile
+                matlines(z, meanProfs[[i]][z],
+                         col = myCols()[i],
+                         lty = 1, lwd = 1,
+                         type = "l")))
+            }
+          }
+        }
+        ## If an item is clicked in the table highlight profile
+        idxDT <<- feats[input$fDataTable_rows_selected]
+        # namesIdxDT <<- names(idxDT)
+        if (length(idxDT)) {
+          invisible(lapply(fracInds, function(z)     # don't plot all lines
+            matlines(z, t(profs[[indData]][idxDT, z, drop = FALSE]),
+                     col = "black",   # would like to colour by location here need names vector of colours
+                     lty = 5, lwd = 2,
+                     type = "l")))
+        }
+    } ## ----------- end of function
+
+    output$profile1 <- renderPlot({
+      plotProfiles(1, mrkSel1())
+    })
+
+    output$profile2 <- renderPlot({
+      plotProfiles(2, mrkSel2())
     })
     
-    output$profile2 <- renderPlot({
-      par(mar = c(13, 4, 1, 1), oma = c(0, 0, 0, 0), bg = scheme, 
-          col.axis = scheme2, col.main = scheme2, 
-          col.lab = scheme2, fg = scheme2)
-      ylim <- range(profs[[2]])
-      n <- nrow(profs[[2]])
-      m <- ncol(profs[[2]])
-      fracs <- colnames(profs[[2]])
-      ## check if there are replicates and if their are, create breaks in the plot
-      if (!is.null(pcol)) {
-        repInfo <- unique(pd[, pcol])
-        repNames <- vector("list", length(repInfo))
-        ## get fraction names by replicate
-        fracNames <- lapply(repInfo, function(z) colnames(profs)[pd[[1]]$Experiment == z])
-        fracInds <- lapply(fracNames, function(z) which(z == colnames(profs[[1]])))
-      } else {
-        fracInds <- list(seq(colnames(profs[[2]])))
-      }
-      ## get unknowns
-      profs_un <- profs[[2]][which(fd[[2]][, fcol[2]] == "unknown"), ]
-      ## get quantiles for each fraction in unknowns
-      quants <- apply(profs_un, MARGIN = 2, function(x) quantile(x, c(0, 1)))  # max and min for unknowns
-      bound_low <- quants[1, ]
-      bound_high <- quants[2, ]
-      ## get quantiles for subcellular classes
-      mrkProfs <- lapply(mrkSel1(), function(z) profs[[2]][z, ])   # 5% and 95% quantiles for all other classes
-      quants <- lapply(mrkProfs, function(z) apply(z, MARGIN = 2, function(x) quantile(x, c(0.05, .95))))
-      meanProfs <- lapply(mrkProfs, function(z) apply(z, 2, mean)) 
-      
-      ## make polygon plots
-      plot(0, ylim = ylim, xlim = c(1, m),
-           type = "n", xaxt = "n", yaxt = "n", xlab = "", 
-           ylab = "Normalised intensities", cex.axis = 1.2,
-           cex.lab = 1.2)
-      v_x <- axis(1, at = 1:m, labels = fracs, las = 2, cex.axis = 1.2)
-      v_y <- axis(2)
-      abline(v = v_x, h = v_y, lty = "dotted", col = "lightgray", lwd = 1)
-      mtext("Fractions", side=1, line=8, cex = 1.2)
-      
-      ## update lines on plot according to zoom
-      feats <<- which(brushBounds2$i & brushBounds2$j)
-      namFeats <- names(feats)[which(names(feats) %in% rownames(profs_un))]
-      
-      ## plot unknowns
-      invisible(lapply(fracInds, function(x)     # plot all unknowns as lines here
-        matlines(x, t(profs_un[namFeats, x]),
-                 col = "grey90", lty = 1, lwd = 1, type = "l")
-      ))
-      
-      ## markers
-      for (i in seq(input$markers)) {
-        invisible(lapply(fracInds, function(x)     # don't plot all lines
-          polygon(c(x, rev(x)), 
-                  c(quants[[i]][2, x], rev(quants[[i]][1, x])),
-                  col = profCols()[i], border = FALSE)
-        ))
-        invisible(lapply(fracInds, function(z)     # plot the mean profile
-          matlines(z, meanProfs[[i]][z],
-                   col = myCols()[i],
-                   lty = 1, lwd = 1,
-                   type = "l")))
-      }
-      ## If an item is clicked in the table highlight profile
-      idxDT <<- feats[input$fDataTable_rows_selected]
-      # namesIdxDT <<- names(idxDT)
-      if (length(idxDT)) {
-        invisible(lapply(fracInds, function(z)     # don't plot all lines
-          matlines(z, t(profs[[2]][idxDT, z, drop = FALSE]),
-                   col = "black",   # would like to colour by location here need names vector of colours
-                   lty = 5, lwd = 2,
-                   type = "l")))
-      }
-    })
+    # output$profile1 <- renderPlot({
+    #   # browser()
+    #   par(mar = c(13, 4, 1, 1), oma = c(0, 0, 0, 0), bg = scheme, 
+    #       col.axis = scheme2, col.main = scheme2, 
+    #       col.lab = scheme2, fg = scheme2)
+    #   ylim <- range(profs[[1]])
+    #   n <- nrow(profs[[1]])
+    #   m <- ncol(profs[[1]])
+    #   fracs <- colnames(profs[[1]])
+    #   ## check if there are replicates and if their are, create breaks in the plot
+    #   # if (!is.null(pcol)) {
+    #   #   repInfo <- unique(pd[, pcol])
+    #   #   repNames <- vector("list", length(repInfo))
+    #   #   ## get fraction names by replicate
+    #   #   fracNames <- lapply(repInfo, function(z) colnames(profs)[pd$Experiment == z])
+    #   #   fracInds <- lapply(fracNames, function(z) which(z == colnames(profs)))
+    #   # } else {
+    #   fracInds <- list(seq(colnames(profs[[1]])))
+    #   # }
+    #   ## get unknowns
+    #   profs_un <- profs[[1]][which(fd[[1]][, fcol[1]] == "unknown"), ]
+    #   ## get quantiles for each fraction in unknowns
+    #   quants <- apply(profs_un, MARGIN = 2, function(x) quantile(x, c(0, 1)))  # max and min for unknowns
+    #   bound_low <- quants[1, ]
+    #   bound_high <- quants[2, ]
+    #   ## get quantiles for subcellular classes
+    #   mrkProfs <- lapply(mrkSel1(), function(z) profs[[1]][z, , drop = FALSE])   # 5% and 95% quantiles for all other classes
+    #   quants <- lapply(mrkProfs, function(z) apply(z, MARGIN = 2, function(x) quantile(x, c(0.05, .95))))
+    #   meanProfs <- lapply(mrkProfs, function(z) apply(z, 2, mean)) 
+    #   ## make polygon plots
+    #   plot(0, ylim = ylim, xlim = c(1, m),
+    #        type = "n", xaxt = "n", yaxt = "n", xlab = "", 
+    #        ylab = "Intensities", cex.axis = 1.2,
+    #        cex.lab = 1.2)
+    #   v_x <- axis(1, at = 1:m, labels = fracs, las = 2, cex.axis = 1.2)
+    #   v_y <- axis(2)
+    #   abline(v = v_x, h = v_y, lty = "dotted", col = "lightgray", lwd = 1)
+    #   mtext("Fractions", side=1, line=8, cex = 1.2)
+    #   ## update lines on plot according to zoom
+    #   # feats <<- which(brushBounds$i & brushBounds$j)
+    #   # namFeats <- names(feats)[which(names(feats) %in% rownames(profs_un))]
+    #   zoomedProts <-  which(brushBounds1$i & brushBounds1$j)
+    #   namFeats <- names(zoomedProts)[which(names(zoomedProts) %in% rownames(profs_un))]
+    #   ## plot unknowns
+    #   invisible(lapply(fracInds, function(x)     # plot all unknowns as lines here
+    #     matlines(x, t(profs_un[namFeats, x, drop = FALSE]),
+    #              col = "grey90", lty = 1, lwd = 1, type = "l")
+    #   ))
+    #   ## markers
+    #   if (!is.null(input$markers)) {
+    #     for (i in 1:length(input$markers)) {
+    #       if (!is.na(mrkSel1()[[i]][1])) {
+    #         invisible(lapply(fracInds, function(x)     # don't plot all lines
+    #           polygon(c(x, rev(x)), 
+    #                   c(quants[[i]][2, x], rev(quants[[i]][1, x])),
+    #                   col = profCols()[i], border = FALSE)
+    #         ))
+    #         invisible(lapply(fracInds, function(z)     # plot the mean profile
+    #           matlines(z, meanProfs[[i]][z],
+    #                    col = myCols()[i],
+    #                    lty = 1, lwd = 1,
+    #                    type = "l")))
+    #       }
+    #     }
+    #   }
+    #   ## If an item is clicked in the table highlight profile
+    #   idxDT <<- feats[input$fDataTable_rows_selected]
+    #   if (length(idxDT)) {
+    #     invisible(lapply(fracInds, function(z)     # don't plot all lines
+    #       matlines(z, t(profs[[1]][idxDT, z, drop = FALSE]),
+    #                col = "black",   # would like to colour by location here need names vector of colours
+    #                lty = 5, lwd = 2,
+    #                type = "l")))
+    #   }
+    # })
+    # 
+    # ## profile 2
+    # output$profile2 <- renderPlot({
+    #   # browser()
+    #   par(mar = c(13, 4, 1, 1), oma = c(0, 0, 0, 0), bg = scheme, 
+    #       col.axis = scheme2, col.main = scheme2, 
+    #       col.lab = scheme2, fg = scheme2)
+    #   ylim <- range(profs[[2]])
+    #   n <- nrow(profs[[2]])
+    #   m <- ncol(profs[[2]])
+    #   fracs <- colnames(profs[[2]])
+    #   ## check if there are replicates and if their are, create breaks in the plot
+    #   # if (!is.null(pcol)) {
+    #   #   repInfo <- unique(pd[, pcol])
+    #   #   repNames <- vector("list", length(repInfo))
+    #   #   ## get fraction names by replicate
+    #   #   fracNames <- lapply(repInfo, function(z) colnames(profs)[pd$Experiment == z])
+    #   #   fracInds <- lapply(fracNames, function(z) which(z == colnames(profs)))
+    #   # } else {
+    #   fracInds <- list(seq(colnames(profs[[2]])))
+    #   # }
+    #   ## get unknowns
+    #   profs_un <- profs[[2]][which(fd[[2]][, fcol[1]] == "unknown"), ]
+    #   ## get quantiles for each fraction in unknowns
+    #   quants <- apply(profs_un, MARGIN = 2, function(x) quantile(x, c(0, 1)))  # max and min for unknowns
+    #   bound_low <- quants[1, ]
+    #   bound_high <- quants[2, ]
+    #   ## get quantiles for subcellular classes
+    #   mrkProfs <- lapply(mrkSel1(), function(z) profs[[2]][z, , drop = FALSE])   # 5% and 95% quantiles for all other classes
+    #   quants <- lapply(mrkProfs, function(z) apply(z, MARGIN = 2, function(x) quantile(x, c(0.05, .95))))
+    #   meanProfs <- lapply(mrkProfs, function(z) apply(z, 2, mean)) 
+    #   ## make polygon plots
+    #   plot(0, ylim = ylim, xlim = c(1, m),
+    #        type = "n", xaxt = "n", yaxt = "n", xlab = "", 
+    #        ylab = "Intensities", cex.axis = 1.2,
+    #        cex.lab = 1.2)
+    #   v_x <- axis(1, at = 1:m, labels = fracs, las = 2, cex.axis = 1.2)
+    #   v_y <- axis(2)
+    #   abline(v = v_x, h = v_y, lty = "dotted", col = "lightgray", lwd = 1)
+    #   mtext("Fractions", side=1, line=8, cex = 1.2)
+    #   ## update lines on plot according to zoom
+    #   # feats <<- which(brushBounds$i & brushBounds$j)
+    #   # namFeats <- names(feats)[which(names(feats) %in% rownames(profs_un))]
+    #   zoomedProts <-  which(brushBounds1$i & brushBounds1$j)
+    #   namFeats <- names(zoomedProts)[which(names(zoomedProts) %in% rownames(profs_un))]
+    #   ## plot unknowns
+    #   invisible(lapply(fracInds, function(x)     # plot all unknowns as lines here
+    #     matlines(x, t(profs_un[namFeats, x, drop = FALSE]),
+    #              col = "grey90", lty = 1, lwd = 1, type = "l")
+    #   ))
+    #   ## markers
+    #   if (!is.null(input$markers)) {
+    #     for (i in 1:length(input$markers)) {
+    #       if (!is.na(mrkSel1()[[i]][1])) {
+    #         invisible(lapply(fracInds, function(x)     # don't plot all lines
+    #           polygon(c(x, rev(x)), 
+    #                   c(quants[[i]][2, x], rev(quants[[i]][1, x])),
+    #                   col = profCols()[i], border = FALSE)
+    #         ))
+    #         invisible(lapply(fracInds, function(z)     # plot the mean profile
+    #           matlines(z, meanProfs[[i]][z],
+    #                    col = myCols()[i],
+    #                    lty = 1, lwd = 1,
+    #                    type = "l")))
+    #       }
+    #     }
+    #   }
+    #   ## If an item is clicked in the table highlight profile
+    #   idxDT <<- feats[input$fDataTable_rows_selected]
+    #   namesIdxDT <<- names(idxDT)
+    #   if (length(idxDT)) {
+    #     invisible(lapply(fracInds, function(z)     # don't plot all lines
+    #       matlines(z, t(profs[[2]][namesIdxDT, z, drop = FALSE]),
+    #                col = "black",   # would like to colour by location here need names vector of colours
+    #                lty = 5, lwd = 2,
+    #                type = "l")))
+    #   }
+    # })
+    # 
+    
     
     ## Class specific/faceted plots
     output$classProfiles1 <- renderPlot({
@@ -749,9 +848,9 @@ pRolocVis_compare <- function(object,
       if (resetLabels$logical) toSel <- numeric()        ## reset labels
       .dt1 <- fd[[1]][feats, input$selTab1, drop = FALSE]
       .dt2 <- fd[[2]][feats, input$selTab2, drop = FALSE]
-      colnames(.dt1) <- paste0('<span style="color:',   
+      colnames(.dt2) <- paste0('<span style="color:',   
                                rep("darkblue", ncol(.dt1)), '">', 
-                               colnames(.dt1), '</span>')
+                               colnames(.dt2), '</span>')
       dtdata <- cbind(.dt1, .dt2)
       # namesIdxDT <<- names(idxDT)
       # # have to change this if we decide to use different size datasets (e.g. tracking via name or index)
@@ -859,7 +958,83 @@ pRolocVis_compare <- function(object,
           dev.off()  
         } 
         else if (input$tabs == "profilesPanel1") {
-          
+          output$profile1 <- renderPlot({
+            pdf(file = file, width = 12)
+            par(mar = c(13, 4, 1, 1), oma = c(0, 0, 0, 0), bg = scheme, 
+                col.axis = scheme2, col.main = scheme2, 
+                col.lab = scheme2, fg = scheme2,
+                mfrow = c(1, 2))
+            ylim <- range(profs[[1]])
+            n <- nrow(profs[[1]])
+            m <- ncol(profs[[1]])
+            fracs <- colnames(profs[[1]])
+            ## check if there are replicates and if their are, create breaks in the plot
+            # if (!is.null(pcol)) {
+            #   repInfo <- unique(pd[, pcol])
+            #   repNames <- vector("list", length(repInfo))
+            #   ## get fraction names by replicate
+            #   fracNames <- lapply(repInfo, function(z) colnames(profs)[pd$Experiment == z])
+            #   fracInds <- lapply(fracNames, function(z) which(z == colnames(profs)))
+            # } else {
+            fracInds <- list(seq(colnames(profs[[1]])))
+            # }
+            ## get unknowns
+            profs_un <- profs[[1]][which(fd[[1]][, fcol[1]] == "unknown"), ]
+            ## get quantiles for each fraction in unknowns
+            quants <- apply(profs_un, MARGIN = 2, function(x) quantile(x, c(0, 1)))  # max and min for unknowns
+            bound_low <- quants[1, ]
+            bound_high <- quants[2, ]
+            ## get quantiles for subcellular classes
+            mrkProfs <- lapply(mrkSel1(), function(z) profs[[1]][z, , drop = FALSE])   # 5% and 95% quantiles for all other classes
+            quants <- lapply(mrkProfs, function(z) apply(z, MARGIN = 2, function(x) quantile(x, c(0.05, .95))))
+            meanProfs <- lapply(mrkProfs, function(z) apply(z, 2, mean)) 
+            ## make polygon plots
+            plot(0, ylim = ylim, xlim = c(1, m),
+                 type = "n", xaxt = "n", yaxt = "n", xlab = "", 
+                 ylab = "Intensities", cex.axis = 1.2,
+                 cex.lab = 1.2)
+            v_x <- axis(1, at = 1:m, labels = fracs, las = 2, cex.axis = 1.2)
+            v_y <- axis(2)
+            abline(v = v_x, h = v_y, lty = "dotted", col = "lightgray", lwd = 1)
+            mtext("Fractions", side=1, line=8, cex = 1.2)
+            ## update lines on plot according to zoom
+            # feats <<- which(brushBounds$i & brushBounds$j)
+            # namFeats <- names(feats)[which(names(feats) %in% rownames(profs_un))]
+            zoomedProts <-  which(brushBounds1$i & brushBounds1$j)
+            namFeats <- names(zoomedProts)[which(names(zoomedProts) %in% rownames(profs_un))]
+            ## plot unknowns
+            invisible(lapply(fracInds, function(x)     # plot all unknowns as lines here
+              matlines(x, t(profs_un[namFeats, x, drop = FALSE]),
+                       col = "grey90", lty = 1, lwd = 1, type = "l")
+            ))
+            ## markers
+            if (!is.null(input$markers)) {
+              for (i in 1:length(input$markers)) {
+                if (!is.na(mrkSel1()[[i]][1])) {
+                  invisible(lapply(fracInds, function(x)     # don't plot all lines
+                    polygon(c(x, rev(x)), 
+                            c(quants[[i]][2, x], rev(quants[[i]][1, x])),
+                            col = profCols()[i], border = FALSE)
+                  ))
+                  invisible(lapply(fracInds, function(z)     # plot the mean profile
+                    matlines(z, meanProfs[[i]][z],
+                             col = myCols()[i],
+                             lty = 1, lwd = 1,
+                             type = "l")))
+                }
+              }
+            }
+            ## If an item is clicked in the table highlight profile
+            idxDT <<- feats[input$fDataTable_rows_selected]
+            namesIdxDT <<- names(idxDT)
+            if (length(idxDT)) {
+              invisible(lapply(fracInds, function(z)     # don't plot all lines
+                matlines(z, t(profs[[1]][namesIdxDT, z, drop = FALSE]),
+                         col = "black",   # would like to colour by location here need names vector of colours
+                         lty = 5, lwd = 2,
+                         type = "l")))
+            }
+          })
           dev.off()
         } 
         else if (input$tabs == "profilesPanel2") {
