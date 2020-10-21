@@ -7,7 +7,7 @@ pRolocVis_aggregate <- function(object,
                                 fig.height = "700px",
                                 # legend.width = "200%",
                                 # legend.cex = 1,
-                                nchar = 25
+                                nchar = 25,
                                 ...) {
   ## removed from arguments
   legend.width = "200%"
