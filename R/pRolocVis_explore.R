@@ -1,6 +1,6 @@
 ## remove this when building package
-source("utils.R")
-source("css.R")
+# source("utils.R")
+# source("css.R")
 
 ## DOUBLE CLICKING TO HIGHLIGHT on/off on PCA plot, or selection via table
 

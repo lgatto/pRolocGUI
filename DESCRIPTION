@@ -1,6 +1,6 @@
 Package: pRolocGUI
 Title: Interactive visualisation of spatial proteomics data
-Version: 1.21.3
+Version: 1.22.0
 Authors@R: c(person(given = "Lisa", family ="Breckels",
 		    email = "lms79@cam.ac.uk",
 		    role = "aut"),
@@ -23,4 +23,4 @@ BugReports: https://github.com/ComputationalProteomicsUnit/pRolocGUI/issues
 VignetteBuilder: knitr
 Video: https://www.youtube.com/playlist?list=PLvIXxpatSLA2loV5Srs2VBpJIYUlVJ4ow
 biocViews: Proteomics, Visualization, GUI
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1
