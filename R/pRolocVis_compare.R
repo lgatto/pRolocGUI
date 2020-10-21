@@ -18,19 +18,16 @@ source("css.R")
 ## https://rinterface.com/shiny/shinydashboardPlus/#
 
 ##' @rdname pRolocVis-apps
-##' @param foi A \code{\link{FeaturesOfInterest}} or
-##'     \code{\link{FoICollection}} object.
+##' @param fcol1 In yhe \code{compare} app this is the feature
+##'     meta-data label (fData column name) for the first dataset in
+##'     the \code{MSnSetList}.  Default is \code{markers}.
+##' @param fcol2 In the \code{compare} app this is the feature
+##'     meta-data label (fData column name) for the second dataset in
+##'     the \code{MSnSetList}.  Default is \code{markers}.
 ##' @param fig.height Height of the figure. Default is \code{"600px"}.
-##' @param fig.width Width of the figure. Default is \code{"100px"}.
-##' @param legend.width Width of the legend. Default is
-##'     \code{"200\%"}.
 ##' @param nchar Maximum number of characters of the markers class
 ##'     names, before their names are truncated. Default is 25.
-##' @param all If \code{TRUE} all clusters are displayed on startup,
-##'     if the total number of clusters is less than including 15. If
-##'     \code{FALSE} or otherwise, only the first cluster in the list
-##'     is displayed.
-##' @return For the \code{pca}, \code{compare} and \code{aggregate} apps 
+##' @return For the \code{explore}, \code{compare} and \code{aggregate} apps 
 ##'     a \code{character} vector of \code{featureNames} names of the
 ##'     \code{object} loaded that have been selected in the app
 ##'     upon application closure.
@@ -378,7 +375,7 @@ pRolocVis_compare <- function(object,
                                .items = list(
                                  p(strong("Map controls")),
                                  br(),
-                                 p("Transparency"),
+                                 p("Transparancy"),
                                  sliderInput("trans", NULL,
                                              min = 0,  max = 1, value = 0.75),
                                  checkboxInput("checkbox", label = "Show labels", value = TRUE),
@@ -450,34 +447,34 @@ pRolocVis_compare <- function(object,
     ## necessarily have the same indices as markers in object[[2]] (would like
     ## to allow different markers between different datasets)
     mrkSel1 <- reactive({
-      lapply(input$markers,
-            function(z) which(pmarkers[[1]][, z] == 1))
-      # ind <- match(input$markers, colnames(pmarkers[[1]]))
-      # .mrkSel1 <- vector("list", length(input$markers))
-      # for (i in seq(length(input$markers))) {
-      #   if (is.na(ind[i])) {
-      #     .mrkSel1[[i]] <- NA
-      #   } else {
-      #     .mrkSel1[[i]] <- which(pmarkers[[1]][, ind[i]] == 1)
-      #   }
-      # }
-      # .mrkSel1
+      # lapply(input$markers,
+      #       function(z) which(pmarkers[[1]][, z] == 1))
+      ind <- match(input$markers, colnames(pmarkers[[1]]))
+      .mrkSel1 <- vector("list", length(input$markers))
+      for (i in seq(length(input$markers))) {
+        if (is.na(ind[i])) {
+          .mrkSel1[[i]] <- NA
+        } else {
+          .mrkSel1[[i]] <- which(pmarkers[[1]][, ind[i]] == 1)
+        }
+      }
+      .mrkSel1
     })
     
   
     mrkSel2 <- reactive({
-      lapply(input$markers,
-            function(z) which(pmarkers[[2]][, z] == 1))
-      # ind <- match(input$markers, colnames(pmarkers[[2]]))
-      # .mrkSel2 <- vector("list", length(input$markers))
-      # for (i in seq(length(input$markers))) {
-      #   if (is.na(ind[i])) {
-      #     .mrkSel2[[i]] <- NA
-      #   } else {
-      #     .mrkSel2[[i]] <- which(pmarkers[[2]][, ind[i]] == 1)
-      #   }
-      # }
-      # .mrkSel2
+      # lapply(input$markers,
+      #       function(z) which(pmarkers[[2]][, z] == 1))
+      ind <- match(input$markers, colnames(pmarkers[[2]]))
+      .mrkSel2 <- vector("list", length(input$markers))
+      for (i in seq(length(input$markers))) {
+        if (is.na(ind[i])) {
+          .mrkSel2[[i]] <- NA
+        } else {
+          .mrkSel2[[i]] <- which(pmarkers[[2]][, ind[i]] == 1)
+        }
+      }
+      .mrkSel2
     })
     
     

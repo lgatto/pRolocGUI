@@ -37,42 +37,43 @@
 ##' @param object An instance of class \code{MSnSet}, or an
 ##'     \code{MSnSetList} of length 2 if using \code{"compare"}
 ##'     application.
-##' @param app The type of application requested: \code{"pca"}
-##'     (default), \code{"classify"}, \code{"compare"} or
+##' @param app The type of application requested: \code{"explore"}
+##'     (default), \code{"compare"} or
 ##'     \code{"aggregate"}. See description below.
 ##' @param fcol The feature meta-data label (\code{fData} column name)
-##'     to be used for colouring. Default is \code{"markers"}. This
-##'     will correspond to the prediction column if using "classify",
-##'     or the markers (labelled data) to be plotted otherwise. If set
-##'     to \code{NULL}, no annotation is expected.
-##' @param legend.cex Point character expansion for the the legend.
-##'     Default is 1.
+##'     to be used for colouring. Default is \code{"markers"}. If set
+##'     to \code{NULL}, no annotation is expected. Not valid for use
+##'     with the \code{"compare"} app, please pass arguments 
+##'     \code{"fcol1"} and \code{"fcol2"} in this case.
 ##' @param ... Additional parameters passed to \code{plot2D} for the
-##'     \code{"pca"} (such as a different dimensionality reduction
-##'     technique than PCA, and its arguments), \code{"classify"},
-##'     \code{"compare"} apps. For the \code{"aggregate"} app this is
-##'     for additional parameters to be passed to
-##'     \code{combineFeatures}.
-##' @author Laurent Gatto, Lisa Breckels and Thomas Naake
+##'     \code{"explore"} (such as the dimensionality reduction
+##'     technique, and methods), \code{"compare"} apps. For 
+##'     the \code{"aggregate"} app this is for additional parameters 
+##'     to be passed to \code{combineFeatures}.
+##' @author Lisa Breckels, Thomas Naake and Laurent Gatto
 ##' @seealso The package vignette: \code{vignette("pRolocGUI")}.
 ##' @examples
 ##' library("pRoloc")
 ##' library("pRolocdata")
+##' 
+##' ## Load the Explore app
 ##' data(hyperLOPIT2015)
-##' ## Load the PCA app
 ##' if (interactive()) {
 ##'   pRolocVis(hyperLOPIT2015)
+##'   pRolocVis(hyperLOPIT2015, method = "t-SNE")
+##'   ## store the t-SNE coords and pass a matrix to pRolocVis
+##'   xx <- plot2D(hyperLOPIT2015, method = "t-SNE")
+##'   pRolocVis(xx, method = "none", methargs = list(hyperLOPIT2015))
 ##' }
 ##'
-##' ## Load classification results from hyperLOPIT stored in fData
+##' ## Load the Compare app
+##' data("hyperLOPIT2015ms3r1")
+##' data("hyperLOPIT2015ms3r2")
+##' xx <- MSnSetList(list(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r2))
 ##' if (interactive()) {
-##'   myThreshold <- pRolocVis(hyperLOPIT2015, app = "classify",
-##'                            fcol = "svm.classification",
-##'                            scol = "svm.score")
-##'   newPredictions <- getPredictions(hyperLOPIT2015, fcol = "svm.classification",
-##'                                    scol = "svm.score", t = myThreshold)
+##'   pRolocVis(xx, app = "compare")
 ##' }
-##'
+##' 
 ##' ## Visualise the location and distribution of peptides per protein group
 ##' data("hyperLOPIT2015ms2psm")
 ##' if (interactive()) {
@@ -84,19 +85,17 @@
 ##'   pRolocVis(hl, app = "aggregate", fcol = "markers",
 ##'             groupBy = "Protein.Group.Accessions")
 ##' }
-pRolocVis <- function(object, app = "pca", fcol, ...) {
+pRolocVis <- function(object, app = "explore", fcol, ...) {
   res <- NULL
-  app <- match.arg(app, c("pca", "compare", "classify", "aggregate"))
+  app <- match.arg(app, c("explore", "compare", "aggregate"))
   if (inherits(object, "MSnSetList"))
     app <- "compare"
   if (missing(app))
-    app <- "pca"
+    app <- "explore"
   if (missing(fcol) && app != "classify")
     fcol <- "markers"
-  if (app == "pca")
-    pRolocVis_pca(object, fcol, ...)
-  if (app == "classify")
-    res <- pRolocVis_classify(object, fcol, ...)
+  if (app == "explore")
+    pRolocVis_explore(object, fcol, ...)
   if (app == "compare")
     pRolocVis_compare(object, ...)
   if (app == "aggregate")

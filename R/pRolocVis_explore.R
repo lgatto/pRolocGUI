@@ -18,19 +18,10 @@ source("css.R")
 ## https://rinterface.com/shiny/shinydashboardPlus/#
 
 ##' @rdname pRolocVis-apps
-##' @param foi A \code{\link{FeaturesOfInterest}} or
-##'     \code{\link{FoICollection}} object.
 ##' @param fig.height Height of the figure. Default is \code{"600px"}.
-##' @param fig.width Width of the figure. Default is \code{"100px"}.
-##' @param legend.width Width of the legend. Default is
-##'     \code{"200\%"}.
 ##' @param nchar Maximum number of characters of the markers class
-##'     names, before their names are truncated. Default is 10.
-##' @param all If \code{TRUE} all clusters are displayed on startup,
-##'     if the total number of clusters is less than including 15. If
-##'     \code{FALSE} or otherwise, only the first cluster in the list
-##'     is displayed.
-##' @return For the \code{pca}, \code{compare} and \code{aggregate} apps 
+##'     names, before their names are truncated. Default is 25.
+##' @return For the \code{explore}, \code{compare} and \code{aggregate} apps 
 ##'     a \code{character} vector of \code{featureNames} names of the
 ##'     \code{object} loaded that have been selected in the app
 ##'     upon application closure.
@@ -361,7 +352,7 @@ pRolocVis_explore <- function(object,
                                .items = list(
                                  p(strong("Map controls")),
                                  br(),
-                                 p("Transparency"),
+                                 p("Transparancy"),
                                  sliderInput("trans", NULL,
                                              min = 0,  max = 1, value = 0.75),
                                  checkboxInput("checkbox", label = "Show labels", value = TRUE),

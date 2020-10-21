@@ -1,45 +1,25 @@
-# narrowFeatureData <- function(object,
-#                               n1 = 6, n2 = 6,
-#                               fcol = "markers") {
-#     if (length(fcol) > 1)
-#         fcol <- NULL
-#     if (is.null(fcol)) {
-#         i <- selectFeatureData(object)
-#         fData(object) <- fData(object)[, i]
-#         return(object)
-#     }
-#     n <- n1 + n2
-#     fv <- fvarLabels(object)
-#     ln <- length(fv)
-#     if (ln <= n) return(object)
-#     i <- c(1:n1, (ln-n2+1):ln)
-#     if (any(fcol %in% fv) & !any(fcol %in% fv[i]))
-#         i <- c(1:n1, (ln-n2+2):ln, match(fcol, fv))
-#     fData(object) <- fData(object)[, i]
-#     if (validObject(object))
-#         return(object)
-# }
-# 
-# mrkVecToMat_lisa <-
-#     function (fd, vfcol = "markers", mfcol = "Markers") 
-#     {
-#         fvl <- colnames(fd)
-#         if (!vfcol %in% fvl) 
-#             stop(vfcol, " does not exist.")
-#         if (mfcol %in% fvl) 
-#             stop(mfcol, " already present.")
-#         m <- fd[, vfcol]
-#         um <- levels(factor(m))
-#         if ("unknown" %in% um) 
-#             um <- um[um != "unknown"]
-#         M <- matrix(0, nrow = nrow(fd), ncol = length(um))
-#         rownames(M) <- rownames(fd)
-#         colnames(M) <- um
-#         for (j in um) M[which(j == m), j] <- 1
-#         fd[, mfcol] <- M
-#         return(fd)
-#     }
-
+# ## Update feature data and convert any columns that are matrices to
+# ## vectors as otherwise in the shiny app these are displayed as a long
+# ## vector of (1, 0, 0, 0, 0, 1, 0) etc.
+.makeMatsVecs <- function(msnset) {
+  .tn <- length(fvarLabels(msnset))
+  chk <- vector(length = .tn)
+  for (i in 1:.tn) {
+    chk[i] <- is.matrix(fData(msnset)[, i])
+  }
+  if (any(chk)) {
+    .ind <- which(chk)
+    .nams <- fvarLabels(msnset)[.ind]
+    .tmpnams <- paste0(.nams, format(Sys.time(), "%a%b%d%H%M%S%Y"))
+    for (i in seq(.nams)) {
+      msnset <- pRoloc::mrkMatToVec(msnset, mfcol = .nams[i],
+                                    vfcol = .tmpnams[i])
+    }
+    fData(msnset)[, .nams] <- NULL
+    fvarLabels(msnset)[match(.tmpnams, fvarLabels(msnset))] <- .nams
+  }
+  return(msnset)
+}
 
 stockcol <- c("#E41A1C", "#377EB8", "#309C17", "#FF7F00", "#FFD700", "#00CED1",
               "#A65628", "#F781BF", "#984EA3", "#9ACD32", "#B0C4DE", "#00008A",
