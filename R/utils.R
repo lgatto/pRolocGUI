@@ -21,24 +21,16 @@
   return(msnset)
 }
 
+## appStock colors
 stockcol <- c("#E41A1C", "#377EB8", "#309C17", "#FF7F00", "#FFD700", "#00CED1",
               "#A65628", "#F781BF", "#984EA3", "#9ACD32", "#B0C4DE", "#00008A",
               "#FDAE6B", "#EBB7BE", "#3F8F8F", "#CF9802", "#6A51A3", "#21E8AC",
               "#0000FF", "#1D7A3E", "#BF2A6B", "#CD5B45", "#808000", "#F21D56",
               "#67000D", "#7A0C79", "#93EDF5", "#A66A6A", "#0E438A", "#DBBCF7")
-getStockcol <- function() {stockcol}
+appStockcol <- function() {stockcol}
 
-
-# getStockcol2 <- function() {c(
-#   "#C9090B", "#256C9D", "#137333", "#EF7905", "#ECC803",
-#   "#02AFB1", "#984B1E", "#DB69A5", "#7A3684", "#80AC24", "#9DB1CC",
-#   "#010169", "#736249", "#EA9F5F", "#55AD91", "#1B4C10", "#B16F78",
-#   "#4F3981", "#CA9209", "#0202B1", "#77A121", "#AE4975", "#C7523B",
-#   "#6E013F", "#5F5F00", "#450109", "#340166", "#5695BB", "#E58061")}
-
-getStockcol2 <- function() {darken(getStockcol())}
-
-plot2D_lisa <- function(coords, fd, fcol = fcol,
+## modified version of plot2D for shiny
+.plot2D_shiny <- function(coords, fd, fcol = fcol,
                    unk = FALSE, scheme = c("white"), ...) {
     if(missing(scheme)) scheme <- "white"
     # Set background black on plot
@@ -62,15 +54,14 @@ plot2D_lisa <- function(coords, fd, fcol = fcol,
     if (!unk) {
         for (i in seq(cl)) {
             ind <- which(fd[, fcol] == cl[i])
-            points(coords[ind, ,drop = FALSE], bg = getStockcol()[i], pch = 21, 
-                   col = paste0(getStockcol()[i], 60), cex = 1.5)
+            points(coords[ind, ,drop = FALSE], bg = appStockcol()[i], pch = 21, 
+                   col = paste0(appStockcol()[i], 60), cex = 1.5)
         }
     }
     
 }
 
-
-highlightOnPlot_lisa <- function(coords, myfoi, labels = FALSE,
+.highlightOnPlot_shiny <- function(coords, myfoi, labels = FALSE,
                             scheme = c("white"), cex = 1.2) {
     
     .data <- coords
@@ -86,30 +77,6 @@ highlightOnPlot_lisa <- function(coords, myfoi, labels = FALSE,
     if (labels) {
         text(.data[myfoi, 1], .data[myfoi, 2], myfoi, pos = 3, font  = 2, cex = cex) 
     }
-}
-
-
-setStockcol <- function (cols) {
-    prevcols <- getStockcol()
-    if (is.null(cols)) {
-        assign("stockcol", stockcol)
-    }
-    else if (cols[1] == "lisacol") {
-        setLisacol()
-    }
-    else assign("stockcol", cols)
-    invisible(prevcols)
-}
-
-.defineDT <- function(labs, fcol) {
-    if (length(labs) > 6) {
-        .ind <- which(labs == fcol)
-        .fvarL <- labs[-.ind]
-        selDT <- c(.fvarL[1:5], fcol)
-    } else {
-        selDT <- labs[1:length(labs)]
-    }
-    return(selDT)
 }
 
 
@@ -212,7 +179,12 @@ plotFacetProfiles <- function(data,
     return(p)
 }
 
-## reuqired to fix sidebaropen on startup (see proceeding functions)
+## these functions are taken from shinydashboardPlus
+## code and modified so that the rightsidebar stays open
+## on startup and so that the plots in the main panel
+## dynamically resize upon openeing and closing see
+## https://github.com/RinteRface/shinydashboardPlus
+## and associated issues
 .rightSidebarTabList <- function(...) {
   
   tabItems <- list(...)
@@ -260,9 +232,9 @@ plotFacetProfiles <- function(data,
   )
 }
 
-
+## https://github.com/RinteRface/shinydashboardPlus
 ## customise the right sidebar so it is open on startup
-my_rightSidebar <- function(..., background = "dark", width = 230, .items = NULL) {
+.setRightSidebar <- function(..., background = "dark", width = 230, .items = NULL) {
     
     panels <- list(...)
     

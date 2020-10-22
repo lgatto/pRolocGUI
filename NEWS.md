@@ -1,9 +1,14 @@
-# pRolocGUI 1.22
+# pRolocGUI 1.99
 
-## CHANGES IN VERSION 1.22.0
-- Update apps to new shinydashboard style
-- Options to save plots as images and download data
-- Support batch import searching and export of datatable
+## CHANGES IN VERSION 1.99.1
+- Apps updated to new shinydashboardPlus style
+- Options to save plots as high res images 
+- User set colourpicker for creating figures
+- Support for data export to csv
+- Support batch import searching
+- PCA app has been replaced with explore app
+- New aggregation app
+- Classify app removed
 
 # pRolocGUI 1.21
 

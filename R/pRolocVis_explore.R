@@ -204,7 +204,7 @@ pRolocVis_explore <- function(object,
   scheme = "white"
   scheme2 <- "black"
   
-  cols <- getStockcol()
+  cols <- appStockcol()
   if (length(cols) < ncol(pmarkers)) {
     message("Too many features for available colours. Some colours will be duplicated.")
     n <- ncol(pmarkers) %/% length(cols)
@@ -214,7 +214,7 @@ pRolocVis_explore <- function(object,
   ## generate UI inputs for colour picker 
   col_ids <-  paste0("col", seq(colnames(pmarkers)))
   myclasses <- colnames(pmarkers)
-  colPicker <- function(x) {colourpicker::colourInput(col_ids[x], myclasses[x], value = getStockcol()[x])}
+  colPicker <- function(x) {colourpicker::colourInput(col_ids[x], myclasses[x], value = appStockcol()[x])}
   col_input <- lapply(seq(col_ids), colPicker)
   ll <- length(col_input)
   if (ll > 5) {
@@ -335,7 +335,7 @@ pRolocVis_explore <- function(object,
     
   )
   
-  rightsidebar <- my_rightSidebar(background = "light",
+  rightsidebar <- .setRightSidebar(background = "light",
                                width = 160,
                                .items = list(
                                  p(strong("Map controls")),
@@ -421,7 +421,7 @@ pRolocVis_explore <- function(object,
     output$pca <- renderPlot({
       par(mar = c(4, 4, 0, 0))
       par(oma = c(1, 0, 0, 0))
-      plot2D_lisa(object_coords, fd, unk = TRUE,
+      .plot2D_shiny(object_coords, fd, unk = TRUE,
              xlim = ranges$x,
              ylim = ranges$y,
              fcol = fcol)
@@ -434,9 +434,9 @@ pRolocVis_explore <- function(object,
       if (resetLabels$logical) idxDT <<- numeric()  ## If TRUE labels are cleared
       namesIdxDT <<- names(idxDT)
       if (length(idxDT)) {
-        highlightOnPlot_lisa(object_coords, namesIdxDT)
+        .highlightOnPlot_shiny(object_coords, namesIdxDT)
         if (input$checkbox)
-          highlightOnPlot_lisa(object_coords, namesIdxDT, labels = TRUE)
+          .highlightOnPlot_shiny(object_coords, namesIdxDT, labels = TRUE)
       }
       resetLabels$logical <- FALSE
       height <- reactive(ifelse(!is.null(input$innerWidth),input$innerWidth*3/5,0)) # fix ratio 1:1
@@ -610,7 +610,7 @@ pRolocVis_explore <- function(object,
           pdf(file = file)
           par(mar = c(4, 4, 0, 0))
           par(oma = c(1, 0, 0, 0))
-          plot2D_lisa(object_coords, fd, unk = TRUE,
+          .plot2D_shiny(object_coords, fd, unk = TRUE,
                  xlim = ranges$x,
                  ylim = ranges$y,
                  fcol = fcol)
@@ -623,9 +623,9 @@ pRolocVis_explore <- function(object,
           if (resetLabels$logical) idxDT <<- numeric()  ## If TRUE labels are cleared
           namesIdxDT <<- names(idxDT)
           if (length(idxDT)) {
-            highlightOnPlot_lisa(object_coords, fd, namesIdxDT)
+            .highlightOnPlot_shiny(object_coords, fd, namesIdxDT)
             if (input$checkbox)
-              highlightOnPlot_lisa(object_coords, fd, namesIdxDT, labels = TRUE, cex = 1)
+              .highlightOnPlot_shiny(object_coords, fd, namesIdxDT, labels = TRUE, cex = 1)
           }
           resetLabels$logical <- FALSE
           height <- reactive(ifelse(!is.null(input$innerWidth),input$innerWidth*3/5,0)) # fix ratio 1:1
@@ -739,7 +739,7 @@ pRolocVis_explore <- function(object,
     observeEvent(input$resetColours, {
       for (i in seq(ncol(pmarkers))) {
         colourpicker::updateColourInput(session, col_ids[i],
-                                        value = getStockcol()[i])
+                                        value = appStockcol()[i])
       }
     })
     

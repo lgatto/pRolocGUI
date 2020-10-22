@@ -95,7 +95,7 @@ pRolocVis_aggregate <- function(object,
   
   
   ## Marker colours
-  cols <- getStockcol()
+  cols <- appStockcol()
   if (length(cols) < max(ncol(pmarkers))) {
     message("Too many features for available colours. Some colours will be duplicated.")
     n <- ncol(pmarkers / length(cols))
