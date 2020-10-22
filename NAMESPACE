@@ -9,6 +9,7 @@ import(shiny)
 import(scales)
 import(shinydashboardPlus)
 
+importFrom("MSnbase", "lapply")
 importFrom("graphics", "axis", "boxplot", "legend", "matlines", "par",
            "points", "title", "abline", "mtext", "polygon", "text")
 importFrom("utils", "packageVersion", "write.table")
