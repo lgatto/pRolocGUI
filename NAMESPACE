@@ -17,8 +17,8 @@ importFrom(DT,
            ## see issue 61
            ## dataTableOutput,
            ## renderDataTable,
-           formatStyle)
-importFrom(dplyr, "%>%")
+           "formatStyle", "JS")
+importFrom(dplyr, "%>%", "group_by")
 importFrom(ggplot2, "aes", "ggplot", "geom_point", "geom_smooth", 
            "annotate", "xlab")
 importFrom(colourpicker, "colourInput")
@@ -26,4 +26,5 @@ importFrom(shinyhelper, "observe_helpers", "helper")
 importFrom(shinyWidgets, "checkboxGroupButtons", "updateCheckboxGroupButtons")
 importFrom(shinyjs, "useShinyjs")
 importFrom(colorspace, "darken", "lighten")
+importFrom(shinydashboard, "dashboardSidebar")
 export(pRolocVis)
