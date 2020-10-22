@@ -355,7 +355,7 @@ pRolocVis_compare <- function(object,
     
   )
   
-  rightsidebar <- rightSidebar(background = "light",
+  rightsidebar <- my_rightSidebar(background = "light",
                                width = 160,
                                .items = list(
                                  p(strong("Map controls")),
