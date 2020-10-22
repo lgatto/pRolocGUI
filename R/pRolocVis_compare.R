@@ -59,7 +59,7 @@ pRolocVis_compare <- function(object,
   ## Check if object is an MSnSetList and if not, check it's a list of matrices 
   ## with MSnSets in the methargs (as per plot2D)
   if (inherits(object, "MSnSetList")) {
-    object_coords <- lapply(object, function(x) plot2D(x, plot = FALSE, ...))
+    object_coords <- lapply(object@x, function(x) plot2D(x, plot = FALSE, ...))
   }
   else if (inherits(object, "list")) {
     object_coords <- list()
@@ -73,7 +73,7 @@ pRolocVis_compare <- function(object,
       for (i in seq(object)) {
         .methargs <- myargs$methargs[[1]]  ## this should be a MSnSetList
         if (is.null(.methargs)) stop(paste("Missing methargs, please pass MSnSets as a MSnSetList, see ?pRolocVis"))
-        if (class(.methargs) != "MSnSetList") stop(paste("methargs must be a MSnSetList of length 2, see ?pRolocVis"))
+        if (!inherits(.methargs, "MSnSetList")) stop(paste("methargs must be a MSnSetList, see ?pRolocVis"))
         if (length(.methargs) != 2) stop(paste("methargs must be a MSnSetList of length 2, see ?pRolocVis"))
         # if (!all(sapply(.methargs, inherits, "MSnSet"))) stop(paste("methargs must be a list of MSnSets of length 2, see ?pRolocVis"))
         if (is.null(myargs$method)) stop(paste("method must be set to method = 'none' if a matrix is passed"))

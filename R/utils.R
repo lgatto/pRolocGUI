@@ -140,6 +140,9 @@ plotFacetProfiles <- function(data,
                               col,
                               ...) {
   
+  intensities = NULL
+  mrk = NULL
+  
     if (missing(replicate.column.name)) {
         # message(paste("Replicate information not provided, assuming 1 replicate only"))
         repInfo <- rep(1, ncol(data))
