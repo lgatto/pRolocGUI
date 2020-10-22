@@ -2,27 +2,18 @@
 ##' interactively.
 ##'
 ##' The function \code{pRolocVis} is a wrapper for
-##' \code{pRolocVis_pca}, \code{pRolocVis_classify},\code{pRolocVis_compare}.
+##' \code{pRolocVis_pca}, \code{pRolocVis_compare}.
 ##' and \code{pRolocVis_aggregate}. These Shiny apps allow to explore and
 ##' analyse interactively spatial proteomics data.
 ##'
-##' The \code{pca} Shiny app allows exploration of quantitative data
-##' (1) visually through Principle Component Analysis (PCA), (2)
+##' The \code{explore} Shiny app allows exploration of quantitative data
+##' (1) visually through a projection of the dataset, (2)
 ##' protein profiles, and (3) a searchable feature data table,
-##' allowing visualisation of particular proteins of interest. (NOTE:
-##' This
-##' \href{https://github.com/ComputationalProteomicsUnit/pRolocGUI/issues/92}{issue
-##' on GitHub} shows how to use pre-computed coodinates prior to
-##' visualisation with the app.)
-##'
-##' The \code{classify} Shiny app is used to visualise classification
-##' results and set user-specified thresholds for sub-cellular
-##' location predictions.
+##' allowing visualisation of sets of proteins of interest. 
 ##'
 ##' The \code{compare} Shiny app is meant for comparing protein
 ##' localisation between two conditions, or two different experiments,
-##' replicates etc. Please note that passing the argument \code{method}
-##' to \code{...} will not work as it is already specified internally.
+##' replicates etc.
 ##'
 ##' The \code{aggregation} Shiny app displays a scatter plot of the
 ##' maximum or mean distances within each feature (e.g. protein group)

@@ -219,14 +219,21 @@ pRolocVis_compare <- function(object,
     actionButton(inputId = "selectall", label="Select/clear all",
                  style='padding:4%; font-size:100%; margin:6px 5px 6px 20%') %>%
       helper(colour = "grey",
-             type = "markdown",
+             type = "inline",
              title = "Explore compartments",
-             content = "Labels", size = "s"),
+             content = c("This sidebar allows you to explore proteins that 
+                         belong to pre-defined subcellular classes. To remove 
+                         or add the class labels on the spatial map click 
+                         the desired button that corresponds to the compartments 
+                         name. All class labels can be added back to the plot 
+                         (or fully removed) by clicking them individually 
+                         or using the \"Select/clear all\" action button."),
+             size = "s"),
     checkboxGroupButtons(
       inputId = "markers",
       label = "",
       choices = myclasses,
-      selected = NULL,
+      selected = myclasses,
       direction = "vertical",
       width = "100%",
       size = "xs",
@@ -270,33 +277,63 @@ pRolocVis_compare <- function(object,
                                                id = "plotBrush2",
                                                resetOnNew = TRUE))) %>%
                            helper(colour = "grey",
-                                  type = "markdown",
+                                  type = "inline",
                                   title = "Interactive data projection",
-                                  content = "Map", size = "s")
-                           )),
+                                  content = c("This visualisation is an interactive 
+                                  projection of the dataset. Each point on the plot 
+                                  represents one protein.<br /> <br /> Double click 
+                                  points on the plot to identify them (similarly you 
+                                  can double click to remove them or alternatively 
+                                  use the \"Clear selection\" button in the left 
+                                  tab panel to remove all highlighted proteins). 
+                                  If you would like to highlight proteins without 
+                                  displaying their name/ID untick \"Show Labels\" 
+                                  in the left panel.<br /> <br /> Searching: Use 
+                                  the search box below the plot to search and find 
+                                  your favourite proteins. Batch searching is enabled 
+                                  but requires that protein IDs/features/text are 
+                                  separated by spaces. Search matches will appear 
+                                  in the table below. Click the desired row entry(s) 
+                                  in the table and they will be highlighed on the plot.
+                                  <br /> <br /> Interactive zooming: Click and brush 
+                                  areas of the plot (use your mouse to click and brush 
+                                  a rectangular area of the plot) and then click the 
+                                  \"Zoom/reset\" button in the bottom left panel. 
+                                  <br /> <br /> Exporting: Highlighed proteins can 
+                                  be exported to a .csv file by clicking \"Save selection\". 
+                                  Highlighted proteins can be removed from the selection 
+                                  by clicking \"Clear selection\". <br /> <br /> Rendering 
+                                  of images: Use the \"Download plot\" button to 
+                                  save a high resolution PDF of the data."),
+                           size = "s"))
+                           ),
                 tabPanel("Profiles", value = "profilesPanel1",
-                         fluidRow(
-                           column(5,
-                                  plotOutput("profile1",
-                                             height = "400px",
-                                             width = "100%"),
-                                  offset = 0),
-                           column(5,
-                                  plotOutput("profile2",
-                                             height = "400px",
-                                             width = "100%"),
-                                  offset = 0) %>%
+                         br(),
+                         p(strong("Dataset 1")),
+                         plotOutput("profile1",
+                                    height = "400px",
+                                    width = "100%") %>%
                            helper(colour = "grey",
-                                  type = "markdown",
+                                  type = "inline",
                                   title = "Protein profiles",
-                                  content = "Profiles", size = "s")
-                           )),
+                                  content = "Profile plot displaying the relative 
+                                             abundance of each protein in each fraction 
+                                             across the gradient employed.", size = "s"),
+                         p(strong("Dataset 2")),
+                         plotOutput("profile2",
+                                    height = "400px",
+                                    width = "100%")
+                  ),
                 tabPanel("Profiles (by class)", value = "profilesPanel2",
                          fluidRow(
                            column(5, br(),
+                                  p(strong("Dataset 1")),
+                                  br(),
                                   plotOutput("classProfiles1",
                                              height = "1200px")),
                            column(5, br(),
+                                  p(strong("Dataset 2")),
+                                  br(),
                                   plotOutput("classProfiles2",
                                              height = "1200px"))
                            )),
@@ -318,14 +355,15 @@ pRolocVis_compare <- function(object,
                          )),
                 tabPanel("Sample info", value = "sampleInfo",
                          br(),
-                         fluidRow(
-                           column(5, p(strong("Sample data for data 1")),
-                                       tableOutput("pdata1")),
-                           column(5, p(strong("Sample data for data 2")), 
-                                       tableOutput("pdata2"))
-                         ),
+                         # fluidRow(
+                         #   column(5, 
+                         p(strong("Sample data for data 1")), br(),
+                         tableOutput("pdata1"),
+                         p(strong("Sample data for data 2")), br(),
+                         tableOutput("pdata2"),
                          br(),br(),
-                ), 
+                         ),
+                 
                 tabPanel("Colour picker", value = "colPicker",
                          fluidRow(br(),
                            if (ll > 5) {

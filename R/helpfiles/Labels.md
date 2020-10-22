@@ -1,1 +1,0 @@
-This sidebar allows you to explore proteins that belong to pre-defined subcellular classes. To remove or add the class labels on the spatial map click the desired button that corresponds to the compartments name. All class labels can be added back to the plot (or fully removed) by clicking them individually or using the "Select/clear all" action button.
