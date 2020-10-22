@@ -197,8 +197,8 @@ plotFacetProfiles <- function(data,
     p <- p + 
         scale_x_discrete(limits=fracLev) +
         ylab("Normalised intensities") + xlab("") +
-        # scale_fill_manual(values = col, aesthetics = c("fill","colour")) + 
-        # scale_color_manual(values = col, aesthetics = c("fill, colour")) +
+        scale_fill_manual(values = col, aesthetics = c("fill","colour")) +
+        scale_color_manual(values = col, aesthetics = c("fill, colour")) +
         theme_light() +
         theme(panel.spacing = unit(1, "lines"),
               legend.position = "none", 
