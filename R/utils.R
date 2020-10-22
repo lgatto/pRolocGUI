@@ -152,11 +152,11 @@ plotFacetProfiles <- function(data,
     ## prep data for ggplot 
     .rn <- rownames(data)
     .cn <- colnames(data)
-    plot_data <- data.frame(id = rep(.rn, ncol(data)),  
-                            fraction = rep(.cn, each = nrow(data)), # variable
-                            intensities = as.vector(data),  # value
-                            rep = factor(rep(repInfo, each = nrow(data))),
-                            mrk = rep(fd[, fcol], ncol(data)))
+    plot_data <- data.frame("id" = rep(.rn, ncol(data)),  
+                            "fraction" = rep(.cn, each = nrow(data)), # variable
+                            "intensities" = as.vector(data),  # value
+                            "rep" = factor(rep(repInfo, each = nrow(data))),
+                            "mrk" = rep(fd[, fcol], ncol(data)))
     plot_data <- within(plot_data, fraction <- factor(fraction, levels = colnames(data)))
     
     df <- plot_data %>% group_by(mrk, fraction, rep) %>%
@@ -194,8 +194,8 @@ plotFacetProfiles <- function(data,
     p <- p + 
         scale_x_discrete(limits=fracLev) +
         ylab("Normalised intensities") + xlab("") +
-        scale_fill_manual(values = col, aesthetics = c("fill","colour")) +
-        scale_color_manual(values = col, aesthetics = c("fill, colour")) +
+        # scale_fill_manual(values = col, aesthetics = c("fill","colour")) + 
+        # scale_color_manual(values = col, aesthetics = c("fill, colour")) +
         theme_light() +
         theme(panel.spacing = unit(1, "lines"),
               legend.position = "none", 
