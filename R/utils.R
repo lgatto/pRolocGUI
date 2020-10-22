@@ -269,8 +269,57 @@ plotFacetProfiles<-function(df, col, reps = FALSE, ...){
     return(p)
 }
 
+## reuqired to fix sidebaropen on startup (see proceeding functions)
+.rightSidebarTabList <- function(...) {
+  
+  tabItems <- list(...)
+  tabItems <- tabItems[[1]]$children
+  len <- length(tabItems)
+  
+  if (len > 0) {
+    # generate tab items based on panel items
+    tabItemList <- lapply(1:len, FUN = function(i) {
+      
+      item <- tabItems[[i]]
+      id <- item$attribs$id
+      id <- gsub(x = id, pattern = "control-sidebar-", replacement = "")
+      id <- gsub(x = id, pattern = "-tab", replacement = "")
+      active <- sum(grep(x = item$attribs$class, pattern = "active")) == 1
+      icon <- item$attribs$icon
+      
+      .rightSidebarTabItem(id = id, icon = icon, active = active)
+    })
+    
+    # put everything inside the container
+    shiny::tags$ul(
+      class = "nav nav-tabs nav-justified control-sidebar-tabs",
+      tabItemList
+    )
+  }
+}
+.rightSidebarTabItem <- function(id, icon, active) {
+  
+  stopifnot(!is.null(id))
+  
+  shiny::tags$li(
+    class = if (isTRUE(active)) "active" else NULL,
+    shiny::tags$a(
+      href = paste0("#control-sidebar-", id, "-tab"), 
+      `data-toggle` = "tab",
+      shiny::tags$i(class = paste0("fa fa-", icon))
+    )
+  )
+}
+.rightSidebarPanel <- function(...) {
+  shiny::tags$div(
+    class = "controlbar tab-content",
+    ...
+  )
+}
+
+
 ## customise the right sidebar so it is open on startup
-rightSidebar <- function(..., background = "dark", width = 230, .items = NULL) {
+my_rightSidebar <- function(..., background = "dark", width = 230, .items = NULL) {
     
     panels <- list(...)
     
@@ -280,8 +329,8 @@ rightSidebar <- function(..., background = "dark", width = 230, .items = NULL) {
             class = paste0("control-sidebar control-sidebar-", background),
             style = paste0("width: ", width, "px;"),
             # automatically create the tab menu
-            if (length(panels) > 0) shinydashboardPlus:::rightSidebarTabList(rigthSidebarPanel(...)),
-            if (length(panels) > 0) shinydashboardPlus:::rigthSidebarPanel(...) else rigthSidebarPanel(.items)
+            if (length(panels) > 0) .rightSidebarTabList(.rightSidebarPanel(...)),
+            if (length(panels) > 0) .rightSidebarPanel(...) else .rightSidebarPanel(.items)
         ),
         # Add the sidebar background. This div must be placed
         # immediately after the control sidebar
