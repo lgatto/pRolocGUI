@@ -93,9 +93,9 @@ pRolocVis <- function(object, app = "explore", fcol, ...) {
   if (missing(app))
     app <- "explore"
   if (app == "explore")
-    pRolocVis_explore(object, fcol, ...)
+    res <- pRolocVis_explore(object, fcol, ...)
   if (app == "compare")
-    pRolocVis_compare(object, ...)
+    res <- pRolocVis_compare(object, ...)
   if (app == "aggregate")
     res <- pRolocVis_aggregate(object, fcol, ...)
   invisible(res)
