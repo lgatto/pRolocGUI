@@ -8,11 +8,11 @@
 \alias{pRolocVis_explore}
 \title{Interactive visualisation of spatial proteomics data}
 \usage{
-pRolocVis(object, app = "explore", fcol, ...)
+pRolocVis(object, app = "explore", fcol = "markers", ...)
 
 pRolocVis_aggregate(
   object,
-  fcol,
+  fcol = "markers",
   groupBy,
   fig.height = "700px",
   nchar = 25,
@@ -21,8 +21,7 @@ pRolocVis_aggregate(
 
 pRolocVis_compare(
   object,
-  fcol1 = "markers",
-  fcol2 = "markers",
+  fcol = "markers",
   fig.height = "700px",
   nchar = 25,
   ...
@@ -47,8 +46,12 @@ application.}
 
 \item{fcol}{The feature meta-data label (\code{fData} column name)
 to be used for colouring. Default is \code{"markers"}. If set
-to \code{NULL}, no annotation is expected. Not valid for use
-with the \code{"compare"} app, please pass arguments 
+to \code{NULL}, no annotation is expected. For the
+\code{"compare"} app, a character vector of length 2 is
+allowed to set different labels for each dataset. If
+only one label is specified, then this single label 
+will be used to identify the annotation column in both datasets. 
+Please see example herein.
 \code{"fcol1"} and \code{"fcol2"} in this case.}
 
 \item{...}{Additional parameters passed to \code{plot2D} for the
@@ -60,29 +63,10 @@ to be passed to \code{combineFeatures}.}
 \item{groupBy}{The feature meta-data label (\code{fData} column name)
 to be used for summarising the features to be combined.}
 
-\item{fig.height}{Height of the figure. Default is \code{"600px"}.}
+\item{fig.height}{Height of the figure. Default is \code{"700px"}.}
 
-\item{nchar}{Maximum number of characters of the markers class
+\item{nchar}{Maximum number of characters of the subcellular class
 names, before their names are truncated. Default is 25.}
-
-\item{fcol1}{In yhe \code{compare} app this is the feature
-meta-data label (fData column name) for the first dataset in
-the \code{MSnSetList}.  Default is \code{markers}.}
-
-\item{fcol2}{In the \code{compare} app this is the feature
-meta-data label (fData column name) for the second dataset in
-the \code{MSnSetList}.  Default is \code{markers}.}
-}
-\value{
-For the \code{explore}, \code{compare} and \code{aggregate} apps 
-    a \code{character} vector of \code{featureNames} names of the
-    \code{object} loaded that have been selected in the app
-    upon application closure.
-
-For the \code{explore}, \code{compare} and \code{aggregate} apps 
-    a \code{character} vector of \code{featureNames} names of the
-    \code{object} loaded that have been selected in the app
-    upon application closure.
 }
 \description{
 These functions allow one to explore spatial proteomics data
@@ -135,11 +119,11 @@ if (interactive()) {
 }
 
 ## Load the Compare app
-data("hyperLOPIT2015ms3r1")
-data("hyperLOPIT2015ms3r2")
-xx <- MSnSetList(list(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r2))
+data("hyperLOPITU2OS2018")
+data("lopitdcU2OS2018")
+xx <- MSnSetList(list(hyperLOPITU2OS2018, lopitdcU2OS2018))
 if (interactive()) {
-  pRolocVis(xx, app = "compare")
+  pRolocVis(xx, app = "compare", fcol = c("markers", "final.assignment"))
 }
 
 ## Visualise the location and distribution of peptides per protein group
@@ -148,7 +132,7 @@ if (interactive()) {
   ## Combine PSM data to peptides
   hl <- combineFeatures(hyperLOPIT2015ms2psm,
                         groupBy = fData(hyperLOPIT2015ms2psm)$Sequence,
-                        fun = median)
+                        method = median)
   ## Visualise peptides according to protein group
   pRolocVis(hl, app = "aggregate", fcol = "markers",
             groupBy = "Protein.Group.Accessions")
