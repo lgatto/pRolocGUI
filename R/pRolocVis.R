@@ -92,8 +92,6 @@ pRolocVis <- function(object, app = "explore", fcol, ...) {
     app <- "compare"
   if (missing(app))
     app <- "explore"
-  if (missing(fcol) && app != "classify")
-    fcol <- "markers"
   if (app == "explore")
     pRolocVis_explore(object, fcol, ...)
   if (app == "compare")
