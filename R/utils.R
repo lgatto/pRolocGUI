@@ -70,7 +70,7 @@ plot2D_lisa <- function(coords, fd, fcol = fcol,
 }
 
 
-highlightOnPlot <- function(coords, myfoi, labels = FALSE,
+highlightOnPlot_lisa <- function(coords, myfoi, labels = FALSE,
                             scheme = c("white"), cex = 1.2) {
     
     .data <- coords
@@ -132,12 +132,21 @@ $("#mySearch").on("keyup redraw", function(){
 '
 
 ## make data frame for ggplot
-makeDF <- function(data = profs, fcol = fcol, fd = fd, pd = pd, replicate.column.name) {
+plotFacetProfiles <- function(data, 
+                              fcol, 
+                              fd, 
+                              pd, 
+                              replicate.column.name, 
+                              col,
+                              ...) {
+  
     if (missing(replicate.column.name)) {
         # message(paste("Replicate information not provided, assuming 1 replicate only"))
         repInfo <- rep(1, ncol(data))
+        reps <- FALSE
     } else {
         repInfo <- pd[, replicate.column.name]
+        reps <- TRUE
     }
     
     ## prep data for ggplot 
@@ -149,85 +158,16 @@ makeDF <- function(data = profs, fcol = fcol, fd = fd, pd = pd, replicate.column
                             rep = factor(rep(repInfo, each = nrow(data))),
                             mrk = rep(fd[, fcol], ncol(data)))
     plot_data <- within(plot_data, fraction <- factor(fraction, levels = colnames(data)))
-    return(plot_data)
-}
+    
+    df <- plot_data %>% group_by(mrk, fraction, rep) %>%
+      dplyr::summarise(min = min(intensities, na.rm = TRUE),
+                       quant_05 = quantile(intensities, 0.05, na.rm = TRUE),
+                       mean = mean(intensities, na.rm = TRUE),
+                       quant_95 = quantile(intensities, 0.95, na.rm = TRUE),
+                       max = max(intensities, na.rm = TRUE), .groups = "keep",
+                       na.rm = TRUE)
+    
 
-
-# ## Get average intensity profiles and run hclust - see example in ?plotConsProfiles 
-# clusterFracMatrix <- function(plot_data, reps = FALSE) {
-#     if (reps) {
-#         repInfo <- unique(plot_data[, "rep"])
-#     } else {
-#         repInfo = 1
-#     }
-#     averMat <- vector("list", length(repInfo))
-#     for (i in seq(repInfo)) {
-#         averMat[[i]] <- plot_data %>%
-#             filter(rep == repInfo[i]) %>%
-#             filter(mrk!="unknown") %>% # pointless averaging unknown proteins in this representation
-#             group_by(mrk, fraction) %>%
-#             summarise(intensities=mean(intensities), .groups = "keep")
-#         # Get marker set ordering according to hierarchical clustering
-#         # As currently implemented, requires reshape to wide-format matrix for dist
-#         average_profile_matrix <- averMat[[i]] %>% spread(key=fraction, value=intensities) %>% data.frame()
-#         rownames(average_profile_matrix) <- average_profile_matrix$mrk
-#         average_profile_matrix <- average_profile_matrix %>% dplyr::select(-mrk)
-#         clust <- hclust(dist(as.matrix(average_profile_matrix)))
-#         my_order <- rownames(average_profile_matrix)[clust$order]
-#         # Re-level factor by new marker set order
-#         averMat[[i]]$mrk <- factor(averMat[[i]]$mrk, my_order)
-#         averMat[[i]]$rep <- repInfo[i]
-#     }
-#     averMat <- do.call(rbind, averMat)
-#     return(averMat)
-# }
-# 
-# ## plot heatmap of marker profiles
-# ## 
-# plotHeatmap <- function(averMat) {
-#     g <- ggplot() + geom_tile(data = averMat, 
-#                               aes(factor(fraction), mrk, fill=intensities)) +
-#         scale_fill_continuous(low="white", high="#53788F", name="Normalised intensities") +
-#         facet_wrap(rep~., scales = "free_x", labeller = as_labeller(c("1"="Replicate 1",
-#                                                                       "2"="Replicate 2",
-#                                                                       "3"="Replicate 3"))) +
-#         xlab("Fractions") +
-#         theme_light() +
-#         theme(strip.text.x = element_text(size = 14),
-#               strip.background = element_rect(fill="#E0E0E0"),
-#               axis.title = element_text(size=14),
-#               legend.text = element_text(size=12),
-#               axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size = 14),
-#               axis.text.y = element_text(size = 14),
-#               # axis.text.x = element_blank(), 
-#               # axis.title.x = element_blank(),
-#               axis.title.x = element_text(margin = margin(10,0,0,0))     # remove facet strips
-#         ) +
-#         ylab("Classes")
-#     return(g)
-# }
-# 
-# ## generate boxplot of intensities
-# ggboxplot <- function(plot_data) {
-#     q <- ggplot(data = plot_data, aes(fraction, intensities, group = fraction)) + 
-#         geom_boxplot(fill="#53788F") + 
-#         # scale_fill_manual("gray") + 
-#         theme_light() +
-#         xlab("Fractions") +
-#         ylab("Normalised intensities") +
-#         theme(legend.position = "none", 
-#               axis.title = element_text(size=14),
-#               strip.text.x = element_text(size = 14),
-#               strip.background = element_rect(fill="#E0E0E0"),
-#               # strip.text = element_blank(),
-#               axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size = 14),
-#               axis.text.y = element_text(size = 14),
-#               axis.title.x = element_text(margin = margin(10,0,0,0)))     # remove facet strips
-#     return(q) 
-# } 
-
-## facet of all profile plots
-plotFacetProfiles<-function(df, col, reps = FALSE, ...){
     fracLev <- levels(df$fraction)
     if (reps == TRUE) {
         repLev <- levels(df$rep)
@@ -254,7 +194,7 @@ plotFacetProfiles<-function(df, col, reps = FALSE, ...){
     p <- p + 
         scale_x_discrete(limits=fracLev) +
         ylab("Normalised intensities") + xlab("") +
-        scale_fill_manual(values = col, aesthetics = c("fill","colour")) + 
+        scale_fill_manual(values = col, aesthetics = c("fill","colour")) +
         scale_color_manual(values = col, aesthetics = c("fill, colour")) +
         theme_light() +
         theme(panel.spacing = unit(1, "lines"),

@@ -228,18 +228,6 @@ pRolocVis_explore <- function(object,
     cw <- c("50%")
   }
 
-  ## make data.frame for ggplot facets
-  plot_data <- makeDF(profs, fcol, fd, pd)
-  calcData <- plot_data %>% group_by(mrk, fraction, rep) %>%
-    dplyr::summarise(min = min(intensities, na.rm = TRUE),
-              quant_05 = quantile(intensities, 0.05, na.rm = TRUE),
-              mean = mean(intensities, na.rm = TRUE),
-              quant_95 = quantile(intensities, 0.95, na.rm = TRUE),
-              max = max(intensities, na.rm = TRUE), .groups = "keep",
-              na.rm = TRUE)
-  # heatmap_data <- clusterFracMatrix(plot_data, reps = TRUE)
-  ggCols <- cols
-
   
   #####################################################################
   ########################### BUILD UI  ############################### 
@@ -446,9 +434,9 @@ pRolocVis_explore <- function(object,
       if (resetLabels$logical) idxDT <<- numeric()  ## If TRUE labels are cleared
       namesIdxDT <<- names(idxDT)
       if (length(idxDT)) {
-        highlightOnPlot(object_coords, namesIdxDT)
+        highlightOnPlot_lisa(object_coords, namesIdxDT)
         if (input$checkbox)
-          highlightOnPlot(object_coords, namesIdxDT, labels = TRUE)
+          highlightOnPlot_lisa(object_coords, namesIdxDT, labels = TRUE)
       }
       resetLabels$logical <- FALSE
       height <- reactive(ifelse(!is.null(input$innerWidth),input$innerWidth*3/5,0)) # fix ratio 1:1
@@ -533,7 +521,7 @@ pRolocVis_explore <- function(object,
     ## Class specific/faceted plots
     output$profile2 <- renderPlot({
       mycol <- c(cols_user(), "grey")
-      plotFacetProfiles(df = calcData, col = mycol, reps = FALSE)
+      plotFacetProfiles(profs, fcol, fd, pd, col = mycol)
     })
     
     ## --------Display/update data table--------
@@ -635,9 +623,9 @@ pRolocVis_explore <- function(object,
           if (resetLabels$logical) idxDT <<- numeric()  ## If TRUE labels are cleared
           namesIdxDT <<- names(idxDT)
           if (length(idxDT)) {
-            highlightOnPlot(object_coords, fd, namesIdxDT)
+            highlightOnPlot_lisa(object_coords, fd, namesIdxDT)
             if (input$checkbox)
-              highlightOnPlot(object_coords, fd, namesIdxDT, labels = TRUE, cex = 1)
+              highlightOnPlot_lisa(object_coords, fd, namesIdxDT, labels = TRUE, cex = 1)
           }
           resetLabels$logical <- FALSE
           height <- reactive(ifelse(!is.null(input$innerWidth),input$innerWidth*3/5,0)) # fix ratio 1:1
@@ -730,7 +718,7 @@ pRolocVis_explore <- function(object,
             h <- ncol(profs)/2
           }
           mycol <- c(cols_user(), "grey")
-          profByClass <- plotFacetProfiles(df = calcData, col = mycol, reps = FALSE)
+          profByClass <- plotFacetProfiles(profs, fcol, fd, pd, col = mycol)
           ggsave(filename = file, plot = profByClass, device = "pdf", width = w, height = h) 
         } 
         else {

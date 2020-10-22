@@ -17,7 +17,7 @@ Depends: methods, R (>= 3.1.0), pRoloc (>= 1.27.6), Biobase,
 Imports: shiny (>= 0.9.1), scales, dplyr, DT (>= 0.1.40), graphics,
 	 utils, ggplot2, shinydashboardPlus, colourpicker, shinyhelper,
          shinyWidgets, shinyjs, colorspace, shinydashboard,
-         stats, grDevices
+         stats, grDevices, grid
 Suggests: pRolocdata, knitr, BiocStyle (>= 2.5.19), rmarkdown
 License: GPL-2
 URL: http://ComputationalProteomicsUnit.github.io/pRolocGUI/

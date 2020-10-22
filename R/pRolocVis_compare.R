@@ -216,21 +216,6 @@ pRolocVis_compare <- function(object,
     cw <- c("50%")
   }
   
-  ## make data.frame for ggplot facets
-  plot_data <- calcData <- list()
-  for (i in seq(object_coords)) {
-    plot_data[[i]] <- makeDF(profs[[i]], fcol[[i]], fd[[i]], pd[[i]])
-    calcData[[i]] <- plot_data[[i]] %>% group_by(mrk, fraction, rep) %>%
-      dplyr::summarise(min = min(intensities, na.rm = TRUE),
-                       quant_05 = quantile(intensities, 0.05, na.rm = TRUE),
-                       mean = mean(intensities, na.rm = TRUE),
-                       quant_95 = quantile(intensities, 0.95, na.rm = TRUE),
-                       max = max(intensities, na.rm = TRUE), .groups = "keep",
-                       na.rm = TRUE)
-  }
-  # heatmap_data <- clusterFracMatrix(plot_data, reps = TRUE)
-  ggCols <- cols
-
   
   #####################################################################
   ########################### BUILD UI  ############################### 
@@ -635,12 +620,14 @@ pRolocVis_compare <- function(object,
     ## ================================================================
     output$classProfiles1 <- renderPlot({
       mycol <- c(cols_user(), "grey")
-      plotFacetProfiles(df = calcData[[1]], col = mycol, reps = FALSE, ncol = 1)
+      plotFacetProfiles(profs[[1]], fcol[1], fd[[1]], 
+                        pd[[1]], col = mycol, ncol = 1)
     })
     
     output$classProfiles2 <- renderPlot({
       mycol <- c(cols_user(), "grey")
-      plotFacetProfiles(df = calcData[[2]], col = mycol, reps = FALSE, ncol = 1)
+      plotFacetProfiles(profs[[2]], fcol[2], fd[[2]], 
+                        pd[[2]], col = mycol, ncol = 1)
     })
     
     
@@ -783,8 +770,12 @@ pRolocVis_compare <- function(object,
           #   h <- ncol(profs)/2
           # }
           mycol <- c(cols_user(), "grey")
-          profByClass <- plotFacetProfiles(df = calcData[[1]], col = mycol, reps = FALSE)
-          profByClass <- plotFacetProfiles(df = calcData[[2]], col = mycol, reps = FALSE)
+          profByClass1 <- plotFacetProfiles(profs[[1]], fcol[1], 
+                                            fd[[1]], pd[[1]], 
+                                            col = mycol, ncol = 1)
+          profByClass2 <- plotFacetProfiles(profs[[2]], fcol[2], 
+                                            fd[[2]], pd[[2]], 
+                                            col = mycol, ncol = 1)
           ggsave(filename = file, plot = profByClass1, device = "pdf", width = 12, height = 5) 
           ggsave(filename = file, plot = profByClass2, device = "pdf", width = 12, height = 5) 
         } 
