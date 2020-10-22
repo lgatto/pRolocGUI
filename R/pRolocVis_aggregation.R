@@ -2,7 +2,7 @@
 ##' @param groupBy The feature meta-data label (\code{fData} column name)
 ##' to be used for summarising the features to be combined.
 pRolocVis_aggregate <- function(object, 
-                                fcol,
+                                fcol = "markers",
                                 groupBy,
                                 fig.height = "700px",
                                 # legend.width = "200%",
@@ -18,7 +18,7 @@ pRolocVis_aggregate <- function(object,
   fig.width = "100%"
   
   ## Return featureNames of proteins selected
-  on.exit(return(invisible(idDT)))
+  # on.exit(return(invisible(idDT)))
 
   ## Check input object is an MSnSet
   if (!inherits(object, "MSnSet"))

@@ -42,9 +42,16 @@
 ##'     \code{"aggregate"}. See description below.
 ##' @param fcol The feature meta-data label (\code{fData} column name)
 ##'     to be used for colouring. Default is \code{"markers"}. If set
-##'     to \code{NULL}, no annotation is expected. Not valid for use
-##'     with the \code{"compare"} app, please pass arguments 
+##'     to \code{NULL}, no annotation is expected. For the
+##'     \code{"compare"} app, a character vector of length 2 is
+##'     allowed to set different labels for each dataset. If
+##'     only one label is specified, then this single label 
+##'     will be used to identify the annotation column in both datasets. 
+##'     Please see example herein.
 ##'     \code{"fcol1"} and \code{"fcol2"} in this case.
+##' @param fig.height Height of the figure. Default is \code{"700px"}.
+##' @param nchar Maximum number of characters of the subcellular class
+##'     names, before their names are truncated. Default is 25.
 ##' @param ... Additional parameters passed to \code{plot2D} for the
 ##'     \code{"explore"} (such as the dimensionality reduction
 ##'     technique, and methods), \code{"compare"} apps. For 
@@ -67,11 +74,11 @@
 ##' }
 ##'
 ##' ## Load the Compare app
-##' data("hyperLOPIT2015ms3r1")
-##' data("hyperLOPIT2015ms3r2")
-##' xx <- MSnSetList(list(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r2))
+##' data("hyperLOPITU2OS2018")
+##' data("lopitdcU2OS2018")
+##' xx <- MSnSetList(list(hyperLOPITU2OS2018, lopitdcU2OS2018))
 ##' if (interactive()) {
-##'   pRolocVis(xx, app = "compare")
+##'   pRolocVis(xx, app = "compare", fcol = c("markers", "final.assignment"))
 ##' }
 ##' 
 ##' ## Visualise the location and distribution of peptides per protein group
@@ -80,12 +87,12 @@
 ##'   ## Combine PSM data to peptides
 ##'   hl <- combineFeatures(hyperLOPIT2015ms2psm,
 ##'                         groupBy = fData(hyperLOPIT2015ms2psm)$Sequence,
-##'                         fun = median)
+##'                         method = median)
 ##'   ## Visualise peptides according to protein group
 ##'   pRolocVis(hl, app = "aggregate", fcol = "markers",
 ##'             groupBy = "Protein.Group.Accessions")
 ##' }
-pRolocVis <- function(object, app = "explore", fcol, ...) {
+pRolocVis <- function(object, app = "explore", fcol = "markers", ...) {
   res <- NULL
   app <- match.arg(app, c("explore", "compare", "aggregate"))
   if (inherits(object, "MSnSetList"))
@@ -95,7 +102,7 @@ pRolocVis <- function(object, app = "explore", fcol, ...) {
   if (app == "explore")
     res <- pRolocVis_explore(object, fcol, ...)
   if (app == "compare")
-    res <- pRolocVis_compare(object, ...)
+    res <- pRolocVis_compare(object, fcol, ...)
   if (app == "aggregate")
     res <- pRolocVis_aggregate(object, fcol, ...)
   invisible(res)

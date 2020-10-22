@@ -18,22 +18,8 @@
 ## https://rinterface.com/shiny/shinydashboardPlus/#
 
 ##' @rdname pRolocVis-apps
-##' @param fcol1 In yhe \code{compare} app this is the feature
-##'     meta-data label (fData column name) for the first dataset in
-##'     the \code{MSnSetList}.  Default is \code{markers}.
-##' @param fcol2 In the \code{compare} app this is the feature
-##'     meta-data label (fData column name) for the second dataset in
-##'     the \code{MSnSetList}.  Default is \code{markers}.
-##' @param fig.height Height of the figure. Default is \code{"600px"}.
-##' @param nchar Maximum number of characters of the markers class
-##'     names, before their names are truncated. Default is 25.
-##' @return For the \code{explore}, \code{compare} and \code{aggregate} apps 
-##'     a \code{character} vector of \code{featureNames} names of the
-##'     \code{object} loaded that have been selected in the app
-##'     upon application closure.
 pRolocVis_compare <- function(object,
-                          fcol1 = "markers", 
-                          fcol2 = "markers",
+                          fcol = "markers",
                           fig.height = "700px",
                           # fig.width = "100%",
                           # legend.width = "200%",
@@ -51,11 +37,7 @@ pRolocVis_compare <- function(object,
   
   ## Check no more than 2 datasets are loaded
   if (length(object) != 2) stop(paste("object must be of length 2 (use the 'explore' app for 1 object)"))
-  
-  ## check fcol is not set, user must define fcol1 and fcol2 explicitly
-  if (any(names(myargs) == "fcol"))
-    stop("Please specify 'fcol1' and 'fcol2' for each MSnSet respectively, see ?pRolocVis for more details")
-  
+
   ## Check if object is an MSnSetList and if not, check it's a list of matrices 
   ## with MSnSets in the methargs (as per plot2D)
   if (inherits(object, "MSnSetList")) {
@@ -97,14 +79,22 @@ pRolocVis_compare <- function(object,
     })
   
   
-  ## Check fcol is present and if not add a new column called nullmarkers
-  .fcol <- c(fcol1, fcol2)
-  for (i in seq(.fcol)) {
-    if (!is.null(.fcol[i]) && !.fcol[i] %in% fvarLabels(object[[i]])) {
+  ## Check fcol is valid and if not add a new column called nullmarkers
+  ## check fcol is not set, user must define fcol1 and fcol2 explicitly
+  if (length(fcol) == 1) {
+    fcol <- rep(fcol, 2)
+    message(paste0(c("-----------------------------------------------",
+                   "\nIf length(fcol) == 1 pRolocVis will assume that",
+                   "\nthe same fcol is to be used for both datasets",
+                   "\nsetting fcol = c(", fcol[1], ",", fcol[2],")",
+                   "\n-----------------------------------------------")))
+  }
+  for (i in seq(fcol)) {
+    if (!is.null(fcol[i]) && !fcol[i] %in% fvarLabels(object[[i]])) {
       stop("No fcol found, please specify fcol", immediate. = TRUE)
-      # .fcol[i] <- NULL
+      # fcol[i] <- NULL
     }
-    if (is.null(.fcol[i])) {
+    if (is.null(fcol[i])) {
       message(paste("fcol = NULL, no annotation column specified, setting fcol name to nullmarkers"))
       setUnknowncol("#BEBEBE")
       m <- matrix(0, ncol = 1, nrow = nrow(object[[i]]))
@@ -114,7 +104,7 @@ pRolocVis_compare <- function(object,
         fData(x)[, "nullmarkers"] <- 0
         return(x)
       })
-      fcol1 <- fcol2 <- "nullmarkers"
+      fcol <- rep("nullmarkers", 2)
     }
   }
 
@@ -142,7 +132,6 @@ pRolocVis_compare <- function(object,
   
   
   ## Now extract all relevant data
-  fcol <- c(fcol1, fcol2)
   fd <- lapply(object, fData)                     # all featureData
   pd <- lapply(object, pData)
   pcol <- NULL                                    # replicate information
@@ -237,7 +226,7 @@ pRolocVis_compare <- function(object,
       inputId = "markers",
       label = "",
       choices = myclasses,
-      selected = myclasses,
+      selected = NULL,
       direction = "vertical",
       width = "100%",
       size = "xs",
@@ -429,34 +418,37 @@ pRolocVis_compare <- function(object,
     
     ## Get coords for proteins according to selectized marker class(es)
     ## NB: need two reactive objects here as markers in object[[1]] do not
-    ## necessarily have the same indices as markers in object[[2]] (would like
-    ## to allow different markers between different datasets)
+    ## necessarily have the same indices as markers in object[[2]] (would 
+    ## like to allow different markers between different datasets)
     mrkSel1 <- reactive({
       # lapply(input$markers,
       #       function(z) which(pmarkers[[1]][, z] == 1))
       ind <- match(input$markers, colnames(pmarkers[[1]]))
-      .mrkSel1 <- vector("list", length(input$markers))
-      for (i in seq(length(input$markers))) {
-        if (is.na(ind[i])) {
-          .mrkSel1[[i]] <- NA
-        } else {
-          .mrkSel1[[i]] <- which(pmarkers[[1]][, ind[i]] == 1)
+      .mrkSel1 <- list()
+      if (length(ind) > 0) {
+        for (i in seq(length(input$markers))) {
+          if (is.na(ind[i])) {
+            .mrkSel1[[i]] <- NA
+          } else {
+            .mrkSel1[[i]] <- which(pmarkers[[1]][, ind[i]] == 1)
+          }
         }
       }
       .mrkSel1
     })
-    
   
     mrkSel2 <- reactive({
       # lapply(input$markers,
       #       function(z) which(pmarkers[[2]][, z] == 1))
       ind <- match(input$markers, colnames(pmarkers[[2]]))
-      .mrkSel2 <- vector("list", length(input$markers))
-      for (i in seq(length(input$markers))) {
-        if (is.na(ind[i])) {
-          .mrkSel2[[i]] <- NA
-        } else {
-          .mrkSel2[[i]] <- which(pmarkers[[2]][, ind[i]] == 1)
+      .mrkSel2 <- list()
+      if (length(ind) > 0) {
+        for (i in seq(length(input$markers))) {
+          if (is.na(ind[i])) {
+            .mrkSel2[[i]] <- NA
+          } else {
+            .mrkSel2[[i]] <- which(pmarkers[[2]][, ind[i]] == 1)
+          }
         }
       }
       .mrkSel2
@@ -530,8 +522,8 @@ pRolocVis_compare <- function(object,
   
     ## =====================PROFILES plot========================
     ## ==========================================================
-    
     plotProfiles <- function(indData = 1, indMrk = mrkSel1()) {
+      # browser()
       par(mar = c(13, 4, 1, 1), oma = c(0, 0, 0, 0), bg = scheme,
             col.axis = scheme2, col.main = scheme2,
             col.lab = scheme2, fg = scheme2)
@@ -557,7 +549,8 @@ pRolocVis_compare <- function(object,
       bound_high <- quants[2, ]
       ## get quantiles for subcellular classes
       mrkProfs <- lapply(mrkSel1(), function(z) profs[[indData]][z, , drop = FALSE])   # 5% and 95% quantiles for all other classes
-      quants <- lapply(mrkProfs, function(z) apply(z, MARGIN = 2, function(x) quantile(x, c(0.05, .95))))
+      quants <- lapply(mrkProfs, function(z) apply(z, MARGIN = 2, function(x) 
+        quantile(x, c(0.05, .95), na.rm = TRUE)))
       meanProfs <- lapply(mrkProfs, function(z) apply(z, 2, mean))
       ## make polygon plots
       plot(0, ylim = ylim, xlim = c(1, m),

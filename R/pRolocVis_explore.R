@@ -18,13 +18,6 @@
 ## https://rinterface.com/shiny/shinydashboardPlus/#
 
 ##' @rdname pRolocVis-apps
-##' @param fig.height Height of the figure. Default is \code{"600px"}.
-##' @param nchar Maximum number of characters of the markers class
-##'     names, before their names are truncated. Default is 25.
-##' @return For the \code{explore}, \code{compare} and \code{aggregate} apps 
-##'     a \code{character} vector of \code{featureNames} names of the
-##'     \code{object} loaded that have been selected in the app
-##'     upon application closure.
 pRolocVis_explore <- function(object,
                           fcol = "markers",
                           fig.height = "700px",
