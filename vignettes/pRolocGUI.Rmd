@@ -344,7 +344,7 @@ for more information.
 We can launch the `pRolocVis` function and look at the PSM data
 without aggregating to peptide
 
-```{r aggvar, echo = TRUE, message = FALSE, warning = FALSE}
+```{r aggvar, eval = FALSE, echo = TRUE, message = FALSE, warning = FALSE}
 ## load PSM data
 data("hyperLOPIT2015ms2psm")
 
@@ -358,7 +358,7 @@ app to look at the relationships between peptide level data and
 protein groups. For this latter case we can use the `combineFeatures`
 function from `MSnbase`. 
 
-```{r aggvar, echo = TRUE, message = FALSE, warning = FALSE}
+```{r aggvar2, eval = FALSE, echo = TRUE, message = FALSE, warning = FALSE}
 ## Combine PSM data to peptides
 hl <- combineFeatures(hyperLOPIT2015ms2psm,
                       groupBy = fData(hyperLOPIT2015ms2psm)$Sequence,
