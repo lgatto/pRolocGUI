@@ -351,17 +351,17 @@ pRolocVis_aggregate <- function(object,
           allpeps <- unlist(lapply(protacc, 
                                    function(z) 
                                      feats_pep[fData(peps)[, groupBy] == z]))
-          pRoloc:::highlightOnPlot(pcas[[2]], allpeps, cex = 1.3)
+          pRoloc::highlightOnPlot(pcas[[2]], allpeps, cex = 1.3)
           ## === highlight selected pep as a solid circle
-          pRoloc:::highlightOnPlot(pcas[[2]], idDT, cex = 1.3)
+          pRoloc::highlightOnPlot(pcas[[2]], idDT, cex = 1.3)
           
           if (input$checkbox) {
-            pRoloc:::highlightOnPlot(pcas[[2]], idDT, labels = TRUE, pos = 3)
+            pRoloc::highlightOnPlot(pcas[[2]], idDT, labels = TRUE, pos = 3)
           }
           ## === highlight corresponding proteins on PCA plot
-          pRoloc:::highlightOnPlot(pcas[[1]], unique(protacc), cex = 2,
+          pRoloc::highlightOnPlot(pcas[[1]], unique(protacc), cex = 2,
                           pch = 19, col = "black")
-          pRoloc:::highlightOnPlot(pcas[[1]], unique(protacc), cex = .8,
+          pRoloc::highlightOnPlot(pcas[[1]], unique(protacc), cex = .8,
                           pch = 19, col = "red")
         }
         resetLabels$logical <<- FALSE

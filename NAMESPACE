@@ -5,26 +5,30 @@ import(MSnbase)
 import(methods)
 
 ## Imports
-importFrom("graphics", "axis", "boxplot", "legend", "matlines", "par",
-           "points", "title")
-importFrom("utils", "packageVersion")
-
 import(shiny)
 import(scales)
 import(shinydashboardPlus)
 
-importFrom(DT,
+importFrom("graphics", "axis", "boxplot", "legend", "matlines", "par",
+           "points", "title", "abline", "mtext", "polygon", "text")
+importFrom("utils", "packageVersion", "write.table")
+importFrom("DT",
            ## see issue 61
            ## dataTableOutput,
            ## renderDataTable,
            "formatStyle", "JS")
-importFrom(dplyr, "%>%", "group_by")
-importFrom(ggplot2, "aes", "ggplot", "geom_point", "geom_smooth", 
-           "annotate", "xlab")
-importFrom(colourpicker, "colourInput")
-importFrom(shinyhelper, "observe_helpers", "helper")
-importFrom(shinyWidgets, "checkboxGroupButtons", "updateCheckboxGroupButtons")
-importFrom(shinyjs, "useShinyjs")
-importFrom(colorspace, "darken", "lighten")
-importFrom(shinydashboard, "dashboardSidebar")
+importFrom("dplyr", "%>%", "group_by")
+importFrom("ggplot2", "aes", "ggplot", "geom_point", "geom_smooth", 
+           "annotate", "xlab", "ylab", "theme_light", "element_text",
+           "element_rect", "element_blank", "facet_wrap", "geom_line",
+           "geom_ribbon", "ggsave", "theme", "scale_fill_manual",
+           "scale_color_manual", "scale_x_discrete")
+importFrom("colourpicker", "colourInput")
+importFrom("shinyhelper", "observe_helpers", "helper")
+importFrom("shinyWidgets", "checkboxGroupButtons", "updateCheckboxGroupButtons")
+importFrom("shinyjs", "useShinyjs")
+importFrom("colorspace", "darken", "lighten")
+importFrom("shinydashboard", "dashboardSidebar")
+importFrom("grDevices", "dev.off", "pdf", "rgb")
+importFrom("stats", "quantile")
 export(pRolocVis)

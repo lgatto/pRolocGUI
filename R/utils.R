@@ -280,8 +280,8 @@ rightSidebar <- function(..., background = "dark", width = 230, .items = NULL) {
             class = paste0("control-sidebar control-sidebar-", background),
             style = paste0("width: ", width, "px;"),
             # automatically create the tab menu
-            if (length(panels) > 0) shinydashboardPlus:::rightSidebarTabList(shinydashboardPlus:::rigthSidebarPanel(...)),
-            if (length(panels) > 0) shinydashboardPlus:::rigthSidebarPanel(...) else shinydashboardPlus:::rigthSidebarPanel(.items)
+            if (length(panels) > 0) shinydashboardPlus:::rightSidebarTabList(rigthSidebarPanel(...)),
+            if (length(panels) > 0) shinydashboardPlus:::rigthSidebarPanel(...) else rigthSidebarPanel(.items)
         ),
         # Add the sidebar background. This div must be placed
         # immediately after the control sidebar

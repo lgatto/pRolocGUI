@@ -606,7 +606,7 @@ pRolocVis_explore <- function(object,
     ## --------Save selection button--------
     ## When save button is download save points/proteins selected
     output$downloadData <- downloadHandler(
-      file = "features.csv",
+      filename = "features.csv",
       content = function(file) { 
         write.table(namesIdxDT, file = file, quote = FALSE, 
                     row.names = FALSE, col.names = FALSE)
@@ -616,7 +616,7 @@ pRolocVis_explore <- function(object,
     ## --------Save figure button--------
     ## Save figure of PCA
     output$saveplot <- downloadHandler(
-      file = function(){"plot.pdf"}, 
+      filename = function(){"plot.pdf"}, 
       content = function(file) {
         if (input$tabs == "mapPanel") {
           pdf(file = file)

@@ -746,7 +746,7 @@ pRolocVis_compare <- function(object,
     ## ===========================================================
     ## When save button is download save points/proteins selected
     output$downloadData <- downloadHandler(
-      file = "features.csv",
+      filename = "features.csv",
       content = function(file) { 
         write.table(idxDT, file = file, quote = FALSE, 
                     row.names = FALSE, col.names = FALSE)
@@ -758,7 +758,7 @@ pRolocVis_compare <- function(object,
     ## ===========================================================
     ## Save figure of PCA
     output$saveplot <- downloadHandler(
-      file = function(){"plot.pdf"}, 
+      filename = function(){"plot.pdf"}, 
       content = function(file) {
         if (input$tabs == "mapPanel") {
           pdf(file = file, width = 13, height = 6)
