@@ -181,7 +181,7 @@ To run the `explore` application using `pRolocVis`:
 pRolocVis(object = hyperLOPIT2015, fcol = "markers") 
 ```
 
-![The PCA Tab](figures/SS_01_map.png)
+![The PCA Tab](figures/SS_01_map.jpg)
 
 **Viewing** The Spatial Map tab is characterised by its main panel which shows
 a PCA plot for the selected `MSnSet`. By default a PCA plot is used to
@@ -208,6 +208,8 @@ table. The search supports batch searching so users can paste their
 favourite sets of proteins, protein accessions/keywords must be
 separated by spaces.
 
+![Searching the datatable](figures/SS_11_tablesearching.jpg)
+
 To select/unselect a protein of interest one can simply
 click/unclick on the corresponding entry in the table or double click
 directly on a protein of interest on the interactive PCA plot. If a protein(s)
@@ -219,7 +221,7 @@ on the plot. Any selected proteins on the plot or in the table
 can be cleared at any time by clicking the 'Clear selection' button in
 the right sidebar panel.
 
-![Searching for proteins of interest](figures/SS_02_search.png)
+![Searching for proteins of interest](figures/SS_02_search.jpg)
 **Saving selected proteins**
 Once proteins have been highlighted in the table and/or the plot
 they can be exported using the "Save selection" button in the
@@ -234,8 +236,8 @@ This process can be repeated until the desired level of zoom is reached.
 The plot can be resetted to the original size by clicking the 
 'Zoom/reset button' once again.
 
-![Brushing on the plot](figures/SS_03_brush.png)
-![Zooming proteins of interest](figures/SS_04_zoom.png)
+![Brushing on the plot](figures/SS_03_brush.jpg)
+![Zooming proteins of interest](figures/SS_04_zoom.jpg)
 
 **Downloading figures**
 All visualisations in the app (the map and two profile plots) 
@@ -246,7 +248,7 @@ can be downloaded as high resolution PDFs by clicking the
 The left and right sidebar panels can be shown/hidden at
 any time by clicking the icons in the main dashboard.
 
-![Hiding the sidebars](figures/SS_05_nosidebars.png)
+![Hiding the sidebars](figures/SS_05_nosidebars.jpg)
 
 
 **The profiles tabs** 
@@ -271,34 +273,34 @@ examined on a group by group basis. Proteins of interest can be
 searched in the data table and once clicked, the distribution(s) 
 of selected protein(s) are shown by dotted black lines. 
 
-![The profiles tab](figures/SS_06a_ribbons.png)
-![The profiles tab, selecting proteins of interest](figures/SS_06b_ribbons.png)
+![The profiles tab](figures/SS_06a_ribbons.jpg)
+![The profiles tab, selecting proteins of interest](figures/SS_06b_ribbons.jpg)
 There is a second profiles tab called "Profiles (by class)" which
 shows the protein profiles faceted by their class labels. This static 
 plot can be useful when comparing the trend between classes, 
 especially when two or more classes have very similar trends.
 
 
-![Profiles faceted by subcellular class](figures/SS_07_facets.png)
+![Profiles faceted by subcellular class](figures/SS_07_facets.jpg)
 
 **Table Selection** The Table Selection tab provides an interface 
 for data table column selection. Multiple columns can be selected on and 
 off by clicking/unclicking the checkboxes that correspond to the columns
 in the data table. 
 
-![Customising the table](figures/SS_08_tableselection.png)
+![Customising the table](figures/SS_08_tableselection.jpg)
 
 **Sample Information**
 The tab "Sample Info" stores any sample information that is stored in 
 the `pData` slot of the `MSnSet`.
 
-![the Sample Info Tab](figures/SS_09_sampleInfo.png)
+![the Sample Info Tab](figures/SS_09_sampleInfo.jpg)
 
 **Colour Picker**
 This tab provides an interface to select and set colours for the 
 class labels.
 
-![The colour picker](figures/SS_10_colourpicker.png)
+![The colour picker](figures/SS_10_colourpicker.jpg)
 
 # The `compare` application
 
@@ -320,7 +322,7 @@ mydata <- MSnSetList(list(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r2))
 pRolocVis(mydata, app = "compare") 
 ```
 
-![The compare application, main panel](figures/SS_12_compare.png)
+![The compare application, main panel](figures/SS_12_compare.jpg)
 
 The compare app has the same functionality as the explore application
 for protein profile visualisation,interactive searchable datatable that
@@ -369,7 +371,7 @@ pRolocVis(hyperLOPIT2015ms2psm, app = "aggregate", fcol = "markers",
           groupBy = "Protein.Group.Accessions")
 ```
 
-![The aggregate app](figures/SS_13_aggregate_mean.png)
+![The aggregate app](figures/SS_13_aggregate_mean.jpg)
 
 The main body of the app contains (1) a `aggvar` distance plot and a 
 (2) PCA plot of the PSMs/peptides. The `aggvar` distance plot shows the 
@@ -390,7 +392,7 @@ the subsets of peptide (or PSM) feautres correspond to proteins
 with different expression patterns.
 
 
-![Examining peptides and proteins](figures/SS_14_aggregate_hl.png)
+![Examining peptides and proteins](figures/SS_14_aggregate_hl.jpg)
 
 Both the aggvar plot and PCA plot are interactive, 
 and similarly to the other `pRolocVis` apps you can click 
@@ -400,7 +402,7 @@ proteins of interest. When a protein group is clicked
 in the left plot, the peptides and associated protein 
 group are automatically shown on the right PCA plot.
 
-![the max function](figures/SS_15_aggregate_mean.png)
+![the max function](figures/SS_15_aggregate_mean.jpg)
 As previously mentioned `aggvar` can use either max or mean as
 a function. In the left sidebar there is a drop down menu for
 users to try each method.
