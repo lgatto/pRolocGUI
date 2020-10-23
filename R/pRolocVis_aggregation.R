@@ -2,20 +2,23 @@
 ##' @param groupBy The feature meta-data label (\code{fData} column name)
 ##' to be used for summarising the features to be combined.
 pRolocVis_aggregate <- function(object, 
-                                fcol,
+                                fcol = "markers",
                                 groupBy,
-                                fig.height = "600px",
-                                fig.width = "100%",
-                                legend.width = "200%",
-                                legend.cex = 1,
-                                nchar = 40,
-                                all = TRUE,
-                                mirrorX = FALSE,
-                                mirrorY = FALSE,
+                                fig.height = "700px",
+                                # legend.width = "200%",
+                                # legend.cex = 1,
+                                nchar = 25,
                                 ...) {
+  ## removed from arguments
+  legend.width = "200%"
+  legend.cex = 1
+  mirrorX = FALSE
+  mirrorY = FALSE
+  all = TRUE
+  fig.width = "100%"
   
   ## Return featureNames of proteins selected
-  on.exit(return(invisible(idDT)))
+  # on.exit(return(invisible(idDT)))
 
   ## Check input object is an MSnSet
   if (!inherits(object, "MSnSet"))
@@ -92,7 +95,7 @@ pRolocVis_aggregate <- function(object,
   
   
   ## Marker colours
-  cols <- getStockcol()
+  cols <- appStockcol()
   if (length(cols) < max(ncol(pmarkers))) {
     message("Too many features for available colours. Some colours will be duplicated.")
     n <- ncol(pmarkers / length(cols))
@@ -348,17 +351,17 @@ pRolocVis_aggregate <- function(object,
           allpeps <- unlist(lapply(protacc, 
                                    function(z) 
                                      feats_pep[fData(peps)[, groupBy] == z]))
-          highlightOnPlot(pcas[[2]], allpeps, cex = 1.3)
+          pRoloc::highlightOnPlot(pcas[[2]], allpeps, cex = 1.3)
           ## === highlight selected pep as a solid circle
-          highlightOnPlot(pcas[[2]], idDT, cex = 1.3, pch = 19)
+          pRoloc::highlightOnPlot(pcas[[2]], idDT, cex = 1.3)
           
           if (input$checkbox) {
-            highlightOnPlot(pcas[[2]], idDT, labels = TRUE, pos = 3, pch = 19)
+            pRoloc::highlightOnPlot(pcas[[2]], idDT, labels = TRUE, pos = 3)
           }
           ## === highlight corresponding proteins on PCA plot
-          highlightOnPlot(pcas[[1]], unique(protacc), cex = 2,
+          pRoloc::highlightOnPlot(pcas[[1]], unique(protacc), cex = 2,
                           pch = 19, col = "black")
-          highlightOnPlot(pcas[[1]], unique(protacc), cex = .8,
+          pRoloc::highlightOnPlot(pcas[[1]], unique(protacc), cex = .8,
                           pch = 19, col = "red")
         }
         resetLabels$logical <<- FALSE

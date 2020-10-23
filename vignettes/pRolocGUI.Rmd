@@ -3,10 +3,11 @@ title: "pRolocGUI - Interactive visualisation of spatial proteomics data"
 author: 
 - name: Lisa Breckels
   affiliation: 
-    - &cpu Computational Proteomics Unit, Cambridge, UK 
+    - Cambridge Centre for Proteomcs, Cambridge, UK 
 - name: Thomas Naake
 - name: Laurent Gatto
-  affiliation: *cpu
+  affiliation: 
+    - de Duve Institute, UCLouvain, Belgium
 package: pRolocGUI
 output:
   BiocStyle::html_document:
@@ -51,20 +52,22 @@ the `pRoloc` vignette (see `vignette("pRoloc-tutorial")`) before using
 There are 3 applications distributed with `pRolocGUI` which are
 wrapped and launched by the `pRolocVis` function. These 3 applications
 are called according to the argument `app` in the `pRolocVis`
-function which may be one of "pca", "classify" or
-"compare". 
+function which may be one of "explore", "compare" or
+"aggregate". 
 
-* The `pca` application launches a Principal Components Analysis (PCA) 
-plot of the data, with an alternate profiles tab for visualisation of 
-protein profiles, it also features a searchable data table for the
-identification of proteins of interest.
-* The `classify` application has been designed to view machine 
-learning classification results according to user-specified thresholds
-for the assignment of sub-cellular location.
-* The `compare` application allows the comparison of two comparable 
+* The `explore` application launches a interactive spatial map 
+(dimensionality reduction) of the data, with an alternate 
+profiles tab for visualisation of protein profiles. There is a 
+searchable data table for the identification of proteins of 
+interest and functionality to download figures and export proteins 
+of interest.
+* The `compare` application features the same functionality as 
+the `explore` app but allows the comparison of two 
 `MSnSet` instances, e.g. this might be of help for the analyses of
 changes in protein localisation in different conditions. 
-
+* The `aggregate` application allows users to load peptide or
+PSM level data and look at the relationship between peptides
+and proteins (following aggregation).
 
 ## Getting started
 
@@ -98,15 +101,11 @@ length 2 for the `compare` application). Please see
 `vignette("pRoloc-tutorial")` or `vignette("MSnbase-io")` for
 importing and loading data. The argument `app` tells the `pRolocVis`
 function what type of application to load. One can choose
-from: `"pca"` (default), `"classify"`, `"compare"`.  The optional 
+from: `"explore"` (default), `"compare"` or `"aggregate"`.  The optional 
 argument `fcol` (and `fcol1` and `fcol2` for the compare app)
 can be used which allows the user to specify the 
-feature meta-data label(s) (`fData` column name(s)) to be plotted. 
-The default is `markers` (i.e. the labelled data) for the PCA and compare 
-For the classification app one must specify the prediction column i.e. the
-feature meta-data label that corresponds to the column containing the
-classification results, generated from running a supervised machine
-learning analysis (see [below](#the-classify-application)).
+feature meta-data label(s) (`fData` column name(s)) to be plotted,
+the default is `markers` (i.e. the labelled data).
 
 For example, to load the default `pRolocVis` application:
 
@@ -128,32 +127,35 @@ browser tab, where `pRolocVis` is running.
 There are 3 different applications, each one designed to address a 
 different specific user requirement.
 
-* The PCA app is intended for exploratory data analysis, 
-which features a clickable interface and zoomable PCA plot. If you would
-like to search for a particular protein or set of proteins this is the
-application to use. This app also features a protein profiles tab, 
-designed for examining the patterns of user-specified
-sets of proteins. For example, if one has several overlapping
-sub-cellular clusters in their data, as highlighted by the PCA plot or
-otherwise, one can check for separation in all data dimensions by
-examining the protein profile patterns. Proteins that co-localise are
-known to exhibit similar distributions (De Duve's principale).
-* The classification app can be used for viewing the sub-cellular class 
-predictions output from a supervised machine learning analysis and to
-help the user set a classification threshold (see the [`pRoloc`
-tutorial](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-tutorial.pdf)
-for details on spatial proteomics data analysis).
+* The explore app is intended for exploratory data analysis, 
+which features a clickable interface and zoomable spatial map.
+The default spatial map is in the form of a PCA plot, but many other
+dimensionality reduction techniques are supported including t-SNE
+and MDS among others. If you would like to search for a particular 
+protein or set of proteins this is the application to use. This 
+app also features a protein profiles tab, designed for examining 
+the patterns of user-specified sets of proteins. For example, if 
+one has several overlapping sub-cellular clusters in their data, 
+as highlighted by the PCA plot or otherwise, one can check for 
+separation in all data dimensions by examining the protein profile 
+patterns. Proteins that co-localise are known to exhibit similar 
+distributions (De Duve's principale).
+
 * The comparison application may be of interest if a user wishes to 
 examine two replicate experiments, or two experiments from different
-conditions etc.  Two PCA plots are loaded side-by-side and one can
+conditions etc.  Two spatial maps are loaded side-by-side and one can
 search and identify common proteins between the two data sets. As per the 
 default application there is also a protein profiles tab to allow one to look
 at the patterns of protein profiles of interest in each dataset. 
 
+* The aggregate app is for examining the effect that peptide or PSM 
+aggregation may have on the protein level data. 
+
 # The `pca` application
 
-The `pca`, default, application is characterised by an interactive and
-searchable Principal Components Analysis (PCA) plot. PCA is an
+The `explore` (default) app is characterised by an interactive and
+searchable spatial map, by default this is a Principal Components 
+Analysis (PCA) plot. PCA is an
 ordinance method that can be used to transform a high-dimensional
 dataset into a smaller lower-dimenensional set of uncorrelated
 variables (principal components), such that the first principal
@@ -162,207 +164,150 @@ variability in the data as possible. Each succeeding component in turn
 has the highest variance possible under the constraint that it be
 orthogonal to the preceding components. Thus, PCA is particularly
 useful for visualisation of multidimensional data in 2-dimensions,
-wherein all the proteins can be plotted on the same figure.
+wherein all the proteins can be plotted on the same figure. Other
+dimensionality reduction methods are supported such as t-SNE, 
+among others (please see `?plot2D` and the argument `method`)
 
-The application is subdivided in to three tabs: (1) PCA, (2) Profiles, 
-and (3) Table Selection.  A searchable data table containing the experimental 
-feature meta-data is permanantly dispalyed at the bottom of the screen for
-ease. You can browse between the tabs by simply clicking on them at the top
-of the screen.
+The application is subdivided in to different tabs: (1) Spatial Map, 
+(2) Profiles, (3) Profiles (by class), (4) Table Selection, (5)
+Sample info and (6) Colour picker. A searchable data table containing 
+the experimental feature meta-data is permanantly dispalyed at the bottom 
+of the screen for ease. You can browse between the tabs by simply 
+clicking on them at the top of the screen.
 
-To run the `pca` application using `pRolocVis`: 
+To run the `explore` application using `pRolocVis`: 
 
 ```{r pca1, eval = FALSE, echo = TRUE} 
 pRolocVis(object = hyperLOPIT2015, fcol = "markers") 
 ```
 
-![The PCA Tab](figures/SS_PCA1.jpg)
+![The PCA Tab](figures/SS_01_map.jpg)
 
-**Viewing** The PCA tab is characterised by its main panel which shows
+**Viewing** The Spatial Map tab is characterised by its main panel which shows
 a PCA plot for the selected `MSnSet`. By default a PCA plot is used to
 display the data and the first two principal components are plotted.
-The sidebar panel controls what features to highlight on the PCA plot.
-Under the 'Labels' menu, input can be selected by clicking on and off
-the data class names, or by typing and  searching in the white input
-box. Selected items can then be deleted, by clicking on the name of the
-class and pressing the delete button on your keyboard. The PCA plot will
-then be updated accordingly. Below the select box is a 'transparancy' slider 
-bar which controls the opacity of the highlighted data classes and two action
-buttons 'Zoom/reset plot' and 'Clear selection', which are described below. 
+The left sidebar panel controls what class labels (sub-cellular compartments) 
+to highlight on the PCA plot. Labels can be selected by clicking on and off
+the coloured data class names, or removed/highlighted by clicking the 
+"Select/clear all" button. The right sidebar contains the map controls.
+This features a 'transparancy' slider to control the opacity of the highlighted 
+data points, and other buttons which are in detail below. 
 
-![Selecting sub-cellular classes](figures/SS_PCA2.jpg)
-
-**Searching** Below the PCA plot is a searchable data table containing
+**Searching** Below the spatial map is a searchable data table containing
 the fetaure meta data (`fData`). For LOPIT experiments, such as the
 one used in this example, this may contain protein accession numbers,
 protein entry names, protein description, the number of quantified
 peptides per protein, and columns containing sub-cellular localisation
-information. The data table is limited to displaying 12 columns of
-information, these are automatically selected from the `fData` to be
-the first 6 and last features. To select specific columns in the 
-`fData` to display in the data table use the `fdataInds` argument, see
-`?pRolocVis` for more details.One can search for proteins of interest by 
-using the white search box, above the table to the right. Searching is 
+information. 
+
+One can search for proteins of interest by 
+using the white search box, above the table. Searching is 
 done by partial pattern matching with table elements. Any matches or 
 partial text matches that are found are highlighted in the data
-table. To select/unselect a protein of interest one can simply
+table. The search supports batch searching so users can paste their
+favourite sets of proteins, protein accessions/keywords must be
+separated by spaces.
+
+![Searching the datatable](figures/SS_11_tablesearching.jpg)
+
+To select/unselect a protein of interest one can simply
 click/unclick on the corresponding entry in the table or double click
 directly on a protein of interest on the interactive PCA plot. If a protein(s)
 in the table is clicked and selected the row in the table will turn
 grey and the protein(s) will be highlighted on the PCA plot by a dark
-grey circle(s), if the 'Show labels' box is checked in the left sidebar
+grey circle(s), if the 'Show labels' box is checked (the default) in the right sidebar
 panel the protein names for the selected protein(s) will also be shown
-on the PCA plot. Any selected proteins on the PCA plot or in the table
-can be cleared at any time by clicking the 'Clear selection' button on
-the left hand side panel.
+on the plot. Any selected proteins on the plot or in the table
+can be cleared at any time by clicking the 'Clear selection' button in
+the right sidebar panel.
 
-![Searching for proteins of interest](figures/SS_PCA3.jpg)
+![Searching for proteins of interest](figures/SS_02_search.jpg)
+**Saving selected proteins**
+Once proteins have been highlighted in the table and/or the plot
+they can be exported using the "Save selection" button in the
+right sidebar. This will download the ids (as defined by `featureNames`
+in the `MSnSet` object) of the current protein selection to a .csv file.
 
 **Zooming** If a user wishes to examine a protein(s) in more detail,
 one can zoom in on specific points by hovering the mouse over the plot, 
 then clicking and drawing a (square) brush and then clicking the 
-'Zoom/reset button' in the left side panel to zoom to the brushed area. 
+'Zoom/reset button' in the right sidebar to zoom to the brushed area. 
 This process can be repeated until the desired level of zoom is reached. 
 The plot can be resetted to the original size by clicking the 
 'Zoom/reset button' once again.
 
-![Brushing on the plot](figures/SS_PCA4.jpg)
-![Zooming proteins of interest](figures/SS_PCA5.jpg)
+![Brushing on the plot](figures/SS_03_brush.jpg)
+![Zooming proteins of interest](figures/SS_04_zoom.jpg)
 
-**Profiles** By clicking the profiles tab at the top of the 
-page a protein profiles plot is displayed that shows
-the quantitation data that is stored in the `exprs` data slot 
+**Downloading figures**
+All visualisations in the app (the map and two profile plots) 
+can be downloaded as high resolution PDFs by clicking the
+"Download Plot" button in the right sidebar panel. 
+
+**Hiding the sidebar panels**
+The left and right sidebar panels can be shown/hidden at
+any time by clicking the icons in the main dashboard.
+
+![Hiding the sidebars](figures/SS_05_nosidebars.jpg)
+
+
+**The profiles tabs** 
+There are two profiles tabs in `pRolocGUI` which display the
+protein profile quantitation data that is stored in the `exprs` data slot 
 of the `MSnSet`. For the `hyperLOPIT2015` dataset this is the relative 
 abundances of each protein across the 20 fractions (2 x 10-plex replicates). 
-As per the PCA tab, the profiles plot can also be updated according 
-to the input selected in the sidebar panel on the left.
 
-The profiles tab may be useful to
-specifically look for discrimination between (potentially
-overlappling) sub-cellular niches. It allows one to do
-this in an easy and direct manor where all proteins belonging to the
-same sub-cellular niche/data cluster (as specified by `fcol`) are
+The first "Profiles" tab shows two ribbons plots, one for each dataset. 
+As per the Spatial Map tab, the plot is updated according 
+to the input classes selected in the sidebar panel on the left. 
+A ribbon is plotted for each each sub-cellular class between the 5th and 
+95th percentile value per channel. The mean class profile is also highlighted
+by a bold line. Unknown/unlabelled profiles are shown as dark gray lines.
+
+The profiles tab is useful to look for discrimination between  
+different sub-cellular niches in an easy and direct manor 
+where all proteins belonging to the same sub-cellular niche/data 
+cluster (as specified by `fcol` when the app is launched) are
 loaded together. The protein distribution patterns can then be
-examined on a group vs group basis. Proteins of interest can be
+examined on a group by group basis. Proteins of interest can be
 searched in the data table and once clicked, the distribution(s) 
-of selected protein(s) are shown by black lines. 
+of selected protein(s) are shown by dotted black lines. 
 
-![The profiles tab](figures/SS_PCA6.jpg)
-![The profiles tab, selecting proteins of interest](figures/SS_PCA7.jpg)
+![The profiles tab](figures/SS_06a_ribbons.jpg)
+![The profiles tab, selecting proteins of interest](figures/SS_06b_ribbons.jpg)
+There is a second profiles tab called "Profiles (by class)" which
+shows the protein profiles faceted by their class labels. This static 
+plot can be useful when comparing the trend between classes, 
+especially when two or more classes have very similar trends.
 
-**Features** There is also functionality to use the
-`FeaturesOfInterest`/`FoICollection` infrastructure distributed by the
-`MSnbase` package (for examples on how to create `FeaturesOfInterest`
-see the [`pRoloc`
-tutorial](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-tutorial.html)).
 
-![Table Selection](figures/SS_PCA8.jpg)
+![Profiles faceted by subcellular class](figures/SS_07_facets.jpg)
 
 **Table Selection** The Table Selection tab provides an interface 
 for data table column selection. Multiple columns can be selected on and 
 off by clicking/unclicking the checkboxes that correspond to the columns
-in the data table.
+in the data table. 
 
-**Note:** Other ordinance methods are available for displaying
-the data, for example, multidimensional scaling (MDS), and kernal-PCA,
-and t-SNE are all supported, and can be specified using the `method`
-argument when caling `pRolocVis` (this is not supported in the `compare` or
-`classify` application).
+![Customising the table](figures/SS_08_tableselection.jpg)
 
-# The `classify` application
+**Sample Information**
+The tab "Sample Info" stores any sample information that is stored in 
+the `pData` slot of the `MSnSet`.
 
-Machine learning classification forms a large part of spatial
-proteomics data analysis. Protein localisation prediction can be cast
-as a supervised machine learning problem (learning from labelled instances), wherein one has a set of a
-few well-known examples (labelled data), that is sub-cellular protein
-markers (proteins that are known to belong to a set of finite sub-cellular
-niches), which can used to learn a classifier to associate unlabelled
-proteins to one of the sub-cellular classes that appear in the
-labelled training data.
+![the Sample Info Tab](figures/SS_09_sampleInfo.jpg)
 
-In the example below, we use one of the classification algorithms from the `r Biocpkg("pRoloc")`
-package; a Support Vector Machine (SVM) classifier, and train a model for
-protein localisation prediction of unassigned proteins in the
-`hyperLOPIT2015` dataset. We first use the `svmOptimisation` function
-to find the best model parameters using the labelled training data
-found in `fcol = "markers"` and then apply these parameters using the
-`svmClassification` function. (Note, here we perform a reduced search
-using `times = 3` in the interest of time. In practise we recommend at
-least to use `times = 100` as described in the [`pRoloc`
-tutorial](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-tutorial.html).
+**Colour Picker**
+This tab provides an interface to select and set colours for the 
+class labels.
 
-This tutorial also contains more information on machine learning, the practise
-of training and testing, and some extensive examples of machine learning 
-classification in spatial proteomics.)
-
-```{r classify, eval = TRUE, echo = TRUE, warning = FALSE} 
-opt <- svmOptimisation(object = hyperLOPIT2015, 
-                       fcol = "markers", 
-                       times = 3, verbose = FALSE)
-res <- svmClassification(object = hyperLOPIT2015, assessRes = opt) 
-```
-
-By default, the classification function adds new feature variables containing the new sub-cellular
-assignments made by the SVM classifier and the associated assignment probabilities,
-called scores, to the `featureData` slot of
-the `MSnSet`, in this case, they are labelled `svm` and `svm.scores`,
-and can be accessed using the `fData` accessor method, e.g.
-`fData(res)$svm` or `fData(res)$svm.scores`.
-
-It is common when applying a supervised classification algorithm,
-wherein the whole class diversity is not present in the training data,
-to set a specific score cutoff on which to define new assignments,
-below which classifications are set to unknown/unassigned. Deciding on
-a threshold is not trivial as classifier scores are heavily dependent
-upon the classifier used and different sub-cellular niches can exhibit
-different score distributions. To help examine these distributions and
-set a threshold one can use the `classify` app. 
-
-To launch the `classify` application:
-
-```{r cutoff, eval = FALSE, echo = TRUE} 
-pRolocVis(object = res, app = "classify", fcol = "svm") 
-```
-
-![The classification application, setting a "quantile" cutoff score](figures/SS_Classify1.jpg)
-
-The data is loaded and displayed on a PCA plot and a boxplot is used to
-display the classifier scores by data class. On the left there is
-a sidebar panel with sliders to control the thresholds upon which classifications 
-are made. There are two types of cut-off that the user can choose from: (1)
-"Quantile" and (2) "User-defined". By default, when the application is launched
-quatile scoring is selected and set to 0.5, the median. The 
-class-specific score thresholds that correspond to selecting the desired
-quantile are shown on as red dots on the boxplot. The assignments on the PCA
-plot are also updated according to the selected threshold. The quantile 
-threshold can be set by moving the corresponding quantile slider. If one
-wished to set their own cut-offs the "User-defined" radio button must be selected
-and then the sliders for defining user-specified scores become active and the
-scores and highlighted on the boxplot by blue dots. 
-
-![The classification application, setting a "user-defined" cutoff score](figures/SS_Classify2.jpg)
-
-By default, when user-specified
-scores are selected all sliders are set to 1 and can be changed by moving 
-the sliders to the desired score. Once the desired score has been found the
-application can be closed and the class-specific scores are displayed in the
-R console. These scores can be used to get protein localisation predictions
-using the `getPredictions` function, as demonstrated below:
-
-```{r score, eval=FALSE}
-mythreshold <- pRolocVis(object = res, app = "classify", fcol = "svm") 
-res <- getPredictions(res, fcol = "svm", 
-                      mcol = "markers", t = mythreshold)
-```
-
-The classification app can also be used as an intercative version of 
-the function `orgQuants` in the `r Biocpkg("pRoloc")` package.
+![The colour picker](figures/SS_10_colourpicker.jpg)
 
 # The `compare` application
 
 The comparison application may be of interest if a user wishes to 
 examine two replicate experiments, or two experiments from different
-conditions etc.  Two PCA plots are loaded side-by-side and one can
+conditions etc.  Two Spatial Map plots are loaded side-by-side 
+(the default method is PCA) and one can
 search and identify common proteins between the two data sets.
 
 A `MSnSetList` of length 2 must be supplied as input, containing
@@ -377,58 +322,90 @@ mydata <- MSnSetList(list(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r2))
 pRolocVis(mydata, app = "compare") 
 ```
 
-![The compare application, main panel](figures/SS_Compare1.jpg)
-![The compare application, selecting classes](figures/SS_Compare2.jpg)
+![The compare application, main panel](figures/SS_12_compare.jpg)
 
-**Viewing, remapping, searching and zooming**
-The compare app has the same functionality as the pca application and
-PCA, Profiles and Table Selection tabs. One key feature of the compare
-application is the ability to re-map the second dataset onto the PCA data
-space of the first (reference) data set (see `?pRolocVis` and the argument `remap = TRUE`). 
+The compare app has the same functionality as the explore application
+for protein profile visualisation,interactive searchable datatable that
+allows both batch import and export, colour selection and options
+to download the visualisations. Visualisations and tables that 
+appear in each tab are loaded side-by-side, one per dataset.
 
-Currently, only PCA is supported and re-mapping is done by default. This can 
-be switched off with the `remap` argument. Using the first dataset as the
-reference set, PCA is carried out on the first dataset and the standard 
-deviations of the principal components (i.e. the square roots of the 
-eigenvalues of the covariance/correlation matrix) and the matrix of 
-variable loadings (i.e. a matrix whose columns contain the eigenvectors) are
-stored and then used to calculate the principal components of the second 
-dataset. Both datasets are scaled and centered in the usual way. The
-first dataset appears on the left, and the second re-mapped data appears on the right. 
-The order of the first (the reference data for remapping) and second dataset 
-can be changed through regeneration/re-ordering of the `MSnSetList` object. 
-Note: the proteins that are common in both datasets are only displayed.
+# The `aggregate` application
 
-As per the pca application, and described in detail above, there is a sidebar with a 
-'Labels' menu, where input can be selected by clicking on and off
-the data class names. Proteins of interest can be highlighted by double clicking
-on any of the PCA plots (and highlighted in both datasets on both PCA plots), or
-by typing and  searching in the white input box above the data table and clicking
-on the protein of interest in the data table. Zooming, clicking and searching
-for proteins of interest is supported as per the pca app.
+The aggregate app allows users to look both the peptide (and/or PSM)
+and/or protein level data together and explore the effects of
+PSM/protein aggregation to protein and identify protein groups
+with interesting expression patterns. 
 
-![The compare application, searching fpr proteins](figures/SS_Compare3.jpg)
-![The compare application, brushing](figures/SS_Compare4.jpg)
-![The compare application, zooming](figures/SS_Compare5.jpg)
+To run the `aggregate` app we first load a PSM level dataset from
+`pRolocdata`. The dataset `hyperLOPIT2015ms2psm` contains PSM 
+level intensity data, where each row corresponds to one PSM 
+and each column is the TMT-plex. Please see `?hyperLOPIT2015ms2psm` 
+for more information.
 
-**Profiles**
-As per the pca application there is a profiles tab which loads the
-quantitative protein profiles for the first experiment and second
-experiment, on the left- and right-hand sides respectively. One
-can highlight proteins of interest by clicking items in the data 
-table, and selecting classes to display in the side panel under the
-'Labels' menu.
+We can launch the `pRolocVis` function and look at the PSM data
+without aggregating to peptide
 
-![The compare application, profiles](figures/SS_Compare6.jpg)
+```{r aggvar, eval = FALSE, echo = TRUE, message = FALSE, warning = FALSE}
+## load PSM data
+data("hyperLOPIT2015ms2psm")
 
-**Table Selection**
-By default 4 columns containing the feature data the first dataset 
-(dark blue) and 4 columns for the second dataset (black) will be displayed 
-in the table, and users can select particular columns they wish to display
-in the Table Selection tab.
+## Visualise the PSMs per to protein group
+pRolocVis(hyperLOPIT2015ms2psm, app = "aggregate", fcol = "markers",
+          groupBy = "Protein.Group.Accessions")
+```
 
-![The compare application, table selection](figures/SS_Compare7.jpg)
+Or we can first aggregate from PSM to peptide and then launch the
+app to look at the relationships between peptide level data and 
+protein groups. For this latter case we can use the `combineFeatures`
+function from `MSnbase`. 
 
+```{r aggvar2, eval = FALSE, echo = TRUE, message = FALSE, warning = FALSE}
+## Combine PSM data to peptides
+hl <- combineFeatures(hyperLOPIT2015ms2psm,
+                      groupBy = fData(hyperLOPIT2015ms2psm)$Sequence,
+                      method = median)
+
+## Visualise peptides according to protein group
+pRolocVis(hyperLOPIT2015ms2psm, app = "aggregate", fcol = "markers",
+          groupBy = "Protein.Group.Accessions")
+```
+
+![The aggregate app](figures/SS_13_aggregate_mean.jpg)
+
+The main body of the app contains (1) a `aggvar` distance plot and a 
+(2) PCA plot of the PSMs/peptides. The `aggvar` distance plot shows the 
+(log10) number of features (in this example peptides) per protein group
+and the aggregation summarising distance per protein group. 
+The app uses the function `aggvar` from 
+`r Biocpkg("MSnbase")` package. 
+
+As described in the `?aggvar` 
+documentation, the app, can take `max` or `mean` as a function, 
+and this can be selected in the left sidebar panel. By default,
+on loading the max is calculated. Using max as a function, 
+one can help identify protein groups with single extreme outliers, 
+such as, for example, a mis-identified peptide that was erroneously 
+assigned to that protein group. The mean can also be used as a function
+to identify more systematic inconsistencies where, for example, 
+the subsets of peptide (or PSM) feautres correspond to proteins 
+with different expression patterns.
+
+
+![Examining peptides and proteins](figures/SS_14_aggregate_hl.jpg)
+
+Both the aggvar plot and PCA plot are interactive, 
+and similarly to the other `pRolocVis` apps you can click 
+individual proteins or peptides in either the aggvar
+or PCA plot, to search and highlight peptides and 
+proteins of interest. When a protein group is clicked 
+in the left plot, the peptides and associated protein 
+group are automatically shown on the right PCA plot.
+
+![the max function](figures/SS_15_aggregate_mean.jpg)
+As previously mentioned `aggvar` can use either max or mean as
+a function. In the left sidebar there is a drop down menu for
+users to try each method.
 
 # References
 
