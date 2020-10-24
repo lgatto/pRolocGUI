@@ -102,10 +102,13 @@ length 2 for the `compare` application). Please see
 importing and loading data. The argument `app` tells the `pRolocVis`
 function what type of application to load. One can choose
 from: `"explore"` (default), `"compare"` or `"aggregate"`.  The optional 
-argument `fcol` (and `fcol1` and `fcol2` for the compare app)
-can be used which allows the user to specify the 
+argument `fcol` is used to specify the 
 feature meta-data label(s) (`fData` column name(s)) to be plotted,
-the default is `markers` (i.e. the labelled data).
+the default is `markers` (i.e. the labelled data). For the the compare
+app this can be a `character` of length 2, where the first element 
+is the label for dataset 1 and the second element is for dataset 2 
+(if only one element is provide this label will be used for both
+datasets, more detail is provided in the examples further below.)
 
 For example, to load the default `pRolocVis` application:
 
@@ -319,10 +322,33 @@ produced using the hyperLOPIT technology.
 data(hyperLOPIT2015ms3r1)
 data(hyperLOPIT2015ms3r2) 
 mydata <- MSnSetList(list(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r2))
-pRolocVis(mydata, app = "compare") 
+pRolocVis(mydata, app = "compare", fcol = "markers") 
 ```
 
+This will load the datasets `hyperLOPIT2015ms3r1` and `hyperLOPIT2015ms3r2`
+side by side and use the column name called `markers` for the colour
+labelling in both plots.
+
 ![The compare application, main panel](figures/SS_12_compare.jpg)
+If we pass a `fcol` of length 2 to the app we can specify
+different feature data columns by which to the label the
+dataset. For example, in the proceeding example we load
+data from a LOPIT-DC experiment, `lopitdcU2OS2018`, and then
+a hyperLOPIT experiment, `hyperLOPITU2OS2018`. If we wish to
+display the feature data contained in the column called 
+`markers` for `hyperLOPITU2OS2018`, but a different set of
+features for `lopitdcU2OS2018`, called `final.assignment`
+we would specify this using `fcol` as follows.
+
+
+```{r compare2, eval=FALSE, echo=TRUE}
+data("hyperLOPITU2OS2018")
+data("lopitdcU2OS2018")
+xx <- MSnSetList(list(hyperLOPITU2OS2018, lopitdcU2OS2018))
+if (interactive()) {
+  pRolocVis(xx, app = "compare", fcol = c("markers", "final.assignment"))
+}
+```
 
 The compare app has the same functionality as the explore application
 for protein profile visualisation,interactive searchable datatable that
