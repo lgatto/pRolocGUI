@@ -121,6 +121,27 @@ pRolocVis_explore <- function(object,
     fData(object)[, fcol] <- m
   }
   
+  ## Shorten markers names if too long
+  getMyClasses <- getMarkerClasses(object)
+  cn <- sapply(getMyClasses,
+               function(x) {
+                 if (nchar(x) > nchar) {
+                   x <- strsplit(x, "")[[1]]
+                   x <- paste(x[1:nchar], collapse = "")
+                   x <- sub(" +$", "", x)
+                   x <- paste0(x, "...")
+                 }
+                 return(x)
+               })    
+  names(cn) <- NULL
+  diffNam1 <- setdiff(getMyClasses, cn)
+  diffNam2 <- setdiff(cn, getMyClasses)
+  for (i in seq(diffNam1)) {
+    object <- fDataToUnknown(object, fcol = fcol, 
+                             from = diffNam1[i], 
+                             to = diffNam2[i])
+  }
+  
 
   ## Update feature data and convert any columns that are matrices
   ## to vectors as otherwise in the shiny app these are displayed as
@@ -167,31 +188,14 @@ pRolocVis_explore <- function(object,
     fcol <- mName
     pmarkers <- fData(object)[, fcol]
     }
-    
-    
   }
-  ## Shorten markers names if too long
-  cn <- sapply(colnames(pmarkers),
-               function(x) {
-                 if (nchar(x) > nchar) {
-                   x <- strsplit(x, "")[[1]]
-                   x <- paste(x[1:nchar], collapse = "")
-                   x <- sub(" +$", "", x)
-                   x <- paste0(x, "...")
-                 }
-                 return(x)
-               })    
-  names(cn) <- NULL
-  colnames(pmarkers) <- cn
-  
-  
+
   ## Define DT columns (select only first 4 columns of fData to display on startup)
   ## initialize other objects for the datatable tracking
   origFvarLab <- colnames(fd)
   selDT <- colnames(fd)[1:4]           
   feats <- toSel <- idxDT <- numeric()
   namesIdxDT <- character()
-
   
   ## Marker colours
   scheme = "white"
@@ -420,7 +424,7 @@ pRolocVis_explore <- function(object,
     ## Update colours according to colourpicker input
     cols_user <- reactive({
       cols_user <- sapply(col_ids, function(z) input[[z]])
-      cols_user <- names(cols_user) <- myclasses
+      names(cols_user) <-  myclasses
       return(cols_user)
     })
     
@@ -546,11 +550,10 @@ pRolocVis_explore <- function(object,
                    type = "l")))
       }
     })
-    
+
     ## Class specific/faceted plots
     output$profile2 <- renderPlot({
-      mycol <- c(cols_user(), "grey")
-      plotFacetProfiles(profs, fcol, fd, pd, col = mycol)
+      plotFacetProfiles(profs, fcol, fd, pd, col = cols_user())
     })
     
     ## --------Display/update data table--------
@@ -746,8 +749,7 @@ pRolocVis_explore <- function(object,
             w <- round(ncol(profs)/1.5)
             h <- ncol(profs)/2
           }
-          mycol <- c(cols_user(), "grey")
-          profByClass <- plotFacetProfiles(profs, fcol, fd, pd, col = mycol)
+          profByClass <- plotFacetProfiles(profs, fcol, fd, pd, col = cols_user())
           ggsave(filename = file, plot = profByClass, device = "pdf", width = w, height = h) 
         } 
         else {

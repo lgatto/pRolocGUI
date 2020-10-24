@@ -161,7 +161,10 @@ plotFacetProfiles <- function(data,
     
     ## extract colours for organelles in the data 
     col <- c(col, "unknown" = "darkgrey")
-    col <- col[levels(df$mrk)]
+    if (is.factor(df$mrk)) 
+      col <- col[levels(df$mrk)]
+    else
+      col <- col[unique(df$mrk)]
     
     ## plot data
     p <- p + 

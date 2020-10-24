@@ -107,7 +107,30 @@ pRolocVis_compare <- function(object,
       fcol <- rep("nullmarkers", 2)
     }
   }
-
+  
+  ## Shorten markers names if too long
+  for (i in seq(object)) {
+    getMyClasses <- getMarkerClasses(object[[i]])
+    cn <- sapply(getMyClasses,
+                 function(x) {
+                   if (nchar(x) > nchar) {
+                     x <- strsplit(x, "")[[1]]
+                     x <- paste(x[1:nchar], collapse = "")
+                     x <- sub(" +$", "", x)
+                     x <- paste0(x, "...")
+                   }
+                   return(x)
+                 })    
+    names(cn) <- NULL
+    diffNam1 <- setdiff(getMyClasses, cn)
+    diffNam2 <- setdiff(cn, getMyClasses)
+    for (j in seq(diffNam1)) {
+      object <- fDataToUnknown(object[[i]], fcol = fcol[i], 
+                               from = diffNam1[j], 
+                               to = diffNam2[j])
+    }
+  }
+  
 
   ## Update feature data and convert any columns that are matrices
   ## to vectors as otherwise in the shiny app these are displayed as
@@ -151,19 +174,6 @@ pRolocVis_compare <- function(object,
       fcol[i] <- mName
       pmarkers[[i]] <- fData(object[[i]])[, fcol[i]]
     }
-    ## Shorten markers names if too long
-    cn <- sapply(colnames(pmarkers[[i]]),
-                 function(x) {
-                   if (nchar(x) > nchar) {
-                     x <- strsplit(x, "")[[1]]
-                     x <- paste(x[1:nchar], collapse = "")
-                     x <- sub(" +$", "", x)
-                     x <- paste0(x, "...")
-                   }
-                   return(x)
-                 })    
-    names(cn) <- NULL
-    colnames(pmarkers[[i]]) <- cn
   }
   
   
@@ -598,10 +608,10 @@ pRolocVis_compare <- function(object,
       bound_low <- quants[1, ]
       bound_high <- quants[2, ]
       ## get quantiles for subcellular classes
-      mrkProfs <- lapply(mrkSel1(), function(z) profs[[indData]][z, , drop = FALSE])   # 5% and 95% quantiles for all other classes
+      mrkProfs <- lapply(indMrk, function(z) profs[[indData]][z, , drop = FALSE])   # 5% and 95% quantiles for all other classes
       quants <- lapply(mrkProfs, function(z) apply(z, MARGIN = 2, function(x) 
         quantile(x, c(0.05, .95), na.rm = TRUE)))
-      meanProfs <- lapply(mrkProfs, function(z) apply(z, 2, mean))
+      meanProfs <- lapply(mrkProfs, function(z) apply(z, 2, mean, na.rm = TRUE))
       ## make polygon plots
       plot(0, ylim = ylim, xlim = c(1, m),
            type = "n", xaxt = "n", yaxt = "n", xlab = "",
@@ -641,7 +651,7 @@ pRolocVis_compare <- function(object,
       ## If an item is clicked in the table highlight profile
       idxDT <<- feats[input$fDataTable_rows_selected]
       # namesIdxDT <<- names(idxDT)
-      if (length(idxDT)) {
+      if (length(idxDT) > 0) {
         invisible(lapply(fracInds, function(z)     # don't plot all lines
           matlines(z, t(profs[[indData]][idxDT, z, drop = FALSE]),
                    col = "black",   # would like to colour by location here need names vector of colours
