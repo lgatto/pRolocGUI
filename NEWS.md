@@ -1,5 +1,9 @@
 # pRolocGUI 1.99
 
+## CHANGES IN VERSION 1.99.2
+- fixed warning in profiles plot
+- fixed colour matching in factet plot
+
 ## CHANGES IN VERSION 1.99.1
 - Apps updated to new shinydashboardPlus style
 - Options to save plots as high res images 
