@@ -125,7 +125,7 @@ pRolocVis_compare <- function(object,
     diffNam1 <- setdiff(getMyClasses, cn)
     diffNam2 <- setdiff(cn, getMyClasses)
     for (j in seq(diffNam1)) {
-      object <- fDataToUnknown(object[[i]], fcol = fcol[i], 
+      object[[i]] <- fDataToUnknown(object[[i]], fcol = fcol[i], 
                                from = diffNam1[j], 
                                to = diffNam2[j])
     }
