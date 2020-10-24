@@ -109,9 +109,9 @@ pRolocVis_compare <- function(object,
   }
   
   ## Shorten markers names if too long
-  for (i in seq(object)) {
-    getMyClasses <- getMarkerClasses(object[[i]])
-    cn <- sapply(getMyClasses,
+  for (i in seq_along(object)) {
+    origCl <- getMarkerClasses(object[[i]])
+    cn <- sapply(origCl,
                  function(x) {
                    if (nchar(x) > nchar) {
                      x <- strsplit(x, "")[[1]]
@@ -122,13 +122,17 @@ pRolocVis_compare <- function(object,
                    return(x)
                  })    
     names(cn) <- NULL
-    diffNam1 <- setdiff(getMyClasses, cn)
-    diffNam2 <- setdiff(cn, getMyClasses)
-    for (j in seq(diffNam1)) {
-      object[[i]]@x <- fDataToUnknown(object[[i]]@x, fcol = fcol[i], 
-                               from = diffNam1[j], 
-                               to = diffNam2[j])
+    from <- setdiff(origCl, cn)
+    to <- setdiff(cn, origCl)
+    stopifnot(length(to) == length(from))
+    x <- object[[i]]
+    stopifnot(fcol[i] %in% fvarLabels(x))
+    fvar <- fData(x)[[fcol[i]]]
+    for (j in seq_along(from)) {
+      fvar <- sub(from[j], to[j], fvar)
     }
+    fData(x)[[fcol[i]]] <- fvar
+    object@x[[i]] <- x
   }
   
 
