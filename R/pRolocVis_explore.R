@@ -419,7 +419,9 @@ pRolocVis_explore <- function(object,
     
     ## Update colours according to colourpicker input
     cols_user <- reactive({
-      sapply(col_ids, function(z) input[[z]])
+      cols_user <- sapply(col_ids, function(z) input[[z]])
+      cols_user <- names(cols_user) <- myclasses
+      return(cols_user)
     })
     
     
