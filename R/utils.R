@@ -109,7 +109,6 @@ plotFacetProfiles <- function(data,
   
   intensities = NULL
   mrk = NULL
-  
     if (missing(replicate.column.name)) {
         # message(paste("Replicate information not provided, assuming 1 replicate only"))
         repInfo <- rep(1, ncol(data))
@@ -136,7 +135,6 @@ plotFacetProfiles <- function(data,
                        quant_95 = quantile(intensities, 0.95, na.rm = TRUE),
                        max = max(intensities, na.rm = TRUE), .groups = "keep",
                        na.rm = TRUE)
-    
 
     fracLev <- levels(df$fraction)
     if (reps == TRUE) {
@@ -161,6 +159,11 @@ plotFacetProfiles <- function(data,
                       mapping = aes(fraction, mean, group = mrk, color = mrk))
     }
     
+    ## extract colours for organelles in the data 
+    col <- c(col, "unknown" = "darkgrey")
+    col <- col[levels(df$mrk)]
+    
+    ## plot data
     p <- p + 
         scale_x_discrete(limits=fracLev) +
         ylab("Normalised intensities") + xlab("") +
