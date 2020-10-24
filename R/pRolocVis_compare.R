@@ -107,7 +107,34 @@ pRolocVis_compare <- function(object,
       fcol <- rep("nullmarkers", 2)
     }
   }
-
+  
+  ## Shorten markers names if too long
+  for (i in seq_along(object)) {
+    origCl <- getMarkerClasses(object[[i]])
+    cn <- sapply(origCl,
+                 function(x) {
+                   if (nchar(x) > nchar) {
+                     x <- strsplit(x, "")[[1]]
+                     x <- paste(x[1:nchar], collapse = "")
+                     x <- sub(" +$", "", x)
+                     x <- paste0(x, "...")
+                   }
+                   return(x)
+                 })    
+    names(cn) <- NULL
+    from <- setdiff(origCl, cn)
+    to <- setdiff(cn, origCl)
+    stopifnot(length(to) == length(from))
+    x <- object[[i]]
+    stopifnot(fcol[i] %in% fvarLabels(x))
+    fvar <- fData(x)[[fcol[i]]]
+    for (j in seq_along(from)) {
+      fvar <- sub(from[j], to[j], fvar)
+    }
+    fData(x)[[fcol[i]]] <- fvar
+    object@x[[i]] <- x
+  }
+  
 
   ## Update feature data and convert any columns that are matrices
   ## to vectors as otherwise in the shiny app these are displayed as
@@ -151,19 +178,6 @@ pRolocVis_compare <- function(object,
       fcol[i] <- mName
       pmarkers[[i]] <- fData(object[[i]])[, fcol[i]]
     }
-    ## Shorten markers names if too long
-    cn <- sapply(colnames(pmarkers[[i]]),
-                 function(x) {
-                   if (nchar(x) > nchar) {
-                     x <- strsplit(x, "")[[1]]
-                     x <- paste(x[1:nchar], collapse = "")
-                     x <- sub(" +$", "", x)
-                     x <- paste0(x, "...")
-                   }
-                   return(x)
-                 })    
-    names(cn) <- NULL
-    colnames(pmarkers[[i]]) <- cn
   }
   
   
@@ -472,7 +486,9 @@ pRolocVis_compare <- function(object,
           }
         }
       }
-      .mrkSel1
+      # print(input$markers)
+      # print(paste0("---------"))
+      return(.mrkSel1)
     })
   
     mrkSel2 <- reactive({
@@ -495,15 +511,24 @@ pRolocVis_compare <- function(object,
     
     ## Update colours according to colourpicker input
     cols_user <- reactive({
-      sapply(col_ids, function(z) input[[z]])
+      cols_user <- sapply(col_ids, function(z) input[[z]])
+      names(cols_user) <- myclasses
+      # print(paste0("cols_user"))
+      # print(cols_user)
+      # print(paste0("---------"))
+      return(cols_user)
     })
     
     
     ## Update colour transparacy according to slider input
     myCols <- reactive({
-      scales::alpha(cols_user(),
+      myCols <- scales::alpha(cols_user(),
                     input$trans)[sapply(input$markers, function(z)
                       which(myclasses == z))]
+      # print(paste0("myCols"))
+      # print(myCols)
+      # print(paste0("---------"))
+      return(myCols)
     })
     
     myCols.bg <- reactive({
@@ -582,14 +607,15 @@ pRolocVis_compare <- function(object,
       ## get unknowns
       profs_un <- profs[[indData]][which(fd[[indData]][, fcol[indData]] == "unknown"), ]
       ## get quantiles for each fraction in unknowns
-      quants <- apply(profs_un, MARGIN = 2, function(x) quantile(x, c(0, 1)))  # max and min for unknowns
+      quants <- apply(profs_un, MARGIN = 2, function(x) 
+        quantile(x, c(0, 1), na.rm = TRUE))  # max and min for unknowns
       bound_low <- quants[1, ]
       bound_high <- quants[2, ]
       ## get quantiles for subcellular classes
-      mrkProfs <- lapply(mrkSel1(), function(z) profs[[indData]][z, , drop = FALSE])   # 5% and 95% quantiles for all other classes
+      mrkProfs <- lapply(indMrk, function(z) profs[[indData]][z, , drop = FALSE])   # 5% and 95% quantiles for all other classes
       quants <- lapply(mrkProfs, function(z) apply(z, MARGIN = 2, function(x) 
         quantile(x, c(0.05, .95), na.rm = TRUE)))
-      meanProfs <- lapply(mrkProfs, function(z) apply(z, 2, mean))
+      meanProfs <- lapply(mrkProfs, function(z) apply(z, 2, mean, na.rm = TRUE))
       ## make polygon plots
       plot(0, ylim = ylim, xlim = c(1, m),
            type = "n", xaxt = "n", yaxt = "n", xlab = "",
@@ -629,7 +655,7 @@ pRolocVis_compare <- function(object,
       ## If an item is clicked in the table highlight profile
       idxDT <<- feats[input$fDataTable_rows_selected]
       # namesIdxDT <<- names(idxDT)
-      if (length(idxDT)) {
+      if (length(idxDT) > 0) {
         invisible(lapply(fracInds, function(z)     # don't plot all lines
           matlines(z, t(profs[[indData]][idxDT, z, drop = FALSE]),
                    col = "black",   # would like to colour by location here need names vector of colours
@@ -646,19 +672,16 @@ pRolocVis_compare <- function(object,
       plotProfiles(2, mrkSel2())
     })
     
-    
     ## =====================FACET profiles plot========================
     ## ================================================================
     output$classProfiles1 <- renderPlot({
-      mycol <- c(cols_user(), "grey")
       plotFacetProfiles(profs[[1]], fcol[1], fd[[1]], 
-                        pd[[1]], col = mycol, ncol = 1)
+                        pd[[1]], col = cols_user(), ncol = 1)
     })
     
     output$classProfiles2 <- renderPlot({
-      mycol <- c(cols_user(), "grey")
       plotFacetProfiles(profs[[2]], fcol[2], fd[[2]], 
-                        pd[[2]], col = mycol, ncol = 1)
+                        pd[[2]], col = cols_user(), ncol = 1)
     })
     
     
@@ -800,13 +823,12 @@ pRolocVis_compare <- function(object,
           #   w <- round(ncol(profs)/1.5)
           #   h <- ncol(profs)/2
           # }
-          mycol <- c(cols_user(), "grey")
           profByClass1 <- plotFacetProfiles(profs[[1]], fcol[1], 
                                             fd[[1]], pd[[1]], 
-                                            col = mycol, ncol = 1)
+                                            col = cols_user(), ncol = 1)
           profByClass2 <- plotFacetProfiles(profs[[2]], fcol[2], 
                                             fd[[2]], pd[[2]], 
-                                            col = mycol, ncol = 1)
+                                            col = cols_user(), ncol = 1)
           ggsave(filename = file, plot = profByClass1, device = "pdf", width = 12, height = 5) 
           ggsave(filename = file, plot = profByClass2, device = "pdf", width = 12, height = 5) 
         } 

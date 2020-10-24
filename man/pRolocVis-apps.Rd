@@ -51,8 +51,7 @@ to \code{NULL}, no annotation is expected. For the
 allowed to set different labels for each dataset. If
 only one label is specified, then this single label 
 will be used to identify the annotation column in both datasets. 
-Please see example herein.
-\code{"fcol1"} and \code{"fcol2"} in this case.}
+Please see example herein.}
 
 \item{...}{Additional parameters passed to \code{plot2D} for the
 \code{"explore"} (such as the dimensionality reduction

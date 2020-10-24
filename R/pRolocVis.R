@@ -39,7 +39,6 @@
 ##'     only one label is specified, then this single label 
 ##'     will be used to identify the annotation column in both datasets. 
 ##'     Please see example herein.
-##'     \code{"fcol1"} and \code{"fcol2"} in this case.
 ##' @param fig.height Height of the figure. Default is \code{"700px"}.
 ##' @param nchar Maximum number of characters of the subcellular class
 ##'     names, before their names are truncated. Default is 25.
