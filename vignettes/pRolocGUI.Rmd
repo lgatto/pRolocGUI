@@ -154,7 +154,7 @@ at the patterns of protein profiles of interest in each dataset.
 * The aggregate app is for examining the effect that peptide or PSM 
 aggregation may have on the protein level data. 
 
-# The `pca` application
+# The `explore` application
 
 The `explore` (default) app is characterised by an interactive and
 searchable spatial map, by default this is a Principal Components 
@@ -184,7 +184,7 @@ To run the `explore` application using `pRolocVis`:
 pRolocVis(object = hyperLOPIT2015, fcol = "markers") 
 ```
 
-![The PCA Tab](figures/SS_01_map.jpg)
+![The explore Tab](figures/SS_01_map.jpg)
 
 **Viewing** The Spatial Map tab is characterised by its main panel which shows
 a PCA plot for the selected `MSnSet`. By default a PCA plot is used to

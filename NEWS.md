@@ -1,3 +1,13 @@
+# pRolocGUI 2.1
+
+## CHANGES IN VERSION pRolocGUI 2.1.1
+- fixed typos in vigentte 
+
+# pRolocGUI 2.0
+
+## CHANGES IN VERSION 2.0.0
+- New version for Bioc release
+
 # pRolocGUI 1.99
 
 ## CHANGES IN VERSION 1.99.2
