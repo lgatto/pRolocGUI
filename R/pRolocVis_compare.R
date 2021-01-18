@@ -728,7 +728,7 @@ pRolocVis_compare <- function(object,
                     selection = list(mode = 'multiple', selected = toSel),
                     options = list(
                       search = list(regex = TRUE, 
-                                    caseInsensitive = FALSE),
+                                    caseInsensitive = TRUE),
                       dom = "l<'search'>rtip",
                       pageLength = 100,
                       scrollX = TRUE
