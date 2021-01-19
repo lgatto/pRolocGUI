@@ -371,7 +371,7 @@ pRolocVis_explore <- function(object,
                                .items = list(
                                  p(strong("Map controls")),
                                  br(),
-                                 p("Transparancy"),
+                                 p("Transparency"),
                                  sliderInput("trans", NULL,
                                              min = 0,  max = 1, value = 0.75),
                                  checkboxInput("checkbox", label = "Show labels", value = TRUE),
