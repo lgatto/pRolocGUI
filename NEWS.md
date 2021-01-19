@@ -2,6 +2,7 @@
 
 ## CHANGES IN VERSION pRolocGUI 2.1.1
 - fixed typos in vigentte 
+- fixed typos in explore and compare apps UIs
 
 # pRolocGUI 2.0
 
