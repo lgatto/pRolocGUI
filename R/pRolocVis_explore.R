@@ -230,9 +230,9 @@ pRolocVis_explore <- function(object,
   ########################### BUILD UI  ############################### 
   #####################################################################
   
-  header <- dashboardHeaderPlus(title = "pRolocGUI Explore",
-                                enable_rightsidebar = TRUE,
-                                rightSidebarIcon = "filter")
+  header <- dashboardHeader(title = "pRolocGUI Explore",
+                            # enable_rightsidebar = TRUE,
+                            controlbarIcon = "filter")
   
   sidebar <- dashboardSidebar(
     p(strong("Subcellular classes")),
@@ -262,7 +262,9 @@ pRolocVis_explore <- function(object,
                    lib = "glyphicon"),
         no = icon("remove",
                   lib = "glyphicon"))
-    ) 
+    ),
+    minified = FALSE
+    # minified = FALSE,
   )
   
   body <- dashboardBody(
@@ -366,34 +368,60 @@ pRolocVis_explore <- function(object,
     
   )
   
-  rightsidebar <- .setRightSidebar(background = "light",
-                               width = 160,
-                               .items = list(
-                                 p(strong("Map controls")),
-                                 br(),
-                                 p("Transparency"),
-                                 sliderInput("trans", NULL,
-                                             min = 0,  max = 1, value = 0.75),
-                                 checkboxInput("checkbox", label = "Show labels", value = TRUE),
-                                 br(),
-                                 actionButton("resetButton", "Zoom/reset plot", style='padding:6px; font-size:90%'),
-                                 br(), br(),
-                                 actionButton("clear", "Clear selection", style='padding:6px; font-size:90%'),
-                                 br(), br(),
-                                 actionButton("resetColours", "Reset colours", style='padding:6px; font-size:90%'),
-                                 br(), br(),
-                                 downloadButton("downloadData", "Save selection", style='padding:6px; font-size:90%'),
-                                 br(), br(),
-                                 downloadButton("saveplot", "Download plot", style='padding:6px; font-size:90%'),
-                                 br())
+  # rightsidebar <- .setRightSidebar(background = "light",
+  #                              width = 160,
+  #                              .items = list(
+  #                                p(strong("Map controls")),
+  #                                br(),
+  #                                p("Transparency"),
+  #                                sliderInput("trans", NULL,
+  #                                            min = 0,  max = 1, value = 0.75),
+  #                                checkboxInput("checkbox", label = "Show labels", value = TRUE),
+  #                                br(),
+  #                                actionButton("resetButton", "Zoom/reset plot", style='padding:6px; font-size:90%'),
+  #                                br(), br(),
+  #                                actionButton("clear", "Clear selection", style='padding:6px; font-size:90%'),
+  #                                br(), br(),
+  #                                actionButton("resetColours", "Reset colours", style='padding:6px; font-size:90%'),
+  #                                br(), br(),
+  #                                downloadButton("downloadData", "Save selection", style='padding:6px; font-size:90%'),
+  #                                br(), br(),
+  #                                downloadButton("saveplot", "Download plot", style='padding:6px; font-size:90%'),
+  #                                br())
+  # )
+  
+  controlbar <- dashboardControlbar(
+    skin = "light",
+    width = 160,
+    .list = list(
+      p(strong("Map controls")),
+      br(),
+      p("Transparency"),
+      sliderInput("trans", NULL,
+                  min = 0,  max = 1, value = 0.75),
+      checkboxInput("checkbox", label = "Show labels", value = TRUE),
+      br(),
+      actionButton("resetButton", "Zoom/reset plot", style='padding:6px; font-size:90%'),
+      br(), br(),
+      actionButton("clear", "Clear selection", style='padding:6px; font-size:90%'),
+      br(), br(),
+      actionButton("resetColours", "Reset colours", style='padding:6px; font-size:90%'),
+      br(), br(),
+      downloadButton("downloadData", "Save selection", style='padding:6px; font-size:90%'),
+      br(), br(),
+      downloadButton("saveplot", "Download plot", style='padding:6px; font-size:90%'),
+      br())
   )
   
   
-  ui <- tags$body(class="skin-blue right-sidebar-mini control-sidebar-open", dashboardPagePlus(header,
-                                                                                               sidebar,
-                                                                                               body,
-                                                                                               rightsidebar,
-                                                                                               sidebar_fullCollapse = TRUE))
+  ui <- tags$body(class="skin-blue right-sidebar-mini control-sidebar-open", 
+                  dashboardPage(header,
+                                sidebar,
+                                body,
+                                controlbar
+                                # sidebar_fullCollapse = TRUE))
+                  ))
+                                                                                               
   ui <- shinyUI(tagList(ui))
   
   
