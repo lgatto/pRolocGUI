@@ -170,7 +170,7 @@ pRolocVis_explore <- function(object,
     pd <- data.frame("Information" = "No sample information provided (see pData(MSnSet) and ?pData for examples)")
   }
   pcol <- NULL                                    # replicate information
-  profs <- exprs(object)                          # intensities
+  profs <- MSnbase::exprs(object)                          # intensities
   mName <- paste0("Markers", format(Sys.time(), "%a%b%d%H%M%S%Y"))
   pmarkers_msnset <- mrkVecToMat(object, fcol, mfcol = mName)
   pmarkers <- fData(pmarkers_msnset)[, mName]     # marker matrix    

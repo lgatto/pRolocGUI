@@ -106,7 +106,7 @@ plotFacetProfiles <- function(data,
                               replicate.column.name, 
                               col,
                               ...) {
-  
+
   intensities = NULL
   mrk = NULL
     if (missing(replicate.column.name)) {
