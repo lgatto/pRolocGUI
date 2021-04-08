@@ -331,15 +331,16 @@ pRolocVis_explore <- function(object,
                   ),
                   tabPanel("Profiles", value = "profilesPanel1",
                            br(),
-                           plotOutput("profile1",
-                                      height = "550px") %>%
+                           p(strong("Protein profiles")) %>%
                              helper(colour = "grey",
                                     type = "inline",
                                     buttonLabel = "profs",
                                     title = "Protein profiles",
                                     content = c("Profile plot displaying the relative 
                                              abundance of each protein in each fraction 
-                                             across the gradient employed."), size = "s")),
+                                             across the gradient employed."), size = "s"),
+                           plotOutput("profile1",
+                                      height = "550px")),
                   tabPanel("Profiles (by class)", value = "profilesPanel2",
                            br(),
                            plotOutput("profile2",
@@ -434,15 +435,17 @@ pRolocVis_explore <- function(object,
                   ),
                   tabPanel("Profiles", value = "profilesPanel1",
                            br(),
-                           plotOutput("profile1",
-                                      height = "550px") %>%
+                           br(),
+                           p(strong("Protein profiles")) %>%
                              helper(colour = "grey",
                                     type = "inline",
                                     buttonLabel = "profs",
                                     title = "Protein profiles",
                                     content = c("Profile plot displaying the relative 
                                              abundance of each protein in each fraction 
-                                             across the gradient employed."), size = "s")),
+                                             across the gradient employed."), size = "s"),
+                           plotOutput("profile1",
+                                      height = "550px")),
                   # tabPanel("Profiles (by class)", value = "profilesPanel2",
                   #          br(),
                   #          plotOutput("profile2",
