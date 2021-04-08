@@ -121,6 +121,9 @@ pRolocVis_explore <- function(object,
     rownames(m) <- featureNames(object)
     colnames(m) <- "0"
     fData(object)[, fcol] <- m
+  } else {
+    if (!isMrkVec(object, fcol) & !isMrkMat(object, fcol)) 
+    stop("Your fcol (markers) are neither vector nor matrix. See ?markers for details.")
   }
   
   ## Shorten markers names if too long

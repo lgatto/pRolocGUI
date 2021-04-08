@@ -107,6 +107,9 @@ pRolocVis_compare <- function(object,
         return(x)
       })
       fcol <- rep("nullmarkers", 2)
+    } else {
+      if (!isMrkVec(object[[i]], fcol[i]) & !isMrkMat(object[[i]], fcol[i])) 
+        stop("Your fcol (markers) are neither vector nor matrix. See ?markers for details.")
     }
   }
   
