@@ -39,7 +39,7 @@ pRolocVis_explore <- function(object,
   myargs <- list(...)
 
   if (inherits(object, "MSnSet")) {
-    object_coords <- plot2D(object, plot = FALSE, ...)
+    object_coords <- plot2D(object, plot = FALSE, fcol = NULL, ...)
   } 
   else if (inherits(object, "matrix")) {
     message(paste("---------------------------------------------------------",
@@ -47,7 +47,7 @@ pRolocVis_explore <- function(object,
                   "\narguments method = 'none' and methargs are also passed",
                   "\nSee ?plot2D and the pRolocGUI vignette for more details.",
                   "\n---------------------------------------------------------"))
-    chk <- plot2D(object, plot = FALSE, ...)
+    chk <- plot2D(object, plot = FALSE, fcol = NULL, ...)
     object_coords <- object
     object <- myargs$methargs[[1]]
   }
