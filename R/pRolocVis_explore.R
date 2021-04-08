@@ -19,14 +19,16 @@
 
 ##' @rdname pRolocVis-apps
 pRolocVis_explore <- function(object,
-                          fcol = "markers",
-                          fig.height = "700px",
-                          # fig.width = "100%",
-                          # legend.width = "200%",
-                          # legend.cex = 1,
-                          nchar = 25,
-                          # all = TRUE,
-                          ...) {
+                              fcol = "markers",
+                              classProfiles = FALSE,
+                              fig.height = "700px",
+                              # fig.width = "100%",
+                              # legend.width = "200%",
+                              # legend.cex = 1,
+                              nchar = 25,
+                              # all = TRUE,
+                              ...) {
+                          
   
   #####################################################################
   ##################### Initialize app settings  ###################### 
@@ -232,7 +234,7 @@ pRolocVis_explore <- function(object,
   
   header <- dashboardHeader(title = "pRolocGUI Explore",
                             # enable_rightsidebar = TRUE,
-                            controlbarIcon = "filter")
+                            controlbarIcon = shiny::icon("gears"))
   
   sidebar <- dashboardSidebar(
     p(strong("Subcellular classes")),
@@ -240,6 +242,7 @@ pRolocVis_explore <- function(object,
                  style='padding:4%; font-size:100%; margin:6px 5px 6px 20%') %>%
       helper(colour = "grey",
              type = "inline",
+             buttonLabel = "classes",
              title = "Explore compartments",
              content = c("This sidebar allows you to explore proteins that 
                          belong to pre-defined subcellular classes. To remove 
@@ -267,33 +270,35 @@ pRolocVis_explore <- function(object,
     # minified = FALSE,
   )
   
-  body <- dashboardBody(
-    ## trigger resize of plot  when sidebars are clicked
-    tags$script('
+  if (classProfiles) {
+    body <- dashboardBody(
+      ## trigger resize of plot  when sidebars are clicked
+      tags$script('
       $(".navbar-custom-menu").on("click",function(){
         $(window).trigger("resize");
       })'
-    ),
-    ## update colours in css according to selected colorpicker
-    tags$head(uiOutput("css")),
-    ## css for styling app
-    tags$head(tags$style(HTML(css_hs))),
-    useShinyjs(),
-    tags$hr(),
-    ## main body of the app
-    tabsetPanel(type = "tabs", id = "tabs",
-                tabPanel("Spatial Map", value = "mapPanel",
-                         br(),
-                         plotOutput("pca",
-                                    height = fig.height,
-                                    dblclick = "dblClick",
-                                    brush = brushOpts(
-                                      id = "pcaBrush",
-                                      resetOnNew = TRUE)) %>%
-                           helper(colour = "grey",
-                                  type = "inline",
-                                  title = "Interactive data projection",
-                                  content = c("This visualisation is an interactive 
+      ),
+      ## update colours in css according to selected colorpicker
+      tags$head(uiOutput("css")),
+      ## css for styling app
+      tags$head(tags$style(HTML(css_hs))),
+      useShinyjs(),
+      tags$hr(),
+      ## main body of the app
+      tabsetPanel(type = "tabs", id = "tabs",
+                  tabPanel("Spatial Map", value = "mapPanel",
+                           br(),
+                           plotOutput("pca",
+                                      height = fig.height,
+                                      dblclick = "dblClick",
+                                      brush = brushOpts(
+                                        id = "pcaBrush",
+                                        resetOnNew = TRUE)) %>%
+                             helper(colour = "grey",
+                                    type = "inline",
+                                    buttonLabel = "map",
+                                    title = "Interactive data projection",
+                                    content = c("This visualisation is an interactive 
                                   projection of the dataset. Each point on the plot 
                                   represents one protein.<br /> <br /> Double click 
                                   points on the plot to identify them (similarly you 
@@ -319,54 +324,160 @@ pRolocVis_explore <- function(object,
                                   by clicking \"Clear selection\". <br /> <br /> Rendering 
                                   of images: Use the \"Download plot\" button to 
                                   save a high resolution PDF of the data."), 
-                                  size = "s")
-                         ),
-                tabPanel("Profiles", value = "profilesPanel1",
-                         br(),
-                         plotOutput("profile1",
-                                    height = "550px") %>%
-                           helper(colour = "grey",
-                                  type = "inline",
-                                  title = "Protein profiles",
-                                  content = c("Profile plot displaying the relative 
+                                    size = "s")
+                  ),
+                  tabPanel("Profiles", value = "profilesPanel1",
+                           br(),
+                           plotOutput("profile1",
+                                      height = "550px") %>%
+                             helper(colour = "grey",
+                                    type = "inline",
+                                    buttonLabel = "profs",
+                                    title = "Protein profiles",
+                                    content = c("Profile plot displaying the relative 
                                              abundance of each protein in each fraction 
                                              across the gradient employed."), size = "s")),
-                tabPanel("Profiles (by class)", value = "profilesPanel2",
-                         br(),
-                         plotOutput("profile2",
-                                    height = "800px")),
-                tabPanel("Table Selection", id = "tableSelPanel",
-                         br(),
-                         fluidRow(
-                           column(4,
-                                  checkboxGroupInput("selTab",
-                                                     "Data columns to display",
-                                                     choices = origFvarLab,
-                                                     # choices = origFvarLab[-grep(mName, origFvarLab)],
-                                                     selected = selDT)))),
-                # tabPanel("Table Legends", value = "tbl",
-                #          tableOutput("tbl")),
-                tabPanel("Sample info", value = "sampleInfo",
-                         br(), br(),
-                         tableOutput("pdata"), br()), 
-                tabPanel("Colour picker", value = "colPicker",
-                         br(),
-                         fluidRow(
-                           if (ll > 5) {
-                             splitLayout(cellWidths = c("50%", "50%"),
-                                         col_input[num1],
-                                         col_input[num2])
-                           } else {
-                             splitLayout(cellWidths = "50%",
-                                         col_input)
-                           }, br(), br(), br(), br(), br()  ## add whitespace
-                         ), br(), br())   # this is a list of N colour containers for N organelles
-    ),      #===end TABS in MP===
-    
-    ## feature data table is always visible
-    DT::dataTableOutput("fDataTable")
-    
-  )
+                  tabPanel("Profiles (by class)", value = "profilesPanel2",
+                           br(),
+                           plotOutput("profile2",
+                                      height = "800px")),
+                  tabPanel("Table Selection", id = "tableSelPanel",
+                           br(),
+                           fluidRow(
+                             column(4,
+                                    checkboxGroupInput("selTab",
+                                                       "Data columns to display",
+                                                       choices = origFvarLab,
+                                                       # choices = origFvarLab[-grep(mName, origFvarLab)],
+                                                       selected = selDT)))),
+                  # tabPanel("Table Legends", value = "tbl",
+                  #          tableOutput("tbl")),
+                  tabPanel("Sample info", value = "sampleInfo",
+                           br(), br(),
+                           tableOutput("pdata"), br()), 
+                  tabPanel("Colour picker", value = "colPicker",
+                           br(),
+                           fluidRow(
+                             if (ll > 5) {
+                               splitLayout(cellWidths = c("50%", "50%"),
+                                           col_input[num1],
+                                           col_input[num2])
+                             } else {
+                               splitLayout(cellWidths = "50%",
+                                           col_input)
+                             }, br(), br(), br(), br(), br()  ## add whitespace
+                           ), br(), br())   # this is a list of N colour containers for N organelles
+      ),      #===end TABS in MP===
+      
+      ## feature data table is always visible
+      DT::dataTableOutput("fDataTable")
+      
+    )
+  } else {
+    body <- dashboardBody(
+      ## trigger resize of plot  when sidebars are clicked
+      tags$script('
+      $(".navbar-custom-menu").on("click",function(){
+        $(window).trigger("resize");
+      })'
+      ),
+      ## update colours in css according to selected colorpicker
+      tags$head(uiOutput("css")),
+      ## css for styling app
+      tags$head(tags$style(HTML(css_hs))),
+      useShinyjs(),
+      tags$hr(),
+      ## main body of the app
+      tabsetPanel(type = "tabs", id = "tabs",
+                  tabPanel("Spatial Map", value = "mapPanel",
+                           br(),
+                           plotOutput("pca",
+                                      height = fig.height,
+                                      dblclick = "dblClick",
+                                      brush = brushOpts(
+                                        id = "pcaBrush",
+                                        resetOnNew = TRUE)) %>%
+                             helper(colour = "grey",
+                                    buttonLabel = "map",
+                                    type = "inline",
+                                    title = "Interactive data projection",
+                                    content = c("This visualisation is an interactive 
+                                  projection of the dataset. Each point on the plot 
+                                  represents one protein.<br /> <br /> Double click 
+                                  points on the plot to identify them (similarly you 
+                                  can double click to remove them or alternatively 
+                                  use the \"Clear selection\" button in the left 
+                                  tab panel to remove all highlighted proteins). 
+                                  If you would like to highlight proteins without 
+                                  displaying their name/ID untick \"Show Labels\" 
+                                  in the left panel.<br /> <br /> Searching: Use 
+                                  the search box below the plot to search and find 
+                                  your favourite proteins. Batch searching is enabled 
+                                  but requires that protein IDs/features/text are 
+                                  separated by spaces. Search matches will appear 
+                                  in the table below. Click the desired row entry(s) 
+                                  in the table and they will be highlighed on the plot.
+                                  <br /> <br /> Interactive zooming: Click and brush 
+                                  areas of the plot (use your mouse to click and brush 
+                                  a rectangular area of the plot) and then click the 
+                                  \"Zoom/reset\" button in the bottom left panel. 
+                                  <br /> <br /> Exporting: Highlighed proteins can 
+                                  be exported to a .csv file by clicking \"Save selection\". 
+                                  Highlighted proteins can be removed from the selection 
+                                  by clicking \"Clear selection\". <br /> <br /> Rendering 
+                                  of images: Use the \"Download plot\" button to 
+                                  save a high resolution PDF of the data."), 
+                                    size = "s")
+                  ),
+                  tabPanel("Profiles", value = "profilesPanel1",
+                           br(),
+                           plotOutput("profile1",
+                                      height = "550px") %>%
+                             helper(colour = "grey",
+                                    type = "inline",
+                                    buttonLabel = "profs",
+                                    title = "Protein profiles",
+                                    content = c("Profile plot displaying the relative 
+                                             abundance of each protein in each fraction 
+                                             across the gradient employed."), size = "s")),
+                  # tabPanel("Profiles (by class)", value = "profilesPanel2",
+                  #          br(),
+                  #          plotOutput("profile2",
+                  #                     height = "800px")),
+                  tabPanel("Table Selection", id = "tableSelPanel",
+                           br(),
+                           fluidRow(
+                             column(4,
+                                    checkboxGroupInput("selTab",
+                                                       "Data columns to display",
+                                                       choices = origFvarLab,
+                                                       # choices = origFvarLab[-grep(mName, origFvarLab)],
+                                                       selected = selDT)))),
+                  # tabPanel("Table Legends", value = "tbl",
+                  #          tableOutput("tbl")),
+                  tabPanel("Sample info", value = "sampleInfo",
+                           br(), br(),
+                           tableOutput("pdata"), br()), 
+                  tabPanel("Colour picker", value = "colPicker",
+                           br(),
+                           fluidRow(
+                             if (ll > 5) {
+                               splitLayout(cellWidths = c("50%", "50%"),
+                                           col_input[num1],
+                                           col_input[num2])
+                             } else {
+                               splitLayout(cellWidths = "50%",
+                                           col_input)
+                             }, br(), br(), br(), br(), br()  ## add whitespace
+                           ), br(), br())   # this is a list of N colour containers for N organelles
+      ),      #===end TABS in MP===
+      
+      ## feature data table is always visible
+      DT::dataTableOutput("fDataTable")
+      
+    )
+  }
+  
   
   # rightsidebar <- .setRightSidebar(background = "light",
   #                              width = 160,
@@ -394,22 +505,22 @@ pRolocVis_explore <- function(object,
     skin = "light",
     width = 160,
     .list = list(
-      p(strong("Map controls")),
+      p(strong(" Map controls")),
       br(),
-      p("Transparency"),
-      sliderInput("trans", NULL,
+      p(" Transparency"),
+      sliderInput(" trans", NULL,
                   min = 0,  max = 1, value = 0.75),
       checkboxInput("checkbox", label = "Show labels", value = TRUE),
       br(),
-      actionButton("resetButton", "Zoom/reset plot", style='padding:6px; font-size:90%'),
+      actionButton("resetButton", "Zoom/reset plot", style='padding:8px; font-size:90%; margin:3px 3px 3px 6px'),
       br(), br(),
-      actionButton("clear", "Clear selection", style='padding:6px; font-size:90%'),
+      actionButton("clear", "Clear selection", style='padding:8px; font-size:90%; margin:3px 3px 3px 6px'),
       br(), br(),
-      actionButton("resetColours", "Reset colours", style='padding:6px; font-size:90%'),
+      actionButton("resetColours", "Reset colours", style='padding:8px; font-size:90%; margin:3px 3px 3px 6px'),
       br(), br(),
-      downloadButton("downloadData", "Save selection", style='padding:6px; font-size:90%'),
+      downloadButton("downloadData", "Save selection", style='padding:8px; font-size:90%; margin:3px 3px 3px 6px'),
       br(), br(),
-      downloadButton("saveplot", "Download plot", style='padding:6px; font-size:90%'),
+      downloadButton("saveplot", "Download plot", style='padding:8px; font-size:90%; margin:3px 3px 3px 6px'),
       br())
   )
   
@@ -580,9 +691,12 @@ pRolocVis_explore <- function(object,
     })
 
     ## Class specific/faceted plots
-    output$profile2 <- renderPlot({
-      plotFacetProfiles(profs, fcol, fd, pd, col = cols_user())
-    })
+    if (classProfiles) {
+      output$profile2 <- renderPlot({
+        plotFacetProfiles(profs, fcol, fd, pd, col = cols_user())
+      }) 
+    }
+    
     
     ## --------Display/update data table--------
     ## Feature data table
