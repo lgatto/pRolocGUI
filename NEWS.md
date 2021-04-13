@@ -6,6 +6,9 @@
 - depend on shinydashboardPlus 2.0.0
 - fixed bug in pRolocVis which fails when no fcol
   explicitly called markers is not present
+- added argument classProfiles to compare and explore 
+  apps so that users can choose to display class 
+  specific profiles
 
 # pRolocGUI 2.1
 

@@ -18,6 +18,8 @@
 ## https://rinterface.com/shiny/shinydashboardPlus/#
 
 ##' @rdname pRolocVis-apps
+##' @param classProfiles A \code{logical} indicating if a tab displaying
+##' individual class profile plots should be displayed. Default is \code{FALSE}. 
 pRolocVis_explore <- function(object,
                               fcol = "markers",
                               classProfiles = FALSE,

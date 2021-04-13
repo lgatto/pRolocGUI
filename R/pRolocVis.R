@@ -39,7 +39,7 @@
 ##'     only one label is specified, then this single label 
 ##'     will be used to identify the annotation column in both datasets. 
 ##'     Please see example herein.
-##' @param fig.height Height of the figure. Default is \code{"700px"}.
+##' @param fig.height Height of the figure.
 ##' @param nchar Maximum number of characters of the subcellular class
 ##'     names, before their names are truncated. Default is 25.
 ##' @param ... Additional parameters passed to \code{plot2D} for the

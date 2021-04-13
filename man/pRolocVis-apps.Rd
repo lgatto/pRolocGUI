@@ -22,7 +22,8 @@ pRolocVis_aggregate(
 pRolocVis_compare(
   object,
   fcol = "markers",
-  fig.height = "700px",
+  classProfiles = FALSE,
+  fig.height = "400px",
   nchar = 25,
   ...
 )
@@ -30,6 +31,7 @@ pRolocVis_compare(
 pRolocVis_explore(
   object,
   fcol = "markers",
+  classProfiles = FALSE,
   fig.height = "700px",
   nchar = 25,
   ...
@@ -62,10 +64,13 @@ to be passed to \code{combineFeatures}.}
 \item{groupBy}{The feature meta-data label (\code{fData} column name)
 to be used for summarising the features to be combined.}
 
-\item{fig.height}{Height of the figure. Default is \code{"700px"}.}
+\item{fig.height}{Height of the figure.}
 
 \item{nchar}{Maximum number of characters of the subcellular class
 names, before their names are truncated. Default is 25.}
+
+\item{classProfiles}{A \code{logical} indicating if a tab displaying
+individual class profile plots should be displayed. Default is \code{FALSE}.}
 }
 \description{
 These functions allow one to explore spatial proteomics data

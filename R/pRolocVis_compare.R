@@ -1,7 +1,3 @@
-## remove this when building package
-# source("utils.R")
-# source("css.R")
-
 ## DOUBLE CLICKING TO HIGHLIGHT on/off on PCA plot, or selection via table
 
 ## Shiny: spinning loading wheel on top of plot while plot is recalculating
@@ -18,6 +14,8 @@
 ## https://rinterface.com/shiny/shinydashboardPlus/#
 
 ##' @rdname pRolocVis-apps
+##' @param classProfiles A \code{logical} indicating if a tab displaying
+##' individual class profile plots should be displayed. Default is \code{FALSE}. 
 pRolocVis_compare <- function(object,
                           fcol = "markers",
                           classProfiles = FALSE,
