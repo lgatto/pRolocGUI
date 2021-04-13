@@ -1,6 +1,6 @@
-# pRolocGUI 2.3
+# pRolocGUI 2.1
 
-## CHANGES IN VERSION 2.3.0
+## CHANGES IN VERSION 2.1.2
 - re-write of code to fix the breaking changes
   introduced by shinydashboardPlus v2
 - depend on shinydashboardPlus 2.0.0
@@ -9,8 +9,6 @@
 - added argument classProfiles to compare and explore 
   apps so that users can choose to display class 
   specific profiles
-
-# pRolocGUI 2.1
 
 ## CHANGES IN VERSION 2.1.1
 - fixed typos in vigentte 
