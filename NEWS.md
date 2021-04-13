@@ -1,6 +1,15 @@
+# pRolocGUI 2.3
+
+## CHANGES IN VERSION 2.3.0
+- re-write of code to fix the breaking changes
+  introduced by shinydashboardPlus v2
+- depend on shinydashboardPlus 2.0.0
+- fixed bug in pRolocVis which fails when no fcol
+  explicitly called markers is not present
+
 # pRolocGUI 2.1
 
-## CHANGES IN VERSION pRolocGUI 2.1.1
+## CHANGES IN VERSION 2.1.1
 - fixed typos in vigentte 
 - fixed typos in explore and compare apps UIs
 
