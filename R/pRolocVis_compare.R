@@ -75,7 +75,7 @@ pRolocVis_compare <- function(object,
   object <- commonFeatureNames(object)
   .cmnNam <- featureNames(object[[1]])
   object_coords <- lapply(object_coords, function(x) {
-    x <- x[.cmnNam, ]
+    x <- x[.cmnNam, , drop = FALSE]
     return(x)
     })
   
@@ -654,7 +654,7 @@ pRolocVis_compare <- function(object,
           if (is.na(ind[i])) {
             .mrkSel1[[i]] <- NA
           } else {
-            .mrkSel1[[i]] <- which(pmarkers[[1]][, ind[i]] == 1)
+            .mrkSel1[[i]] <- which(pmarkers[[1]][, ind[i], drop = FALSE] == 1)
           }
         }
       }
@@ -673,7 +673,7 @@ pRolocVis_compare <- function(object,
           if (is.na(ind[i])) {
             .mrkSel2[[i]] <- NA
           } else {
-            .mrkSel2[[i]] <- which(pmarkers[[2]][, ind[i]] == 1)
+            .mrkSel2[[i]] <- which(pmarkers[[2]][, ind[i], drop = FALSE] == 1)
           }
         }
       }
@@ -729,7 +729,7 @@ pRolocVis_compare <- function(object,
       if (!is.null(input$markers)) {
         for (i in 1:length(input$markers)) {
           if (!is.na(indMrk[[i]][1]))
-            points(object_coords[[indData]][mrkSel2()[[i]], ], pch = 16,
+            points(object_coords[[indData]][mrkSel2()[[i]], , drop = FALSE], pch = 16,
                    cex = 1.4, bg = myCols()[i], col = myCols.bg()[i])
         }
       }

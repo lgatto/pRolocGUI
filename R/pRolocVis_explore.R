@@ -100,7 +100,7 @@ pRolocVis_explore <- function(object,
   
     object <- object[-chk, ]
     if (nrow(object) != nrow(object_coords)) {
-      object_coords <- object_coords[!chk, ]
+      object_coords <- object_coords[!chk, , drop = FALSE]
     }
     if (all(featureNames(object) != rownames(object_coords))) {
       stop(paste("Row/featureNames in matrix/MSnSet do not match"))
@@ -566,7 +566,7 @@ pRolocVis_explore <- function(object,
     ## Get coords for proteins according to selectized marker class(es)
     mrkSel <- reactive({
       lapply(input$markers,
-             function(z) which(pmarkers[, z] == 1))
+             function(z) which(pmarkers[, z, drop = FALSE] == 1))
     })
     
     
@@ -609,7 +609,7 @@ pRolocVis_explore <- function(object,
              fcol = fcol)
       if (!is.null(input$markers)) {
         for (i in 1:length(input$markers))
-          points(object_coords[mrkSel()[[i]], ], pch = 21,
+          points(object_coords[mrkSel()[[i]], , drop = FALSE], pch = 21,
                  cex = 1.4, bg = myCols()[i], col = myCols.bg()[i])
       }
       idxDT <<- feats[input$fDataTable_rows_selected] ## highlight point on plot by selecting item in table
@@ -815,7 +815,7 @@ pRolocVis_explore <- function(object,
                  fcol = fcol)
           if (!is.null(input$markers)) {
             for (i in 1:length(input$markers))
-              points(object_coords[mrkSel()[[i]], ], pch = 21,
+              points(object_coords[mrkSel()[[i]], , drop = FALSE], pch = 21,
                      cex = 1.4, bg = myCols()[i], col = myCols.bg()[i])
           }
           idxDT <<- feats[input$fDataTable_rows_selected] ## highlight point on plot by selecting item in table
