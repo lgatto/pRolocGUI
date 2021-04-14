@@ -1,5 +1,10 @@
 # pRolocGUI 2.1
 
+## CHANGES IN VERSION 2.1.3
+- added and renames buttons for downloading data
+- fixed issue #104 that occurs when marker classes
+  have only 1 member
+
 ## CHANGES IN VERSION 2.1.2
 - re-write of code to fix the breaking changes
   introduced by shinydashboardPlus v2
