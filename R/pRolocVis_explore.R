@@ -324,7 +324,7 @@ pRolocVis_explore <- function(object,
                                   a rectangular area of the plot) and then click the 
                                   \"Zoom/reset\" button in the bottom left panel. 
                                   <br /> <br /> Exporting: Highlighed proteins can 
-                                  be exported to a .csv file by clicking \"Save selection\". 
+                                  be exported to a .csv file by clicking \"Export selected\". 
                                   Highlighted proteins can be removed from the selection 
                                   by clicking \"Clear selection\". <br /> <br /> Rendering 
                                   of images: Use the \"Download plot\" button to 
@@ -503,7 +503,7 @@ pRolocVis_explore <- function(object,
   #                                br(), br(),
   #                                actionButton("resetColours", "Reset colours", style='padding:6px; font-size:90%'),
   #                                br(), br(),
-  #                                downloadButton("downloadData", "Save selection", style='padding:6px; font-size:90%'),
+  #                                downloadButton("exportSelected", "Save selection", style='padding:6px; font-size:90%'),
   #                                br(), br(),
   #                                downloadButton("saveplot", "Download plot", style='padding:6px; font-size:90%'),
   #                                br())
@@ -526,7 +526,9 @@ pRolocVis_explore <- function(object,
       br(), br(),
       actionButton("resetColours", "Reset colours", style='padding:8px; font-size:90%; margin:3px 3px 3px 6px'),
       br(), br(),
-      downloadButton("downloadData", "Save selection", style='padding:8px; font-size:90%; margin:3px 3px 3px 6px'),
+      downloadButton("exportSelected", "Export selected", style='padding:8px; font-size:90%; margin:3px 3px 3px 6px'),
+      br(), br(),
+      downloadButton("exportData", "Export data", style='padding:8px; font-size:90%; margin:3px 3px 3px 6px'),
       br(), br(),
       downloadButton("saveplot", "Download plot", style='padding:8px; font-size:90%; margin:3px 3px 3px 6px'),
       br())
@@ -773,13 +775,28 @@ pRolocVis_explore <- function(object,
       resetLabels$logical <- TRUE
     })
     
-    ## --------Save selection button--------
+    ## --------Export selected button--------
     ## When save button is download save points/proteins selected
-    output$downloadData <- downloadHandler(
+    output$exportSelected <- downloadHandler(
       filename = "features.csv",
       content = function(file) { 
-        write.table(namesIdxDT, file = file, quote = FALSE, 
-                    row.names = FALSE, col.names = FALSE)
+        write.table(cbind(profs[namesIdxDT, , drop = FALSE], 
+                          fd[namesIdxDT, , drop = FALSE]), 
+                    file = file, quote = FALSE, 
+                    col.names = NA, row.names = TRUE, 
+                    sep = "\t")
+      }
+    )
+    
+    ## --------Export data button--------
+    ## When save button is download whole dataset
+    output$exportData <- downloadHandler(
+      filename = "fulldataset.csv",
+      content = function(file) { 
+        write.table(cbind(profs, fd), 
+                  file = file, quote = FALSE, 
+                  row.names = TRUE, col.names = NA,
+                  sep = "\t")
       }
     )
     

@@ -323,7 +323,7 @@ pRolocVis_compare <- function(object,
                                   a rectangular area of the plot) and then click the 
                                   \"Zoom/reset\" button in the bottom left panel. 
                                   <br /> <br /> Exporting: Highlighed proteins can 
-                                  be exported to a .csv file by clicking \"Save selection\". 
+                                  be exported to a .csv file by clicking \"Export selected\". 
                                   Highlighted proteins can be removed from the selection 
                                   by clicking \"Clear selection\". <br /> <br /> Rendering 
                                   of images: Use the \"Download plot\" button to 
@@ -581,7 +581,9 @@ pRolocVis_compare <- function(object,
                                      br(), br(),
                                      actionButton("resetColours", "Reset colours", style='padding:6px; font-size:90%'),
                                      br(), br(),
-                                     downloadButton("downloadData", "Save selection", style='padding:6px; font-size:90%'),
+                                     downloadButton("exportSelected", "Export selected", style='padding:6px; font-size:90%'),
+                                     br(), br(),
+                                     downloadButton("exportData", "Export data", style='padding:6px; font-size:90%'),
                                      br(), br(),
                                      downloadButton("saveplot", "Download plot", style='padding:6px; font-size:90%'),
                                      br())
@@ -956,14 +958,46 @@ pRolocVis_compare <- function(object,
       resetLabels$logical <<- TRUE
     })
     
-    ## =====================DOWNLOAD DATA=========================
-    ## ===========================================================
+    ## =====================EXPORT DATA=========================
+    ## =========================================================
     ## When save button is download save points/proteins selected
-    output$downloadData <- downloadHandler(
+    output$exportSelected <- downloadHandler(
       filename = "features.csv",
-      content = function(file) { 
-        write.table(idxDT, file = file, quote = FALSE, 
-                    row.names = FALSE, col.names = FALSE)
+      content = function(file) {
+        write.table(
+          data.frame(
+            dataset_0 = rep("DATA_0 =", length(idxDT)),
+            cbind(profs[[1]][idxDT, , drop = FALSE],
+                  fd[[1]][idxDT, , drop = FALSE]),
+            dataset_1 = rep("DATA_1 =", length(idxDT)),
+            cbind(profs[[2]][idxDT, , drop = FALSE],
+                  fd[[2]][idxDT, , drop = FALSE])
+        ),
+        file = file, 
+        quote = FALSE, 
+        col.names = NA,
+        row.names = TRUE, 
+        sep = "\t")
+      }
+    )
+    
+    ## --------Export data button--------
+    ## When save button is download whole dataset
+    output$exportData <- downloadHandler(
+      filename = "fulldata.csv",
+      content = function(file) {
+        write.table(
+          data.frame(
+            dataset_0 = rep("DATA_0 =", nrow(profs[[1]])),
+            cbind(profs[[1]], fd[[1]]),
+            dataset_1 = rep("DATA_1 =", nrow(profs[[1]])),
+            cbind(profs[[2]], fd[[2]])
+            ),
+          file = file, 
+          quote = FALSE, 
+          col.names = NA, 
+          row.names = TRUE, 
+          sep = "\t")
       }
     )
     
