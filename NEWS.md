@@ -1,6 +1,21 @@
 # pRolocGUI 2.1
 
-## CHANGES IN VERSION pRolocGUI 2.1.1
+## CHANGES IN VERSION 2.1.3
+- added and renames buttons for downloading data
+- fixed issue #104 that occurs when marker classes
+  have only 1 member
+
+## CHANGES IN VERSION 2.1.2
+- re-write of code to fix the breaking changes
+  introduced by shinydashboardPlus v2
+- depend on shinydashboardPlus 2.0.0
+- fixed bug in pRolocVis which fails when no fcol
+  explicitly called markers is not present
+- added argument classProfiles to compare and explore 
+  apps so that users can choose to display class 
+  specific profiles
+
+## CHANGES IN VERSION 2.1.1
 - fixed typos in vigentte 
 - fixed typos in explore and compare apps UIs
 

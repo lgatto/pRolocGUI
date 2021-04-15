@@ -52,8 +52,17 @@ css_hs <- HTML('
        }      
        
        /* ------ move helper ? icon closer to button ------ */
-              .shinyhelper-container {right: 25%}
+              .shinyhelper-container {right: 15%}
               
+       /* ------ move items in controlbar away from margins ------ */   
+       .control-sidebar {
+    position: right;
+    padding-top: 100px;
+    padding-left: 10px;
+    padding-right: 10px;
+    z-index: 1010;
+       }
+
       ')
 
 css_colours <- function(colors){
