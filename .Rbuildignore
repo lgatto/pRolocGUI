@@ -11,3 +11,4 @@ pkgdown.css
 pkgdown.js
 reference
 ^docs$
+.github
