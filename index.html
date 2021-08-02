@@ -1,222 +1,227 @@
-<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>pRolocGUI by ComputationalProteomicsUnit</title>
-
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/github-light.css">
-    <meta name="viewport" content="width=device-width">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-  </head>
-  <body>
-    <div class="wrapper">
-      <header>
-        <h1>pRolocGUI</h1>
-        <p>An interactive interface to pRoloc</p>
-
-        <p class="view"><a href="https://github.com/ComputationalProteomicsUnit/pRolocGUI">View the Project on GitHub <small>ComputationalProteomicsUnit/pRolocGUI</small></a></p>
-
-
-        <ul>
-          <li><a href="https://github.com/ComputationalProteomicsUnit/pRolocGUI/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/ComputationalProteomicsUnit/pRolocGUI/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/ComputationalProteomicsUnit/pRolocGUI">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
-        <h1>
-<a id="exploring-and-visualising-spatial-proteomics-data" class="anchor" href="#exploring-and-visualising-spatial-proteomics-data" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Exploring and visualising spatial proteomics data</h1>
-
-<h2>
-<a id="introduction" class="anchor" href="#introduction" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Introduction</h2>
-
-<p>The
-<a href="http://www.bioconductor.org/packages/devel/bioc/html/pRolocGUI.html"><code>pRolocGUI</code></a>
-package is an interactive interface to explore and visualise
-experimental mass spectrometry-based spatial proteomics data. It
-relies on the <a href="http://shiny.rstudio.com/"><code>shiny</code></a> framework for
-interactive visualisation, the
-<a href="http://www.bioconductor.org/packages/release/bioc/html/MSnbase.html"><code>MSnbase</code></a>
-package to handle data and metadata and the
-<a href="http://www.bioconductor.org/packages/release/bioc/html/pRoloc.html"><code>pRoloc</code></a>
-software for spatial proteomics specific data matters. Example spatial
-data is available in the
-<a href="http://bioconductor.org/packages/release/data/experiment/html/pRolocdata.html"><code>pRolocdata</code></a>
-experiment package.</p>
-
-<p>The <code>pRoloc</code> suite set of software are distributed as part of the
-<code>R</code>/<a href="http://bioconductor.org/">Bioconductor</a> project and are developed
-at the <a href="http://cpu.sysbiol.cam.ac.uk/">Computational Proteomics Unit</a>
-at the
-<a href="http://proteomics.bio.cam.ac.uk">Cambridge Centre for Proteomics</a>
-labs, at the University of Cambridge.</p>
-
-<p>This document describes the installation of the software, followed by
-a basic quick start guide for using <code>pRolocGUI</code> to search and
-visualise the organelle map. Please refer to the respective
-documentation and vignettes for full details about the software.</p>
-
-<p>If you use these open-source software for your research, please cite:</p>
-
-<blockquote>
-<p>Gatto L, Breckels LM, Wieczorek S, Burger T, Lilley KS.
- Mass-spectrometry-based spatial proteomics data analysis using pRoloc
- and pRolocdata. Bioinformatics. 2014 May 1;30(9):1322-4.
- doi:10.1093/bioinformatics/btu013. Epub 2014 Jan 11. PubMed PMID:
- 24413670; PubMed Central PMCID: PMC3998135.</p>
-
-<p>Breckels LM, Gatto L, Christoforou A, Groen AJ, Lilley KS, Trotter
- MW. The effect of organelle discovery upon sub-cellular protein
- localisation. J Proteomics. 2013 Mar 21. doi:pii:
- S1874-3919(13)00094-8. 10.1016/j.jprot.2013.02.019. [Epub ahead of
- print] PubMed PMID: 23523639.</p>
-
-<p>Gatto L., Breckels L.M., Burger T, Nightingale D.J.H., Groen A.J.,
- Campbell C., Mulvey C.M., Christoforou A., Ferro M., Lilley K.S. 'A
- foundation for reliable spatial proteomics data analysis' Mol Cell
- Proteomics. 2014 May 20. </p>
-</blockquote>
-
-<h2>
-<a id="build-status" class="anchor" href="#build-status" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Build status</h2>
-
-<table>
-<thead>
-<tr>
-<th align="center">Github</th>
-<th align="center">Bioconductor devel</th>
-<th align="center">Bioconductor release</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td align="center"><a href="https://travis-ci.org/lmsimp/bioc-pRoloc-hyperLOPIT-workflow"><img src="https://travis-ci.org/lmsimp/bioc-pRoloc-hyperLOPIT-workflow.svg?branch=master" alt="Build Status"></a></td>
-<td align="center"><a href="http://bioconductor.org/packages/devel/bioc/html/pRolocGUI.html"><img src="http://bioconductor.org/shields/build/devel/bioc/pRolocGUI.svg" alt="Build Status"></a></td>
-<td align="center"><a href="http://bioconductor.org/packages/release/bioc/html/pRolocGUI.html"><img src="http://bioconductor.org/shields/build/release/bioc/pRolocGUI.svg" alt="Build Status"></a></td>
-</tr>
-</tbody>
-</table>
-
-<h2>
-<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h2>
-
-<p><code>pRolocGUI</code> is written in the <a href="http://www.r-project.org/"><code>R</code></a>
-programming language. Before installing the software you need to
-download <code>R</code> and (optionally) <code>RStudio</code>.</p>
-
-<p>1) Download the latest <code>R</code> release for your operating system from the
-<a href="http://www.r-project.org/">R website</a> and install it.</p>
-
-<p>2) Optional, but
-recommended. <a href="http://www.rstudio.com/products/rstudio/download/">Download</a>
-and install the RStudio IDE. <code>RStudio</code> provides a good code editor and
-excellent integration with the <code>R</code> terminal.</p>
-
-<p>3) Start <code>R</code> or <code>RStudio</code>. </p>
-
-<p>4) Install the Bioconductor packages <code>pRoloc</code>, <code>pRolocdata</code> and
-<code>pRolocGUI</code>:</p>
-
-<p><code>pRolocGUI</code> requires <code>R &gt;= 3.1.1</code> and Bioconductor version <code>&gt;= 3.0</code>.
-In an <code>R</code> console, type</p>
-
-<div class="highlight highlight-source-r"><pre>source(<span class="pl-s"><span class="pl-pds">"</span>http://www.bioconductor.org/biocLite.R<span class="pl-pds">"</span></span>)
-biocLite(c(<span class="pl-s"><span class="pl-pds">"</span>pRoloc<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>pRolocdata<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>pRolocGUI<span class="pl-pds">"</span></span>))</pre></div>
-
-<h4>
-<a id="development-version" class="anchor" href="#development-version" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Development version</h4>
-
-<p>The development code on github can be installed using <code>biocLite</code> (or
-<code>install_github</code>). New pre-release features might not be documented or
-thoroughly tested and could substantially change prior to release. Use
-at your own risks.</p>
-
-<div class="highlight highlight-source-r"><pre>biocLite(<span class="pl-s"><span class="pl-pds">"</span>ComputationalProteomicsUnit/pRolocGUI<span class="pl-pds">"</span></span>)</pre></div>
-
-<h2>
-<a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Getting started</h2>
-
-<p>Before using a package's functionality, it needs to be loaded:</p>
-
-<div class="highlight highlight-source-r"><pre>library(<span class="pl-s"><span class="pl-pds">"</span>pRolocGUI<span class="pl-pds">"</span></span>)</pre></div>
-
-<p>We first load data from
-<a href="http://www.nature.com/ncomms/2016/160112/ncomms9992/full/ncomms9992.html">Christoforou et al 2016</a>
-distributed in the <code>pRolocdata</code> package:</p>
-
-<div class="highlight highlight-source-r"><pre>library(<span class="pl-s"><span class="pl-pds">"</span>pRolocdata<span class="pl-pds">"</span></span>)
-data(<span class="pl-smi">hyperLOPIT2015</span>)</pre></div>
-
-<p>There are 3 different visualisation applications currently
-available: <code>main</code>, <code>classification</code> and <code>compare</code>.
-These apps are launched using the <code>pRolocVis</code> function and
-passing <code>object</code>, which is an <code>MSnSet</code> containing the data 
-one wishes to interrogate. One may also specify which app
-they wish to use by using the <code>app</code> argument, see <code>?pRolocVis</code>
-for more details. The default app that is loaded if 
-<code>app</code> is not specified is the <code>main</code> application:</p>
-
-<div class="highlight highlight-source-r"><pre>pRolocVis(<span class="pl-smi">hyperLOPIT2015</span>)</pre></div>
-
-<p><img src="https://github.com/ComputationalProteomicsUnit/pRolocGUI/blob/master/vignettes/figures/SS_PCA1.jpg" alt="Screenshot - PCA"></p>
-
-<p>The graphical interface is described in details in the package
-vignette that is included in the package itself (get it by typing
-<code>vignette("pRolocGUI")</code> in <code>R</code>), available by clicking the <code>?</code> once
-the interface is loaded or can be
-<a href="http://bioconductor.org/packages/devel/bioc/vignettes/pRolocGUI/inst/doc/pRolocGUI.html">consulted online</a>.</p>
-
-<h2>
-<a id="more-resources" class="anchor" href="#more-resources" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>More resources</h2>
-
-<h3>
-<a id="support" class="anchor" href="#support" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Support</h3>
-
-<ul>
-<li>The Bioconductor <a href="https://support.bioconductor.org/">support forum</a>
-</li>
-<li>Open a <code>pRolocGUI</code> GitHub
-<a href="https://github.com/ComputationalProteomicsUnit/pRolocGUI/issues">issue</a>
-(requires a free GitHub account).</li>
-</ul>
-
-<h3>
-<a id="videos-new-videos-will-appear-shortly-for-the-new-apps" class="anchor" href="#videos-new-videos-will-appear-shortly-for-the-new-apps" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Videos (new videos will appear shortly for the new apps)</h3>
-
-<ol>
-<li><a href="https://www.youtube.com/watch?v=dg6NvmMVQ3I">An introduction to Bioconductor</a></li>
-<li><a href="http://youtu.be/zXtiiAoB_vM">A brief introduction to <code>pRolocGUI</code></a></li>
-<li><a href="http://youtu.be/qHMUnZnrkdA">Downloading and install <code>R</code></a></li>
-<li><a href="http://youtu.be/vlSbKf0OK3g">Using RStudio</a></li>
-<li><a href="http://youtu.be/_VmAZF1g_O4">Installing the <code>pRolocGUI</code> interface</a></li>
-<li>
-<a href="http://youtu.be/24gntTd133w">Starting <code>pRolocGUI</code></a> - This tutorial is for the older legacy applications. New videos will appear shortly for the new applications.</li>
-<li>
-<a href="http://youtu.be/cG3PEQ-uWhM">Using <code>pRolocGUI</code> to explore and visualise experimental spatial proteomics data</a> - This tutorial is for the older legacy applications. New videos will appear shortly for the new applications.</li>
-</ol>
-
-<p>Tutorial <a href="https://www.youtube.com/watch?v=qHMUnZnrkdA&amp;list=PLvIXxpatSLA2loV5Srs2VBpJIYUlVJ4ow">playlist</a>.</p>
-
-<h3>
-<a id="general-resources" class="anchor" href="#general-resources" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>General resources</h3>
-
-<ul>
-<li><a href="http://lgatto.github.io/TeachingMaterial/">Teaching material</a></li>
-<li>R and Bioconductor for proteomics
-<a href="http://lgatto.github.io/RforProteomics/">web page</a> and
-<a href="http://www.bioconductor.org/packages/release/data/experiment/html/RforProteomics.html">package</a>.</li>
-</ul>
-      </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/ComputationalProteomicsUnit">ComputationalProteomicsUnit</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
-      </footer>
-    </div>
-    <script src="javascripts/scale.fix.js"></script>
+<!DOCTYPE html>
+<!-- Generated by pkgdown: do not edit by hand --><html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive visualisation of spatial proteomics data • pRolocGUI</title>
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
+<script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
+<script src="pkgdown.js"></script><meta property="og:title" content="Interactive visualisation of spatial proteomics data">
+<meta property="og:description" content="The package pRolocGUI comprises functions to
+    interactively visualise organelle (spatial) proteomics
+    data on the basis of pRoloc, pRolocdata and shiny.">
+<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
+<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+<![endif]-->
+</head>
+<body data-spy="scroll" data-target="#toc">
     
+
+    <div class="container template-home">
+      <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="index.html">pRolocGUI</a>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.0</span>
+      </span>
+    </div>
+
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+<li>
+  <a href="articles/pRolocGUI.html">Get started</a>
+</li>
+<li>
+  <a href="reference/index.html">Reference</a>
+</li>
+<li>
+  <a href="news/index.html">Changelog</a>
+</li>
+      </ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+  <a href="https://github.com/ComputationalProteomicsUnit/pRolocGUI/">
+    <span class="fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+</div>
+<!--/.nav-collapse -->
+  </div>
+<!--/.container -->
+</div>
+<!--/.navbar -->
+
+      
+
+      </header><div class="row">
+  <div class="contents col-md-9">
+
+<p>Bioconductor build status: - Devel: <a href="http://bioconductor.org/packages/devel/bioc/html/pRolocGUI.html" class="external-link"><img src="http://bioconductor.org/shields/build/devel/bioc/pRolocGUI.svg" alt="Bioconductor devel build Status"></a> - Release: <a href="http://bioconductor.org/packages/release/bioc/html/pRolocGUI.html" class="external-link"><img src="http://bioconductor.org/shields/build/release/bioc/pRolocGUI.svg" alt="Bioconductor release build Status"></a></p>
+<div id="exploring-and-visualising-spatial-proteomics-data" class="section level1">
+<div class="page-header"><h1 class="hasAnchor">
+<a href="#exploring-and-visualising-spatial-proteomics-data" class="anchor" aria-hidden="true"></a>Exploring and visualising spatial proteomics data</h1></div>
+<div id="introduction" class="section level2">
+<h2 class="hasAnchor">
+<a href="#introduction" class="anchor" aria-hidden="true"></a>Introduction</h2>
+<p>The <a href="http://www.bioconductor.org/packages/devel/bioc/html/pRolocGUI.html" class="external-link"><code>pRolocGUI</code></a> package is an interactive interface to explore and visualise experimental mass spectrometry-based spatial proteomics data. It relies on the <a href="http://shiny.rstudio.com/" class="external-link"><code>shiny</code></a> framework for interactive visualisation, the <a href="http://www.bioconductor.org/packages/release/bioc/html/MSnbase.html" class="external-link"><code>MSnbase</code></a> package to handle data and metadata and the <a href="http://www.bioconductor.org/packages/release/bioc/html/pRoloc.html" class="external-link"><code>pRoloc</code></a> software for spatial proteomics specific data matters. Example spatial data is available in the <a href="http://bioconductor.org/packages/release/data/experiment/html/pRolocdata.html" class="external-link"><code>pRolocdata</code></a> experiment package.</p>
+<p>The <code>pRoloc</code> suite set of software are distributed as part of the <code>R</code>/<a href="http://bioconductor.org/" class="external-link">Bioconductor</a> project and are developed by Lisa Breckels at the <a href="http://proteomics.bio.cam.ac.uk" class="external-link">Cambridge Centre for Proteomics</a> at the University of Cambridge and by <a href="http://lgatto.github.io/" class="external-link">Laurent Gatto</a>, director of the Computational Biology and Bioinformatics (CBIO) group at UCLouvain, in Belgium.</p>
+<p>This document describes the installation of the software, followed by a basic quick start guide for using <code>pRolocGUI</code> to search and visualise spatial proteomics data. Please refer to the respective documentation and vignettes for full details about the software.</p>
+<p>If you use these open-source software for your research, please cite:</p>
+<blockquote>
+<p>Gatto L, Breckels LM, Wieczorek S, Burger T, Lilley KS. Mass-spectrometry-based spatial proteomics data analysis using pRoloc and pRolocdata. Bioinformatics. 2014 May 1;30(9):1322-4. <a href="doi:10.1093/bioinformatics/btu013" class="uri">doi:10.1093/bioinformatics/btu013</a>. Epub 2014 Jan 11. <a href="PMID:24413670" class="uri">PMID:24413670</a>; PMCID:PMC3998135.</p>
+</blockquote>
+<blockquote>
+<p>Breckels LM, Gatto L, Christoforou A, Groen AJ, Lilley KS, Trotter MW. The effect of organelle discovery upon sub-cellular protein localisation. J Proteomics. 2013 Mar 21. <a href="doi:pii" class="uri">doi:pii</a>: S1874-3919(13)00094-8. 10.1016/j.jprot.2013.02.019. <a href="PMID:23523639" class="uri">PMID:23523639</a>.</p>
+</blockquote>
+<blockquote>
+<p>Gatto L., Breckels L.M., Burger T, Nightingale D.J.H., Groen A.J., Campbell C., Mulvey C.M., Christoforou A., Ferro M., Lilley K.S. ‘A foundation for reliable spatial proteomics data analysis’ Mol Cell Proteomics. 2014 May 20.</p>
+</blockquote>
+</div>
+<div id="installation" class="section level2">
+<h2 class="hasAnchor">
+<a href="#installation" class="anchor" aria-hidden="true"></a>Installation</h2>
+<p><code>pRolocGUI</code> is written in the <a href="http://www.r-project.org/" class="external-link"><code>R</code></a> programming language. Before installing the software you need to download <code>R</code> and (optionally) <code>RStudio</code>.</p>
+<ol style="list-style-type: decimal">
+<li><p>Download the latest <code>R</code> release for your operating system from the <a href="http://www.r-project.org/" class="external-link">R website</a> and install it.</p></li>
+<li><p>Optional, but recommended. <a href="http://www.rstudio.com/products/rstudio/download/" class="external-link">Download</a> and install the RStudio IDE. <code>RStudio</code> provides a good code editor and excellent integration with the <code>R</code> terminal.</p></li>
+<li><p>Start <code>R</code> or <code>RStudio</code>.</p></li>
+<li><p>Install the Bioconductor packages <code>pRoloc</code>, <code>pRolocdata</code> and <code>pRolocGUI</code>:</p></li>
+</ol>
+<p><code>pRolocGUI</code> requires <code>R &gt;= 3.1.1</code> and Bioconductor version <code>&gt;= 3.0</code>. In an <code>R</code> console, type</p>
+<pre><code>if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+BiocManager::install(c("pRoloc", "pRolocdata", "pRolocGUI"))</code></pre>
+<div id="development-version" class="section level4">
+<h4 class="hasAnchor">
+<a href="#development-version" class="anchor" aria-hidden="true"></a>Development version</h4>
+<p>The development code on github can also be installed using <code><a href="https://rdrr.io/pkg/BiocManager/man/install.html" class="external-link">BiocManager::install</a></code> (or <code>install_github</code>). New pre-release features might not be documented or thoroughly tested and could substantially change prior to release. Use at your own risks.</p>
+<pre><code>BiocManager::install("ComputationalProteomicsUnit/pRolocGUI")</code></pre>
+</div>
+</div>
+<div id="getting-started" class="section level2">
+<h2 class="hasAnchor">
+<a href="#getting-started" class="anchor" aria-hidden="true"></a>Getting started</h2>
+<p>Before using a package’s functionality, it needs to be loaded:</p>
+<pre><code><a href="http://ComputationalProteomicsUnit.github.io/pRolocGUI/" class="external-link">library("pRolocGUI")</a></code></pre>
+<p>We first load data from <a href="http://www.nature.com/ncomms/2016/160112/ncomms9992/full/ncomms9992.html" class="external-link">Christoforou et al 2016</a> distributed in the <code>pRolocdata</code> package:</p>
+<pre><code><a href="https://github.com/lgatto/pRolocdata" class="external-link">library("pRolocdata")
+data(hyperLOPIT2015)</a></code></pre>
+<p>There are 3 different visualisation applications currently available: <code>explore</code>, <code>compare</code> and <code>aggregate</code>. These apps are launched using the <code>pRolocVis</code> function and passing <code>object</code>, which is an <code>MSnSet</code> containing the data one wishes to interrogate. One may also specify which app they wish to use by using the <code>app</code> argument, see <code><a href="reference/pRolocVis-apps.html">?pRolocVis</a></code> for more details. The default app that is loaded if <code>app</code> is not specified is the <code>explore</code> application:</p>
+<pre><code>pRolocVis(hyperLOPIT2015)</code></pre>
+<div class="figure">
+<img src="https://raw.githubusercontent.com/ComputationalProteomicsUnit/pRolocGUI/master/vignettes/figures/SS_PCA1.jpg" alt=""><p class="caption">Screenshot - PCA</p>
+</div>
+<p>The graphical interface is described in details in the package vignette that is included in the package itself (get it by typing <code><a href="articles/pRolocGUI.html">vignette("pRolocGUI")</a></code> in <code>R</code>), available by clicking the <code>?</code> once the interface is loaded or can be <a href="http://bioconductor.org/packages/devel/bioc/vignettes/pRolocGUI/inst/doc/pRolocGUI.html" class="external-link">consulted online</a>.</p>
+</div>
+<div id="more-resources" class="section level2">
+<h2 class="hasAnchor">
+<a href="#more-resources" class="anchor" aria-hidden="true"></a>More resources</h2>
+<div id="support" class="section level3">
+<h3 class="hasAnchor">
+<a href="#support" class="anchor" aria-hidden="true"></a>Support</h3>
+<ul>
+<li>The Bioconductor <a href="https://support.bioconductor.org/" class="external-link">support forum</a>
+</li>
+<li>Open a <code>pRolocGUI</code> GitHub <a href="https://github.com/ComputationalProteomicsUnit/pRolocGUI/issues" class="external-link">issue</a> (requires a free GitHub account).</li>
+</ul>
+</div>
+<div id="videos-new-videos-will-appear-shortly-for-the-new-apps" class="section level3">
+<h3 class="hasAnchor">
+<a href="#videos-new-videos-will-appear-shortly-for-the-new-apps" class="anchor" aria-hidden="true"></a>Videos (new videos will appear shortly for the new apps)</h3>
+<ol start="0" style="list-style-type: decimal">
+<li><a href="https://www.youtube.com/watch?v=dg6NvmMVQ3I" class="external-link">An introduction to Bioconductor</a></li>
+<li><a href="http://youtu.be/zXtiiAoB_vM" class="external-link">A brief introduction to <code>pRolocGUI</code></a></li>
+<li><a href="http://youtu.be/qHMUnZnrkdA" class="external-link">Downloading and install <code>R</code></a></li>
+<li><a href="http://youtu.be/vlSbKf0OK3g" class="external-link">Using RStudio</a></li>
+<li><a href="http://youtu.be/_VmAZF1g_O4" class="external-link">Installing the <code>pRolocGUI</code> interface</a></li>
+<li>
+<a href="http://youtu.be/24gntTd133w" class="external-link">Starting <code>pRolocGUI</code></a> - This tutorial is for the older legacy applications. New videos will appear shortly for the new applications.</li>
+<li>
+<a href="http://youtu.be/cG3PEQ-uWhM" class="external-link">Using <code>pRolocGUI</code> to explore and visualise experimental spatial proteomics data</a> - This tutorial is for the older legacy applications. New videos will appear shortly for the new applications.</li>
+</ol>
+<p>Tutorial <a href="https://www.youtube.com/watch?v=qHMUnZnrkdA&amp;list=PLvIXxpatSLA2loV5Srs2VBpJIYUlVJ4ow" class="external-link">playlist</a>.</p>
+</div>
+<div id="general-resources" class="section level3">
+<h3 class="hasAnchor">
+<a href="#general-resources" class="anchor" aria-hidden="true"></a>General resources</h3>
+<ul>
+<li><a href="http://lgatto.github.io/TeachingMaterial/" class="external-link">Teaching material</a></li>
+<li>R and Bioconductor for proteomics <a href="http://lgatto.github.io/RforProteomics/" class="external-link">web page</a> and <a href="http://www.bioconductor.org/packages/release/data/experiment/html/RforProteomics.html" class="external-link">package</a>.</li>
+</ul>
+</div>
+</div>
+</div>
+
+  </div>
+
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <div class="links">
+<h2 data-toc-skip>Links</h2>
+<ul class="list-unstyled">
+<li>Download from BIOC at <br><a href="https://www.bioconductor.org/packages/pRolocGUI">https://​www.bioconductor.org/​packages/​pRolocGUI</a>
+</li>
+<li>Browse source code at <br><a href="https://github.com/ComputationalProteomicsUnit/pRolocGUI/">https://​github.com/​ComputationalProteomicsUnit/​pRolocGUI/​</a>
+</li>
+<li>Report a bug at <br><a href="https://github.com/ComputationalProteomicsUnit/pRolocGUI/issues">https://​github.com/​ComputationalProteomicsUnit/​pRolocGUI/​issues</a>
+</li>
+</ul>
+</div>
+
+<div class="license">
+<h2 data-toc-skip>License</h2>
+<ul class="list-unstyled">
+<li><a href="https://www.r-project.org/Licenses/GPL-2">GPL-2</a></li>
+</ul>
+</div>
+
+
+<div class="developers">
+<h2 data-toc-skip>Developers</h2>
+<ul class="list-unstyled">
+<li>Lisa Breckels <br><small class="roles"> Author </small>  </li>
+<li>Thomas Naake <br><small class="roles"> Author </small>  </li>
+<li>Laurent Gatto <br><small class="roles"> Author, maintainer </small>  </li>
+</ul>
+</div>
+
+
+
+  </div>
+</div>
+
+
+      <footer><div class="copyright">
+  <p></p>
+<p>Developed by Lisa Breckels, Thomas Naake, Laurent Gatto.</p>
+</div>
+
+<div class="pkgdown">
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p>
+</div>
+
+      </footer>
+</div>
+
+  
+
+
+  
+
   </body>
 </html>
