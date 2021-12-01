@@ -1,7 +1,3 @@
-## remove this when building package
-# source("utils.R")
-# source("css.R")
-
 ## DOUBLE CLICKING TO HIGHLIGHT on/off on PCA plot, or selection via table
 
 ## Shiny: spinning loading wheel on top of plot while plot is recalculating
@@ -18,9 +14,12 @@
 ## https://rinterface.com/shiny/shinydashboardPlus/#
 
 ##' @rdname pRolocVis-apps
+##' @param classProfiles A \code{logical} indicating if a tab displaying
+##' individual class profile plots should be displayed. Default is \code{FALSE}. 
 pRolocVis_compare <- function(object,
                           fcol = "markers",
-                          fig.height = "700px",
+                          classProfiles = FALSE,
+                          fig.height = "400px",
                           # fig.width = "100%",
                           # legend.width = "200%",
                           # legend.cex = 1,
@@ -41,7 +40,8 @@ pRolocVis_compare <- function(object,
   ## Check if object is an MSnSetList and if not, check it's a list of matrices 
   ## with MSnSets in the methargs (as per plot2D)
   if (inherits(object, "MSnSetList")) {
-    object_coords <- lapply(object@x, function(x) plot2D(x, plot = FALSE, ...))
+    object_coords <- lapply(object@x, function(x) plot2D(x, plot = FALSE, 
+                                                         fcol = NULL, ...))
   }
   else if (inherits(object, "list")) {
     object_coords <- list()
@@ -60,7 +60,8 @@ pRolocVis_compare <- function(object,
         # if (!all(sapply(.methargs, inherits, "MSnSet"))) stop(paste("methargs must be a list of MSnSets of length 2, see ?pRolocVis"))
         if (is.null(myargs$method)) stop(paste("method must be set to method = 'none' if a matrix is passed"))
         if (myargs$method != "none") stop(paste("method must be set to method = 'none' if a matrix is passed"))
-        chk <- plot2D(object[[i]], plot = FALSE, method = myargs$method, methargs = list(.methargs[[i]]))
+        chk <- plot2D(object[[i]], plot = FALSE, fcol = NULL,
+                      method = myargs$method, methargs = list(.methargs[[i]]))
         object_coords[[i]] <- object[[i]]
         object[[i]] <- myargs$methargs[[1]][[i]]
       }
@@ -74,7 +75,7 @@ pRolocVis_compare <- function(object,
   object <- commonFeatureNames(object)
   .cmnNam <- featureNames(object[[1]])
   object_coords <- lapply(object_coords, function(x) {
-    x <- x[.cmnNam, ]
+    x <- x[.cmnNam, , drop = FALSE]
     return(x)
     })
   
@@ -105,6 +106,9 @@ pRolocVis_compare <- function(object,
         return(x)
       })
       fcol <- rep("nullmarkers", 2)
+    } else {
+      if (!isMrkVec(object[[i]], fcol[i]) & !isMrkMat(object[[i]], fcol[i])) 
+        stop("Your fcol (markers) are neither vector nor matrix. See ?markers for details.")
     }
   }
   
@@ -162,7 +166,7 @@ pRolocVis_compare <- function(object,
   fd <- lapply(object, fData)                     # all featureData
   pd <- lapply(object, pData)
   pcol <- NULL                                    # replicate information
-  profs <- lapply(object, exprs)                  # intensities
+  profs <- lapply(object, MSnbase::exprs)                  # intensities
   mName <- paste0("Markers", format(Sys.time(), "%a%b%d%H%M%S%Y"))
   pmarkers_msnset <- list()
   for (i in seq(object)) pmarkers_msnset[[i]] <- mrkVecToMat(object[[i]], fcol[i], mfcol = mName)
@@ -224,9 +228,9 @@ pRolocVis_compare <- function(object,
   ########################### BUILD UI  ############################### 
   #####################################################################
   
-  header <- dashboardHeaderPlus(title = "pRolocGUI Compare",
-                                enable_rightsidebar = TRUE,
-                                rightSidebarIcon = "filter")
+  header <- dashboardHeader(title = "pRolocGUI Compare",
+                                # enable_rightsidebar = TRUE,
+                            controlbarIcon = shiny::icon("gears"))
   
   sidebar <- dashboardSidebar(
     p(strong("Subcellular classes")),
@@ -234,6 +238,7 @@ pRolocVis_compare <- function(object,
                  style='padding:4%; font-size:100%; margin:6px 5px 6px 20%') %>%
       helper(colour = "grey",
              type = "inline",
+             buttonLabel = "classes",
              title = "Explore compartments",
              content = c("This sidebar allows you to explore proteins that 
                          belong to pre-defined subcellular classes. To remove 
@@ -256,44 +261,185 @@ pRolocVis_compare <- function(object,
                    lib = "glyphicon"),
         no = icon("remove",
                   lib = "glyphicon"))
-    ) 
+    ),
+    minified = FALSE
   )
   
+  if (classProfiles) {
   body <- dashboardBody(
-    ## trigger resize of plot  when sidebars are clicked
-    tags$script('
+      ## trigger resize of plot  when sidebars are clicked
+      tags$script('
       $(".navbar-custom-menu").on("click",function(){
         $(window).trigger("resize");
       })'
-    ),
-    ## update colours in css according to selected colorpicker
-    tags$head(uiOutput("css")),
-    ## css for styling app
-    tags$head(tags$style(HTML(css_hs))),
-    useShinyjs(),
-    tags$hr(),
-    ## main body of the app
-    tabsetPanel(type = "tabs", id = "tabs",
-                tabPanel("Spatial Map", value = "mapPanel",
-                         fluidRow(
-                           column(5, br(),
-                                  plotOutput("pca1",
-                                             height = fig.height,
-                                             dblclick = "dblClick1",
-                                             brush = brushOpts(
-                                               id = "plotBrush1",
-                                               resetOnNew = TRUE))),
-                           column(5, br(),
-                                  plotOutput("pca2",
-                                             height = fig.height,
-                                             dblclick = "dblClick2",
-                                             brush = brushOpts(
-                                               id = "plotBrush2",
-                                               resetOnNew = TRUE))) %>%
-                           helper(colour = "grey",
-                                  type = "inline",
-                                  title = "Interactive data projection",
-                                  content = c("This visualisation is an interactive 
+      ),
+      ## update colours in css according to selected colorpicker
+      tags$head(uiOutput("css")),
+      ## css for styling app
+      tags$head(tags$style(HTML(css_hs))),
+      useShinyjs(),
+      tags$hr(),
+      ## main body of the app
+      tabsetPanel(type = "tabs", id = "tabs",
+                  tabPanel("Spatial Map", value = "mapPanel",
+                           fluidRow(
+                             column(5, br(),
+                                    plotOutput("pca1",
+                                               height = fig.height,
+                                               width = "500px",
+                                               dblclick = "dblClick1",
+                                               brush = brushOpts(
+                                                 id = "plotBrush1",
+                                                 resetOnNew = TRUE))),
+                             column(5, br(),
+                                    plotOutput("pca2",
+                                               height = fig.height,
+                                               width = "500px",
+                                               dblclick = "dblClick2",
+                                               brush = brushOpts(
+                                                 id = "plotBrush2",
+                                                 resetOnNew = TRUE))) %>%
+                               helper(colour = "grey",
+                                      type = "inline",
+                                      title = "Interactive data projection",
+                                      content = c("This visualisation is an interactive 
+                                  projection of the dataset. Each point on the plot 
+                                  represents one protein.<br /> <br /> Double click 
+                                  points on the plot to identify them (similarly you 
+                                  can double click to remove them or alternatively 
+                                  use the \"Clear selection\" button in the left 
+                                  tab panel to remove all highlighted proteins). 
+                                  If you would like to highlight proteins without 
+                                  displaying their name/ID untick \"Show Labels\" 
+                                  in the left panel.<br /> <br /> Searching: Use 
+                                  the search box below the plot to search and find 
+                                  your favourite proteins. Batch searching is enabled 
+                                  but requires that protein IDs/features/text are 
+                                  separated by spaces. Search matches will appear 
+                                  in the table below. Click the desired row entry(s) 
+                                  in the table and they will be highlighed on the plot.
+                                  <br /> <br /> Interactive zooming: Click and brush 
+                                  areas of the plot (use your mouse to click and brush 
+                                  a rectangular area of the plot) and then click the 
+                                  \"Zoom/reset\" button in the bottom left panel. 
+                                  <br /> <br /> Exporting: Highlighed proteins can 
+                                  be exported to a .csv file by clicking \"Export selected\". 
+                                  Highlighted proteins can be removed from the selection 
+                                  by clicking \"Clear selection\". <br /> <br /> Rendering 
+                                  of images: Use the \"Download plot\" button to 
+                                  save a high resolution PDF of the data."),
+                                      size = "s"))
+                  ),
+                  tabPanel("Profiles", value = "profilesPanel1",
+                           p(strong("Dataset 1")) %>%
+                             helper(colour = "grey",
+                                    type = "inline",
+                                    title = "Protein profiles",
+                                    content = "Profile plot displaying the relative 
+                                             abundance of each protein in each fraction 
+                                             across the gradient employed.", size = "s"),
+                           br(),
+                           plotOutput("profile1",
+                                      height = "400px",
+                                      width = "100%"),
+                           p(strong("Dataset 2")),
+                           plotOutput("profile2",
+                                      height = "400px",
+                                      width = "100%")
+                  ),
+                  tabPanel("Profiles (by class)", value = "profilesPanel2",
+                           fluidRow(
+                             column(5, br(),
+                                    p(strong("Dataset 1")),
+                                    br(),
+                                    plotOutput("classProfiles1",
+                                               height = "1200px")),
+                             column(5, br(),
+                                    p(strong("Dataset 2")),
+                                    br(),
+                                    plotOutput("classProfiles2",
+                                               height = "1200px"))
+                           )),
+                  tabPanel("Table Selection", value = "tableSelPanel",
+                           fluidRow(
+                             column(5, br(),
+                                    checkboxGroupInput("selTab1", 
+                                                       "Columns to display for data 1",
+                                                       choices = origFvarLab[[1]],
+                                                       selected = selDT[[1]])
+                             ),
+                             column(5, br(),
+                                    checkboxGroupInput("selTab2",
+                                                       "Columns to display for data 2",
+                                                       choices = origFvarLab[[2]],
+                                                       selected = selDT[[2]])
+                                    
+                             )
+                           )),
+                  tabPanel("Sample info", value = "sampleInfo",
+                           br(),
+                           # fluidRow(
+                           #   column(5, 
+                           p(strong("Sample data for data 1")), br(),
+                           tableOutput("pdata1"),
+                           p(strong("Sample data for data 2")), br(),
+                           tableOutput("pdata2"),
+                           br(),br(),
+                  ),
+                  
+                  tabPanel("Colour picker", value = "colPicker",
+                           fluidRow(br(),
+                                    if (ll > 5) {
+                                      splitLayout(cellWidths = c("50%", "50%"),
+                                                  col_input[num1],
+                                                  col_input[num2])
+                                    } else {
+                                      splitLayout(cellWidths = "50%",
+                                                  col_input)
+                                    }, br(), br(), br(), br(), br()  ## add whitespace
+                           ))   # this is a list of N colour containers for N organelles
+      ),      #===end TABS in MP===
+      
+      ## feature data table is always visible
+      DT::dataTableOutput("fDataTable")
+      
+  )
+  } else {
+    body <- dashboardBody(
+      ## trigger resize of plot  when sidebars are clicked
+      tags$script('
+      $(".navbar-custom-menu").on("click",function(){
+        $(window).trigger("resize");
+      })'
+      ),
+      ## update colours in css according to selected colorpicker
+      tags$head(uiOutput("css")),
+      ## css for styling app
+      tags$head(tags$style(HTML(css_hs))),
+      useShinyjs(),
+      tags$hr(),
+      ## main body of the app
+      tabsetPanel(type = "tabs", id = "tabs",
+                  tabPanel("Spatial Map", value = "mapPanel",
+                           fluidRow(
+                             column(5, br(),
+                                    plotOutput("pca1",
+                                               height = fig.height,
+                                               dblclick = "dblClick1",
+                                               brush = brushOpts(
+                                                 id = "plotBrush1",
+                                                 resetOnNew = TRUE))),
+                             column(5, br(),
+                                    plotOutput("pca2",
+                                               height = fig.height,
+                                               dblclick = "dblClick2",
+                                               brush = brushOpts(
+                                                 id = "plotBrush2",
+                                                 resetOnNew = TRUE))) %>%
+                               helper(colour = "grey",
+                                      type = "inline",
+                                      title = "Interactive data projection",
+                                      content = c("This visualisation is an interactive 
                                   projection of the dataset. Each point on the plot 
                                   represents one protein.<br /> <br /> Double click 
                                   points on the plot to identify them (similarly you 
@@ -319,111 +465,137 @@ pRolocVis_compare <- function(object,
                                   by clicking \"Clear selection\". <br /> <br /> Rendering 
                                   of images: Use the \"Download plot\" button to 
                                   save a high resolution PDF of the data."),
-                           size = "s"))
-                           ),
-                tabPanel("Profiles", value = "profilesPanel1",
-                         br(),
-                         p(strong("Dataset 1")),
-                         plotOutput("profile1",
-                                    height = "400px",
-                                    width = "100%") %>%
-                           helper(colour = "grey",
-                                  type = "inline",
-                                  title = "Protein profiles",
-                                  content = "Profile plot displaying the relative 
+                                      size = "s"))
+                  ),
+                  tabPanel("Profiles", value = "profilesPanel1",
+                           br(),
+                           p(strong("Dataset 1")) %>%
+                             helper(colour = "grey",
+                                    type = "inline",
+                                    title = "Protein profiles",
+                                    content = "Profile plot displaying the relative 
                                              abundance of each protein in each fraction 
                                              across the gradient employed.", size = "s"),
-                         p(strong("Dataset 2")),
-                         plotOutput("profile2",
-                                    height = "400px",
-                                    width = "100%")
+                           plotOutput("profile1",
+                                      height = "400px",
+                                      width = "100%"),
+                           p(strong("Dataset 2")),
+                           plotOutput("profile2",
+                                      height = "400px",
+                                      width = "100%")
                   ),
-                tabPanel("Profiles (by class)", value = "profilesPanel2",
-                         fluidRow(
-                           column(5, br(),
-                                  p(strong("Dataset 1")),
-                                  br(),
-                                  plotOutput("classProfiles1",
-                                             height = "1200px")),
-                           column(5, br(),
-                                  p(strong("Dataset 2")),
-                                  br(),
-                                  plotOutput("classProfiles2",
-                                             height = "1200px"))
+                  # tabPanel("Profiles (by class)", value = "profilesPanel2",
+                  #          fluidRow(
+                  #            column(5, br(),
+                  #                   p(strong("Dataset 1")),
+                  #                   br(),
+                  #                   plotOutput("classProfiles1",
+                  #                              height = "1200px")),
+                  #            column(5, br(),
+                  #                   p(strong("Dataset 2")),
+                  #                   br(),
+                  #                   plotOutput("classProfiles2",
+                  #                              height = "1200px"))
+                  #          )),
+                  tabPanel("Table Selection", value = "tableSelPanel",
+                           fluidRow(
+                             column(5, br(),
+                                    checkboxGroupInput("selTab1", 
+                                                       "Columns to display for data 1",
+                                                       choices = origFvarLab[[1]],
+                                                       selected = selDT[[1]])
+                             ),
+                             column(5, br(),
+                                    checkboxGroupInput("selTab2",
+                                                       "Columns to display for data 2",
+                                                       choices = origFvarLab[[2]],
+                                                       selected = selDT[[2]])
+                                    
+                             )
                            )),
-                tabPanel("Table Selection", value = "tableSelPanel",
-                         fluidRow(
-                           column(5, br(),
-                                  checkboxGroupInput("selTab1", 
-                                                     "Columns to display for data 1",
-                                                     choices = origFvarLab[[1]],
-                                                     selected = selDT[[1]])
-                           ),
-                           column(5, br(),
-                                  checkboxGroupInput("selTab2",
-                                                     "Columns to display for data 2",
-                                                     choices = origFvarLab[[2]],
-                                                     selected = selDT[[2]])
-                                  
-                           )
-                         )),
-                tabPanel("Sample info", value = "sampleInfo",
-                         br(),
-                         # fluidRow(
-                         #   column(5, 
-                         p(strong("Sample data for data 1")), br(),
-                         tableOutput("pdata1"),
-                         p(strong("Sample data for data 2")), br(),
-                         tableOutput("pdata2"),
-                         br(),br(),
-                         ),
-                 
-                tabPanel("Colour picker", value = "colPicker",
-                         fluidRow(br(),
-                           if (ll > 5) {
-                             splitLayout(cellWidths = c("50%", "50%"),
-                                         col_input[num1],
-                                         col_input[num2])
-                           } else {
-                             splitLayout(cellWidths = "50%",
-                                         col_input)
-                           }, br(), br(), br(), br(), br()  ## add whitespace
-                         ))   # this is a list of N colour containers for N organelles
-    ),      #===end TABS in MP===
+                  tabPanel("Sample info", value = "sampleInfo",
+                           br(),
+                           # fluidRow(
+                           #   column(5, 
+                           p(strong("Sample data for data 1")), br(),
+                           tableOutput("pdata1"),
+                           p(strong("Sample data for data 2")), br(),
+                           tableOutput("pdata2"),
+                           br(),br(),
+                  ),
+                  
+                  tabPanel("Colour picker", value = "colPicker",
+                           fluidRow(br(),
+                                    if (ll > 5) {
+                                      splitLayout(cellWidths = c("50%", "50%"),
+                                                  col_input[num1],
+                                                  col_input[num2])
+                                    } else {
+                                      splitLayout(cellWidths = "50%",
+                                                  col_input)
+                                    }, br(), br(), br(), br(), br()  ## add whitespace
+                           ))   # this is a list of N colour containers for N organelles
+      ),      #===end TABS in MP===
+      
+      ## feature data table is always visible
+      DT::dataTableOutput("fDataTable")
+      
+  )
+  }
     
-    ## feature data table is always visible
-    DT::dataTableOutput("fDataTable")
-    
+  
+  # rightsidebar <- .setRightSidebar(background = "light",
+  #                              width = 160,
+  #                              .items = list(
+  #                                p(strong("Map controls")),
+  #                                br(),
+  #                                p("Transparency"),
+  #                                sliderInput("trans", NULL,
+  #                                            min = 0,  max = 1, value = 0.75),
+  #                                checkboxInput("checkbox", label = "Show labels", value = TRUE),
+  #                                br(),
+  #                                actionButton("resetButton", "Zoom/reset plot", style='padding:6px; font-size:90%'),
+  #                                br(), br(),
+  #                                actionButton("clear", "Clear selection", style='padding:6px; font-size:90%'),
+  #                                br(), br(),
+  #                                actionButton("resetColours", "Reset colours", style='padding:6px; font-size:90%'),
+  #                                br(), br(),
+  #                                downloadButton("downloadData", "Save selection", style='padding:6px; font-size:90%'),
+  #                                br(), br(),
+  #                                downloadButton("saveplot", "Download plot", style='padding:6px; font-size:90%'),
+  #                                br())
+  # )
+  controlbar <- dashboardControlbar(skin = "light",
+                                   width = 160,
+                                   .items = list(
+                                     p(strong("Map controls")),
+                                     br(),
+                                     p("Transparency"),
+                                     sliderInput("trans", NULL,
+                                                 min = 0,  max = 1, value = 0.75),
+                                     checkboxInput("checkbox", label = "Show labels", value = TRUE),
+                                     br(),
+                                     actionButton("resetButton", "Zoom/reset plot", style='padding:6px; font-size:90%'),
+                                     br(), br(),
+                                     actionButton("clear", "Clear selection", style='padding:6px; font-size:90%'),
+                                     br(), br(),
+                                     actionButton("resetColours", "Reset colours", style='padding:6px; font-size:90%'),
+                                     br(), br(),
+                                     downloadButton("exportSelected", "Export selected", style='padding:6px; font-size:90%'),
+                                     br(), br(),
+                                     downloadButton("exportData", "Export data", style='padding:6px; font-size:90%'),
+                                     br(), br(),
+                                     downloadButton("saveplot", "Download plot", style='padding:6px; font-size:90%'),
+                                     br())
   )
   
-  rightsidebar <- .setRightSidebar(background = "light",
-                               width = 160,
-                               .items = list(
-                                 p(strong("Map controls")),
-                                 br(),
-                                 p("Transparancy"),
-                                 sliderInput("trans", NULL,
-                                             min = 0,  max = 1, value = 0.75),
-                                 checkboxInput("checkbox", label = "Show labels", value = TRUE),
-                                 br(),
-                                 actionButton("resetButton", "Zoom/reset plot", style='padding:6px; font-size:90%'),
-                                 br(), br(),
-                                 actionButton("clear", "Clear selection", style='padding:6px; font-size:90%'),
-                                 br(), br(),
-                                 actionButton("resetColours", "Reset colours", style='padding:6px; font-size:90%'),
-                                 br(), br(),
-                                 downloadButton("downloadData", "Save selection", style='padding:6px; font-size:90%'),
-                                 br(), br(),
-                                 downloadButton("saveplot", "Download plot", style='padding:6px; font-size:90%'),
-                                 br())
-  )
-  
-  
-  ui <- tags$body(class="skin-blue right-sidebar-mini control-sidebar-open", dashboardPagePlus(header,
-                                                                                               sidebar,
-                                                                                               body,
-                                                                                               rightsidebar,
-                                                                                               sidebar_fullCollapse = TRUE))
+  ui <- tags$body(class="skin-blue right-sidebar-mini control-sidebar-open", 
+                  dashboardPage(header,
+                                sidebar,
+                                body,
+                                controlbar
+                                # sidebar_fullCollapse = TRUE
+                                ))
   
   ui <- shinyUI(tagList(ui))
   
@@ -482,7 +654,7 @@ pRolocVis_compare <- function(object,
           if (is.na(ind[i])) {
             .mrkSel1[[i]] <- NA
           } else {
-            .mrkSel1[[i]] <- which(pmarkers[[1]][, ind[i]] == 1)
+            .mrkSel1[[i]] <- which(pmarkers[[1]][, ind[i], drop = FALSE] == 1)
           }
         }
       }
@@ -501,7 +673,7 @@ pRolocVis_compare <- function(object,
           if (is.na(ind[i])) {
             .mrkSel2[[i]] <- NA
           } else {
-            .mrkSel2[[i]] <- which(pmarkers[[2]][, ind[i]] == 1)
+            .mrkSel2[[i]] <- which(pmarkers[[2]][, ind[i], drop = FALSE] == 1)
           }
         }
       }
@@ -557,7 +729,7 @@ pRolocVis_compare <- function(object,
       if (!is.null(input$markers)) {
         for (i in 1:length(input$markers)) {
           if (!is.na(indMrk[[i]][1]))
-            points(object_coords[[indData]][mrkSel2()[[i]], ], pch = 16,
+            points(object_coords[[indData]][mrkSel2()[[i]], , drop = FALSE], pch = 16,
                    cex = 1.4, bg = myCols()[i], col = myCols.bg()[i])
         }
       }
@@ -674,15 +846,18 @@ pRolocVis_compare <- function(object,
     
     ## =====================FACET profiles plot========================
     ## ================================================================
-    output$classProfiles1 <- renderPlot({
-      plotFacetProfiles(profs[[1]], fcol[1], fd[[1]], 
-                        pd[[1]], col = cols_user(), ncol = 1)
-    })
+    if (classProfiles) {
+      output$classProfiles1 <- renderPlot({
+        plotFacetProfiles(profs[[1]], fcol[1], fd[[1]], 
+                          pd[[1]], col = cols_user(), ncol = 1)
+      })
+      
+      output$classProfiles2 <- renderPlot({
+        plotFacetProfiles(profs[[2]], fcol[2], fd[[2]], 
+                          pd[[2]], col = cols_user(), ncol = 1)
+      })
+    }
     
-    output$classProfiles2 <- renderPlot({
-      plotFacetProfiles(profs[[2]], fcol[2], fd[[2]], 
-                        pd[[2]], col = cols_user(), ncol = 1)
-    })
     
     
     ## ========================DATA TABLE========================
@@ -728,7 +903,7 @@ pRolocVis_compare <- function(object,
                     selection = list(mode = 'multiple', selected = toSel),
                     options = list(
                       search = list(regex = TRUE, 
-                                    caseInsensitive = FALSE),
+                                    caseInsensitive = TRUE),
                       dom = "l<'search'>rtip",
                       pageLength = 100,
                       scrollX = TRUE
@@ -783,14 +958,46 @@ pRolocVis_compare <- function(object,
       resetLabels$logical <<- TRUE
     })
     
-    ## =====================DOWNLOAD DATA=========================
-    ## ===========================================================
+    ## =====================EXPORT DATA=========================
+    ## =========================================================
     ## When save button is download save points/proteins selected
-    output$downloadData <- downloadHandler(
+    output$exportSelected <- downloadHandler(
       filename = "features.csv",
-      content = function(file) { 
-        write.table(idxDT, file = file, quote = FALSE, 
-                    row.names = FALSE, col.names = FALSE)
+      content = function(file) {
+        write.table(
+          data.frame(
+            dataset_0 = rep("DATA_0 =", length(idxDT)),
+            cbind(profs[[1]][idxDT, , drop = FALSE],
+                  fd[[1]][idxDT, , drop = FALSE]),
+            dataset_1 = rep("DATA_1 =", length(idxDT)),
+            cbind(profs[[2]][idxDT, , drop = FALSE],
+                  fd[[2]][idxDT, , drop = FALSE])
+        ),
+        file = file, 
+        quote = FALSE, 
+        col.names = NA,
+        row.names = TRUE, 
+        sep = "\t")
+      }
+    )
+    
+    ## --------Export data button--------
+    ## When save button is download whole dataset
+    output$exportData <- downloadHandler(
+      filename = "fulldata.csv",
+      content = function(file) {
+        write.table(
+          data.frame(
+            dataset_0 = rep("DATA_0 =", nrow(profs[[1]])),
+            cbind(profs[[1]], fd[[1]]),
+            dataset_1 = rep("DATA_1 =", nrow(profs[[1]])),
+            cbind(profs[[2]], fd[[2]])
+            ),
+          file = file, 
+          quote = FALSE, 
+          col.names = NA, 
+          row.names = TRUE, 
+          sep = "\t")
       }
     )
     

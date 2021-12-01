@@ -18,15 +18,19 @@
 ## https://rinterface.com/shiny/shinydashboardPlus/#
 
 ##' @rdname pRolocVis-apps
+##' @param classProfiles A \code{logical} indicating if a tab displaying
+##' individual class profile plots should be displayed. Default is \code{FALSE}. 
 pRolocVis_explore <- function(object,
-                          fcol = "markers",
-                          fig.height = "700px",
-                          # fig.width = "100%",
-                          # legend.width = "200%",
-                          # legend.cex = 1,
-                          nchar = 25,
-                          # all = TRUE,
-                          ...) {
+                              fcol = "markers",
+                              classProfiles = FALSE,
+                              fig.height = "700px",
+                              # fig.width = "100%",
+                              # legend.width = "200%",
+                              # legend.cex = 1,
+                              nchar = 25,
+                              # all = TRUE,
+                              ...) {
+                          
   
   #####################################################################
   ##################### Initialize app settings  ###################### 
@@ -37,7 +41,7 @@ pRolocVis_explore <- function(object,
   myargs <- list(...)
 
   if (inherits(object, "MSnSet")) {
-    object_coords <- plot2D(object, plot = FALSE, ...)
+    object_coords <- plot2D(object, plot = FALSE, fcol = NULL, ...)
   } 
   else if (inherits(object, "matrix")) {
     message(paste("---------------------------------------------------------",
@@ -45,7 +49,7 @@ pRolocVis_explore <- function(object,
                   "\narguments method = 'none' and methargs are also passed",
                   "\nSee ?plot2D and the pRolocGUI vignette for more details.",
                   "\n---------------------------------------------------------"))
-    chk <- plot2D(object, plot = FALSE, ...)
+    chk <- plot2D(object, plot = FALSE, fcol = NULL, ...)
     object_coords <- object
     object <- myargs$methargs[[1]]
   }
@@ -96,7 +100,7 @@ pRolocVis_explore <- function(object,
   
     object <- object[-chk, ]
     if (nrow(object) != nrow(object_coords)) {
-      object_coords <- object_coords[!chk, ]
+      object_coords <- object_coords[!chk, , drop = FALSE]
     }
     if (all(featureNames(object) != rownames(object_coords))) {
       stop(paste("Row/featureNames in matrix/MSnSet do not match"))
@@ -119,6 +123,9 @@ pRolocVis_explore <- function(object,
     rownames(m) <- featureNames(object)
     colnames(m) <- "0"
     fData(object)[, fcol] <- m
+  } else {
+    if (!isMrkVec(object, fcol) & !isMrkMat(object, fcol)) 
+    stop("Your fcol (markers) are neither vector nor matrix. See ?markers for details.")
   }
   
   ## Shorten markers names if too long
@@ -170,7 +177,7 @@ pRolocVis_explore <- function(object,
     pd <- data.frame("Information" = "No sample information provided (see pData(MSnSet) and ?pData for examples)")
   }
   pcol <- NULL                                    # replicate information
-  profs <- exprs(object)                          # intensities
+  profs <- MSnbase::exprs(object)                          # intensities
   mName <- paste0("Markers", format(Sys.time(), "%a%b%d%H%M%S%Y"))
   pmarkers_msnset <- mrkVecToMat(object, fcol, mfcol = mName)
   pmarkers <- fData(pmarkers_msnset)[, mName]     # marker matrix    
@@ -230,9 +237,9 @@ pRolocVis_explore <- function(object,
   ########################### BUILD UI  ############################### 
   #####################################################################
   
-  header <- dashboardHeaderPlus(title = "pRolocGUI Explore",
-                                enable_rightsidebar = TRUE,
-                                rightSidebarIcon = "filter")
+  header <- dashboardHeader(title = "pRolocGUI Explore",
+                            # enable_rightsidebar = TRUE,
+                            controlbarIcon = shiny::icon("gears"))
   
   sidebar <- dashboardSidebar(
     p(strong("Subcellular classes")),
@@ -240,6 +247,7 @@ pRolocVis_explore <- function(object,
                  style='padding:4%; font-size:100%; margin:6px 5px 6px 20%') %>%
       helper(colour = "grey",
              type = "inline",
+             buttonLabel = "classes",
              title = "Explore compartments",
              content = c("This sidebar allows you to explore proteins that 
                          belong to pre-defined subcellular classes. To remove 
@@ -262,36 +270,144 @@ pRolocVis_explore <- function(object,
                    lib = "glyphicon"),
         no = icon("remove",
                   lib = "glyphicon"))
-    ) 
+    ),
+    minified = FALSE
+    # minified = FALSE,
   )
   
-  body <- dashboardBody(
-    ## trigger resize of plot  when sidebars are clicked
-    tags$script('
+  if (classProfiles) {
+    body <- dashboardBody(
+      ## trigger resize of plot  when sidebars are clicked
+      tags$script('
       $(".navbar-custom-menu").on("click",function(){
         $(window).trigger("resize");
       })'
-    ),
-    ## update colours in css according to selected colorpicker
-    tags$head(uiOutput("css")),
-    ## css for styling app
-    tags$head(tags$style(HTML(css_hs))),
-    useShinyjs(),
-    tags$hr(),
-    ## main body of the app
-    tabsetPanel(type = "tabs", id = "tabs",
-                tabPanel("Spatial Map", value = "mapPanel",
-                         br(),
-                         plotOutput("pca",
-                                    height = fig.height,
-                                    dblclick = "dblClick",
-                                    brush = brushOpts(
-                                      id = "pcaBrush",
-                                      resetOnNew = TRUE)) %>%
-                           helper(colour = "grey",
-                                  type = "inline",
-                                  title = "Interactive data projection",
-                                  content = c("This visualisation is an interactive 
+      ),
+      ## update colours in css according to selected colorpicker
+      tags$head(uiOutput("css")),
+      ## css for styling app
+      tags$head(tags$style(HTML(css_hs))),
+      useShinyjs(),
+      tags$hr(),
+      ## main body of the app
+      tabsetPanel(type = "tabs", id = "tabs",
+                  tabPanel("Spatial Map", value = "mapPanel",
+                           br(),
+                           plotOutput("pca",
+                                      height = fig.height,
+                                      dblclick = "dblClick",
+                                      brush = brushOpts(
+                                        id = "pcaBrush",
+                                        resetOnNew = TRUE)) %>%
+                             helper(colour = "grey",
+                                    type = "inline",
+                                    buttonLabel = "map",
+                                    title = "Interactive data projection",
+                                    content = c("This visualisation is an interactive 
+                                  projection of the dataset. Each point on the plot 
+                                  represents one protein.<br /> <br /> Double click 
+                                  points on the plot to identify them (similarly you 
+                                  can double click to remove them or alternatively 
+                                  use the \"Clear selection\" button in the left 
+                                  tab panel to remove all highlighted proteins). 
+                                  If you would like to highlight proteins without 
+                                  displaying their name/ID untick \"Show Labels\" 
+                                  in the left panel.<br /> <br /> Searching: Use 
+                                  the search box below the plot to search and find 
+                                  your favourite proteins. Batch searching is enabled 
+                                  but requires that protein IDs/features/text are 
+                                  separated by spaces. Search matches will appear 
+                                  in the table below. Click the desired row entry(s) 
+                                  in the table and they will be highlighed on the plot.
+                                  <br /> <br /> Interactive zooming: Click and brush 
+                                  areas of the plot (use your mouse to click and brush 
+                                  a rectangular area of the plot) and then click the 
+                                  \"Zoom/reset\" button in the bottom left panel. 
+                                  <br /> <br /> Exporting: Highlighed proteins can 
+                                  be exported to a .csv file by clicking \"Export selected\". 
+                                  Highlighted proteins can be removed from the selection 
+                                  by clicking \"Clear selection\". <br /> <br /> Rendering 
+                                  of images: Use the \"Download plot\" button to 
+                                  save a high resolution PDF of the data."), 
+                                    size = "s")
+                  ),
+                  tabPanel("Profiles", value = "profilesPanel1",
+                           br(),
+                           p(strong("Protein profiles")) %>%
+                             helper(colour = "grey",
+                                    type = "inline",
+                                    buttonLabel = "profs",
+                                    title = "Protein profiles",
+                                    content = c("Profile plot displaying the relative 
+                                             abundance of each protein in each fraction 
+                                             across the gradient employed."), size = "s"),
+                           plotOutput("profile1",
+                                      height = "550px")),
+                  tabPanel("Profiles (by class)", value = "profilesPanel2",
+                           br(),
+                           plotOutput("profile2",
+                                      height = "800px")),
+                  tabPanel("Table Selection", id = "tableSelPanel",
+                           br(),
+                           fluidRow(
+                             column(4,
+                                    checkboxGroupInput("selTab",
+                                                       "Data columns to display",
+                                                       choices = origFvarLab,
+                                                       # choices = origFvarLab[-grep(mName, origFvarLab)],
+                                                       selected = selDT)))),
+                  # tabPanel("Table Legends", value = "tbl",
+                  #          tableOutput("tbl")),
+                  tabPanel("Sample info", value = "sampleInfo",
+                           br(), br(),
+                           tableOutput("pdata"), br()), 
+                  tabPanel("Colour picker", value = "colPicker",
+                           br(),
+                           fluidRow(
+                             if (ll > 5) {
+                               splitLayout(cellWidths = c("50%", "50%"),
+                                           col_input[num1],
+                                           col_input[num2])
+                             } else {
+                               splitLayout(cellWidths = "50%",
+                                           col_input)
+                             }, br(), br(), br(), br(), br()  ## add whitespace
+                           ), br(), br())   # this is a list of N colour containers for N organelles
+      ),      #===end TABS in MP===
+      
+      ## feature data table is always visible
+      DT::dataTableOutput("fDataTable")
+      
+    )
+  } else {
+    body <- dashboardBody(
+      ## trigger resize of plot  when sidebars are clicked
+      tags$script('
+      $(".navbar-custom-menu").on("click",function(){
+        $(window).trigger("resize");
+      })'
+      ),
+      ## update colours in css according to selected colorpicker
+      tags$head(uiOutput("css")),
+      ## css for styling app
+      tags$head(tags$style(HTML(css_hs))),
+      useShinyjs(),
+      tags$hr(),
+      ## main body of the app
+      tabsetPanel(type = "tabs", id = "tabs",
+                  tabPanel("Spatial Map", value = "mapPanel",
+                           br(),
+                           plotOutput("pca",
+                                      height = fig.height,
+                                      dblclick = "dblClick",
+                                      brush = brushOpts(
+                                        id = "pcaBrush",
+                                        resetOnNew = TRUE)) %>%
+                             helper(colour = "grey",
+                                    buttonLabel = "map",
+                                    type = "inline",
+                                    title = "Interactive data projection",
+                                    content = c("This visualisation is an interactive 
                                   projection of the dataset. Each point on the plot 
                                   represents one protein.<br /> <br /> Double click 
                                   points on the plot to identify them (similarly you 
@@ -317,83 +433,116 @@ pRolocVis_explore <- function(object,
                                   by clicking \"Clear selection\". <br /> <br /> Rendering 
                                   of images: Use the \"Download plot\" button to 
                                   save a high resolution PDF of the data."), 
-                                  size = "s")
-                         ),
-                tabPanel("Profiles", value = "profilesPanel1",
-                         br(),
-                         plotOutput("profile1",
-                                    height = "550px") %>%
-                           helper(colour = "grey",
-                                  type = "inline",
-                                  title = "Protein profiles",
-                                  content = c("Profile plot displaying the relative 
+                                    size = "s")
+                  ),
+                  tabPanel("Profiles", value = "profilesPanel1",
+                           br(),
+                           br(),
+                           p(strong("Protein profiles")) %>%
+                             helper(colour = "grey",
+                                    type = "inline",
+                                    buttonLabel = "profs",
+                                    title = "Protein profiles",
+                                    content = c("Profile plot displaying the relative 
                                              abundance of each protein in each fraction 
-                                             across the gradient employed."), size = "s")),
-                tabPanel("Profiles (by class)", value = "profilesPanel2",
-                         br(),
-                         plotOutput("profile2",
-                                    height = "800px")),
-                tabPanel("Table Selection", id = "tableSelPanel",
-                         br(),
-                         fluidRow(
-                           column(4,
-                                  checkboxGroupInput("selTab",
-                                                     "Data columns to display",
-                                                     choices = origFvarLab,
-                                                     # choices = origFvarLab[-grep(mName, origFvarLab)],
-                                                     selected = selDT)))),
-                # tabPanel("Table Legends", value = "tbl",
-                #          tableOutput("tbl")),
-                tabPanel("Sample info", value = "sampleInfo",
-                         br(), br(),
-                         tableOutput("pdata"), br()), 
-                tabPanel("Colour picker", value = "colPicker",
-                         br(),
-                         fluidRow(
-                           if (ll > 5) {
-                             splitLayout(cellWidths = c("50%", "50%"),
-                                         col_input[num1],
-                                         col_input[num2])
-                           } else {
-                             splitLayout(cellWidths = "50%",
-                                         col_input)
-                           }, br(), br(), br(), br(), br()  ## add whitespace
-                         ), br(), br())   # this is a list of N colour containers for N organelles
-    ),      #===end TABS in MP===
-    
-    ## feature data table is always visible
-    DT::dataTableOutput("fDataTable")
-    
+                                             across the gradient employed."), size = "s"),
+                           plotOutput("profile1",
+                                      height = "550px")),
+                  # tabPanel("Profiles (by class)", value = "profilesPanel2",
+                  #          br(),
+                  #          plotOutput("profile2",
+                  #                     height = "800px")),
+                  tabPanel("Table Selection", id = "tableSelPanel",
+                           br(),
+                           fluidRow(
+                             column(4,
+                                    checkboxGroupInput("selTab",
+                                                       "Data columns to display",
+                                                       choices = origFvarLab,
+                                                       # choices = origFvarLab[-grep(mName, origFvarLab)],
+                                                       selected = selDT)))),
+                  # tabPanel("Table Legends", value = "tbl",
+                  #          tableOutput("tbl")),
+                  tabPanel("Sample info", value = "sampleInfo",
+                           br(), br(),
+                           tableOutput("pdata"), br()), 
+                  tabPanel("Colour picker", value = "colPicker",
+                           br(),
+                           fluidRow(
+                             if (ll > 5) {
+                               splitLayout(cellWidths = c("50%", "50%"),
+                                           col_input[num1],
+                                           col_input[num2])
+                             } else {
+                               splitLayout(cellWidths = "50%",
+                                           col_input)
+                             }, br(), br(), br(), br(), br()  ## add whitespace
+                           ), br(), br())   # this is a list of N colour containers for N organelles
+      ),      #===end TABS in MP===
+      
+      ## feature data table is always visible
+      DT::dataTableOutput("fDataTable")
+      
+    )
+  }
+  
+  
+  # rightsidebar <- .setRightSidebar(background = "light",
+  #                              width = 160,
+  #                              .items = list(
+  #                                p(strong("Map controls")),
+  #                                br(),
+  #                                p("Transparency"),
+  #                                sliderInput("trans", NULL,
+  #                                            min = 0,  max = 1, value = 0.75),
+  #                                checkboxInput("checkbox", label = "Show labels", value = TRUE),
+  #                                br(),
+  #                                actionButton("resetButton", "Zoom/reset plot", style='padding:6px; font-size:90%'),
+  #                                br(), br(),
+  #                                actionButton("clear", "Clear selection", style='padding:6px; font-size:90%'),
+  #                                br(), br(),
+  #                                actionButton("resetColours", "Reset colours", style='padding:6px; font-size:90%'),
+  #                                br(), br(),
+  #                                downloadButton("exportSelected", "Save selection", style='padding:6px; font-size:90%'),
+  #                                br(), br(),
+  #                                downloadButton("saveplot", "Download plot", style='padding:6px; font-size:90%'),
+  #                                br())
+  # )
+  
+  controlbar <- dashboardControlbar(
+    skin = "light",
+    width = 160,
+    .list = list(
+      p(strong(" Map controls")),
+      br(),
+      p(" Transparency"),
+      sliderInput(" trans", NULL,
+                  min = 0,  max = 1, value = 0.75),
+      checkboxInput("checkbox", label = "Show labels", value = TRUE),
+      br(),
+      actionButton("resetButton", "Zoom/reset plot", style='padding:8px; font-size:90%; margin:3px 3px 3px 6px'),
+      br(), br(),
+      actionButton("clear", "Clear selection", style='padding:8px; font-size:90%; margin:3px 3px 3px 6px'),
+      br(), br(),
+      actionButton("resetColours", "Reset colours", style='padding:8px; font-size:90%; margin:3px 3px 3px 6px'),
+      br(), br(),
+      downloadButton("exportSelected", "Export selected", style='padding:8px; font-size:90%; margin:3px 3px 3px 6px'),
+      br(), br(),
+      downloadButton("exportData", "Export data", style='padding:8px; font-size:90%; margin:3px 3px 3px 6px'),
+      br(), br(),
+      downloadButton("saveplot", "Download plot", style='padding:8px; font-size:90%; margin:3px 3px 3px 6px'),
+      br())
   )
   
-  rightsidebar <- .setRightSidebar(background = "light",
-                               width = 160,
-                               .items = list(
-                                 p(strong("Map controls")),
-                                 br(),
-                                 p("Transparancy"),
-                                 sliderInput("trans", NULL,
-                                             min = 0,  max = 1, value = 0.75),
-                                 checkboxInput("checkbox", label = "Show labels", value = TRUE),
-                                 br(),
-                                 actionButton("resetButton", "Zoom/reset plot", style='padding:6px; font-size:90%'),
-                                 br(), br(),
-                                 actionButton("clear", "Clear selection", style='padding:6px; font-size:90%'),
-                                 br(), br(),
-                                 actionButton("resetColours", "Reset colours", style='padding:6px; font-size:90%'),
-                                 br(), br(),
-                                 downloadButton("downloadData", "Save selection", style='padding:6px; font-size:90%'),
-                                 br(), br(),
-                                 downloadButton("saveplot", "Download plot", style='padding:6px; font-size:90%'),
-                                 br())
-  )
   
-  
-  ui <- tags$body(class="skin-blue right-sidebar-mini control-sidebar-open", dashboardPagePlus(header,
-                                                                                               sidebar,
-                                                                                               body,
-                                                                                               rightsidebar,
-                                                                                               sidebar_fullCollapse = TRUE))
+  ui <- tags$body(class="skin-blue right-sidebar-mini control-sidebar-open", 
+                  dashboardPage(header,
+                                sidebar,
+                                body,
+                                controlbar
+                                # sidebar_fullCollapse = TRUE))
+                  ))
+                                                                                               
   ui <- shinyUI(tagList(ui))
   
   
@@ -417,7 +566,7 @@ pRolocVis_explore <- function(object,
     ## Get coords for proteins according to selectized marker class(es)
     mrkSel <- reactive({
       lapply(input$markers,
-             function(z) which(pmarkers[, z] == 1))
+             function(z) which(pmarkers[, z, drop = FALSE] == 1))
     })
     
     
@@ -460,7 +609,7 @@ pRolocVis_explore <- function(object,
              fcol = fcol)
       if (!is.null(input$markers)) {
         for (i in 1:length(input$markers))
-          points(object_coords[mrkSel()[[i]], ], pch = 21,
+          points(object_coords[mrkSel()[[i]], , drop = FALSE], pch = 21,
                  cex = 1.4, bg = myCols()[i], col = myCols.bg()[i])
       }
       idxDT <<- feats[input$fDataTable_rows_selected] ## highlight point on plot by selecting item in table
@@ -552,9 +701,12 @@ pRolocVis_explore <- function(object,
     })
 
     ## Class specific/faceted plots
-    output$profile2 <- renderPlot({
-      plotFacetProfiles(profs, fcol, fd, pd, col = cols_user())
-    })
+    if (classProfiles) {
+      output$profile2 <- renderPlot({
+        plotFacetProfiles(profs, fcol, fd, pd, col = cols_user())
+      }) 
+    }
+    
     
     ## --------Display/update data table--------
     ## Feature data table
@@ -584,7 +736,7 @@ pRolocVis_explore <- function(object,
                     rownames = TRUE,
                     options = list(
                       search = list(regex = TRUE, 
-                                    caseInsensitive = FALSE),
+                                    caseInsensitive = TRUE),
                       dom = "l<'search'>rtip",
                       pageLength = 100,
                       scrollX = TRUE
@@ -623,13 +775,28 @@ pRolocVis_explore <- function(object,
       resetLabels$logical <- TRUE
     })
     
-    ## --------Save selection button--------
+    ## --------Export selected button--------
     ## When save button is download save points/proteins selected
-    output$downloadData <- downloadHandler(
+    output$exportSelected <- downloadHandler(
       filename = "features.csv",
       content = function(file) { 
-        write.table(namesIdxDT, file = file, quote = FALSE, 
-                    row.names = FALSE, col.names = FALSE)
+        write.table(cbind(profs[namesIdxDT, , drop = FALSE], 
+                          fd[namesIdxDT, , drop = FALSE]), 
+                    file = file, quote = FALSE, 
+                    col.names = NA, row.names = TRUE, 
+                    sep = "\t")
+      }
+    )
+    
+    ## --------Export data button--------
+    ## When save button is download whole dataset
+    output$exportData <- downloadHandler(
+      filename = "fulldataset.csv",
+      content = function(file) { 
+        write.table(cbind(profs, fd), 
+                  file = file, quote = FALSE, 
+                  row.names = TRUE, col.names = NA,
+                  sep = "\t")
       }
     )
     
@@ -648,7 +815,7 @@ pRolocVis_explore <- function(object,
                  fcol = fcol)
           if (!is.null(input$markers)) {
             for (i in 1:length(input$markers))
-              points(object_coords[mrkSel()[[i]], ], pch = 21,
+              points(object_coords[mrkSel()[[i]], , drop = FALSE], pch = 21,
                      cex = 1.4, bg = myCols()[i], col = myCols.bg()[i])
           }
           idxDT <<- feats[input$fDataTable_rows_selected] ## highlight point on plot by selecting item in table
