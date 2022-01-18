@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">pRolocGUI</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.5.4</span>
       </span>
     </div>
 
@@ -84,14 +84,14 @@
 
     
     
-<div class="section level1">
-<h1 id="foreword">Foreword<a class="anchor" aria-label="anchor" href="#foreword"></a>
-</h1>
+<div class="section level2">
+<h2 id="foreword">Foreword<a class="anchor" aria-label="anchor" href="#foreword"></a>
+</h2>
 <p><em><a href="https://bioconductor.org/packages/3.15/pRolocGUI" class="external-link">pRolocGUI</a></em> is under active development; current functionality is evolving and new features will be added. This software is free and open-source. You are invited to open issues in the <a href="https://github.com/ComputationalProteomicsUnit/pRolocGUI/issues" class="external-link">Github <code>pRolocGUI</code> repository</a> in case you have any questions, suggestions or have found any bugs or typos. To reach a broader audience for more general questions about proteomics analyses using R consider of writing to the <a href="https://support.bioconductor.org" class="external-link">Bioconductor Support Forum</a>.</p>
 </div>
-<div class="section level1">
-<h1 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
-</h1>
+<div class="section level2">
+<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+</h2>
 <p>This vignette describes the implemented functionality of the <code>pRolocGUI</code> package. The package is based on the <code>MSnSet</code> class definitions of <em><a href="https://bioconductor.org/packages/3.15/MSnbase" class="external-link">MSnbase</a></em> and on the functions defined in the <em><a href="https://bioconductor.org/packages/3.15/pRoloc" class="external-link">pRoloc</a></em> package. <em><a href="https://bioconductor.org/packages/3.15/pRolocGUI" class="external-link">pRolocGUI</a></em> is intended for, but not limited to, the interactive visualisation and analysis of quantitative spatial proteomics data. To achieve reactivity and interactivity, <code>pRolocGUI</code> relies on the <a href="http://www.rstudio.com/shiny/" class="external-link"><code>shiny</code></a> framework. We recommend some familiarity with the <code>MSnSet</code> class (see <code><a href="https://lgatto.github.io/MSnbase/reference/MSnSet-class.html" class="external-link">?MSnSet</a></code> for details) and the <code>pRoloc</code> vignette (see <code>vignette("pRoloc-tutorial")</code>) before using <code>pRolocGUI</code>.</p>
 <p>There are 3 applications distributed with <code>pRolocGUI</code> which are wrapped and launched by the <code>pRolocVis</code> function. These 3 applications are called according to the argument <code>app</code> in the <code>pRolocVis</code> function which may be one of “explore”, “compare” or “aggregate”.</p>
 <ul>
@@ -99,9 +99,9 @@
 <li>The <code>compare</code> application features the same functionality as the <code>explore</code> app but allows the comparison of two <code>MSnSet</code> instances, e.g. this might be of help for the analyses of changes in protein localisation in different conditions.</li>
 <li>The <code>aggregate</code> application allows users to load peptide or PSM level data and look at the relationship between peptides and proteins (following aggregation).</li>
 </ul>
-<div class="section level2">
-<h2 id="getting-started">Getting started<a class="anchor" aria-label="anchor" href="#getting-started"></a>
-</h2>
+<div class="section level3">
+<h3 id="getting-started">Getting started<a class="anchor" aria-label="anchor" href="#getting-started"></a>
+</h3>
 <p>Once R is started, the first step to enable functionality of the package is to load it, as shown in the code chunk below. We also load the <em><a href="https://bioconductor.org/packages/3.15/pRolocdata" class="external-link">pRolocdata</a></em> data package, which contains quantitative proteomics datasets.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="http://ComputationalProteomicsUnit.github.io/pRolocGUI/" class="external-link">"pRolocGUI"</a></span><span class="op">)</span>
@@ -116,9 +116,9 @@
 <p>Launching any of the <code>pRolocVis</code> applications will open a new tab in a separate pop-up window, and then the application can be opened in your default Internet browser if desired, by clicking the ‘open in browser’ button in the top panel of the window.</p>
 <p>To stop the applications from running press <code>Esc</code> or <code>Ctrl-C</code> in the console (or use the “STOP” button when using RStudio) and close the browser tab, where <code>pRolocVis</code> is running.</p>
 </div>
-<div class="section level2">
-<h2 id="which-app-should-i-use">Which app should I use?<a class="anchor" aria-label="anchor" href="#which-app-should-i-use"></a>
-</h2>
+<div class="section level3">
+<h3 id="which-app-should-i-use">Which app should I use?<a class="anchor" aria-label="anchor" href="#which-app-should-i-use"></a>
+</h3>
 <p>There are 3 different applications, each one designed to address a different specific user requirement.</p>
 <ul>
 <li><p>The explore app is intended for exploratory data analysis, which features a clickable interface and zoomable spatial map. The default spatial map is in the form of a PCA plot, but many other dimensionality reduction techniques are supported including t-SNE and MDS among others. If you would like to search for a particular protein or set of proteins this is the application to use. This app also features a protein profiles tab, designed for examining the patterns of user-specified sets of proteins. For example, if one has several overlapping sub-cellular clusters in their data, as highlighted by the PCA plot or otherwise, one can check for separation in all data dimensions by examining the protein profile patterns. Proteins that co-localise are known to exhibit similar distributions (De Duve’s principale).</p></li>
@@ -127,9 +127,9 @@
 </ul>
 </div>
 </div>
-<div class="section level1">
-<h1 id="the-explore-application">The <code>explore</code> application<a class="anchor" aria-label="anchor" href="#the-explore-application"></a>
-</h1>
+<div class="section level2">
+<h2 id="the-explore-application">The <code>explore</code> application<a class="anchor" aria-label="anchor" href="#the-explore-application"></a>
+</h2>
 <p>The <code>explore</code> (default) app is characterised by an interactive and searchable spatial map, by default this is a Principal Components Analysis (PCA) plot. PCA is an ordinance method that can be used to transform a high-dimensional dataset into a smaller lower-dimenensional set of uncorrelated variables (principal components), such that the first principal component has the largest possible variance to account for as much variability in the data as possible. Each succeeding component in turn has the highest variance possible under the constraint that it be orthogonal to the preceding components. Thus, PCA is particularly useful for visualisation of multidimensional data in 2-dimensions, wherein all the proteins can be plotted on the same figure. Other dimensionality reduction methods are supported such as t-SNE, among others (please see <code><a href="https://rdrr.io/pkg/pRoloc/man/plot2D.html" class="external-link">?plot2D</a></code> and the argument <code>method</code>)</p>
 <p>The application is subdivided in to different tabs: (1) Spatial Map, (2) Profiles, (3) Profiles (by class), (4) Table Selection, (5) Sample info and (6) Colour picker. A searchable data table containing the experimental feature meta-data is permanantly dispalyed at the bottom of the screen for ease. You can browse between the tabs by simply clicking on them at the top of the screen.</p>
 <p>To run the <code>explore</code> application using <code>pRolocVis</code>:</p>
@@ -174,9 +174,9 @@ different sub-cellular niches in an easy and direct manor where all proteins bel
 <img src="figures/SS_10_colourpicker.jpg" alt=""><p class="caption">The colour picker</p>
 </div>
 </div>
-<div class="section level1">
-<h1 id="the-compare-application">The <code>compare</code> application<a class="anchor" aria-label="anchor" href="#the-compare-application"></a>
-</h1>
+<div class="section level2">
+<h2 id="the-compare-application">The <code>compare</code> application<a class="anchor" aria-label="anchor" href="#the-compare-application"></a>
+</h2>
 <p>The comparison application may be of interest if a user wishes to examine two replicate experiments, or two experiments from different conditions etc. Two Spatial Map plots are loaded side-by-side (the default method is PCA) and one can search and identify common proteins between the two data sets.</p>
 <p>A <code>MSnSetList</code> of length 2 must be supplied as input, containing the two datasets one wishes to compare. In the example below we load two replicate datasets of mouse embryonic stem cells produced using the hyperLOPIT technology.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
@@ -195,9 +195,9 @@ different sub-cellular niches in an easy and direct manor where all proteins bel
 <span class="op">}</span></code></pre></div>
 <p>The compare app has the same functionality as the explore application for protein profile visualisation,interactive searchable datatable that allows both batch import and export, colour selection and options to download the visualisations. Visualisations and tables that appear in each tab are loaded side-by-side, one per dataset.</p>
 </div>
-<div class="section level1">
-<h1 id="the-aggregate-application">The <code>aggregate</code> application<a class="anchor" aria-label="anchor" href="#the-aggregate-application"></a>
-</h1>
+<div class="section level2">
+<h2 id="the-aggregate-application">The <code>aggregate</code> application<a class="anchor" aria-label="anchor" href="#the-aggregate-application"></a>
+</h2>
 <p>The aggregate app allows users to look both the peptide (and/or PSM) and/or protein level data together and explore the effects of PSM/protein aggregation to protein and identify protein groups with interesting expression patterns.</p>
 <p>To run the <code>aggregate</code> app we first load a PSM level dataset from <code>pRolocdata</code>. The dataset <code>hyperLOPIT2015ms2psm</code> contains PSM level intensity data, where each row corresponds to one PSM and each column is the TMT-plex. Please see <code><a href="https://rdrr.io/pkg/pRolocdata/man/hyperLOPIT2015.html" class="external-link">?hyperLOPIT2015ms2psm</a></code> for more information.</p>
 <p>We can launch the <code>pRolocVis</code> function and look at the PSM data without aggregating to peptide</p>
@@ -229,9 +229,9 @@ different sub-cellular niches in an easy and direct manor where all proteins bel
 <p>Both the aggvar plot and PCA plot are interactive, and similarly to the other <code>pRolocVis</code> apps you can click individual proteins or peptides in either the aggvar or PCA plot, to search and highlight peptides and proteins of interest. When a protein group is clicked in the left plot, the peptides and associated protein group are automatically shown on the right PCA plot.</p>
 <p><img src="figures/SS_15_aggregate_mean.jpg" alt="the max function"> As previously mentioned <code>aggvar</code> can use either max or mean as a function. In the left sidebar there is a drop down menu for users to try each method.</p>
 </div>
-<div class="section level1">
-<h1 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
-</h1>
+<div class="section level2">
+<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
 <p>Gatto L., Vizcaíno J.A., Hermjakob H., Huber W. and Lilley K.S. <em>Organelle proteomics experimental designs and analysis</em> <a href="http://www.ncbi.nlm.nih.gov/pubmed/21080489" class="external-link">Proteomics, 10:22, 3957-3969, 2010</a>.</p>
 <p>Gatto L., Breckels L.M., Burger T., Nightingale D., Groen A.J., Campbell C., Nikolovski N., Mulvey C.M., Christoforou A., Ferro M., Lilley K.S. <em>A foundation for reliable spatial proteomics data analysis</em>, <a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC4125728/" class="external-link">Mol Cell Proteomics. 2014 Aug;13(8):1937-52</a>.</p>
 <p>Christoforou A., Mulvey C.M., Breckels L.M., Hayward P.C., Geladaki E., Hurrell T., et al. <em>A draft map of the mouse pluripotent stem cell spatial proteome</em>. <a href="http://www.nature.com/ncomms/2016/160112/ncomms9992/full/ncomms9992.html" class="external-link">Nat Commun. 2016 Jan 12;7:9992</a>.</p>
@@ -255,7 +255,7 @@ different sub-cellular niches in an easy and direct manor where all proteins bel
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.0.9000.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.9000.</p>
 </div>
 
       </footer>
