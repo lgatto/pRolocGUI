@@ -129,7 +129,7 @@ pRolocVis_explore <- function(object,
   }
   
   ## Shorten markers names if too long
-  getMyClasses <- getMarkerClasses(object)
+  getMyClasses <- getMarkerClasses(object, fcol = fcol)
   cn <- sapply(getMyClasses,
                function(x) {
                  if (nchar(x) > nchar) {

@@ -1,5 +1,9 @@
 # pRolocGUI 2.1
 
+## CHANGES IN VERSION 2.1.4
+- fix #109 bug in pRolocVis when 'markers' is missing 
+  from fvarLabels
+
 ## CHANGES IN VERSION 2.1.3
 - added and renames buttons for downloading data
 - fixed issue #104 that occurs when marker classes

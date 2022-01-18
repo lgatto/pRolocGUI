@@ -114,7 +114,7 @@ pRolocVis_compare <- function(object,
   
   ## Shorten markers names if too long
   for (i in seq_along(object)) {
-    origCl <- getMarkerClasses(object[[i]])
+    origCl <- getMarkerClasses(object[[i]], fcol = fcol[i])
     cn <- sapply(origCl,
                  function(x) {
                    if (nchar(x) > nchar) {
