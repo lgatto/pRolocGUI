@@ -1,8 +1,18 @@
-# pRolocGUI 2.1
+# pRolocGUI 2.5
 
-## CHANGES IN VERSION 2.1.4
-- fix #109 bug in pRolocVis when 'markers' is missing 
+## CHANGES IN VERSION 2.5.1
+- fix #109 bug in pRolocVis when 'markers' is missing
   from fvarLabels
+
+## CHANGES IN VERSION 2.5.0
+- New version for Bioc
+
+# pRolocGUI 2.3
+
+## CHANGES IN VERSION 2.3.0
+- New version for Bioc
+
+# pRolocGUI 2.1
 
 ## CHANGES IN VERSION 2.1.3
 - added and renames buttons for downloading data
