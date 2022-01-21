@@ -239,7 +239,7 @@ pRolocVis_explore <- function(object,
   
   header <- dashboardHeader(title = "pRolocGUI Explore",
                             # enable_rightsidebar = TRUE,
-                            controlbarIcon = shiny::icon("gears"))
+                            controlbarIcon = shiny::icon("cogs"))
   
   sidebar <- dashboardSidebar(
     p(strong("Subcellular classes")),

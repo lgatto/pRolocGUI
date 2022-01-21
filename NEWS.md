@@ -3,6 +3,7 @@
 ## CHANGES IN VERSION 2.5.1
 - fix #109 bug in pRolocVis when 'markers' is missing
   from fvarLabels
+- fontawesome deprecated swicth to cogs for sidebar 
 
 ## CHANGES IN VERSION 2.5.0
 - New version for Bioc
