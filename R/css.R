@@ -67,7 +67,7 @@ css_hs <- HTML('
 
 css_colours <- function(colors){
   template <- "
-.checkboxGroupButtons div.btn-group:nth-child(%s) button {
+.checkbox-group-buttons div.btn-group:nth-child(%s) button {
   background: %s !important;
   color: white !important;
   padding: 5px;

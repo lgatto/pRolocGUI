@@ -3,7 +3,10 @@
 ## CHANGES IN VERSION 2.5.1
 - fix #109 bug in pRolocVis when 'markers' is missing
   from fvarLabels
-- fontawesome deprecated swicth to cogs for sidebar 
+- fontawesome deprecated switch to cogs for sidebar 
+- fix bug in colour menu #110 attributed from shinyWidgets
+  changing the class name from checkboxGroupButtons to 
+  checkbox-group-buttons
 
 ## CHANGES IN VERSION 2.5.0
 - New version for Bioc
