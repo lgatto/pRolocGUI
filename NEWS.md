@@ -1,5 +1,7 @@
 # pRolocGUI 2.5
 
+## CHANGES IN VERSION 2.5.2
+
 ## CHANGES IN VERSION 2.5.1
 - fix #109 bug in pRolocVis when 'markers' is missing
   from fvarLabels
