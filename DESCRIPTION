@@ -1,6 +1,6 @@
 Package: pRolocGUI
 Title: Interactive visualisation of spatial proteomics data
-Version: 2.5.2
+Version: 2.5.3
 Authors@R: c(person(given = "Lisa", family ="Breckels",
                     email = "lms79@cam.ac.uk",
                     role = "aut"),

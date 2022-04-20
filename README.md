@@ -123,7 +123,7 @@ for more details. The default app that is loaded if
 pRolocVis(hyperLOPIT2015)
 ```
 
-![Screenshot - PCA](https://raw.githubusercontent.com/ComputationalProteomicsUnit/pRolocGUI/master/vignettes/figures/SS_PCA1.jpg)
+![Screenshot - PCA](https://raw.githubusercontent.com/lgatto/pRolocGUI/master/vignettes/figures/SS_01_map.jpg)
 
 The graphical interface is described in details in the package
 vignette that is included in the package itself (get it by typing
