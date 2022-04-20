@@ -5,6 +5,8 @@ Bioconductor build status:
 Exploring and visualising spatial proteomics data
 =================================================
 
+<img align = "right" src="https://raw.githubusercontent.com/Bioconductor/BiocStickers/master/pRoloc/pRolocGUI.png" height="200">
+
 ## Introduction
 
 The
