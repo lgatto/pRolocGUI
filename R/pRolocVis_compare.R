@@ -905,8 +905,8 @@ pRolocVis_compare <- function(object,
                       search = list(regex = TRUE, 
                                     caseInsensitive = TRUE),
                       dom = "l<'search'>rtip",
-                      pageLength = 100,
-                      scrollX = TRUE
+                      pageLength = 100
+                      # scrollX = TRUE
                     ),
                     callback = JS(callback),
                     style = "bootstrap4",

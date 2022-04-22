@@ -1,13 +1,15 @@
 Package: pRolocGUI
 Title: Interactive visualisation of spatial proteomics data
-Version: 2.5.3
+Version: 2.5.4
 Authors@R: c(person(given = "Lisa", family ="Breckels",
                     email = "lms79@cam.ac.uk",
+                    comment = c(ORCID = "0000-0001-8918-7171"),
                     role = "aut"),
              person(given = "Thomas", family ="Naake",
                     role = "aut"),
              person(given = "Laurent", family = "Gatto",
                     email = "laurent.gatto@uclouvain.be",
+                    comment = c(ORCID = "0000-0002-1520-2268"),
                     role = c("aut","cre")))
 Description: The package pRolocGUI comprises functions to
     interactively visualise organelle (spatial) proteomics

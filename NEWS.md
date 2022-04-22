@@ -1,5 +1,8 @@
 # pRolocGUI 2.5
 
+## CHANGES IN VERSION 2.5.4
+- Fixed issue #108 by removing scrollX known issue in DT package
+
 ## CHANGES IN VERSION 2.5.3
 - Update README
 
