@@ -33,11 +33,11 @@ on:
   push:
     branches:
       - master
-      ## - 'RELEASE_*'
+      - 'RELEASE_*'
   pull_request:
     branches:
       - master
-      ## - 'RELEASE_*'
+      - 'RELEASE_*'
 
 name: R-CMD-check-bioc
 
@@ -196,7 +196,7 @@ jobs:
           local_deps <- remotes::local_package_deps(dependencies = TRUE)
           deps <- remotes::dev_package_deps(dependencies = TRUE, repos = BiocManager::repositories())
           BiocManager::install(local_deps[local_deps %in% deps$package[deps$diff != 0]])
-
+          
           ## Pass #2 at installing dependencies
           message(paste('****', Sys.time(), 'pass number 2 at installing dependencies: any remaining dependencies ****'))
           deps <- remotes::dev_package_deps(dependencies = TRUE, repos = BiocManager::repositories())
@@ -206,6 +206,18 @@ jobs:
           message(paste('****', Sys.time(), 'installing rcmdcheck and BiocCheck ****'))
           remotes::install_cran("rcmdcheck")
           BiocManager::install("BiocCheck")
+        shell: Rscript {0}
+
+      ## See https://github.com/Bioconductor/bioconductor_docker/issues/22
+      - name: Manually install preprocessCore
+        run: |
+          git clone https://github.com/bmbolstad/preprocessCore.git
+          cd preprocessCore
+          R CMD INSTALL --configure-args="--disable-threading"  .
+
+      - name: Manually install latest QFeatures
+        run: |
+          BiocManager::install("RforMassSpectrometry/QFeatures")
         shell: Rscript {0}
 
       - name: Session info
@@ -291,3 +303,4 @@ jobs:
         with:
           name: ${{ runner.os }}-biocdocker-biocbranch-${{ needs.define-docker-info.outputs.biocversion }}-r-${{ steps.findrversion.outputs.rversion }}-bioc-${{ steps.findrversion.outputs.biocversionnum }}-results
           path: check
+
