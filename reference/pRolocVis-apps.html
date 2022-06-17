@@ -94,10 +94,14 @@ interactively.</p>
 <dd><p>An instance of class <code>MSnSet</code>, or an
 <code>MSnSetList</code> of length 2 if using <code>"compare"</code>
 application.</p></dd>
+
+
 <dt>app</dt>
 <dd><p>The type of application requested: <code>"explore"</code>
 (default), <code>"compare"</code> or
 <code>"aggregate"</code>. See description below.</p></dd>
+
+
 <dt>fcol</dt>
 <dd><p>The feature meta-data label (<code>fData</code> column name)
 to be used for colouring. Default is <code>"markers"</code>. If set
@@ -107,23 +111,34 @@ allowed to set different labels for each dataset. If
 only one label is specified, then this single label 
 will be used to identify the annotation column in both datasets. 
 Please see example herein.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional parameters passed to <code>plot2D</code> for the
 <code>"explore"</code> (such as the dimensionality reduction
 technique, and methods), <code>"compare"</code> apps. For 
 the <code>"aggregate"</code> app this is for additional parameters 
 to be passed to <code>combineFeatures</code>.</p></dd>
+
+
 <dt>groupBy</dt>
 <dd><p>The feature meta-data label (<code>fData</code> column name)
 to be used for summarising the features to be combined.</p></dd>
+
+
 <dt>fig.height</dt>
 <dd><p>Height of the figure.</p></dd>
+
+
 <dt>nchar</dt>
 <dd><p>Maximum number of characters of the subcellular class
 names, before their names are truncated. Default is 25.</p></dd>
+
+
 <dt>classProfiles</dt>
 <dd><p>A <code>logical</code> indicating if a tab displaying
 individual class profile plots should be displayed. Default is <code>FALSE</code>.</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -206,7 +221,7 @@ and their distributions.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
 </div>
 
       </footer></div>
