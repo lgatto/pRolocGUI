@@ -517,7 +517,7 @@ pRolocVis_explore <- function(object,
       br(),
       p(" Transparency"),
       sliderInput(" trans", NULL,
-                  min = 0,  max = 1, value = 0.75),
+                  min = 0,  max = 1, value = 0.9),
       checkboxInput("checkbox", label = "Show labels", value = TRUE),
       br(),
       actionButton("resetButton", "Zoom/reset plot", style='padding:8px; font-size:90%; margin:3px 3px 3px 6px'),
@@ -588,7 +588,7 @@ pRolocVis_explore <- function(object,
       # scales::alpha(cols.bg,
       #               NA)[sapply(input$markers, function(z)
       #                   which(colnames(pmarkers) == z))]
-      darken(myCols())
+      darken(darken(darken(darken(myCols()))))
     })
     profCols <- reactive({
       scales::alpha(cols_user(),
@@ -610,7 +610,7 @@ pRolocVis_explore <- function(object,
       if (!is.null(input$markers)) {
         for (i in 1:length(input$markers))
           points(object_coords[mrkSel()[[i]], , drop = FALSE], pch = 21,
-                 cex = 1.4, bg = myCols()[i], col = myCols.bg()[i])
+                 cex = 2, bg = myCols()[i], col = myCols.bg()[i])
       }
       idxDT <<- feats[input$fDataTable_rows_selected] ## highlight point on plot by selecting item in table
       if (resetLabels$logical) idxDT <<- numeric()  ## If TRUE labels are cleared

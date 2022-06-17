@@ -572,7 +572,7 @@ pRolocVis_compare <- function(object,
                                      br(),
                                      p("Transparency"),
                                      sliderInput("trans", NULL,
-                                                 min = 0,  max = 1, value = 0.75),
+                                                 min = 0,  max = 1, value = 0.9),
                                      checkboxInput("checkbox", label = "Show labels", value = TRUE),
                                      br(),
                                      actionButton("resetButton", "Zoom/reset plot", style='padding:6px; font-size:90%'),
@@ -704,7 +704,7 @@ pRolocVis_compare <- function(object,
     })
     
     myCols.bg <- reactive({
-      darken(myCols())
+      darken(darken(darken(darken(myCols()))))
     })
     
     profCols <- reactive({
@@ -729,8 +729,8 @@ pRolocVis_compare <- function(object,
       if (!is.null(input$markers)) {
         for (i in 1:length(input$markers)) {
           if (!is.na(indMrk[[i]][1]))
-            points(object_coords[[indData]][mrkSel2()[[i]], , drop = FALSE], pch = 16,
-                   cex = 1.4, bg = myCols()[i], col = myCols.bg()[i])
+            points(object_coords[[indData]][mrkSel2()[[i]], , drop = FALSE], pch = 21,
+                   cex = 1.8, bg = myCols()[i], col = myCols.bg()[i])
         }
       }
       idxDT <<- feats[input$fDataTable_rows_selected] ## highlight point on plot by selecting item in table

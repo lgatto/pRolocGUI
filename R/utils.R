@@ -46,9 +46,9 @@ appStockcol <- function() {stockcol}
          type = "n", ...)
     # ukn <- which(fd[, fcol] == "unknown")
     points(.data[, 1], .data[, 2],
-           bg =  paste0("#C8C8C8"),
-           col = paste0("#505050"),
-           pch = 21, cex = .8, lwd = .7)
+           bg =  paste0("#dbdada"),
+           col = darken(paste0("#C8C8C8")),
+           pch = 21, cex = 1.2, lwd = .7)
     cl <- names(table(fd[, fcol]))
     cl <- cl[cl != "unknown"]
     if (!unk) {
