@@ -230,7 +230,7 @@ pRolocVis_compare <- function(object,
   
   header <- dashboardHeader(title = "pRolocGUI Compare",
                                 # enable_rightsidebar = TRUE,
-                            controlbarIcon = shiny::icon("cogs"))
+                            controlbarIcon = shiny::icon("gears"))
   
   sidebar <- dashboardSidebar(
     p(strong("Subcellular classes")),
