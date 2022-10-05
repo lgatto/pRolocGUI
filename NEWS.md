@@ -4,6 +4,7 @@
 - Move LMB as maintainer
 - Update URLs for Github repo
 - Removed deprecated cogs icon to gears
+- Fix bug in shinyhelper 
 
 ## CHANGES IN VERSION 2.7.0
 - New version for Bioc 3.15
