@@ -245,9 +245,9 @@ pRolocVis_explore <- function(object,
     p(strong("Subcellular classes")),
     actionButton(inputId = "selectall", label="Select/clear all",
                  style='padding:4%; font-size:100%; margin:6px 5px 6px 20%') %>%
-      helper(colour = "grey",
+      helper(icon = "circle-question",
+             colour = "grey",
              type = "inline",
-             buttonLabel = "classes",
              title = "Explore compartments",
              content = c("This sidebar allows you to explore proteins that 
                          belong to pre-defined subcellular classes. To remove 
@@ -299,9 +299,9 @@ pRolocVis_explore <- function(object,
                                       brush = brushOpts(
                                         id = "pcaBrush",
                                         resetOnNew = TRUE)) %>%
-                             helper(colour = "grey",
+                             helper(icon = "circle-question",
+                                    colour = "grey",
                                     type = "inline",
-                                    buttonLabel = "map",
                                     title = "Interactive data projection",
                                     content = c("This visualisation is an interactive 
                                   projection of the dataset. Each point on the plot 
@@ -334,9 +334,9 @@ pRolocVis_explore <- function(object,
                   tabPanel("Profiles", value = "profilesPanel1",
                            br(),
                            p(strong("Protein profiles")) %>%
-                             helper(colour = "grey",
+                             helper(icon = "circle-question",
+                                    colour = "grey",
                                     type = "inline",
-                                    buttonLabel = "profs",
                                     title = "Protein profiles",
                                     content = c("Profile plot displaying the relative 
                                              abundance of each protein in each fraction 
@@ -403,8 +403,8 @@ pRolocVis_explore <- function(object,
                                       brush = brushOpts(
                                         id = "pcaBrush",
                                         resetOnNew = TRUE)) %>%
-                             helper(colour = "grey",
-                                    buttonLabel = "map",
+                             helper(icon = "circle-question",
+                                    colour = "grey",
                                     type = "inline",
                                     title = "Interactive data projection",
                                     content = c("This visualisation is an interactive 
@@ -439,9 +439,9 @@ pRolocVis_explore <- function(object,
                            br(),
                            br(),
                            p(strong("Protein profiles")) %>%
-                             helper(colour = "grey",
+                             helper(icon = "circle-question",
+                                    colour = "grey",
                                     type = "inline",
-                                    buttonLabel = "profs",
                                     title = "Protein profiles",
                                     content = c("Profile plot displaying the relative 
                                              abundance of each protein in each fraction 

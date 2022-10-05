@@ -236,9 +236,9 @@ pRolocVis_compare <- function(object,
     p(strong("Subcellular classes")),
     actionButton(inputId = "selectall", label="Select/clear all",
                  style='padding:4%; font-size:100%; margin:6px 5px 6px 20%') %>%
-      helper(colour = "grey",
+      helper(icon = "circle-question",
+             colour = "grey",
              type = "inline",
-             buttonLabel = "classes",
              title = "Explore compartments",
              content = c("This sidebar allows you to explore proteins that 
                          belong to pre-defined subcellular classes. To remove 
@@ -299,7 +299,8 @@ pRolocVis_compare <- function(object,
                                                brush = brushOpts(
                                                  id = "plotBrush2",
                                                  resetOnNew = TRUE))) %>%
-                               helper(colour = "grey",
+                               helper(icon = "circle-question",
+                                      colour = "grey",
                                       type = "inline",
                                       title = "Interactive data projection",
                                       content = c("This visualisation is an interactive 
@@ -332,7 +333,8 @@ pRolocVis_compare <- function(object,
                   ),
                   tabPanel("Profiles", value = "profilesPanel1",
                            p(strong("Dataset 1")) %>%
-                             helper(colour = "grey",
+                             helper(icon = "circle-question",
+                                    colour = "grey",
                                     type = "inline",
                                     title = "Protein profiles",
                                     content = "Profile plot displaying the relative 
@@ -436,7 +438,8 @@ pRolocVis_compare <- function(object,
                                                brush = brushOpts(
                                                  id = "plotBrush2",
                                                  resetOnNew = TRUE))) %>%
-                               helper(colour = "grey",
+                               helper(icon = "circle-question",
+                                      colour = "grey",
                                       type = "inline",
                                       title = "Interactive data projection",
                                       content = c("This visualisation is an interactive 
@@ -470,7 +473,8 @@ pRolocVis_compare <- function(object,
                   tabPanel("Profiles", value = "profilesPanel1",
                            br(),
                            p(strong("Dataset 1")) %>%
-                             helper(colour = "grey",
+                             helper(icon = "circle-question",
+                                    colour = "grey",
                                     type = "inline",
                                     title = "Protein profiles",
                                     content = "Profile plot displaying the relative 
