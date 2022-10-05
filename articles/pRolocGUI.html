@@ -51,7 +51,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/ComputationalProteomicsUnit/pRolocGUI/" class="external-link">
+  <a href="https://github.com/lgatto/pRolocGUI/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -80,7 +80,7 @@ Naake</h4>
                                     <h4 data-toc-skip class="author">Laurent
 Gatto</h4>
             <address class="author_afil">
-      de Duve Institute, UCLouvain, Belgium<br><small class="dont-index">Source: <a href="https://github.com/ComputationalProteomicsUnit/pRolocGUI/blob/HEAD/vignettes/pRolocGUI.Rmd" class="external-link"><code>vignettes/pRolocGUI.Rmd</code></a></small>
+      de Duve Institute, UCLouvain, Belgium<br><small class="dont-index">Source: <a href="https://github.com/lgatto/pRolocGUI/blob/HEAD/vignettes/pRolocGUI.Rmd" class="external-link"><code>vignettes/pRolocGUI.Rmd</code></a></small>
       <div class="hidden name"><code>pRolocGUI.Rmd</code></div>
 
     </address>
@@ -145,8 +145,8 @@ package is to load it, as shown in the code chunk below. We also load
 the <em><a href="https://bioconductor.org/packages/3.16/pRolocdata" class="external-link">pRolocdata</a></em>
 data package, which contains quantitative proteomics datasets.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="http://ComputationalProteomicsUnit.github.io/pRolocGUI/" class="external-link">"pRolocGUI"</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/lgatto/pRolocdata" class="external-link">"pRolocdata"</a></span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/lgatto/pRolocGUI" class="external-link">"pRolocGUI"</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/lgatto/pRolocdata" class="external-link">"pRolocdata"</a></span><span class="op">)</span></span></code></pre></div>
 <p>We begin by loading the dataset <code>hyperLOPIT2015</code> from the
 <code>pRolocdata</code> data package. The data was produced from using
 the hyperLOPIT technology on mouse E14TG2a embryonic stem cells (<a href="http://www.nature.com/ncomms/2016/160112/ncomms9992/full/ncomms9992.html" class="external-link">Christoforou
@@ -156,7 +156,7 @@ et al 2010</a>, <a href="http://www.ncbi.nlm.nih.gov/pubmed/24846987" class="ext
 and also the <a href="http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-tutorial.html" class="external-link"><code>pRoloc</code>
 tutorial vignette</a>.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">hyperLOPIT2015</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">hyperLOPIT2015</span><span class="op">)</span></span></code></pre></div>
 <p>To load one of the applications using the <code>pRolocVis</code>
 function and view the data you are required to specify a minimum of one
 key argument, <code>object</code>, which is the data to display and must
@@ -178,7 +178,7 @@ below.)</p>
 <p>For example, to load the default <code>pRolocVis</code>
 application:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/pRolocVis-apps.html">pRolocVis</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">hyperLOPIT2015</span>, fcol <span class="op">=</span> <span class="st">"markers"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/pRolocVis-apps.html">pRolocVis</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">hyperLOPIT2015</span>, fcol <span class="op">=</span> <span class="st">"markers"</span><span class="op">)</span></span></code></pre></div>
 <p>Launching any of the <code>pRolocVis</code> applications will open a
 new tab in a separate pop-up window, and then the application can be
 opened in your default Internet browser if desired, by clicking the
@@ -244,7 +244,7 @@ on them at the top of the screen.</p>
 <p>To run the <code>explore</code> application using
 <code>pRolocVis</code>:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/pRolocVis-apps.html">pRolocVis</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">hyperLOPIT2015</span>, fcol <span class="op">=</span> <span class="st">"markers"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/pRolocVis-apps.html">pRolocVis</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">hyperLOPIT2015</span>, fcol <span class="op">=</span> <span class="st">"markers"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
 <img src="figures/SS_01_map.jpg" alt=""><p class="caption">The explore Tab</p>
 </div>
@@ -368,10 +368,10 @@ containing the two datasets one wishes to compare. In the example below
 we load two replicate datasets of mouse embryonic stem cells produced
 using the hyperLOPIT technology.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">hyperLOPIT2015ms3r1</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">hyperLOPIT2015ms3r2</span><span class="op">)</span>
-<span class="va">mydata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnSetList-class.html" class="external-link">MSnSetList</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">hyperLOPIT2015ms3r1</span>, <span class="va">hyperLOPIT2015ms3r2</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="../reference/pRolocVis-apps.html">pRolocVis</a></span><span class="op">(</span><span class="va">mydata</span>, app <span class="op">=</span> <span class="st">"compare"</span>, fcol <span class="op">=</span> <span class="st">"markers"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">hyperLOPIT2015ms3r1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">hyperLOPIT2015ms3r2</span><span class="op">)</span></span>
+<span><span class="va">mydata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnSetList-class.html" class="external-link">MSnSetList</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">hyperLOPIT2015ms3r1</span>, <span class="va">hyperLOPIT2015ms3r2</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/pRolocVis-apps.html">pRolocVis</a></span><span class="op">(</span><span class="va">mydata</span>, app <span class="op">=</span> <span class="st">"compare"</span>, fcol <span class="op">=</span> <span class="st">"markers"</span><span class="op">)</span></span></code></pre></div>
 <p>This will load the datasets <code>hyperLOPIT2015ms3r1</code> and
 <code>hyperLOPIT2015ms3r2</code> side by side and use the column name
 called <code>markers</code> for the colour labelling in both plots.</p>
@@ -386,12 +386,12 @@ contained in the column called <code>markers</code> for
 <code>lopitdcU2OS2018</code>, called <code>final.assignment</code> we
 would specify this using <code>fcol</code> as follows.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"hyperLOPITU2OS2018"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"lopitdcU2OS2018"</span><span class="op">)</span>
-<span class="va">xx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnSetList-class.html" class="external-link">MSnSetList</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">hyperLOPITU2OS2018</span>, <span class="va">lopitdcU2OS2018</span><span class="op">)</span><span class="op">)</span>
-<span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
-  <span class="fu"><a href="../reference/pRolocVis-apps.html">pRolocVis</a></span><span class="op">(</span><span class="va">xx</span>, app <span class="op">=</span> <span class="st">"compare"</span>, fcol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"markers"</span>, <span class="st">"final.assignment"</span><span class="op">)</span><span class="op">)</span>
-<span class="op">}</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"hyperLOPITU2OS2018"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"lopitdcU2OS2018"</span><span class="op">)</span></span>
+<span><span class="va">xx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/MSnSetList-class.html" class="external-link">MSnSetList</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">hyperLOPITU2OS2018</span>, <span class="va">lopitdcU2OS2018</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="../reference/pRolocVis-apps.html">pRolocVis</a></span><span class="op">(</span><span class="va">xx</span>, app <span class="op">=</span> <span class="st">"compare"</span>, fcol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"markers"</span>, <span class="st">"final.assignment"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
 <p>The compare app has the same functionality as the explore application
 for protein profile visualisation,interactive searchable datatable that
 allows both batch import and export, colour selection and options to
@@ -413,25 +413,25 @@ Please see <code><a href="https://rdrr.io/pkg/pRolocdata/man/hyperLOPIT2015.html
 <p>We can launch the <code>pRolocVis</code> function and look at the PSM
 data without aggregating to peptide</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">## load PSM data</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"hyperLOPIT2015ms2psm"</span><span class="op">)</span>
-
-<span class="co">## Visualise the PSMs per to protein group</span>
-<span class="fu"><a href="../reference/pRolocVis-apps.html">pRolocVis</a></span><span class="op">(</span><span class="va">hyperLOPIT2015ms2psm</span>, app <span class="op">=</span> <span class="st">"aggregate"</span>, fcol <span class="op">=</span> <span class="st">"markers"</span>,
-          groupBy <span class="op">=</span> <span class="st">"Protein.Group.Accessions"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co">## load PSM data</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"hyperLOPIT2015ms2psm"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">## Visualise the PSMs per to protein group</span></span>
+<span><span class="fu"><a href="../reference/pRolocVis-apps.html">pRolocVis</a></span><span class="op">(</span><span class="va">hyperLOPIT2015ms2psm</span>, app <span class="op">=</span> <span class="st">"aggregate"</span>, fcol <span class="op">=</span> <span class="st">"markers"</span>,</span>
+<span>          groupBy <span class="op">=</span> <span class="st">"Protein.Group.Accessions"</span><span class="op">)</span></span></code></pre></div>
 <p>Or we can first aggregate from PSM to peptide and then launch the app
 to look at the relationships between peptide level data and protein
 groups. For this latter case we can use the <code>combineFeatures</code>
 function from <code>MSnbase</code>.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">## Combine PSM data to peptides</span>
-<span class="va">hl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lgatto.github.io/MSnbase/reference/combineFeatures.html" class="external-link">combineFeatures</a></span><span class="op">(</span><span class="va">hyperLOPIT2015ms2psm</span>,
-                      groupBy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/featureData.html" class="external-link">fData</a></span><span class="op">(</span><span class="va">hyperLOPIT2015ms2psm</span><span class="op">)</span><span class="op">$</span><span class="va">Sequence</span>,
-                      method <span class="op">=</span> <span class="va">median</span><span class="op">)</span>
-
-<span class="co">## Visualise peptides according to protein group</span>
-<span class="fu"><a href="../reference/pRolocVis-apps.html">pRolocVis</a></span><span class="op">(</span><span class="va">hyperLOPIT2015ms2psm</span>, app <span class="op">=</span> <span class="st">"aggregate"</span>, fcol <span class="op">=</span> <span class="st">"markers"</span>,
-          groupBy <span class="op">=</span> <span class="st">"Protein.Group.Accessions"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co">## Combine PSM data to peptides</span></span>
+<span><span class="va">hl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">combineFeatures</a></span><span class="op">(</span><span class="va">hyperLOPIT2015ms2psm</span>,</span>
+<span>                      groupBy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/Biobase/man/featureData.html" class="external-link">fData</a></span><span class="op">(</span><span class="va">hyperLOPIT2015ms2psm</span><span class="op">)</span><span class="op">$</span><span class="va">Sequence</span>,</span>
+<span>                      method <span class="op">=</span> <span class="va">median</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">## Visualise peptides according to protein group</span></span>
+<span><span class="fu"><a href="../reference/pRolocVis-apps.html">pRolocVis</a></span><span class="op">(</span><span class="va">hyperLOPIT2015ms2psm</span>, app <span class="op">=</span> <span class="st">"aggregate"</span>, fcol <span class="op">=</span> <span class="st">"markers"</span>,</span>
+<span>          groupBy <span class="op">=</span> <span class="st">"Protein.Group.Accessions"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
 <img src="figures/SS_13_aggregate_mean.jpg" alt=""><p class="caption">The aggregate app</p>
 </div>
@@ -500,7 +500,7 @@ Commun. 2016 Jan 12;7:9992</a>.</p>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.9000.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.9000.</p>
 </div>
 
       </footer>
