@@ -1,7 +1,8 @@
 # pRolocGUI 2.7
 
 ## CHANGES IN VERSION 2.7.1
-
+- Move LMB as maintainer
+- Update URLs for Github repo
 
 ## CHANGES IN VERSION 2.7.0
 - New version for Bioc 3.15
