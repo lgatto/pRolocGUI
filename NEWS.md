@@ -1,5 +1,8 @@
 # pRolocGUI 2.7
 
+## CHANGES IN VERSION 2.7.2
+- Explicitly add remap function for aggregation app
+
 ## CHANGES IN VERSION 2.7.1
 - Move LMB as maintainer
 - Update URLs for Github repo

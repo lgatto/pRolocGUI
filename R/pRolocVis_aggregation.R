@@ -131,7 +131,7 @@ pRolocVis_aggregate <- function(object,
   profs <- exprs(peps)
   
   ## Remap protein coords onto peptide PCA coords
-  remapped <- pRoloc:::remap(object = MSnSetList(list(peps, prots)))
+  remapped <- remap(object = MSnSetList(list(peps, prots)))
 
   
   ## Get PCs for each plot 
