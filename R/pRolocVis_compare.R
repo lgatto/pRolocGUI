@@ -165,6 +165,11 @@ pRolocVis_compare <- function(object,
   ## Now extract all relevant data
   fd <- lapply(object, fData)                     # all featureData
   pd <- lapply(object, pData)
+  for (i in seq_along(pd)) {
+    if (ncol(pd[[i]]) == 0) {
+      pd[[i]] <- data.frame("Information" = "No sample information provided for this data see ?pData for examples)")
+    }
+  }
   pcol <- NULL                                    # replicate information
   profs <- lapply(object, MSnbase::exprs)                  # intensities
   mName <- paste0("Markers", format(Sys.time(), "%a%b%d%H%M%S%Y"))
