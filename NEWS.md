@@ -3,6 +3,10 @@
 ## CHANGES IN VERSION 2.9.0
 - New version for Bioc 3.17 
 
+## CHANGES IN VERSION 2.9.1
+- Fix bugs in table selection in explore and compare app
+- Fix transparency slider in explore app
+
 # pRolocGUI 2.8
 
 ## CHANGES IN VERSION 2.8.0

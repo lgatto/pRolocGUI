@@ -516,7 +516,7 @@ pRolocVis_explore <- function(object,
       p(strong(" Map controls")),
       br(),
       p(" Transparency"),
-      sliderInput(" trans", NULL,
+      sliderInput("trans", NULL,
                   min = 0,  max = 1, value = 0.9),
       checkboxInput("checkbox", label = "Show labels", value = TRUE),
       br(),
@@ -729,8 +729,7 @@ pRolocVis_explore <- function(object,
       if (resetLabels$logical) toSel <- numeric()
       ## don't display mName - see https://github.com/ComputationalProteomicsUnit/pRolocGUI/issues/52
       # dtdata <- fd[, -grep(mName, colnames(fd))]
-      dtdata <- fd[, ] # remove this
-      dtdata <- dtdata[brushBounds$i & brushBounds$j, input$selTab]
+      dtdata <- fd[brushBounds$i & brushBounds$j, input$selTab, drop = FALSE]
       DT::datatable(data = dtdata,
                     filter = "top",
                     rownames = TRUE,
