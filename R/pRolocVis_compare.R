@@ -897,9 +897,11 @@ pRolocVis_compare <- function(object,
       if (resetLabels$logical) toSel <- numeric()        ## reset labels
       .dt1 <- fd[[1]][feats, input$selTab1, drop = FALSE]
       .dt2 <- fd[[2]][feats, input$selTab2, drop = FALSE]
-      colnames(.dt2) <- paste0('<span style="color:',   
-                               rep("darkblue", ncol(.dt1)), '">', 
-                               colnames(.dt2), '</span>')
+      if (ncol(.dt2) != 0) {
+        colnames(.dt2) <- paste0('<span style="color:',   
+                                 rep("darkblue", ncol(.dt2)), '">', 
+                                 colnames(.dt2), '</span>')
+      }
       dtdata <- cbind(.dt1, .dt2)
       DT::datatable(data = dtdata,
                     filter = "top",
@@ -914,8 +916,9 @@ pRolocVis_compare <- function(object,
                     ),
                     callback = JS(callback),
                     style = "bootstrap4",
-                    escape = FALSE)  %>%     ## NB: `escape = FALSE` required for colname coloring
-        formatStyle(columns = colnames(.dt2), color = c("darkblue")) 
+                    escape = FALSE)
+                    # escape = FALSE)  %>%     ## NB: `escape = FALSE` required for colname coloring
+        # formatStyle(columns = colnames(.dt2), color = c("darkblue"))
     }, server = FALSE)
     
     
