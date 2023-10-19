@@ -150,25 +150,25 @@ pRolocVis_explore <- function(object,
   }
   
 
-  ## Update feature data and convert any columns that are matrices
-  ## to vectors as otherwise in the shiny app these are displayed as
-  ## a long vector of 1,0,0,0,0,1,0 etc.
-  .tn <- length(fvarLabels(object))
-  chk <- vector(length = .tn)
-  for (i in 1:.tn) {
-    chk[i] <- is.matrix(fData(object)[, i])
-  }
-  if (any(chk)) {
-    .ind <- which(chk)
-    .nams <- fvarLabels(object)[.ind]
-    .tmpnams <- paste0(.nams, format(Sys.time(), "%a%b%d%H%M%S%Y"))
-    for (i in seq(.nams)) {
-      object <- mrkMatToVec(object, mfcol = .nams[i], vfcol = .tmpnams[i])
-    }
-    fData(object)[, .nams] <- NULL
-    fvarLabels(object)[match(.tmpnams, fvarLabels(object))] <- .nams
-  }
-  
+  # ## Update feature data and convert any columns that are matrices
+  # ## to vectors as otherwise in the shiny app these are displayed as
+  # ## a long vector of 1,0,0,0,0,1,0 etc.
+  # .tn <- length(fvarLabels(object))
+  # chk <- vector(length = .tn)
+  # for (i in 1:.tn) {
+  #   chk[i] <- is.matrix(fData(object)[, i]) | is.data.frame(fData(object)[, i])
+  # }
+  # if (any(chk)) {
+  #   .ind <- which(chk)
+  #   .nams <- fvarLabels(object)[.ind]
+  #   .tmpnams <- paste0(.nams, format(Sys.time(), "%a%b%d%H%M%S%Y"))
+  #   for (i in seq(.nams)) {
+  #     object <- mrkMatToVec(object, mfcol = .nams[i], vfcol = .tmpnams[i])
+  #   }
+  #   fData(object)[, .nams] <- NULL
+  #   fvarLabels(object)[match(.tmpnams, fvarLabels(object))] <- .nams
+  # }
+  object <- .convertMatsToCols(object)
   
   ## Now extract all relevant data
   fd <- fData(object)                             # all featureData
