@@ -79,8 +79,8 @@ pRolocVis_aggregate <- function(object,
 
   ## Make any columns in the fData that are a matrix a vector 
   ## (we need to do this to make sure the table is displayed properly)
-  peps <- .makeMatsVecs(peps)
-  prots <- .makeMatsVecs(prots)
+  peps <- .convertMatsToCols(peps)
+  prots <- .convertMatsToCols(prots)
   
   
   ## Extract binary matrix (pmarkers) for the peptide MSnSet for markers

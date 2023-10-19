@@ -144,21 +144,22 @@ pRolocVis_compare <- function(object,
   ## to vectors as otherwise in the shiny app these are displayed as
   ## a long vector of 1,0,0,0,0,1,0 etc
   for (i in seq(object)) {
-    .tn <- length(fvarLabels(object[[i]]))
-    chk <- vector(length = .tn)
-    for (j in 1:.tn) {
-      chk[j] <- is.matrix(fData(object[[i]])[, j])
-    }
-    if (any(chk)) {
-      .ind <- which(chk)
-      .nams <- fvarLabels(object[[i]])[.ind]
-      .tmpnams <- paste0(.nams, format(Sys.time(), "%a%b%d%H%M%S%Y"))
-      for (j in seq(.nams)) {
-        object[[i]] <- mrkMatToVec(object[[i]], mfcol = .nams[j], vfcol = .tmpnams[j])
-      }
-      fData(object[[i]])[, .nams] <- NULL
-      fvarLabels(object[[i]])[match(.tmpnams, fvarLabels(object[[i]]))] <- .nams
-    }
+    object@x[[i]] <- .convertMatsToCols(object[[i]])
+    # .tn <- length(fvarLabels(object[[i]]))
+    # chk <- vector(length = .tn)
+    # for (j in 1:.tn) {
+    #   chk[j] <- is.matrix(fData(object[[i]])[, j])
+    # }
+    # if (any(chk)) {
+    #   .ind <- which(chk)
+    #   .nams <- fvarLabels(object[[i]])[.ind]
+    #   .tmpnams <- paste0(.nams, format(Sys.time(), "%a%b%d%H%M%S%Y"))
+    #   for (j in seq(.nams)) {
+    #     object[[i]] <- mrkMatToVec(object[[i]], mfcol = .nams[j], vfcol = .tmpnams[j])
+    #   }
+    #   fData(object[[i]])[, .nams] <- NULL
+    #   fvarLabels(object[[i]])[match(.tmpnams, fvarLabels(object[[i]]))] <- .nams
+    # }
   }
   
   

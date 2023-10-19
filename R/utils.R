@@ -1,22 +1,22 @@
-# ## Update feature data and convert any columns that are matrices to
-# ## vectors as otherwise in the shiny app these are displayed as a long
-# ## vector of (1, 0, 0, 0, 0, 1, 0) etc.
-.makeMatsVecs <- function(msnset) {
+## Update feature data and convert any columns that are matrices into additional
+## explicit columns in the data.table in the app. Otherwise DT crashes
+.convertMatsToCols <- function(msnset) {
   .tn <- length(fvarLabels(msnset))
   chk <- vector(length = .tn)
   for (i in 1:.tn) {
-    chk[i] <- is.matrix(fData(msnset)[, i])
+    chk[i] <- is.matrix(fData(msnset)[, i]) | is.data.frame(fData(msnset)[, i])
   }
   if (any(chk)) {
     .ind <- which(chk)
     .nams <- fvarLabels(msnset)[.ind]
-    .tmpnams <- paste0(.nams, format(Sys.time(), "%a%b%d%H%M%S%Y"))
     for (i in seq(.nams)) {
-      msnset <- pRoloc::mrkMatToVec(msnset, mfcol = .nams[i],
-                                    vfcol = .tmpnams[i])
+      .df <- fData(msnset)[, .nams[i]]
+      .newNams <- paste0(.nams[i], ".", colnames(.df))
+      colnames(.df) <- .newNams
+      fData(msnset) <- cbind(fData(msnset), .df)
     }
-    fData(msnset)[, .nams] <- NULL
-    fvarLabels(msnset)[match(.tmpnams, fvarLabels(msnset))] <- .nams
+    fData(msnset) <- fData(msnset)[, -.ind]
+    
   }
   return(msnset)
 }
