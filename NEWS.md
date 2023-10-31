@@ -1,3 +1,13 @@
+# pRolocGUI 2.13
+
+## CHANGES IN VERSION 2.13.0
+- New version for Bioc devel 3.19
+
+# pRolocGUI 2.12
+
+## CHANGES IN VERSION 2.12.0
+- Bioconductor release 3.18 
+
 # pRolocGUI 2.11
 
 ## CHANGES IN VERSION 2.11.0
