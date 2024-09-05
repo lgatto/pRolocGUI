@@ -1,6 +1,6 @@
 Package: pRolocGUI
 Title: Interactive visualisation of spatial proteomics data
-Version: 2.15.0
+Version: 2.15.1
 Authors@R: c(person(given = "Lisa", family ="Breckels",
                     email = "lms79@cam.ac.uk",
                     comment = c(ORCID = "0000-0001-8918-7171"),
@@ -20,14 +20,14 @@ Imports: shiny (>= 0.9.1), scales, dplyr, DT (>= 0.1.40), graphics,
          utils, ggplot2, shinydashboardPlus (>= 2.0.0), colourpicker, shinyhelper,
          shinyWidgets, shinyjs, colorspace, stats, grDevices, grid, BiocGenerics,
          shinydashboard
-Suggests: 
+Suggests:
     pRolocdata,
     knitr,
     BiocStyle (>= 2.5.19),
     rmarkdown,
     testthat (>= 3.0.0)
 License: GPL-2
-URL: https://github.com/lgatto/pRolocGUI 
+URL: https://github.com/lgatto/pRolocGUI
 BugReports: https://github.com/lgatto/pRolocGUI/issues
 VignetteBuilder: knitr
 Video: https://www.youtube.com/playlist?list=PLvIXxpatSLA2loV5Srs2VBpJIYUlVJ4ow

@@ -1,5 +1,8 @@
 # pRolocGUI 2.15
 
+## CHANGES IN VERSION 2.15.1
+- Remap in aggregation app.
+
 ## CHANGES IN VERSION 2.15.0
 - New version for Bioc devel
 
@@ -16,7 +19,7 @@
 # pRolocGUI 2.12
 
 ## CHANGES IN VERSION 2.12.0
-- Bioconductor release 3.18 
+- Bioconductor release 3.18
 
 # pRolocGUI 2.11
 
@@ -35,7 +38,7 @@
 # pRolocGUI 2.9
 
 ## CHANGES IN VERSION 2.9.0
-- New version for Bioc 3.17 
+- New version for Bioc 3.17
 
 ## CHANGES IN VERSION 2.9.1
 - Fix bugs in table selection in explore and compare app
@@ -44,7 +47,7 @@
 # pRolocGUI 2.8
 
 ## CHANGES IN VERSION 2.8.0
-- Biocondutor release 3.16 
+- Biocondutor release 3.16
 
 # pRolocGUI 2.7
 
@@ -55,7 +58,7 @@
 - Move LMB as maintainer
 - Update URLs for Github repo
 - Removed deprecated cogs icon to gears
-- Fix bug in shinyhelper 
+- Fix bug in shinyhelper
 
 ## CHANGES IN VERSION 2.7.0
 - New version for Bioc 3.15
@@ -73,9 +76,9 @@
 ## CHANGES IN VERSION 2.5.1
 - fix #109 bug in pRolocVis when 'markers' is missing
   from fvarLabels
-- fontawesome deprecated switch to cogs for sidebar 
+- fontawesome deprecated switch to cogs for sidebar
 - fix bug in colour menu #110 attributed from shinyWidgets
-  changing the class name from checkboxGroupButtons to 
+  changing the class name from checkboxGroupButtons to
   checkbox-group-buttons
 
 ## CHANGES IN VERSION 2.5.0
@@ -99,12 +102,12 @@
 - depend on shinydashboardPlus 2.0.0
 - fixed bug in pRolocVis which fails when no fcol
   explicitly called markers is not present
-- added argument classProfiles to compare and explore 
-  apps so that users can choose to display class 
+- added argument classProfiles to compare and explore
+  apps so that users can choose to display class
   specific profiles
 
 ## CHANGES IN VERSION 2.1.1
-- fixed typos in vigentte 
+- fixed typos in vigentte
 - fixed typos in explore and compare apps UIs
 
 # pRolocGUI 2.0
@@ -120,7 +123,7 @@
 
 ## CHANGES IN VERSION 1.99.1
 - Apps updated to new shinydashboardPlus style
-- Options to save plots as high res images 
+- Options to save plots as high res images
 - User set colourpicker for creating figures
 - Support for data export to csv
 - Support batch import searching
