@@ -12,3 +12,4 @@ pkgdown.js
 reference
 ^docs$
 .github
+_pkgdown.yml
