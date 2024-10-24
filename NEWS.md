@@ -1,5 +1,11 @@
 # pRolocGUI 2.15
 
+## CHANGES IN VERSION 2.15.2
+- Fix bug in compare app when selecting marker 
+  classes and plotting the map
+- Change organlle profile plots to 25% and 75% 
+  quantiles
+
 ## CHANGES IN VERSION 2.15.1
 - Remap in aggregation app.
 
