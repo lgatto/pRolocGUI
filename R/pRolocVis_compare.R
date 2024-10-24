@@ -672,7 +672,7 @@ pRolocVis_compare <- function(object,
       # print(paste0("---------"))
       return(.mrkSel1)
     })
-  
+
     mrkSel2 <- reactive({
       # lapply(input$markers,
       #       function(z) which(pmarkers[[2]][, z] == 1))
@@ -689,7 +689,6 @@ pRolocVis_compare <- function(object,
       }
       .mrkSel2
     })
-    
     
     ## Update colours according to colourpicker input
     cols_user <- reactive({
@@ -739,7 +738,7 @@ pRolocVis_compare <- function(object,
       if (!is.null(input$markers)) {
         for (i in 1:length(input$markers)) {
           if (!is.na(indMrk[[i]][1]))
-            points(object_coords[[indData]][mrkSel2()[[i]], , drop = FALSE], pch = 21,
+            points(object_coords[[indData]][indMrk[[i]], , drop = FALSE], pch = 21,
                    cex = 1.8, bg = myCols()[i], col = myCols.bg()[i])
         }
       }
@@ -796,7 +795,7 @@ pRolocVis_compare <- function(object,
       ## get quantiles for subcellular classes
       mrkProfs <- lapply(indMrk, function(z) profs[[indData]][z, , drop = FALSE])   # 5% and 95% quantiles for all other classes
       quants <- lapply(mrkProfs, function(z) apply(z, MARGIN = 2, function(x) 
-        quantile(x, c(0.05, .95), na.rm = TRUE)))
+        quantile(x, c(0.25, .75), na.rm = TRUE)))
       meanProfs <- lapply(mrkProfs, function(z) apply(z, 2, mean, na.rm = TRUE))
       ## make polygon plots
       plot(0, ylim = ylim, xlim = c(1, m),
