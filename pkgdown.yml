@@ -1,6 +1,9 @@
-pandoc: '3.3'
-pkgdown: 2.1.0.9000
-pkgdown_sha: ee72108bc3a9827dcf313817525652dbd9d4284d
+pandoc: '3.4'
+pkgdown: 2.1.1.9000
+pkgdown_sha: 8d9cba19fe597bba170f8d4c99f351491ab4f4d1
 articles:
   pRolocGUI: pRolocGUI.html
-last_built: 2024-09-05T10:43Z
+last_built: 2024-10-24T22:43Z
+urls:
+  reference: https://lgatto.github.io/pRolocGUI/reference
+  article: https://lgatto.github.io/pRolocGUI/articles
