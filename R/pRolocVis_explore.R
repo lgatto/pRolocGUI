@@ -652,7 +652,7 @@ pRolocVis_explore <- function(object,
       bound_high <- quants[2, ]
       ## get quantiles for subcellular classes
       mrkProfs <- lapply(mrkSel(), function(z) profs[z, , drop = FALSE])   # 5% and 95% quantiles for all other classes
-      quants <- lapply(mrkProfs, function(z) apply(z, MARGIN = 2, function(x) quantile(x, c(0.05, .95))))
+      quants <- lapply(mrkProfs, function(z) apply(z, MARGIN = 2, function(x) quantile(x, c(0.25, .75))))
       meanProfs <- lapply(mrkProfs, function(z) apply(z, 2, mean)) 
       
       ## make polygon plots
@@ -861,7 +861,7 @@ pRolocVis_explore <- function(object,
           bound_high <- quants[2, ]
           ## get quantiles for subcellular classes
           mrkProfs <- lapply(mrkSel(), function(z) profs[z, ])   # 5% and 95% quantiles for all other classes
-          quants <- lapply(mrkProfs, function(z) apply(z, MARGIN = 2, function(x) quantile(x, c(0.05, .95))))
+          quants <- lapply(mrkProfs, function(z) apply(z, MARGIN = 2, function(x) quantile(x, c(0.25, .75))))
           meanProfs <- lapply(mrkProfs, function(z) apply(z, 2, mean)) 
           
           ## make polygon plots
