@@ -8,8 +8,8 @@
 <title>pRolocGUI - Interactive visualisation of spatial proteomics data • pRolocGUI</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="pRolocGUI - Interactive visualisation of spatial proteomics data">
 </head>
 <body>
@@ -72,7 +72,7 @@ Gatto</h4>
 <div class="section level2">
 <h2 id="foreword">Foreword<a class="anchor" aria-label="anchor" href="#foreword"></a>
 </h2>
-<p><em><a href="https://bioconductor.org/packages/3.20/pRolocGUI" class="external-link">pRolocGUI</a></em>
+<p><em><a href="https://bioconductor.org/packages/3.21/pRolocGUI" class="external-link">pRolocGUI</a></em>
 is under active development; current functionality is evolving and new
 features will be added. This software is free and open-source. You are
 invited to open issues in the <a href="https://github.com/ComputationalProteomicsUnit/pRolocGUI/issues" class="external-link">Github
@@ -87,9 +87,9 @@ Support Forum</a>.</p>
 </h2>
 <p>This vignette describes the implemented functionality of the
 <code>pRolocGUI</code> package. The package is based on the
-<code>MSnSet</code> class definitions of <em><a href="https://bioconductor.org/packages/3.20/MSnbase" class="external-link">MSnbase</a></em>
-and on the functions defined in the <em><a href="https://bioconductor.org/packages/3.20/pRoloc" class="external-link">pRoloc</a></em>
-package. <em><a href="https://bioconductor.org/packages/3.20/pRolocGUI" class="external-link">pRolocGUI</a></em>
+<code>MSnSet</code> class definitions of <em><a href="https://bioconductor.org/packages/3.21/MSnbase" class="external-link">MSnbase</a></em>
+and on the functions defined in the <em><a href="https://bioconductor.org/packages/3.21/pRoloc" class="external-link">pRoloc</a></em>
+package. <em><a href="https://bioconductor.org/packages/3.21/pRolocGUI" class="external-link">pRolocGUI</a></em>
 is intended for, but not limited to, the interactive visualisation and
 analysis of quantitative spatial proteomics data. To achieve reactivity
 and interactivity, <code>pRolocGUI</code> relies on the <a href="http://www.rstudio.com/shiny/" class="external-link"><code>shiny</code></a> framework.
@@ -122,7 +122,7 @@ proteins (following aggregation).</li>
 </h3>
 <p>Once R is started, the first step to enable functionality of the
 package is to load it, as shown in the code chunk below. We also load
-the <em><a href="https://bioconductor.org/packages/3.20/pRolocdata" class="external-link">pRolocdata</a></em>
+the <em><a href="https://bioconductor.org/packages/3.21/pRolocdata" class="external-link">pRolocdata</a></em>
 data package, which contains quantitative proteomics datasets.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/lgatto/pRolocGUI" class="external-link">"pRolocGUI"</a></span><span class="op">)</span></span>
@@ -226,7 +226,7 @@ on them at the top of the screen.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/pRolocVis-apps.html">pRolocVis</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">hyperLOPIT2015</span>, fcol <span class="op">=</span> <span class="st">"markers"</span><span class="op">)</span></span></code></pre></div>
 <div class="float">
-<img src="figures%2FSS_01_map.jpg" alt="The explore Tab"><div class="figcaption">The explore Tab</div>
+<img src="figures/SS_01_map.jpg" alt="The explore Tab"><div class="figcaption">The explore Tab</div>
 </div>
 <p><strong>Viewing</strong> The Spatial Map tab is characterised by its
 main panel which shows a PCA plot for the selected <code>MSnSet</code>.
@@ -251,7 +251,7 @@ highlighted in the data table. The search supports batch searching so
 users can paste their favourite sets of proteins, protein
 accessions/keywords must be separated by spaces.</p>
 <div class="float">
-<img src="figures%2FSS_11_tablesearching.jpg" alt="Searching the datatable"><div class="figcaption">Searching the datatable</div>
+<img src="figures/SS_11_tablesearching.jpg" alt="Searching the datatable"><div class="figcaption">Searching the datatable</div>
 </div>
 <p>To select/unselect a protein of interest one can simply click/unclick
 on the corresponding entry in the table or double click directly on a
@@ -263,7 +263,7 @@ right sidebar panel the protein names for the selected protein(s) will
 also be shown on the plot. Any selected proteins on the plot or in the
 table can be cleared at any time by clicking the ‘Clear selection’
 button in the right sidebar panel.</p>
-<p><img src="figures%2FSS_02_search.jpg" alt="Searching for proteins of interest"><strong>Saving selected
+<p><img src="figures/SS_02_search.jpg" alt="Searching for proteins of interest"><strong>Saving selected
 proteins</strong> Once proteins have been highlighted in the table
 and/or the plot they can be exported using the “Save selection” button
 in the right sidebar. This will download the ids (as defined by
@@ -276,7 +276,7 @@ clicking the ‘Zoom/reset button’ in the right sidebar to zoom to the
 brushed area. This process can be repeated until the desired level of
 zoom is reached. The plot can be resetted to the original size by
 clicking the ‘Zoom/reset button’ once again.</p>
-<p><img src="figures%2FSS_03_brush.jpg" alt="Brushing on the plot"><img src="figures%2FSS_04_zoom.jpg" alt="Zooming proteins of interest"></p>
+<p><img src="figures/SS_03_brush.jpg" alt="Brushing on the plot"><img src="figures/SS_04_zoom.jpg" alt="Zooming proteins of interest"></p>
 <p><strong>Downloading figures</strong> All visualisations in the app
 (the map and two profile plots) can be downloaded as high resolution
 PDFs by clicking the “Download Plot” button in the right sidebar
@@ -285,7 +285,7 @@ panel.</p>
 panels can be shown/hidden at any time by clicking the icons in the main
 dashboard.</p>
 <div class="float">
-<img src="figures%2FSS_05_nosidebars.jpg" alt="Hiding the sidebars"><div class="figcaption">Hiding the sidebars</div>
+<img src="figures/SS_05_nosidebars.jpg" alt="Hiding the sidebars"><div class="figcaption">Hiding the sidebars</div>
 </div>
 <p><strong>The profiles tabs</strong> There are two profiles tabs in
 <code>pRolocGUI</code> which display the protein profile quantitation
@@ -308,31 +308,31 @@ together. The protein distribution patterns can then be examined on a
 group by group basis. Proteins of interest can be searched in the data
 table and once clicked, the distribution(s) of selected protein(s) are
 shown by dotted black lines.</p>
-<p><img src="figures%2FSS_06a_ribbons.jpg" alt="The profiles tab"><img src="figures%2FSS_06b_ribbons.jpg" alt="The profiles tab, selecting proteins of interest"> There is a
+<p><img src="figures/SS_06a_ribbons.jpg" alt="The profiles tab"><img src="figures/SS_06b_ribbons.jpg" alt="The profiles tab, selecting proteins of interest"> There is a
 second profiles tab called “Profiles (by class)” which shows the protein
 profiles faceted by their class labels. This static plot can be useful
 when comparing the trend between classes, especially when two or more
 classes have very similar trends.</p>
 <div class="float">
-<img src="figures%2FSS_07_facets.jpg" alt="Profiles faceted by subcellular class"><div class="figcaption">Profiles faceted by subcellular class</div>
+<img src="figures/SS_07_facets.jpg" alt="Profiles faceted by subcellular class"><div class="figcaption">Profiles faceted by subcellular class</div>
 </div>
 <p><strong>Table Selection</strong> The Table Selection tab provides an
 interface for data table column selection. Multiple columns can be
 selected on and off by clicking/unclicking the checkboxes that
 correspond to the columns in the data table.</p>
 <div class="float">
-<img src="figures%2FSS_08_tableselection.jpg" alt="Customising the table"><div class="figcaption">Customising the table</div>
+<img src="figures/SS_08_tableselection.jpg" alt="Customising the table"><div class="figcaption">Customising the table</div>
 </div>
 <p><strong>Sample Information</strong> The tab “Sample Info” stores any
 sample information that is stored in the <code>pData</code> slot of the
 <code>MSnSet</code>.</p>
 <div class="float">
-<img src="figures%2FSS_09_sampleInfo.jpg" alt="the Sample Info Tab"><div class="figcaption">the Sample Info Tab</div>
+<img src="figures/SS_09_sampleInfo.jpg" alt="the Sample Info Tab"><div class="figcaption">the Sample Info Tab</div>
 </div>
 <p><strong>Colour Picker</strong> This tab provides an interface to
 select and set colours for the class labels.</p>
 <div class="float">
-<img src="figures%2FSS_10_colourpicker.jpg" alt="The colour picker"><div class="figcaption">The colour picker</div>
+<img src="figures/SS_10_colourpicker.jpg" alt="The colour picker"><div class="figcaption">The colour picker</div>
 </div>
 </div>
 <div class="section level2">
@@ -355,7 +355,7 @@ using the hyperLOPIT technology.</p>
 <p>This will load the datasets <code>hyperLOPIT2015ms3r1</code> and
 <code>hyperLOPIT2015ms3r2</code> side by side and use the column name
 called <code>markers</code> for the colour labelling in both plots.</p>
-<p><img src="figures%2FSS_12_compare.jpg" alt="The compare application, main panel"> If we pass a
+<p><img src="figures/SS_12_compare.jpg" alt="The compare application, main panel"> If we pass a
 <code>fcol</code> of length 2 to the app we can specify different
 feature data columns by which to the label the dataset. For example, in
 the proceeding example we load data from a LOPIT-DC experiment,
@@ -413,13 +413,13 @@ function from <code>MSnbase</code>.</p>
 <span><span class="fu"><a href="../reference/pRolocVis-apps.html">pRolocVis</a></span><span class="op">(</span><span class="va">hyperLOPIT2015ms2psm</span>, app <span class="op">=</span> <span class="st">"aggregate"</span>, fcol <span class="op">=</span> <span class="st">"markers"</span>,</span>
 <span>          groupBy <span class="op">=</span> <span class="st">"Protein.Group.Accessions"</span><span class="op">)</span></span></code></pre></div>
 <div class="float">
-<img src="figures%2FSS_13_aggregate_mean.jpg" alt="The aggregate app"><div class="figcaption">The aggregate app</div>
+<img src="figures/SS_13_aggregate_mean.jpg" alt="The aggregate app"><div class="figcaption">The aggregate app</div>
 </div>
 <p>The main body of the app contains (1) a <code>aggvar</code> distance
 plot and a (2) PCA plot of the PSMs/peptides. The <code>aggvar</code>
 distance plot shows the (log10) number of features (in this example
 peptides) per protein group and the aggregation summarising distance per
-protein group. The app uses the function <code>aggvar</code> from <em><a href="https://bioconductor.org/packages/3.20/MSnbase" class="external-link">MSnbase</a></em>
+protein group. The app uses the function <code>aggvar</code> from <em><a href="https://bioconductor.org/packages/3.21/MSnbase" class="external-link">MSnbase</a></em>
 package.</p>
 <p>As described in the <code><a href="https://lgatto.github.io/MSnbase/reference/aggvar.html" class="external-link">?aggvar</a></code> documentation, the app, can
 take <code>max</code> or <code>mean</code> as a function, and this can
@@ -432,7 +432,7 @@ systematic inconsistencies where, for example, the subsets of peptide
 (or PSM) feautres correspond to proteins with different expression
 patterns.</p>
 <div class="float">
-<img src="figures%2FSS_14_aggregate_hl.jpg" alt="Examining peptides and proteins"><div class="figcaption">Examining peptides and proteins</div>
+<img src="figures/SS_14_aggregate_hl.jpg" alt="Examining peptides and proteins"><div class="figcaption">Examining peptides and proteins</div>
 </div>
 <p>Both the aggvar plot and PCA plot are interactive, and similarly to
 the other <code>pRolocVis</code> apps you can click individual proteins
@@ -440,7 +440,7 @@ or peptides in either the aggvar or PCA plot, to search and highlight
 peptides and proteins of interest. When a protein group is clicked in
 the left plot, the peptides and associated protein group are
 automatically shown on the right PCA plot.</p>
-<p><img src="figures%2FSS_15_aggregate_mean.jpg" alt="the max function">
+<p><img src="figures/SS_15_aggregate_mean.jpg" alt="the max function">
 As previously mentioned <code>aggvar</code> can use either max or mean
 as a function. In the left sidebar there is a drop down menu for users
 to try each method.</p>
