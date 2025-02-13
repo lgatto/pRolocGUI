@@ -1,3 +1,13 @@
+
+# pRolocGUI 2.17
+
+# CHANGES IN VERSION 2.17.0
+- New version for Bioc devel 3.21
+
+# pRolocGUI 2.16
+
+- New version for Bioc release 3.20 (stable)
+
 # pRolocGUI 2.15
 
 ## CHANGES IN VERSION 2.15.2
