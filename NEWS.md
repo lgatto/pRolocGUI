@@ -1,3 +1,10 @@
+# pRolocGUI 2.21
+
+# CHANGES IN VERSION 2.21.0
+- New version for Bioc devel 3.23
+
+# CHANGES IN VERSION 2.21.1
+- Fix bug in explore app
 
 # pRolocGUI 2.17
 

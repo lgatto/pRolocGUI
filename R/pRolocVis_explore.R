@@ -613,9 +613,13 @@ pRolocVis_explore <- function(object,
                  cex = 2, bg = myCols()[i], col = myCols.bg()[i])
       }
       idxDT <<- feats[input$fDataTable_rows_selected] ## highlight point on plot by selecting item in table
-      if (resetLabels$logical) idxDT <<- numeric()  ## If TRUE labels are cleared
-      namesIdxDT <<- names(idxDT)
-      if (length(idxDT)) {
+      if (resetLabels$logical) {
+        idxDT <<- numeric()  ## If TRUE labels are cleared
+        namesIdxDT <<- NULL
+      } else {
+        namesIdxDT <<- names(idxDT)
+      }
+      if (length(idxDT) > 0) {
         .highlightOnPlot_shiny(object_coords, namesIdxDT)
         if (input$checkbox)
           .highlightOnPlot_shiny(object_coords, namesIdxDT, labels = TRUE)
