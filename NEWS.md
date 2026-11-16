@@ -1,3 +1,7 @@
+# pRolocGUI 2.23
+
+- New version for devel
+
 # pRolocGUI 2.21
 
 # CHANGES IN VERSION 2.21.2
