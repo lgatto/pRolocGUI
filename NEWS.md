@@ -1,5 +1,16 @@
 # pRolocGUI 2.23
 
+## CHANGES IN VERSION 2.23.1
+- Fix `remap()` so all datasets are projected onto the reference
+  PCs; proteins are now drawn in the correct place in the
+  aggregation app
+- Fix "Download plot" in the explore app when proteins are selected
+- Fix `fcol = NULL` (and missing `fcol`) in the explore app
+- Compare app: "Reset colours" now resets the colour pickers, the
+  class profiles download now contains both datasets, and long class
+  names containing special characters are truncated correctly
+
+## CHANGES IN VERSION 2.23.0
 - New version for devel
 
 # pRolocGUI 2.21

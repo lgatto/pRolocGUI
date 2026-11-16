@@ -203,6 +203,7 @@ remap <- function(object, ref = 1) {
         sampleNames(xx) <-
             paste0("PC", 1:ncol(xx))
         exprs(xx) <- preds[[i]]
+        object@x[[i]] <- xx
     }
     pca <- pca1$x
     dimnames(pca) <- dimnames(exprs(object@x[[ref]]))

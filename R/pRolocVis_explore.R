@@ -119,10 +119,7 @@ pRolocVis_explore <- function(object,
     message(paste("fcol = NULL, no annotation column specified, setting fcol name to nullmarkers"))
     setUnknowncol("#BEBEBE")
     fcol <- "nullmarkers"
-    m <- matrix(0, ncol = 1, nrow = nrow(object))
-    rownames(m) <- featureNames(object)
-    colnames(m) <- "0"
-    fData(object)[, fcol] <- m
+    fData(object)[, fcol] <- "unknown"
   } else {
     if (!isMrkVec(object, fcol) & !isMrkMat(object, fcol)) 
     stop("Your fcol (markers) are neither vector nor matrix. See ?markers for details.")
@@ -825,9 +822,9 @@ pRolocVis_explore <- function(object,
           if (resetLabels$logical) idxDT <<- numeric()  ## If TRUE labels are cleared
           namesIdxDT <<- names(idxDT)
           if (length(idxDT)) {
-            .highlightOnPlot_shiny(object_coords, fd, namesIdxDT)
+            .highlightOnPlot_shiny(object_coords, namesIdxDT)
             if (input$checkbox)
-              .highlightOnPlot_shiny(object_coords, fd, namesIdxDT, labels = TRUE, cex = 1)
+              .highlightOnPlot_shiny(object_coords, namesIdxDT, labels = TRUE, cex = 1)
           }
           resetLabels$logical <- FALSE
           height <- reactive(ifelse(!is.null(input$innerWidth),input$innerWidth*3/5,0)) # fix ratio 1:1

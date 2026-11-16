@@ -133,7 +133,7 @@ pRolocVis_compare <- function(object,
     stopifnot(fcol[i] %in% fvarLabels(x))
     fvar <- fData(x)[[fcol[i]]]
     for (j in seq_along(from)) {
-      fvar <- sub(from[j], to[j], fvar)
+      fvar <- sub(from[j], to[j], fvar, fixed = TRUE)
     }
     fData(x)[[fcol[i]]] <- fvar
     object@x[[i]] <- x
@@ -1048,8 +1048,10 @@ pRolocVis_compare <- function(object,
           profByClass2 <- plotFacetProfiles(profs[[2]], fcol[2], 
                                             fd[[2]], pd[[2]], 
                                             col = cols_user(), ncol = 1)
-          ggsave(filename = file, plot = profByClass1, device = "pdf", width = 12, height = 5) 
-          ggsave(filename = file, plot = profByClass2, device = "pdf", width = 12, height = 5) 
+          pdf(file = file, width = 12, height = 5)
+          print(profByClass1)
+          print(profByClass2)
+          dev.off()
         } 
         # 
         # else if (input$tabs == "profilesPanel2") {
@@ -1080,7 +1082,7 @@ pRolocVis_compare <- function(object,
     
     ## reset colours to stockCols
     observeEvent(input$resetColours, {
-      for (i in seq(ncol(pmarkers))) {
+      for (i in seq_along(col_ids)) {
         colourpicker::updateColourInput(session, col_ids[i],
                                         value = appStockcol()[i])
       }
