@@ -1,5 +1,8 @@
 # pRolocGUI 2.23
 
+## CHANGES IN VERSION 2.23.2
+- Bump for Bioc 
+
 ## CHANGES IN VERSION 2.23.1
 - Fix `remap()` so all datasets are projected onto the reference
   PCs; proteins are now drawn in the correct place in the
